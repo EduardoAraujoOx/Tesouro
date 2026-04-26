@@ -1,7 +1,10 @@
+import 'dotenv/config'
+import { PrismaLibSql } from '@prisma/adapter-libsql'
 import { PrismaClient } from '@prisma/client'
 import bcrypt from 'bcryptjs'
 
-const prisma = new PrismaClient()
+const adapter = new PrismaLibSql({ url: process.env.DATABASE_URL! })
+const prisma = new PrismaClient({ adapter })
 
 async function main() {
   // Clear existing data
@@ -319,6 +322,41 @@ async function main() {
   })
 
   console.log('✅ 19 FinancialLines DEMAIS (Abr/2026) criadas')
+
+  await prisma.financialLine.createMany({
+    data: [
+      // rowOrder 26 — subtotal
+      {
+        uploadId: uploadAbr.id, rowOrder: 26, level: 0,
+        rowLabel: 'SUBTOTAL (III=I+II)',
+        groupKey: 'SUBTOTAL', isGroup: false, isSubtotal: true, isTotal: false,
+        colI: 10517919677.51, colII: 1424593692.20, colIII: 0, colIV: 12928157960.26,
+        colV: -3834831974.95, colVI: 0, colVII: 0, colVIII: 8302580247.85,
+        colIX: 0, colX: 0, colXI: 671189775.24, colXII: 152875113.27,
+      },
+      // rowOrder 27 — grupo previdência (sem sublinhas)
+      {
+        uploadId: uploadAbr.id, rowOrder: 27, level: 0,
+        rowLabel: 'RECURSOS VINCULADOS À PREVIDÊNCIA SOCIAL (IV)',
+        groupKey: 'PREVIDENCIA', isGroup: true, isSubtotal: false, isTotal: false,
+        colI: 10315675622.62, colII: 39050757.21, colIII: 0, colIV: 699302944.75,
+        colV: 9577321920.66, colVI: 0, colVII: 0, colVIII: 92946650.61,
+        colIX: 0, colX: 0, colXI: 813977240.00, colXII: 0,
+      },
+      // rowOrder 28 — total
+      {
+        uploadId: uploadAbr.id, rowOrder: 28, level: 0,
+        rowLabel: 'TOTAL (V=III+IV)',
+        groupKey: 'TOTAL', isGroup: false, isSubtotal: false, isTotal: true,
+        colI: 20833595300.13, colII: 1463644449.41, colIII: 0, colIV: 13627460905.01,
+        colV: 5742489945.71, colVI: 0, colVII: 0, colVIII: 8395526898.46,
+        colIX: 0, colX: 0, colXI: 1485167015.24, colXII: 152875113.27,
+      },
+    ],
+  })
+
+  console.log('✅ 3 FinancialLines finais — SUBTOTAL, PREVIDÊNCIA, TOTAL (Abr/2026) criadas')
+  console.log('✅ Seed concluído: 29 linhas financeiras de Abr/2026 inseridas')
 }
 
 main()
