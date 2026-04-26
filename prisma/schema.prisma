@@ -1,0 +1,125 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+}
+
+enum Role {
+  ADMIN
+  SUBSET
+  SEFAZ
+  SEP
+  CONSULTA
+}
+
+model User {
+  id           String   @id @default(cuid())
+  name         String
+  email        String   @unique
+  passwordHash String
+  role         Role     @default(CONSULTA)
+  active       Boolean  @default(true)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  sigefesUploads SigefesUpload[]
+  subsetInputs   SubsetInput[]
+  sepInputs      SepInput[]
+  auditLogs      AuditLog[]
+  pdfExports     PdfExport[]
+}
+
+model FinancialLine {
+  id         String  @id @default(cuid())
+  rowOrder   Int
+  rowLabel   String
+  groupKey   String?
+  isGroup    Boolean @default(false)
+  isSubtotal Boolean @default(false)
+  isTotal    Boolean @default(false)
+  level      Int     @default(0)
+
+  colI    Float @default(0)
+  colII   Float @default(0)
+  colIII  Float @default(0)
+  colIV   Float @default(0)
+  colV    Float @default(0)
+  colVI   Float @default(0)
+  colVII  Float @default(0)
+  colVIII Float @default(0)
+  colIX   Float @default(0)
+  colX    Float @default(0)
+  colXI   Float @default(0)
+  colXII  Float @default(0)
+
+  colVIAdjusted Float?
+  colVINote     String?
+  colIXAdjusted Float?
+  colIXNote     String?
+
+  upload   SigefesUpload @relation(fields: [uploadId], references: [id], onDelete: Cascade)
+  uploadId String
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model SigefesUpload {
+  id            String   @id @default(cuid())
+  monthRef      String
+  referenceDate String?
+  fileName      String
+  isLatest      Boolean  @default(true)
+  uploadedById  String
+  uploadedBy    User     @relation(fields: [uploadedById], references: [id])
+  createdAt     DateTime @default(now())
+
+  lines        FinancialLine[]
+  subsetInputs SubsetInput[]
+  sepInputs    SepInput[]
+}
+
+model SubsetInput {
+  id          String        @id @default(cuid())
+  upload      SigefesUpload @relation(fields: [uploadId], references: [id])
+  uploadId    String
+  monthRef    String
+  isLatest    Boolean       @default(true)
+  createdById String
+  createdBy   User          @relation(fields: [createdById], references: [id])
+  createdAt   DateTime      @default(now())
+}
+
+model SepInput {
+  id          String        @id @default(cuid())
+  upload      SigefesUpload @relation(fields: [uploadId], references: [id])
+  uploadId    String
+  monthRef    String
+  isLatest    Boolean       @default(true)
+  createdById String
+  createdBy   User          @relation(fields: [createdById], references: [id])
+  createdAt   DateTime      @default(now())
+}
+
+model AuditLog {
+  id         String   @id @default(cuid())
+  entityType String
+  entityId   String
+  action     String
+  fieldName  String?
+  oldValue   String?
+  newValue   String?
+  userId     String
+  user       User     @relation(fields: [userId], references: [id])
+  createdAt  DateTime @default(now())
+}
+
+model PdfExport {
+  id            String   @id @default(cuid())
+  monthRef      String
+  generatedById String
+  generatedBy   User     @relation(fields: [generatedById], references: [id])
+  createdAt     DateTime @default(now())
+}

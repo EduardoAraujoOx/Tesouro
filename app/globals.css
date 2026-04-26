@@ -1,0 +1,79 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Light theme (default) */
+:root {
+  --color-background-primary: #ffffff;
+  --color-background-secondary: #f8fafc;
+  --color-background-tertiary: #f1f5f9;
+  --color-text-primary: #0f172a;
+  --color-text-secondary: #64748b;
+  --color-border-primary: #cbd5e1;
+  --color-border-secondary: #e2e8f0;
+  --color-border-tertiary: #f1f5f9;
+  --color-sidebar-bg: #0F1624;
+  --color-negative: #dc2626;
+  --color-positive: #16a34a;
+}
+
+/* Dark theme */
+[data-theme="dark"] {
+  --color-background-primary: #0f172a;
+  --color-background-secondary: #1e293b;
+  --color-background-tertiary: #0f172a;
+  --color-text-primary: #f1f5f9;
+  --color-text-secondary: #94a3b8;
+  --color-border-primary: #334155;
+  --color-border-secondary: #1e293b;
+  --color-border-tertiary: #1e293b;
+  --color-sidebar-bg: #020617;
+  --color-negative: #fca5a5;
+  --color-positive: #86efac;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  font-family: system-ui, -apple-system, sans-serif;
+  background: var(--color-background-tertiary);
+  color: var(--color-text-primary);
+  margin: 0;
+  padding: 0;
+  transition: background 0.2s, color 0.2s;
+}
+
+/* Tabular numbers for financial data */
+.tabular-nums {
+  font-variant-numeric: tabular-nums;
+}
+
+/* Negative values */
+.negative {
+  color: var(--color-negative);
+}
+
+/* Scrollbar styling */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: var(--color-border-primary);
+  border-radius: 3px;
+}
+
+/* Input yellow highlight for VI/IX */
+.vi-ix-input {
+  background: #fefce8;
+  border: 0.5px solid #fde047;
+  border-radius: 5px;
+}
+
+[data-theme="dark"] .vi-ix-input {
+  background: rgba(234, 179, 8, 0.15);
+  border-color: rgba(234, 179, 8, 0.4);
+}
