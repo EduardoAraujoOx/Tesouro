@@ -1,6 +1,8 @@
 'use client'
 import { useState, useEffect } from 'react'
 import { computeExecutiveColumns, computeTrafficLight, formatBRL } from '@/lib/calculations/financialCalc'
+import { GLOSSARIO_FONTES } from '@/lib/constants/glossarioFontes'
+import { GLOSSARIO_COLUNAS } from '@/lib/constants/glossarioColunas'
 
 type Tab = 'memoria' | 'fontes' | 'colunas'
 
@@ -244,14 +246,70 @@ export default function MemoriaPage() {
           {tab === 'memoria' && renderMemoria()}
 
           {tab === 'fontes' && (
-            <div style={{ textAlign: 'center', padding: '50px 0', color: 'var(--color-text-secondary)', fontSize: 13 }}>
-              ⏳ Glossário de fontes em implementação.
+            <div>
+              <div style={{ fontSize: 10, fontWeight: 500, color: 'var(--color-text-secondary)', letterSpacing: '0.07em', marginBottom: 12 }}>
+                GLOSSÁRIO DE FONTES DE RECURSOS
+              </div>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+                {lines.map(line => {
+                  const def = GLOSSARIO_FONTES[line.rowLabel]
+                  if (!def) return null
+                  return (
+                    <div key={line.id} style={{
+                      borderLeft: line.isGroup ? '3px solid #1D4ED8' : '1px solid var(--color-border-tertiary)',
+                      paddingLeft: 12,
+                      paddingTop: 8,
+                      paddingBottom: 8,
+                      background: line.isGroup ? 'var(--color-background-secondary)' : 'transparent',
+                      borderRadius: line.isGroup ? 4 : 0,
+                    }}>
+                      <div style={{ fontSize: 12, fontWeight: line.isGroup ? 600 : 500, color: 'var(--color-text-primary)', marginBottom: 3 }}>
+                        {line.rowLabel}
+                      </div>
+                      <div style={{ fontSize: 11, color: 'var(--color-text-secondary)', lineHeight: 1.5 }}>
+                        {def}
+                      </div>
+                    </div>
+                  )
+                })}
+              </div>
             </div>
           )}
 
           {tab === 'colunas' && (
-            <div style={{ textAlign: 'center', padding: '50px 0', color: 'var(--color-text-secondary)', fontSize: 13 }}>
-              ⏳ Glossário de colunas em implementação.
+            <div>
+              <div style={{ fontSize: 10, fontWeight: 500, color: 'var(--color-text-secondary)', letterSpacing: '0.07em', marginBottom: 12 }}>
+                GLOSSÁRIO DE COLUNAS TÉCNICAS
+              </div>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+                {GLOSSARIO_COLUNAS.map(item => (
+                  <div key={item.k} style={{
+                    borderLeft: item.m ? '3px solid #d97706' : '3px solid #1D4ED8',
+                    paddingLeft: 12,
+                    paddingTop: 10,
+                    paddingBottom: 10,
+                    background: 'var(--color-background-secondary)',
+                    borderRadius: 4,
+                  }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 4 }}>
+                      <span style={{ fontSize: 13, fontWeight: 700, color: item.m ? '#d97706' : '#1D4ED8' }}>
+                        {item.k}
+                      </span>
+                      <span style={{ fontSize: 12, fontWeight: 600, color: 'var(--color-text-primary)' }}>
+                        {item.s}
+                      </span>
+                      {item.m && (
+                        <span style={{ fontSize: 10, background: '#fef3c7', color: '#92400e', borderRadius: 3, padding: '1px 5px', fontWeight: 500 }}>
+                          preenchimento manual
+                        </span>
+                      )}
+                    </div>
+                    <div style={{ fontSize: 11, color: 'var(--color-text-secondary)', lineHeight: 1.5 }}>
+                      {item.d}
+                    </div>
+                  </div>
+                ))}
+              </div>
             </div>
           )}
         </div>
