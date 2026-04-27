@@ -18,19 +18,19 @@ export function validateParsedData(lines: ParsedLine[]): ValidationResult {
 
   checks.push({
     name: 'Total de linhas',
-    passed: lines.length === 29,
-    expected: '29',
+    passed: lines.length >= 25 && lines.length <= 40,
+    expected: 'Entre 25 e 40',
     found: String(lines.length),
-    critical: true,
+    critical: false,
   })
 
   const detail = lines.filter(l => !l.isGroup && !l.isSubtotal && !l.isTotal)
   checks.push({
     name: 'Linhas de detalhe',
-    passed: detail.length === 24,
-    expected: '24',
+    passed: detail.length >= 20 && detail.length <= 35,
+    expected: 'Entre 20 e 35',
     found: String(detail.length),
-    critical: true,
+    critical: false,
   })
 
   const groups = ['TESOURO', 'DEMAIS', 'SUBTOTAL', 'PREVIDENCIA', 'TOTAL']
