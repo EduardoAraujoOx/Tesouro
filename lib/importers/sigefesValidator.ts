@@ -34,7 +34,7 @@ export function validateParsedData(lines: ParsedLine[]): ValidationResult {
   })
 
   const groups = ['TESOURO', 'DEMAIS', 'SUBTOTAL', 'PREVIDENCIA', 'TOTAL']
-  const foundGroups = [...new Set(lines.map(l => l.groupKey).filter(Boolean))] as string[]
+  const foundGroups = Array.from(new Set(lines.map(l => l.groupKey).filter(Boolean))) as string[]
   const allGroupsFound = groups.every(g => foundGroups.includes(g))
   checks.push({
     name: 'Grupos identificados',

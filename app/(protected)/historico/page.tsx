@@ -89,8 +89,8 @@ export default function HistoricoPage() {
                       {data.last}
                     </div>
                     <div style={{ fontSize: 10, color: 'var(--color-text-secondary)' }}>{data.user}</div>
-                    {'count' in data && data.count > 1 && (
-                      <div style={{ fontSize: 10, color: '#d97706', marginTop: 3 }}>{data.count} uploads neste mês</div>
+                    {'count' in data && (data as { count: number }).count > 1 && (
+                      <div style={{ fontSize: 10, color: '#d97706', marginTop: 3 }}>{(data as { count: number }).count} uploads neste mês</div>
                     )}
                   </>
                 ) : (

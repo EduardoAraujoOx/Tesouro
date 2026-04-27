@@ -16,7 +16,7 @@ export async function GET(req: NextRequest) {
     select: { monthRef: true, referenceDate: true, createdAt: true, uploadedBy: { select: { name: true } } },
     orderBy: { monthRef: 'desc' },
   })
-  const months = [...new Set(uploads.map(u => u.monthRef))]
+  const months = Array.from(new Set(uploads.map(u => u.monthRef)))
 
   const targetMonth = month || months[0]
   if (!targetMonth) {

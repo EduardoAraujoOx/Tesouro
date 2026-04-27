@@ -186,7 +186,7 @@ export async function GET(req: NextRequest) {
   const buf = await wb.xlsx.writeBuffer()
   const filename = `radar_fiscal_${upload.monthRef}.xlsx`
 
-  return new NextResponse(buf as Buffer, {
+  return new NextResponse(new Uint8Array(buf), {
     headers: {
       'Content-Type': 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
       'Content-Disposition': `attachment; filename="${filename}"`,
