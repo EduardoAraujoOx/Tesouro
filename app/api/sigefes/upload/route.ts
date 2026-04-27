@@ -18,8 +18,19 @@ export async function POST(req: NextRequest) {
   const file = formData.get('file') as File | null
   if (!file) return NextResponse.json({ error: 'Arquivo não enviado.' }, { status: 400 })
 
-  const buffer = Buffer.from(await file.arrayBuffer())
-  const parseResult = parseSigefesSpreadsheet(buffer)
+  let buffer: Buffer
+  try {
+    buffer = Buffer.from(await file.arrayBuffer())
+  } catch {
+    return NextResponse.json({ error: 'Não foi possível ler o arquivo enviado.' }, { status: 400 })
+  }
+
+  let parseResult: ReturnType<typeof parseSigefesSpreadsheet>
+  try {
+    parseResult = parseSigefesSpreadsheet(buffer)
+  } catch {
+    return NextResponse.json({ error: 'Arquivo inválido ou corrompido. Envie uma exportação .xlsx do SIGEFES-ES.' }, { status: 422 })
+  }
 
   if (parseResult.errors.length > 0) {
     return NextResponse.json({ error: parseResult.errors.join(' '), parseResult }, { status: 422 })
