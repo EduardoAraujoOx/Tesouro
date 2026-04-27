@@ -20,6 +20,7 @@ export default function UploadSigefesPage() {
   const router = useRouter()
   const fileRef = useRef<HTMLInputElement>(null)
   const [state, setState] = useState<UploadState>('idle')
+  const [selectedFile, setSelectedFile] = useState<File | null>(null)
   const [preview, setPreview] = useState<PreviewData | null>(null)
   const [error, setError] = useState('')
   const [dragging, setDragging] = useState(false)
@@ -29,6 +30,7 @@ export default function UploadSigefesPage() {
       setError('Formato inválido. Envie um arquivo .xlsx ou .xls.')
       return
     }
+    setSelectedFile(file)
     setState('parsing')
     setError('')
     try {
@@ -52,11 +54,11 @@ export default function UploadSigefesPage() {
   }
 
   async function handleConfirm() {
-    if (!fileRef.current?.files?.[0]) return
+    if (!selectedFile) return
     setState('confirming')
     try {
       const fd = new FormData()
-      fd.append('file', fileRef.current.files[0])
+      fd.append('file', selectedFile)
       const res = await fetch('/api/sigefes/upload', { method: 'POST', body: fd })
       const data = await res.json()
       if (!res.ok) { setError(data.error || 'Erro ao importar.'); setState('error'); return }

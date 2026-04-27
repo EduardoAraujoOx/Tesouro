@@ -1,7 +1,27 @@
-import { NextResponse } from 'next/server'
+import { NextRequest, NextResponse } from 'next/server'
 import { getServerSession } from 'next-auth'
 import { authOptions } from '@/lib/auth/authOptions'
 import { prisma } from '@/lib/db/prisma'
+
+export async function DELETE(req: NextRequest) {
+  const session = await getServerSession(authOptions)
+  if (!session) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+  if (session.user.role !== 'ADMIN') return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
+
+  const monthRef = new URL(req.url).searchParams.get('monthRef')
+  if (!monthRef) return NextResponse.json({ error: 'monthRef obrigatório.' }, { status: 400 })
+
+  const uploads = await prisma.sigefesUpload.findMany({ where: { monthRef }, select: { id: true } })
+  const uploadIds = uploads.map(u => u.id)
+
+  await prisma.auditLog.deleteMany({ where: { entityId: { in: uploadIds } } })
+  await prisma.pdfExport.deleteMany({ where: { monthRef } })
+  await prisma.subsetInput.deleteMany({ where: { monthRef } })
+  await prisma.sepInput.deleteMany({ where: { monthRef } })
+  await prisma.sigefesUpload.deleteMany({ where: { monthRef } })
+
+  return NextResponse.json({ ok: true })
+}
 
 export async function GET() {
   const session = await getServerSession(authOptions)
