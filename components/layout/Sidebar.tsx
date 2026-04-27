@@ -48,14 +48,26 @@ export default function Sidebar({ mobile, onClose }: SidebarProps) {
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
-      <div style={{ padding: '16px 14px 12px', borderBottom: '1px solid rgba(255,255,255,0.06)' }}>
-        <div style={{ fontSize: 9, color: 'rgba(255,255,255,0.4)', letterSpacing: '0.08em', marginBottom: 4 }}>
-          SEFAZ-ES / TESOURO ESTADUAL
+      <div style={{ padding: '12px 14px 10px', borderBottom: '1px solid rgba(255,255,255,0.06)' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 6 }}>
+          <img
+            src="https://cdn.es.gov.br/images/logo/governo/brasao/center-white/Brasao_Governo_100.png"
+            alt="Brasão ES"
+            style={{ height: 42, width: 'auto', flexShrink: 0 }}
+          />
+          <div>
+            <div style={{ fontSize: 8, color: 'rgba(255,255,255,0.38)', letterSpacing: '0.07em', textTransform: 'uppercase' }}>
+              Governo do Estado do ES
+            </div>
+            <div style={{ fontSize: 8, color: 'rgba(255,255,255,0.38)', letterSpacing: '0.07em', textTransform: 'uppercase', marginTop: 1 }}>
+              SEFAZ / Tesouro Estadual
+            </div>
+          </div>
         </div>
-        <div style={{ fontSize: 13, color: 'white', fontWeight: 500, lineHeight: 1.35 }}>
-          Disponibilidade<br />Financeira Líquida
+        <div style={{ fontSize: 12, color: 'white', fontWeight: 500, lineHeight: 1.35 }}>
+          Disponibilidade Financeira Líquida
         </div>
-        <div style={{ fontSize: 9, color: 'rgba(255,255,255,0.3)', marginTop: 3 }}>
+        <div style={{ fontSize: 9, color: 'rgba(255,255,255,0.3)', marginTop: 2 }}>
           Art. 42 da LRF
         </div>
       </div>

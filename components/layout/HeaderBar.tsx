@@ -55,6 +55,13 @@ export default function HeaderBar({ onMenuClick, mobile, exportMonth }: HeaderBa
           ☰
         </button>
       )}
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#1e3a5f', borderRadius: 6, padding: '4px 6px', flexShrink: 0 }}>
+        <img
+          src="https://cdn.es.gov.br/images/logo/governo/brasao/center-white/Brasao_Governo_100.png"
+          alt="Brasão ES"
+          style={{ height: mobile ? 20 : 24, width: 'auto' }}
+        />
+      </div>
       <div style={{ flex: 1, minWidth: 0 }}>
         <div style={{ fontSize: mobile ? 11 : 13, fontWeight: 500, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', color: 'var(--color-text-primary)' }}>
           {mobile ? 'Disponibilidade Financeira Líquida | SEFAZ-ES' : 'Controle de Disponibilidade Financeira Líquida do Poder Executivo | SEFAZ-ES'}
