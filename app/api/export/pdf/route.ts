@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { getServerSession } from 'next-auth'
+import type { FinancialLine } from '@prisma/client'
 import { authOptions } from '@/lib/auth/authOptions'
 import { prisma } from '@/lib/db/prisma'
 import { computeExecutiveColumns, computeTrafficLight, formatBRL } from '@/lib/calculations/financialCalc'
@@ -45,7 +46,7 @@ export async function GET(req: NextRequest) {
     VERDE: '#16a34a', AMARELO: '#d97706', VERMELHO: '#dc2626', CINZA: '#6b7280',
   }
 
-  function rowHtml(line: typeof upload.lines[0], indent: number) {
+  function rowHtml(line: FinancialLine, indent: number) {
     const ec = computeExecutiveColumns({
       colI: line.colI, colII: line.colII, colIII: line.colIII, colIV: line.colIV,
       colV: line.colV, colVI: line.colVI, colVIAdjusted: line.colVIAdjusted,
