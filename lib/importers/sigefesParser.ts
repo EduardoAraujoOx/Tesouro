@@ -31,18 +31,28 @@ export function parseSigefesSpreadsheet(buffer: Buffer): ParseResult {
 
   const result: ParseResult = { lines: [], referenceDate: null, monthRef: null, errors: [] }
 
-  if (rows[2]?.[0] && String(rows[2][0]).includes('Posição:')) {
-    const dateStr = String(rows[2][0]).replace('Posição:', '').trim()
-    result.referenceDate = dateStr
-    const parts = dateStr.split('/')
-    if (parts.length === 3) result.monthRef = `${parts[2]}-${parts[1]}`
+  // Search any cell in first 15 rows for "Posição:" — handles merged cells and varied layouts
+  outer: for (let i = 0; i < Math.min(rows.length, 15); i++) {
+    for (let j = 0; j < Math.min((rows[i] ?? []).length, 6); j++) {
+      const cell = rows[i]?.[j]
+      if (cell && String(cell).includes('Posição:')) {
+        const dateStr = String(cell).replace(/.*Posição:\s*/i, '').trim()
+        result.referenceDate = dateStr
+        const parts = dateStr.split('/')
+        if (parts.length === 3) result.monthRef = `${parts[2]}-${parts[1]}`
+        break outer
+      }
+    }
   }
 
   let dataStart = -1
-  for (let i = 0; i < Math.min(rows.length, 10); i++) {
-    if (rows[i]?.[0] && String(rows[i][0]).toLowerCase().includes('poder executivo')) {
-      dataStart = i + 1; break
+  for (let i = 0; i < Math.min(rows.length, 15); i++) {
+    for (let j = 0; j < Math.min((rows[i] ?? []).length, 6); j++) {
+      if (rows[i]?.[j] && String(rows[i][j]).toLowerCase().includes('poder executivo')) {
+        dataStart = i + 1; break
+      }
     }
+    if (dataStart !== -1) break
   }
   if (dataStart === -1) {
     result.errors.push('Cabeçalho de dados não encontrado.')
