@@ -57,7 +57,7 @@ export default function HeaderBar({ onMenuClick, mobile, exportMonth }: HeaderBa
       )}
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#1e3a5f', borderRadius: 6, padding: '4px 6px', flexShrink: 0 }}>
         <img
-          src="https://cdn.es.gov.br/images/logo/governo/brasao/center-white/Brasao_Governo_100.png"
+          src="https://cdn.es.gov.br/images/logo/governo/brasao/center-white/Brasao_Governo_500.png"
           alt="Brasão ES"
           style={{ height: mobile ? 20 : 24, width: 'auto' }}
         />

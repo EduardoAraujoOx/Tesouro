@@ -51,7 +51,7 @@ export default function Sidebar({ mobile, onClose }: SidebarProps) {
       <div style={{ padding: '12px 14px 10px', borderBottom: '1px solid rgba(255,255,255,0.06)' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 6 }}>
           <img
-            src="https://cdn.es.gov.br/images/logo/governo/brasao/center-white/Brasao_Governo_100.png"
+            src="https://cdn.es.gov.br/images/logo/governo/brasao/center-white/Brasao_Governo_500.png"
             alt="Brasão ES"
             style={{ height: 42, width: 'auto', flexShrink: 0 }}
           />
