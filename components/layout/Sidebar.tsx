@@ -4,7 +4,11 @@ import { usePathname } from 'next/navigation'
 import { useState } from 'react'
 import { useSession } from 'next-auth/react'
 
-const NAV = [
+type NavLeaf = { id: string; label: string; icon: string; href: string; sub?: never }
+type NavGroup = { id: string; label: string; icon: string; href?: never; sub: { id: string; label: string; href: string }[] }
+type NavItem = NavLeaf | NavGroup
+
+const NAV_BASE: NavItem[] = [
   { id: 'dashboard', label: 'Dashboard', icon: '⊞', href: '/dashboard' },
   {
     id: 'insercao', label: 'Inserção de Dados', icon: '↑',
@@ -16,8 +20,9 @@ const NAV = [
   },
   { id: 'historico', label: 'Histórico', icon: '⏱', href: '/historico' },
   { id: 'memoria', label: 'Memória de Cálculo', icon: '≡', href: '/memoria' },
-  { id: 'admin', label: 'Administração', icon: '⚙', href: '/admin/usuarios' },
 ]
+
+const NAV_ADMIN: NavItem = { id: 'admin', label: 'Administração', icon: '⚙', href: '/admin/usuarios' }
 
 interface SidebarProps {
   mobile?: boolean
@@ -33,6 +38,9 @@ export default function Sidebar({ mobile, onClose }: SidebarProps) {
 
   const isActive = (href: string) => pathname === href
   const isInsercaoActive = pathname?.startsWith('/insercao') ?? false
+
+  const isAdmin = session?.user?.role === 'ADMIN'
+  const NAV = isAdmin ? [...NAV_BASE, NAV_ADMIN] : NAV_BASE
 
   const initials = session?.user?.name
     ? session.user.name.split(' ').map(n => n[0]).slice(0, 2).join('')
