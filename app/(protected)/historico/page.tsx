@@ -1,15 +1,12 @@
 'use client'
 import { useState, useEffect } from 'react'
+import { useSession } from 'next-auth/react'
 
-const MONTH_LABELS: Record<string, string> = {
-  '2026-02': 'Fevereiro/2026',
-  '2026-03': 'Março/2026',
-  '2026-04': 'Abril/2026',
-  '2026-05': 'Maio/2026',
-}
+const MONTH_NAMES = ['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro']
 
 function monthLabel(m: string) {
-  return MONTH_LABELS[m] || m
+  const [year, month] = m.split('-')
+  return `${MONTH_NAMES[parseInt(month) - 1]}/${year}`
 }
 
 interface MonthData {
@@ -21,12 +18,35 @@ interface MonthData {
 }
 
 export default function HistoricoPage() {
+  const { data: session } = useSession()
+  const isAdmin = session?.user?.role === 'ADMIN'
+
   const [months, setMonths] = useState<MonthData[]>([])
   const [loading, setLoading] = useState(true)
+  const [deleting, setDeleting] = useState<string | null>(null)
 
-  useEffect(() => {
-    fetch('/api/historico').then(r => r.json()).then(d => { setMonths(d.months || []); setLoading(false) })
-  }, [])
+  async function load() {
+    setLoading(true)
+    const r = await fetch('/api/historico')
+    const d = await r.json()
+    setMonths(d.months || [])
+    setLoading(false)
+  }
+
+  useEffect(() => { load() }, [])
+
+  async function handleDelete(monthRef: string) {
+    const label = monthLabel(monthRef)
+    if (!confirm(`Excluir todos os dados de ${label}?\n\nEsta ação remove o upload SIGEFES, arrecadação SUBSET, pressões SEP e log de exportações deste mês. Não é reversível.`)) return
+    setDeleting(monthRef)
+    try {
+      const res = await fetch(`/api/historico?monthRef=${monthRef}`, { method: 'DELETE' })
+      if (!res.ok) { alert('Erro ao excluir. Tente novamente.'); return }
+      setMonths(prev => prev.filter(m => m.monthRef !== monthRef))
+    } finally {
+      setDeleting(null)
+    }
+  }
 
   if (loading) return <div style={{ padding: 32, color: 'var(--color-text-secondary)', fontSize: 13 }}>Carregando...</div>
 
@@ -72,6 +92,19 @@ export default function HistoricoPage() {
               >
                 ↓ PDF
               </button>
+              {isAdmin && (
+                <button
+                  onClick={() => handleDelete(m.monthRef)}
+                  disabled={deleting === m.monthRef}
+                  style={{
+                    padding: '4px 10px', fontSize: 11, borderRadius: 5, cursor: deleting === m.monthRef ? 'not-allowed' : 'pointer',
+                    border: '0.5px solid #fca5a5', background: 'none', color: '#dc2626',
+                    opacity: deleting === m.monthRef ? 0.5 : 1,
+                  }}
+                >
+                  {deleting === m.monthRef ? 'Excluindo…' : '🗑 Excluir'}
+                </button>
+              )}
             </div>
           </div>
 
