@@ -50,29 +50,6 @@ const APR_LINES: BaseLine[] = [
 
 const r2 = (n: number) => Math.round(n * 100) / 100
 
-// Scale April data to generate a realistic month snapshot
-// fi=colI factor, fii=colII, fiv=colIV, fviii=colVIII, fxi=colXI, fxii=colXII
-function scaleLines(uploadId: string, fi: number, fii: number, fiv: number, fviii: number, fxi: number, fxii: number) {
-  return APR_LINES.map(l => {
-    const colI    = r2(l.colI    * fi)
-    const colII   = r2(l.colII   * fii)
-    const colIII  = 0
-    const colIV   = r2(l.colIV   * fiv)
-    const colV    = r2(colI - colII - colIII - colIV)
-    const colVIII = r2(l.colVIII * fviii)
-    const colXI   = r2(l.colXI   * fxi)
-    const colXII  = r2(l.colXII  * fxii)
-    return {
-      uploadId,
-      rowOrder: l.rowOrder, level: l.level,
-      rowLabel: l.rowLabel, groupKey: l.groupKey,
-      isGroup: l.isGroup, isSubtotal: l.isSubtotal, isTotal: l.isTotal,
-      colI, colII, colIII, colIV, colV,
-      colVI: 0, colVII: 0, colVIII, colIX: 0, colX: 0, colXI, colXII,
-    }
-  })
-}
-
 async function main() {
   // Clear existing data
   await prisma.auditLog.deleteMany()
@@ -102,31 +79,11 @@ async function main() {
   })
   console.log('✅ 5 usuários criados')
 
-  // ── SigefesUploads ─────────────────────────────────────────────────────────
-  const uploadFev = await prisma.sigefesUpload.create({
-    data: { monthRef: '2026-02', referenceDate: '28/02/2026', fileName: 'controle_art42_fev2026.xlsx', isLatest: true, uploadedById: subset.id, createdAt: new Date('2026-03-04T11:20:00') },
-  })
-  const uploadMar = await prisma.sigefesUpload.create({
-    data: { monthRef: '2026-03', referenceDate: '31/03/2026', fileName: 'controle_art42_mar2026.xlsx', isLatest: true, uploadedById: subset.id, createdAt: new Date('2026-04-02T17:10:00') },
-  })
+  // ── SigefesUpload — Abril/2026 ────────────────────────────────────────────
   const uploadAbr = await prisma.sigefesUpload.create({
     data: { monthRef: '2026-04', referenceDate: '22/04/2026', fileName: 'controle_art42_reestruturado_v2.xlsx', isLatest: true, uploadedById: subset.id, createdAt: new Date('2026-04-23T08:41:00') },
   })
-  console.log('✅ 3 SigefesUploads criados (Fev, Mar, Abr/2026)')
-
-  // ── FinancialLines — Fevereiro/2026 (~70% de Abril) ────────────────────────
-  // Início do ano: caixa menor, empenhos menores, cotas ainda baixas
-  await prisma.financialLine.createMany({
-    data: scaleLines(uploadFev.id, 0.71, 0.55, 0.50, 0.61, 0.63, 0.68),
-  })
-  console.log('✅ 29 FinancialLines Fev/2026 criadas')
-
-  // ── FinancialLines — Março/2026 (~85% de Abril) ────────────────────────────
-  // Mês intermediário: acúmulo crescente de empenhos e cotas liberadas
-  await prisma.financialLine.createMany({
-    data: scaleLines(uploadMar.id, 0.86, 0.73, 0.70, 0.79, 0.81, 0.85),
-  })
-  console.log('✅ 29 FinancialLines Mar/2026 criadas')
+  console.log('✅ SigefesUpload Abr/2026 criado')
 
   // ── FinancialLines — Abril/2026 (valores reais do protótipo) ──────────────
   await prisma.financialLine.createMany({
@@ -143,10 +100,9 @@ async function main() {
   })
   console.log('✅ 29 FinancialLines Abr/2026 criadas (valores reais)')
 
-  // Suppress unused-variable warnings for users created but not otherwise used
   void sefaz; void sep; void admin
 
-  console.log('\n✅ Seed concluído: 87 linhas financeiras (29 × 3 meses)')
+  console.log('\n✅ Seed concluído: 29 linhas financeiras — Abr/2026')
 }
 
 main()
