@@ -206,3 +206,13 @@ INSERT INTO "FinancialLine"("uploadId","rowOrder","level","rowLabel","groupKey",
   ('ABR',26,0,'SUBTOTAL (III=I+II)','SUBTOTAL',false,true,false,10517919677.51,1424593692.2,0,12928157960.26,-3834831974.95,0,0,8302580247.85,0,0,671189775.24,152875113.27,NOW(),NOW()),
   ('ABR',27,0,'RECURSOS VINCULADOS À PREVIDÊNCIA SOCIAL (IV)','PREVIDENCIA',true,false,false,10315675622.62,39050757.21,0,699302944.75,9577321920.66,0,0,92946650.61,0,0,813977240,0,NOW(),NOW()),
   ('ABR',28,0,'TOTAL (V=III+IV)','TOTAL',false,false,true,20833595300.13,1463644449.41,0,13627460905.01,5742489945.71,0,0,8395526898.46,0,0,1485167015.24,152875113.27,NOW(),NOW());
+
+-- ================================================================
+-- OPCIONAL: pré-preencher VI e IX com 0 para mostrar farois coloridos
+-- (equivale a confirmar manualmente "sem arrecadação adicional prevista"
+--  e "sem pressões SEP identificadas")
+-- Execute este bloco separadamente após o seed acima.
+-- ================================================================
+UPDATE "FinancialLine"
+SET "colVIAdjusted" = 0, "colIXAdjusted" = 0
+WHERE "colVIAdjusted" IS NULL OR "colIXAdjusted" IS NULL;
