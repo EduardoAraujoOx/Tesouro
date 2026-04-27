@@ -48,8 +48,10 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: 'Validação crítica falhou.', validation }, { status: 422 })
   }
 
-  const monthRef = parseResult.monthRef
-  if (!monthRef) return NextResponse.json({ error: 'Não foi possível extrair o mês de referência.' }, { status: 422 })
+  const monthRef = parseResult.monthRef ?? (formData.get('monthRef') as string | null)
+  if (!monthRef || !/^\d{4}-\d{2}$/.test(monthRef)) {
+    return NextResponse.json({ error: 'Não foi possível extrair o mês de referência.' }, { status: 422 })
+  }
 
   // Mark previous uploads as not latest
   await prisma.sigefesUpload.updateMany({

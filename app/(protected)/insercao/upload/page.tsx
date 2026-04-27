@@ -14,6 +14,7 @@ interface PreviewData {
   monthRef: string | null
   lineCount: number
   validation: { passed: boolean; checks: Check[] }
+  manualMonthRef: string
 }
 
 export default function UploadSigefesPage() {
@@ -46,6 +47,7 @@ export default function UploadSigefesPage() {
         monthRef: data.parseResult.monthRef,
         lineCount: data.parseResult.lines.length,
         validation: data.validation,
+        manualMonthRef: data.parseResult.monthRef ?? new Date().toISOString().slice(0, 7),
       })
       setState('preview')
     } catch {
@@ -59,6 +61,7 @@ export default function UploadSigefesPage() {
     try {
       const fd = new FormData()
       fd.append('file', selectedFile)
+      if (preview?.manualMonthRef) fd.append('monthRef', preview.manualMonthRef)
       const res = await fetch('/api/sigefes/upload', { method: 'POST', body: fd })
       const data = await res.json()
       if (!res.ok) { setError(data.error || 'Erro ao importar.'); setState('error'); return }
@@ -142,6 +145,18 @@ export default function UploadSigefesPage() {
           {!preview.validation.passed && (
             <div style={{ background: '#fef2f2', border: '0.5px solid #fecaca', borderRadius: 8, padding: '10px 14px', marginBottom: 12, fontSize: 12, color: '#991b1b' }}>
               ❌ Verificação crítica falhou. Verifique se é a exportação correta do SIGEFES-ES.
+            </div>
+          )}
+
+          {!preview.monthRef && (
+            <div style={{ background: '#fef3c7', border: '0.5px solid #fde68a', borderRadius: 8, padding: '10px 14px', marginBottom: 12, fontSize: 12, color: '#92400e' }}>
+              <div style={{ marginBottom: 6 }}>⚠ Data de referência não encontrada no arquivo. Informe o mês manualmente:</div>
+              <input
+                type="month"
+                value={preview.manualMonthRef}
+                onChange={e => setPreview(p => p ? { ...p, manualMonthRef: e.target.value } : p)}
+                style={{ fontSize: 12, padding: '4px 8px', borderRadius: 5, border: '1px solid #fbbf24', background: 'white', color: '#1a1a2e' }}
+              />
             </div>
           )}
 
