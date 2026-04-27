@@ -1,10 +1,8 @@
 import 'dotenv/config'
-import { PrismaLibSql } from '@prisma/adapter-libsql'
 import { PrismaClient } from '@prisma/client'
 import bcrypt from 'bcryptjs'
 
-const adapter = new PrismaLibSql({ url: process.env.DATABASE_URL! })
-const prisma = new PrismaClient({ adapter })
+const prisma = new PrismaClient()
 
 // ── Base data (Abril/2026 — valores reais do protótipo HTML) ─────────────────
 interface BaseLine {
