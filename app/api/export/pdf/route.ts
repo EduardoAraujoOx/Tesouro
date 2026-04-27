@@ -5,7 +5,7 @@ import { authOptions } from '@/lib/auth/authOptions'
 import { prisma } from '@/lib/db/prisma'
 import { computeExecutiveColumns, computeTrafficLight, formatBRL } from '@/lib/calculations/financialCalc'
 
-const LOGO_URL = 'https://cdn.es.gov.br/images/logo/governo/brasao/center-white/Brasao_Governo_100.png'
+const LOGO_URL = 'https://cdn.es.gov.br/images/logo/governo/brasao/center-white/Brasao_Governo_500.png'
 
 const LIGHT_COLOR: Record<string, string> = {
   VERDE: '#16a34a', AMARELO: '#ca8a04', VERMELHO: '#dc2626', CINZA: '#9ca3af',
