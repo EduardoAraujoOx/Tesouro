@@ -15,17 +15,15 @@
     "@prisma/client": "^7.8.0",
     "@react-pdf/renderer": "^4.5.1",
     "@types/bcryptjs": "^2.4.6",
-    "@types/next-auth": "^3.13.0",
     "@types/pg": "^8.20.0",
     "bcryptjs": "^3.0.3",
     "exceljs": "^4.4.0",
-    "next": "14.2.35",
+    "next": "^16.2.4",
     "next-auth": "^4.24.14",
     "pg": "^8.20.0",
     "prisma": "^7.8.0",
     "react": "^18",
-    "react-dom": "^18",
-    "xlsx": "^0.18.5"
+    "react-dom": "^18"
   },
   "prisma": {
     "seed": "ts-node --compiler-options {\"module\":\"CommonJS\"} prisma/seed.ts"

@@ -1,4 +1,4 @@
-import * as XLSX from 'xlsx'
+import ExcelJS from 'exceljs'
 
 export interface ParsedLine {
   rowOrder: number
@@ -24,19 +24,56 @@ export interface ParseResult {
   errors: string[]
 }
 
-export function parseSigefesSpreadsheet(buffer: Buffer): ParseResult {
-  const workbook = XLSX.read(buffer, { type: 'buffer' })
-  const sheet = workbook.Sheets[workbook.SheetNames[0]]
-  const rows: any[][] = XLSX.utils.sheet_to_json(sheet, { header: 1, defval: null })
+function cellStr(v: ExcelJS.CellValue): string | null {
+  if (v === null || v === undefined) return null
+  if (typeof v === 'string') return v
+  if (typeof v === 'number' || typeof v === 'boolean') return String(v)
+  if (v instanceof Date) return v.toLocaleDateString('pt-BR')
+  if (typeof v === 'object') {
+    if ('richText' in v) return (v as ExcelJS.CellRichTextValue).richText.map(r => r.text).join('')
+    if ('text' in v) return (v as ExcelJS.CellHyperlinkValue).text
+    if ('result' in v) {
+      const r = (v as ExcelJS.CellFormulaValue).result
+      if (r !== null && r !== undefined && typeof r !== 'object') return String(r)
+    }
+  }
+  return null
+}
+
+function cellNum(v: ExcelJS.CellValue): number {
+  if (v === null || v === undefined) return 0
+  if (typeof v === 'number') return v
+  if (typeof v === 'string') { const n = parseFloat(v); return isNaN(n) ? 0 : n }
+  if (typeof v === 'object' && 'result' in v) {
+    const r = (v as ExcelJS.CellFormulaValue).result
+    if (typeof r === 'number') return r
+    if (typeof r === 'string') { const n = parseFloat(r); return isNaN(n) ? 0 : n }
+  }
+  return 0
+}
+
+export async function parseSigefesSpreadsheet(buffer: Buffer): Promise<ParseResult> {
+  const workbook = new ExcelJS.Workbook()
+  // exceljs type definitions expect non-generic Buffer; Node 20+ uses Buffer<ArrayBufferLike>
+  await workbook.xlsx.load(buffer as unknown as Parameters<typeof workbook.xlsx.load>[0])
+  const sheet = workbook.worksheets[0]
+
+  // Build 0-indexed rows from exceljs's 1-indexed row.values
+  const rows: ExcelJS.CellValue[][] = []
+  sheet.eachRow({ includeEmpty: true }, (row) => {
+    const vals = row.values as ExcelJS.CellValue[]
+    // vals[0] is undefined in exceljs — shift to 0-indexed
+    rows.push(vals.slice(1))
+  })
 
   const result: ParseResult = { lines: [], referenceDate: null, monthRef: null, errors: [] }
 
-  // Search any cell in first 15 rows for "Posição:" — handles merged cells and varied layouts
+  // Search first 15 rows for "Posição:"
   outer: for (let i = 0; i < Math.min(rows.length, 15); i++) {
     for (let j = 0; j < Math.min((rows[i] ?? []).length, 6); j++) {
-      const cell = rows[i]?.[j]
-      if (cell && String(cell).includes('Posição:')) {
-        const dateStr = String(cell).replace(/.*Posição:\s*/i, '').trim()
+      const cell = cellStr(rows[i]?.[j] ?? null)
+      if (cell && cell.includes('Posição:')) {
+        const dateStr = cell.replace(/.*Posição:\s*/i, '').trim()
         result.referenceDate = dateStr
         const parts = dateStr.split('/')
         if (parts.length === 3) result.monthRef = `${parts[2]}-${parts[1]}`
@@ -48,7 +85,8 @@ export function parseSigefesSpreadsheet(buffer: Buffer): ParseResult {
   let dataStart = -1
   for (let i = 0; i < Math.min(rows.length, 15); i++) {
     for (let j = 0; j < Math.min((rows[i] ?? []).length, 6); j++) {
-      if (rows[i]?.[j] && String(rows[i][j]).toLowerCase().includes('poder executivo')) {
+      const cell = cellStr(rows[i]?.[j] ?? null)
+      if (cell && cell.toLowerCase().includes('poder executivo')) {
         dataStart = i + 1; break
       }
     }
@@ -68,20 +106,14 @@ export function parseSigefesSpreadsheet(buffer: Buffer): ParseResult {
     'TOTAL': 'TOTAL',
   }
 
-  const numVal = (row: any[], idx: number): number => {
-    const v = row[idx]
-    if (v === null || v === undefined || v === '') return 0
-    const n = parseFloat(String(v))
-    return isNaN(n) ? 0 : n
-  }
-
   let rowOrder = 0
   let currentGroup: string | null = null
 
   for (let i = dataStart; i < rows.length; i++) {
     const row = rows[i]
-    if (!row?.[0]) continue
-    const rawLabel = String(row[0])
+    const rawLabelVal = row?.[0] ?? null
+    if (rawLabelVal === null || rawLabelVal === undefined) continue
+    const rawLabel = cellStr(rawLabelVal) ?? ''
     if (!rawLabel.trim() || rawLabel.toLowerCase().includes('sistema integrado')) continue
 
     const label = rawLabel.trim()
@@ -104,14 +136,18 @@ export function parseSigefesSpreadsheet(buffer: Buffer): ParseResult {
 
     result.lines.push({
       rowOrder: rowOrder++, rowLabel: label, groupKey, isGroup, isSubtotal, isTotal, level,
-      colI: numVal(row, 1), colII: numVal(row, 2), colIII: numVal(row, 3), colIV: numVal(row, 4),
-      colV: numVal(row, 5),
-      colVI: 0,
-      colVII: 0,
-      colVIII: numVal(row, 8),
-      colIX: 0,
-      colX: 0,
-      colXI: numVal(row, 11), colXII: numVal(row, 12),
+      colI:    cellNum(row[1] ?? null),
+      colII:   cellNum(row[2] ?? null),
+      colIII:  cellNum(row[3] ?? null),
+      colIV:   cellNum(row[4] ?? null),
+      colV:    cellNum(row[5] ?? null),
+      colVI:   0,
+      colVII:  0,
+      colVIII: cellNum(row[8] ?? null),
+      colIX:   0,
+      colX:    0,
+      colXI:   cellNum(row[11] ?? null),
+      colXII:  cellNum(row[12] ?? null),
     })
   }
 

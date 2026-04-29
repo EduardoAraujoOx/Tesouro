@@ -25,9 +25,9 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: 'Não foi possível ler o arquivo enviado.' }, { status: 400 })
   }
 
-  let parseResult: ReturnType<typeof parseSigefesSpreadsheet>
+  let parseResult: Awaited<ReturnType<typeof parseSigefesSpreadsheet>>
   try {
-    parseResult = parseSigefesSpreadsheet(buffer)
+    parseResult = await parseSigefesSpreadsheet(buffer)
   } catch {
     return NextResponse.json({ error: 'Arquivo inválido ou corrompido. Envie uma exportação .xlsx do SIGEFES-ES.' }, { status: 422 })
   }

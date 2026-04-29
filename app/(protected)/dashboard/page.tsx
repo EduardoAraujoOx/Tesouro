@@ -3,17 +3,7 @@ import { useState, useEffect } from 'react'
 import FinancialExecutiveTable from '@/components/financial/FinancialExecutiveTable'
 import FinancialTechTable from '@/components/financial/FinancialTechTable'
 import type { FinancialLineData } from '@/components/financial/FinancialExecutiveTable'
-
-const MONTH_LABELS: Record<string, string> = {
-  '2026-02': 'Fev/2026',
-  '2026-03': 'Mar/2026',
-  '2026-04': 'Abr/2026',
-  '2026-05': 'Mai/2026',
-}
-
-function monthLabel(m: string) {
-  return MONTH_LABELS[m] || m
-}
+import { monthLabel } from '@/lib/utils/formatMonth'
 
 export default function DashboardPage() {
   const [mode, setMode] = useState<'exec' | 'tech'>('exec')
@@ -33,12 +23,15 @@ export default function DashboardPage() {
     try {
       const url = month ? `/api/dashboard?month=${month}` : '/api/dashboard'
       const res = await fetch(url)
+      if (!res.ok) throw new Error(`HTTP ${res.status}`)
       const data = await res.json()
       setMonths(data.months || [])
       setRows(data.rows || [])
       setReferenceDate(data.referenceDate)
       setUploadedAt(data.uploadedAt)
       if (!period && data.months?.[0]) setPeriod(data.months[0])
+    } catch (err) {
+      console.error('Erro ao carregar dashboard:', err)
     } finally {
       setLoading(false)
     }

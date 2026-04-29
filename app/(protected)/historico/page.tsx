@@ -1,13 +1,7 @@
 'use client'
 import { useState, useEffect } from 'react'
 import { useSession } from 'next-auth/react'
-
-const MONTH_NAMES = ['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro']
-
-function monthLabel(m: string) {
-  const [year, month] = m.split('-')
-  return `${MONTH_NAMES[parseInt(month) - 1]}/${year}`
-}
+import { monthLabel } from '@/lib/utils/formatMonth'
 
 interface MonthData {
   monthRef: string
@@ -27,10 +21,16 @@ export default function HistoricoPage() {
 
   async function load() {
     setLoading(true)
-    const r = await fetch('/api/historico')
-    const d = await r.json()
-    setMonths(d.months || [])
-    setLoading(false)
+    try {
+      const r = await fetch('/api/historico')
+      if (!r.ok) throw new Error(`HTTP ${r.status}`)
+      const d = await r.json()
+      setMonths(d.months || [])
+    } catch (err) {
+      console.error('Erro ao carregar histórico:', err)
+    } finally {
+      setLoading(false)
+    }
   }
 
   useEffect(() => { load() }, [])
