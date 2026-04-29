@@ -1,5 +1,5 @@
 'use client'
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useMemo } from 'react'
 import { computeExecutiveColumns, computeTrafficLight, formatBRL } from '@/lib/calculations/financialCalc'
 import { GLOSSARIO_FONTES } from '@/lib/constants/glossarioFontes'
 import { GLOSSARIO_COLUNAS } from '@/lib/constants/glossarioColunas'
@@ -77,11 +77,29 @@ export default function MemoriaPage() {
   const [tab, setTab]               = useState<Tab>('memoria')
   const [loading, setLoading]       = useState(true)
 
+  const selectedCalc = useMemo(() => {
+    if (!selected) return null
+    const ec = computeExecutiveColumns({
+      colI: selected.colI, colII: selected.colII, colIII: (selected as any).colIII ?? 0,
+      colIV: selected.colIV, colV: selected.colV,
+      colVI: selected.colVI ?? 0, colVIAdjusted: selected.colVIAdjusted,
+      colVIII: selected.colVIII, colIX: selected.colIX ?? 0, colIXAdjusted: selected.colIXAdjusted,
+    })
+    const light = computeTrafficLight(
+      ec.col7, ec.col1,
+      selected.colVIAdjusted !== null,
+      selected.colIXAdjusted !== null,
+    )
+    return { ec, light, ecArr: [ec.col1, ec.col2, ec.col3, ec.col4, ec.col5, ec.col6, ec.col7] }
+  }, [selected])
+
   useEffect(() => {
     fetch('/api/dashboard')
-      .then(r => r.json())
+      .then(r => {
+        if (!r.ok) throw new Error(`HTTP ${r.status}`)
+        return r.json()
+      })
       .then(data => {
-        // Flatten tree: groups + their children, skip subtotals and totals
         const flat: LineData[] = []
         for (const row of (data.rows ?? []) as LineData[]) {
           if (row.isSubtotal || row.isTotal) continue
@@ -92,12 +110,13 @@ export default function MemoriaPage() {
         setRef(data.referenceDate ?? null)
         setUpAt(data.uploadedAt ?? null)
       })
+      .catch(err => console.error('Erro ao carregar memória:', err))
       .finally(() => setLoading(false))
   }, [])
 
   // ── Memória da Linha content ─────────────────────────────────────────────
   function renderMemoria() {
-    if (!selected) {
+    if (!selected || !selectedCalc) {
       return (
         <div style={{ textAlign: 'center', padding: '50px 0', color: 'var(--color-text-secondary)', fontSize: 13 }}>
           ← Selecione uma linha à esquerda
@@ -105,18 +124,7 @@ export default function MemoriaPage() {
       )
     }
 
-    const ec = computeExecutiveColumns({
-      colI: selected.colI, colII: selected.colII, colIII: (selected as any).colIII ?? 0,
-      colIV: selected.colIV, colV: selected.colV,
-      colVI: selected.colVI ?? 0, colVIAdjusted: selected.colVIAdjusted,
-      colVIII: selected.colVIII, colIX: selected.colIX ?? 0, colIXAdjusted: selected.colIXAdjusted,
-    })
-    const ecArr = [ec.col1, ec.col2, ec.col3, ec.col4, ec.col5, ec.col6, ec.col7]
-    const light = computeTrafficLight(
-      ec.col7, ec.col1,
-      selected.colVIAdjusted !== null,
-      selected.colIXAdjusted !== null,
-    )
+    const { ec, ecArr, light } = selectedCalc
 
     return (
       <div>
