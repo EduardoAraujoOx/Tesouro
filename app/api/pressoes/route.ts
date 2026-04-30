@@ -11,7 +11,7 @@ export async function GET(req: NextRequest) {
 
   const upload = await prisma.sigefesUpload.findFirst({
     where: { monthRef: month, isLatest: true },
-    include: { lines: { orderBy: { rowOrder: 'asc' }, where: { isSubtotal: false, isTotal: false } } },
+    include: { lines: { orderBy: { rowOrder: 'asc' } } },
   })
 
   if (!upload) return NextResponse.json({ lines: [], monthRef: month })

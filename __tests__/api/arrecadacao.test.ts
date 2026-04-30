@@ -96,20 +96,14 @@ describe('GET /api/arrecadacao — dados', () => {
     expect(body.lines).toEqual([])
   })
 
-  it('exclui linhas de subtotal e total', async () => {
+  it('inclui todas as linhas (grupos, detalhes, subtotais e totais)', async () => {
     jest.mocked(getServerSession).mockResolvedValue(SESSION_ADMIN)
     jest.mocked(prisma.sigefesUpload.findFirst).mockResolvedValue(mockUpload as any)
 
     await GET(makeGetReq('2026-04'))
-    expect(prisma.sigefesUpload.findFirst).toHaveBeenCalledWith(
-      expect.objectContaining({
-        include: expect.objectContaining({
-          lines: expect.objectContaining({
-            where: { isSubtotal: false, isTotal: false },
-          }),
-        }),
-      })
-    )
+    const call = jest.mocked(prisma.sigefesUpload.findFirst).mock.calls[0][0] as any
+    // Não deve haver filtro excluindo subtotais/totais
+    expect(call?.include?.lines?.where).toBeUndefined()
   })
 })
 
