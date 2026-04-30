@@ -149,11 +149,11 @@ export default function ManualInputTable({ colKey, colLabel, apiEndpoint, month,
                     width: 160, padding: '5px 8px', fontSize: 12,
                     border: '0.5px solid #fde047', borderRadius: 5,
                     textAlign: 'right', background: 'white',
-                    color: 'var(--color-text-primary)', fontVariantNumeric: 'tabular-nums',
+                    color: '#0f172a', fontVariantNumeric: 'tabular-nums',
                   }}
                 />
               ) : (
-                <span style={{ fontSize: 12, fontVariantNumeric: 'tabular-nums', color: 'var(--color-text-primary)' }}>
+                <span style={{ fontSize: 12, fontVariantNumeric: 'tabular-nums', color: '#0f172a' }}>
                   {vals[d.id] || '—'}
                 </span>
               )}
