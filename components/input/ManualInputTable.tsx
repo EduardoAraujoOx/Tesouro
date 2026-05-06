@@ -106,8 +106,21 @@ export default function ManualInputTable({ colKey, colLabel, apiEndpoint, month,
     return (
       <div style={{ padding: 32, textAlign: 'center', color: 'var(--color-text-secondary)' }}>
         <div style={{ fontSize: 32, marginBottom: 10 }}>📋</div>
-        <div style={{ fontSize: 14, fontWeight: 500, marginBottom: 6 }}>Nenhuma base SIGEFES importada</div>
-        <div style={{ fontSize: 12 }}>Faça o upload da planilha SIGEFES antes de preencher os valores.</div>
+        <div style={{ fontSize: 14, fontWeight: 500, marginBottom: 6, color: 'var(--color-text-primary)' }}>
+          Nenhuma base SIGEFES importada
+        </div>
+        <div style={{ fontSize: 12, marginBottom: 16 }}>
+          É necessário importar a planilha SIGEFES antes de preencher os valores.
+        </div>
+        <a
+          href="/insercao/upload"
+          style={{
+            display: 'inline-block', padding: '9px 20px', fontSize: 13, fontWeight: 500,
+            background: '#1D4ED8', color: 'white', borderRadius: 7, textDecoration: 'none',
+          }}
+        >
+          Ir para importação SIGEFES →
+        </a>
       </div>
     )
   }

@@ -93,13 +93,23 @@ describe('GET /api/pressoes — dados', () => {
     expect(body.monthRef).toBe('2026-04')
   })
 
-  it('retorna lines vazio quando upload não existe', async () => {
+  it('retorna lines vazio quando nenhum upload existe', async () => {
     jest.mocked(getServerSession).mockResolvedValue(SESSION_ADMIN)
     jest.mocked(prisma.sigefesUpload.findFirst).mockResolvedValue(null)
 
-    const res = await GET(makeGetReq('2026-04'))
+    const res = await GET(makeGetReq())
     const body = await res.json()
     expect(body.lines).toEqual([])
+  })
+
+  it('busca upload mais recente quando month param não fornecido', async () => {
+    jest.mocked(getServerSession).mockResolvedValue(SESSION_ADMIN)
+    jest.mocked(prisma.sigefesUpload.findFirst).mockResolvedValue(mockUpload as any)
+
+    await GET(makeGetReq())
+    expect(prisma.sigefesUpload.findFirst).toHaveBeenCalledWith(
+      expect.objectContaining({ where: { isLatest: true } })
+    )
   })
 })
 
