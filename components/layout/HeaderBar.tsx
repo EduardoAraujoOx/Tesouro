@@ -24,13 +24,13 @@ export default function HeaderBar({ onMenuClick, mobile, exportMonth }: HeaderBa
   }
 
   function handleExportPDF() {
-    const month = exportMonth || new Date().toISOString().slice(0, 7)
-    window.open(`/api/export/pdf?month=${month}`, '_blank')
+    const params = exportMonth ? `?month=${exportMonth}` : ''
+    window.open(`/api/export/pdf${params}`, '_blank')
   }
 
   function handleExportExcel() {
-    const month = exportMonth || new Date().toISOString().slice(0, 7)
-    window.open(`/api/export/excel?month=${month}`, '_blank')
+    const params = exportMonth ? `?month=${exportMonth}` : ''
+    window.open(`/api/export/excel${params}`, '_blank')
   }
 
   const btnStyle: React.CSSProperties = {

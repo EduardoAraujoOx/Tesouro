@@ -7,15 +7,16 @@ export async function GET(req: NextRequest) {
   const session = await getServerSession(authOptions)
   if (!session) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
-  const month = new URL(req.url).searchParams.get('month') || new Date().toISOString().slice(0, 7)
+  const monthParam = new URL(req.url).searchParams.get('month')
 
   const upload = await prisma.sigefesUpload.findFirst({
-    where: { monthRef: month, isLatest: true },
+    where: monthParam ? { monthRef: monthParam, isLatest: true } : { isLatest: true },
+    orderBy: { createdAt: 'desc' },
     include: { lines: { orderBy: { rowOrder: 'asc' } } },
   })
 
-  if (!upload) return NextResponse.json({ lines: [], monthRef: month })
-  return NextResponse.json({ lines: upload.lines, monthRef: month, uploadId: upload.id })
+  if (!upload) return NextResponse.json({ lines: [], monthRef: monthParam ?? null })
+  return NextResponse.json({ lines: upload.lines, monthRef: upload.monthRef, uploadId: upload.id })
 }
 
 export async function POST(req: NextRequest) {
