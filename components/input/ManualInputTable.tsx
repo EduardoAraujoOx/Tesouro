@@ -13,6 +13,14 @@ interface LineData {
   colIXAdjusted?: number | null
 }
 
+interface ConfirmationData {
+  submittedAt: Date
+  monthRef: string
+  linesCount: number
+  total: number
+  submittedBy: string
+}
+
 interface Props {
   colKey: 'VI' | 'IX'
   colLabel: string
@@ -34,14 +42,22 @@ function formatBRL(v: number | null | undefined): string {
   return new Intl.NumberFormat('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(v)
 }
 
+function formatDateTime(d: Date): string {
+  return d.toLocaleString('pt-BR', {
+    day: '2-digit', month: '2-digit', year: 'numeric',
+    hour: '2-digit', minute: '2-digit', second: '2-digit',
+  })
+}
+
 export default function ManualInputTable({ colKey, colLabel, apiEndpoint, month, canEdit, saveMsg }: Props) {
   const [lines, setLines] = useState<LineData[]>([])
   const [vals, setVals] = useState<Record<string, string>>({})
   const [uploadId, setUploadId] = useState<string>('')
+  const [monthRef, setMonthRef] = useState<string>('')
   const [saving, setSaving] = useState(false)
-  const [saved, setSaved] = useState(false)
   const [loading, setLoading] = useState(true)
   const [inputMode, setInputMode] = useState<'digitar' | 'upload'>('digitar')
+  const [confirmation, setConfirmation] = useState<ConfirmationData | null>(null)
 
   useEffect(() => { load() }, [month])
 
@@ -53,6 +69,7 @@ export default function ManualInputTable({ colKey, colLabel, apiEndpoint, month,
       const data = await res.json()
       setLines(data.lines || [])
       setUploadId(data.uploadId || '')
+      setMonthRef(data.monthRef || '')
       const initial: Record<string, string> = {}
       ;(data.lines || []).forEach((l: LineData) => {
         const adj = colKey === 'VI' ? l.colVIAdjusted : l.colIXAdjusted
@@ -64,38 +81,122 @@ export default function ManualInputTable({ colKey, colLabel, apiEndpoint, month,
     }
   }
 
-  async function handleSave() {
-    setSaving(true)
-    try {
-      const values = lines
-        .filter(l => !l.isGroup && !l.isSubtotal && !l.isTotal)
-        .map(l => ({ lineId: l.id, value: parseBRL(vals[l.id] || '') }))
-      await fetch(apiEndpoint, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ uploadId, values }),
-      })
-      setSaved(true)
-      setTimeout(() => setSaved(false), 4000)
-    } finally {
-      setSaving(false)
-    }
-  }
-
-  // Compute the sum of input values for detail rows belonging to a given groupKey
-  function groupSum(groupKey: string | null): number {
-    return lines
-      .filter(l => !l.isGroup && !l.isSubtotal && !l.isTotal && l.groupKey === groupKey)
-      .reduce((acc, l) => acc + (parseBRL(vals[l.id] || '') ?? 0), 0)
-  }
-
-  // Compute the grand total across all groups (excluding previdência from subtotal, etc.)
-  function totalSum(): number {
+  function computeTotal(): number {
     return lines
       .filter(l => !l.isGroup && !l.isSubtotal && !l.isTotal)
       .reduce((acc, l) => acc + (parseBRL(vals[l.id] || '') ?? 0), 0)
   }
 
+  async function handleSave() {
+    setSaving(true)
+    const total = computeTotal()
+    const detailLines = lines.filter(l => !l.isGroup && !l.isSubtotal && !l.isTotal)
+    const filledCount = detailLines.filter(l => parseBRL(vals[l.id] || '') !== null).length
+    try {
+      const values = detailLines.map(l => ({ lineId: l.id, value: parseBRL(vals[l.id] || '') }))
+      const res = await fetch(apiEndpoint, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ uploadId, values }),
+      })
+      if (!res.ok) throw new Error('Erro ao salvar')
+
+      setConfirmation({
+        submittedAt: new Date(),
+        monthRef,
+        linesCount: filledCount,
+        total,
+        submittedBy: saveMsg || '',
+      })
+    } finally {
+      setSaving(false)
+    }
+  }
+
+  function handleNovoEnvio() {
+    setVals({})
+    setConfirmation(null)
+  }
+
+  // ── Tela de confirmação ───────────────────────────────────────────────────────
+  if (confirmation) {
+    const colName = colKey === 'VI' ? 'Arrecadação Prevista' : 'Pressões Orçamentárias'
+    const colFull = `Coluna ${colKey} — ${colName}`
+    return (
+      <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 32 }}>
+        <div style={{ maxWidth: 480, width: '100%', textAlign: 'center' }}>
+
+          {/* Ícone de sucesso */}
+          <div style={{
+            width: 64, height: 64, borderRadius: 16, background: '#16a34a',
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+            margin: '0 auto 20px', fontSize: 32,
+          }}>
+            ✓
+          </div>
+
+          <div style={{ fontSize: 20, fontWeight: 700, color: 'var(--color-text-primary)', marginBottom: 4 }}>
+            Dados enviados com sucesso
+          </div>
+          <div style={{ fontSize: 13, color: 'var(--color-text-secondary)', marginBottom: 28 }}>
+            Concluído em {formatDateTime(confirmation.submittedAt)}
+          </div>
+
+          {/* Comprovante */}
+          <div style={{
+            background: 'var(--color-background-secondary)',
+            border: '0.5px solid var(--color-border-secondary)',
+            borderRadius: 10, padding: '18px 24px', textAlign: 'left', marginBottom: 24,
+          }}>
+            {[
+              ['Tipo de dado', colFull],
+              ['Mês de referência', confirmation.monthRef || '—'],
+              ['Linhas preenchidas', `${confirmation.linesCount}`],
+              ['Total informado', `R$ ${formatBRL(confirmation.total)}`],
+              ['Enviado por', confirmation.submittedBy || '—'],
+            ].map(([label, value]) => (
+              <div key={label} style={{ display: 'flex', justifyContent: 'space-between', padding: '7px 0', borderBottom: '0.5px solid var(--color-border-tertiary)' }}>
+                <span style={{ fontSize: 12, color: 'var(--color-text-secondary)' }}>{label}</span>
+                <span style={{ fontSize: 12, fontWeight: 500, color: 'var(--color-text-primary)', textAlign: 'right', maxWidth: 280 }}>{value}</span>
+              </div>
+            ))}
+          </div>
+
+          <div style={{ fontSize: 11, color: 'var(--color-text-secondary)', marginBottom: 20 }}>
+            Os dados foram registrados e já estão disponíveis no Dashboard.
+            Para fazer uma nova inserção, clique em "Novo envio" abaixo.
+          </div>
+
+          <div style={{ display: 'flex', gap: 10, justifyContent: 'center' }}>
+            <button
+              onClick={handleNovoEnvio}
+              style={{
+                padding: '10px 22px', fontSize: 13, fontWeight: 500,
+                background: '#1D4ED8', color: 'white',
+                border: 'none', borderRadius: 7, cursor: 'pointer',
+              }}
+            >
+              Novo envio
+            </button>
+            <a
+              href="/dashboard"
+              style={{
+                padding: '10px 22px', fontSize: 13, fontWeight: 500,
+                background: 'transparent', color: 'var(--color-text-secondary)',
+                border: '0.5px solid var(--color-border-secondary)',
+                borderRadius: 7, cursor: 'pointer', textDecoration: 'none',
+                display: 'inline-flex', alignItems: 'center',
+              }}
+            >
+              Ver Dashboard →
+            </a>
+          </div>
+        </div>
+      </div>
+    )
+  }
+
+  // ── Estados de carregamento e vazio ───────────────────────────────────────────
   if (loading) return <div style={{ padding: 32, color: 'var(--color-text-secondary)', fontSize: 13 }}>Carregando...</div>
 
   const groups    = lines.filter(l => l.isGroup)
@@ -127,21 +228,23 @@ export default function ManualInputTable({ colKey, colLabel, apiEndpoint, month,
 
   const BD = '0.5px solid var(--color-border-tertiary)'
 
+  function groupSum(groupKey: string | null): number {
+    return lines
+      .filter(l => !l.isGroup && !l.isSubtotal && !l.isTotal && l.groupKey === groupKey)
+      .reduce((acc, l) => acc + (parseBRL(vals[l.id] || '') ?? 0), 0)
+  }
+
   function renderGroupSection(g: LineData) {
     const children = lines.filter(l => !l.isGroup && !l.isSubtotal && !l.isTotal && l.groupKey === g.groupKey)
     const sum = groupSum(g.groupKey)
-
     return (
       <>
-        {/* Group header */}
         <tr key={g.id} style={{ background: '#1e3a5f', color: 'white' }}>
           <td style={{ padding: '8px 14px', fontSize: 12, fontWeight: 500 }}>▸ {g.rowLabel}</td>
           <td style={{ padding: '7px 10px', textAlign: 'right', fontSize: 12, fontVariantNumeric: 'tabular-nums', background: 'rgba(234,179,8,0.15)', color: 'rgba(255,255,255,0.5)', fontStyle: 'italic' }}>
             {sum !== 0 ? formatBRL(sum) : '—'}
           </td>
         </tr>
-
-        {/* Detail rows */}
         {children.map((d, i) => (
           <tr key={d.id} style={{ borderBottom: BD, background: i % 2 === 0 ? 'var(--color-background-primary)' : 'var(--color-background-secondary)' }}>
             <td style={{ padding: '7px 14px 7px 28px', color: 'var(--color-text-primary)', fontSize: 11, maxWidth: 340 }}>
@@ -152,7 +255,7 @@ export default function ManualInputTable({ colKey, colLabel, apiEndpoint, month,
                 <input
                   type="text"
                   value={vals[d.id] || ''}
-                  onChange={e => { setVals(p => ({ ...p, [d.id]: e.target.value })); setSaved(false) }}
+                  onChange={e => setVals(p => ({ ...p, [d.id]: e.target.value }))}
                   onBlur={e => {
                     const parsed = parseBRL(e.target.value)
                     if (parsed !== null) setVals(p => ({ ...p, [d.id]: formatBRL(parsed) }))
@@ -179,7 +282,7 @@ export default function ManualInputTable({ colKey, colLabel, apiEndpoint, month,
 
   function renderSummaryRow(label: string, value: number, bg: string, color: string) {
     return (
-      <tr style={{ background: bg, color }}>
+      <tr key={label} style={{ background: bg, color }}>
         <td style={{ padding: '9px 14px', fontSize: 12, fontWeight: 600 }}>{label}</td>
         <td style={{ padding: '9px 10px', textAlign: 'right', fontSize: 13, fontWeight: 700, fontVariantNumeric: 'tabular-nums', borderLeft: BD }}>
           {formatBRL(value)}
@@ -187,6 +290,8 @@ export default function ManualInputTable({ colKey, colLabel, apiEndpoint, month,
       </tr>
     )
   }
+
+  const grandTotal = computeTotal()
 
   return (
     <div style={{ padding: '16px 22px', overflow: 'auto', flex: 1 }}>
@@ -238,21 +343,11 @@ export default function ManualInputTable({ colKey, colLabel, apiEndpoint, month,
           </thead>
           <tbody>
             {groups.map(g => renderGroupSection(g))}
-
-            {/* Subtotals from SIGEFES (read-only, computed from inputs) */}
-            {subtotals.map(s =>
-              renderSummaryRow(s.rowLabel, totalSum(), '#1e293b', 'white')
-            )}
-
-            {/* Total from SIGEFES (read-only) */}
-            {totals.map(t =>
-              renderSummaryRow(t.rowLabel, totalSum(), '#0F1624', 'white')
-            )}
-
-            {/* Fallback totals when subtotal/total not in response */}
-            {subtotals.length === 0 && totals.length === 0 && (
-              renderSummaryRow('TOTAL (calculado)', totalSum(), '#0F1624', 'white')
-            )}
+            {subtotals.map(s => renderSummaryRow(s.rowLabel, grandTotal, '#1e293b', 'white'))}
+            {totals.map(t => renderSummaryRow(t.rowLabel, grandTotal, '#0F1624', 'white'))}
+            {subtotals.length === 0 && totals.length === 0 &&
+              renderSummaryRow('TOTAL (calculado)', grandTotal, '#0F1624', 'white')
+            }
           </tbody>
         </table>
       </div>
@@ -262,11 +357,15 @@ export default function ManualInputTable({ colKey, colLabel, apiEndpoint, month,
           <button
             onClick={handleSave}
             disabled={saving}
-            style={{ padding: '9px 18px', fontSize: 13, fontWeight: 500, background: '#1D4ED8', color: 'white', border: 'none', borderRadius: 7, cursor: saving ? 'default' : 'pointer', opacity: saving ? 0.7 : 1 }}
+            style={{
+              padding: '9px 18px', fontSize: 13, fontWeight: 500,
+              background: '#1D4ED8', color: 'white',
+              border: 'none', borderRadius: 7,
+              cursor: saving ? 'default' : 'pointer', opacity: saving ? 0.7 : 1,
+            }}
           >
-            {saving ? 'Salvando...' : 'Salvar e confirmar dados'}
+            {saving ? 'Enviando...' : 'Enviar dados'}
           </button>
-          {saved && <span style={{ fontSize: 12, color: '#16a34a', fontWeight: 500 }}>✓ {saveMsg || 'Dados salvos com sucesso'}</span>}
         </div>
       )}
     </div>
