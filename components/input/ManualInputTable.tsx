@@ -234,45 +234,60 @@ export default function ManualInputTable({ colKey, colLabel, apiEndpoint, month,
       .reduce((acc, l) => acc + (parseBRL(vals[l.id] || '') ?? 0), 0)
   }
 
+  function renderInput(id: string) {
+    return canEdit ? (
+      <input
+        type="text"
+        value={vals[id] || ''}
+        onChange={e => setVals(p => ({ ...p, [id]: e.target.value }))}
+        onBlur={e => {
+          const parsed = parseBRL(e.target.value)
+          if (parsed !== null) setVals(p => ({ ...p, [id]: formatBRL(parsed) }))
+        }}
+        placeholder="0,00"
+        style={{
+          width: 160, padding: '5px 8px', fontSize: 12,
+          border: '0.5px solid #fde047', borderRadius: 5,
+          textAlign: 'right', background: 'white',
+          color: '#0f172a', fontVariantNumeric: 'tabular-nums',
+        }}
+      />
+    ) : (
+      <span style={{ fontSize: 12, fontVariantNumeric: 'tabular-nums', color: '#0f172a' }}>
+        {vals[id] || '—'}
+      </span>
+    )
+  }
+
   function renderGroupSection(g: LineData) {
     const children = lines.filter(l => !l.isGroup && !l.isSubtotal && !l.isTotal && l.groupKey === g.groupKey)
     const sum = groupSum(g.groupKey)
+    const hasChildren = children.length > 0
+
     return (
       <>
+        {/* Group header — input direto quando sem filhos, subtotal em itálico quando tem filhos */}
         <tr key={g.id} style={{ background: '#1e3a5f', color: 'white' }}>
-          <td style={{ padding: '8px 14px', fontSize: 12, fontWeight: 500 }}>▸ {g.rowLabel}</td>
-          <td style={{ padding: '7px 10px', textAlign: 'right', fontSize: 12, fontVariantNumeric: 'tabular-nums', background: 'rgba(234,179,8,0.15)', color: 'rgba(255,255,255,0.5)', fontStyle: 'italic' }}>
-            {sum !== 0 ? formatBRL(sum) : '—'}
+          <td style={{ padding: '8px 14px', fontSize: 12, fontWeight: 500 }}>
+            {hasChildren ? `▸ ${g.rowLabel}` : g.rowLabel}
+          </td>
+          <td style={{ padding: hasChildren ? '7px 10px' : '5px 10px', textAlign: hasChildren ? 'right' : 'center', background: hasChildren ? 'rgba(234,179,8,0.15)' : (canEdit ? '#fefce8' : 'rgba(234,179,8,0.15)'), borderLeft: BD }}>
+            {hasChildren ? (
+              <span style={{ fontSize: 12, fontVariantNumeric: 'tabular-nums', color: 'rgba(255,255,255,0.5)', fontStyle: 'italic' }}>
+                {sum !== 0 ? formatBRL(sum) : '—'}
+              </span>
+            ) : renderInput(g.id)}
           </td>
         </tr>
+
+        {/* Detail rows */}
         {children.map((d, i) => (
           <tr key={d.id} style={{ borderBottom: BD, background: i % 2 === 0 ? 'var(--color-background-primary)' : 'var(--color-background-secondary)' }}>
             <td style={{ padding: '7px 14px 7px 28px', color: 'var(--color-text-primary)', fontSize: 11, maxWidth: 340 }}>
               {d.rowLabel}
             </td>
             <td style={{ padding: '5px 10px', textAlign: 'center', background: canEdit ? '#fefce8' : 'transparent', borderLeft: BD }}>
-              {canEdit ? (
-                <input
-                  type="text"
-                  value={vals[d.id] || ''}
-                  onChange={e => setVals(p => ({ ...p, [d.id]: e.target.value }))}
-                  onBlur={e => {
-                    const parsed = parseBRL(e.target.value)
-                    if (parsed !== null) setVals(p => ({ ...p, [d.id]: formatBRL(parsed) }))
-                  }}
-                  placeholder="0,00"
-                  style={{
-                    width: 160, padding: '5px 8px', fontSize: 12,
-                    border: '0.5px solid #fde047', borderRadius: 5,
-                    textAlign: 'right', background: 'white',
-                    color: '#0f172a', fontVariantNumeric: 'tabular-nums',
-                  }}
-                />
-              ) : (
-                <span style={{ fontSize: 12, fontVariantNumeric: 'tabular-nums', color: '#0f172a' }}>
-                  {vals[d.id] || '—'}
-                </span>
-              )}
+              {renderInput(d.id)}
             </td>
           </tr>
         ))}
