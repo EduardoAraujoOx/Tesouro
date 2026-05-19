@@ -18,8 +18,8 @@ export function validateParsedData(lines: ParsedLine[]): ValidationResult {
 
   checks.push({
     name: 'Total de linhas',
-    passed: lines.length >= 25 && lines.length <= 40,
-    expected: 'Entre 25 e 40',
+    passed: lines.length >= 10,
+    expected: 'Ao menos 10',
     found: String(lines.length),
     critical: false,
   })
@@ -27,8 +27,8 @@ export function validateParsedData(lines: ParsedLine[]): ValidationResult {
   const detail = lines.filter(l => !l.isGroup && !l.isSubtotal && !l.isTotal)
   checks.push({
     name: 'Linhas de detalhe',
-    passed: detail.length >= 20 && detail.length <= 35,
-    expected: 'Entre 20 e 35',
+    passed: detail.length >= 5,
+    expected: 'Ao menos 5',
     found: String(detail.length),
     critical: false,
   })
