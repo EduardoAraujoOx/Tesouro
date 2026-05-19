@@ -1,5 +1,5 @@
 'use client'
-import { useState, useEffect } from 'react'
+import React, { useState, useEffect } from 'react'
 
 interface LineData {
   id: string
@@ -11,6 +11,24 @@ interface LineData {
   level: number
   colVIAdjusted?: number | null
   colIXAdjusted?: number | null
+}
+
+interface TreeNode extends LineData {
+  children: TreeNode[]
+}
+
+function buildTree(lines: LineData[]): TreeNode[] {
+  const result: TreeNode[] = []
+  const stack: TreeNode[] = []
+  for (const line of lines) {
+    if (line.isSubtotal || line.isTotal) continue
+    const node: TreeNode = { ...line, children: [] }
+    while (stack.length && stack[stack.length - 1].level >= node.level) stack.pop()
+    if (stack.length === 0) result.push(node)
+    else stack[stack.length - 1].children.push(node)
+    stack.push(node)
+  }
+  return result
 }
 
 interface ConfirmationData {
@@ -58,6 +76,7 @@ export default function ManualInputTable({ colKey, colLabel, apiEndpoint, month,
   const [loading, setLoading] = useState(true)
   const [inputMode, setInputMode] = useState<'digitar' | 'upload'>('digitar')
   const [confirmation, setConfirmation] = useState<ConfirmationData | null>(null)
+  const [subExpanded, setSubExpanded] = useState<Record<string, boolean>>({})
 
   useEffect(() => { load() }, [month])
 
@@ -67,15 +86,20 @@ export default function ManualInputTable({ colKey, colLabel, apiEndpoint, month,
       const url = month ? `${apiEndpoint}?month=${month}` : apiEndpoint
       const res = await fetch(url)
       const data = await res.json()
-      setLines(data.lines || [])
+      const loadedLines: LineData[] = data.lines || []
+      setLines(loadedLines)
       setUploadId(data.uploadId || '')
       setMonthRef(data.monthRef || '')
       const initial: Record<string, string> = {}
-      ;(data.lines || []).forEach((l: LineData) => {
+      loadedLines.forEach((l: LineData) => {
         const adj = colKey === 'VI' ? l.colVIAdjusted : l.colIXAdjusted
         if (adj !== null && adj !== undefined) initial[l.id] = formatBRL(adj)
       })
       setVals(initial)
+      // Start all level-1 sub-groups expanded
+      const expandInit: Record<string, boolean> = {}
+      loadedLines.filter(l => l.level === 1).forEach(l => { expandInit[l.id] = true })
+      setSubExpanded(expandInit)
     } finally {
       setLoading(false)
     }
@@ -83,14 +107,14 @@ export default function ManualInputTable({ colKey, colLabel, apiEndpoint, month,
 
   function computeTotal(): number {
     return lines
-      .filter(l => !l.isGroup && !l.isSubtotal && !l.isTotal)
+      .filter(l => l.level === 2)
       .reduce((acc, l) => acc + (parseBRL(vals[l.id] || '') ?? 0), 0)
   }
 
   async function handleSave() {
     setSaving(true)
     const total = computeTotal()
-    const detailLines = lines.filter(l => !l.isGroup && !l.isSubtotal && !l.isTotal)
+    const detailLines = lines.filter(l => l.level === 2)
     const filledCount = detailLines.filter(l => parseBRL(vals[l.id] || '') !== null).length
     try {
       const values = detailLines.map(l => ({ lineId: l.id, value: parseBRL(vals[l.id] || '') }))
@@ -199,7 +223,6 @@ export default function ManualInputTable({ colKey, colLabel, apiEndpoint, month,
   // ── Estados de carregamento e vazio ───────────────────────────────────────────
   if (loading) return <div style={{ padding: 32, color: 'var(--color-text-secondary)', fontSize: 13 }}>Carregando...</div>
 
-  const groups    = lines.filter(l => l.isGroup)
   const subtotals = lines.filter(l => l.isSubtotal)
   const totals    = lines.filter(l => l.isTotal)
 
@@ -227,11 +250,11 @@ export default function ManualInputTable({ colKey, colLabel, apiEndpoint, month,
   }
 
   const BD = '0.5px solid var(--color-border-tertiary)'
+  const tree = buildTree(lines)
 
-  function groupSum(groupKey: string | null): number {
-    return lines
-      .filter(l => !l.isGroup && !l.isSubtotal && !l.isTotal && l.groupKey === groupKey)
-      .reduce((acc, l) => acc + (parseBRL(vals[l.id] || '') ?? 0), 0)
+  function nodeSum(node: TreeNode): number {
+    if (node.children.length === 0) return parseBRL(vals[node.id] || '') ?? 0
+    return node.children.reduce((acc, c) => acc + nodeSum(c), 0)
   }
 
   function renderInput(id: string) {
@@ -259,39 +282,64 @@ export default function ManualInputTable({ colKey, colLabel, apiEndpoint, month,
     )
   }
 
-  function renderGroupSection(g: LineData) {
-    const children = lines.filter(l => !l.isGroup && !l.isSubtotal && !l.isTotal && l.groupKey === g.groupKey)
-    const sum = groupSum(g.groupKey)
-    const hasChildren = children.length > 0
+  function renderTreeNode(node: TreeNode): React.ReactNode {
+    const hasSubs = node.children.length > 0
 
-    return (
-      <>
-        {/* Group header — input direto quando sem filhos, subtotal em itálico quando tem filhos */}
-        <tr key={g.id} style={{ background: '#1e3a5f', color: 'white' }}>
-          <td style={{ padding: '8px 14px', fontSize: 12, fontWeight: 500 }}>
-            {hasChildren ? `▸ ${g.rowLabel}` : g.rowLabel}
-          </td>
-          <td style={{ padding: hasChildren ? '7px 10px' : '5px 10px', textAlign: hasChildren ? 'right' : 'center', background: hasChildren ? 'rgba(234,179,8,0.15)' : (canEdit ? '#fefce8' : 'rgba(234,179,8,0.15)'), borderLeft: BD }}>
-            {hasChildren ? (
+    if (node.level === 0) {
+      // Group header (level 0): dark blue, shows sum of all its level-2 descendants
+      const sum = nodeSum(node)
+      return (
+        <React.Fragment key={node.id}>
+          <tr style={{ background: '#1e3a5f', color: 'white' }}>
+            <td style={{ padding: '8px 14px', fontSize: 12, fontWeight: 500 }}>
+              {node.rowLabel}
+            </td>
+            <td style={{ padding: '7px 10px', textAlign: 'right', background: 'rgba(234,179,8,0.15)', borderLeft: BD }}>
               <span style={{ fontSize: 12, fontVariantNumeric: 'tabular-nums', color: 'rgba(255,255,255,0.5)', fontStyle: 'italic' }}>
                 {sum !== 0 ? formatBRL(sum) : '—'}
               </span>
-            ) : renderInput(g.id)}
-          </td>
-        </tr>
-
-        {/* Detail rows */}
-        {children.map((d, i) => (
-          <tr key={d.id} style={{ borderBottom: BD, background: i % 2 === 0 ? 'var(--color-background-primary)' : 'var(--color-background-secondary)' }}>
-            <td style={{ padding: '7px 14px 7px 28px', color: 'var(--color-text-primary)', fontSize: 11, maxWidth: 340 }}>
-              {d.rowLabel}
-            </td>
-            <td style={{ padding: '5px 10px', textAlign: 'center', background: canEdit ? '#fefce8' : 'transparent', borderLeft: BD }}>
-              {renderInput(d.id)}
             </td>
           </tr>
-        ))}
-      </>
+          {node.children.map(sub => renderTreeNode(sub))}
+        </React.Fragment>
+      )
+    }
+
+    if (node.level === 1) {
+      // Sub-category (level 1): collapsible header, shows sum of its level-2 children
+      const sum = nodeSum(node)
+      const open = subExpanded[node.id] ?? true
+      return (
+        <React.Fragment key={node.id}>
+          <tr
+            onClick={() => setSubExpanded(p => ({ ...p, [node.id]: !p[node.id] }))}
+            style={{ background: '#162032', color: 'white', cursor: hasSubs ? 'pointer' : 'default', borderBottom: BD }}
+          >
+            <td style={{ padding: '7px 14px 7px 22px', fontSize: 11, fontWeight: 500 }}>
+              {hasSubs && <span style={{ fontSize: 8, opacity: 0.65, marginRight: 5 }}>{open ? '▼' : '▶'}</span>}
+              {node.rowLabel}
+            </td>
+            <td style={{ padding: '6px 10px', textAlign: 'right', background: 'rgba(234,179,8,0.12)', borderLeft: BD }}>
+              <span style={{ fontSize: 11, fontVariantNumeric: 'tabular-nums', color: 'rgba(255,255,255,0.55)', fontStyle: 'italic' }}>
+                {sum !== 0 ? formatBRL(sum) : '—'}
+              </span>
+            </td>
+          </tr>
+          {hasSubs && open && node.children.map(item => renderTreeNode(item))}
+        </React.Fragment>
+      )
+    }
+
+    // Level 2: editable leaf item
+    return (
+      <tr key={node.id} style={{ borderBottom: BD, background: 'var(--color-background-primary)' }}>
+        <td style={{ padding: '6px 14px 6px 32px', color: 'var(--color-text-primary)', fontSize: 11, maxWidth: 340 }}>
+          {node.rowLabel}
+        </td>
+        <td style={{ padding: '4px 10px', textAlign: 'center', background: canEdit ? '#fefce8' : 'transparent', borderLeft: BD }}>
+          {renderInput(node.id)}
+        </td>
+      </tr>
     )
   }
 
@@ -357,7 +405,7 @@ export default function ManualInputTable({ colKey, colLabel, apiEndpoint, month,
             </tr>
           </thead>
           <tbody>
-            {groups.map(g => renderGroupSection(g))}
+            {tree.map(g => renderTreeNode(g))}
             {subtotals.map(s => renderSummaryRow(s.rowLabel, grandTotal, '#1e293b', 'white'))}
             {totals.map(t => renderSummaryRow(t.rowLabel, grandTotal, '#0F1624', 'white'))}
             {subtotals.length === 0 && totals.length === 0 &&
