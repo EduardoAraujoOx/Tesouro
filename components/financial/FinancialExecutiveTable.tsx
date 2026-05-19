@@ -49,6 +49,7 @@ export default function FinancialExecutiveTable({ rows, referenceDate, uploadedA
       : row.isSubtotal ? '#1e293b'
       : row.isGroup ? '#1e3a5f'
       : depth === 1 ? '#162032'
+      : depth === 2 ? 'var(--color-background-secondary)'
       : 'var(--color-background-primary)'
     const tc = (dark || depth === 1) ? 'white' : 'var(--color-text-primary)'
     const hasKids = (row.children?.length ?? 0) > 0
