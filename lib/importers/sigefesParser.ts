@@ -96,15 +96,37 @@ function parseRows(rawRows: (string | number | null | ExcelJS.CellValue)[][]): P
     return cellNum(v as ExcelJS.CellValue)
   }
 
-  // Search first 15 rows for "Posição:"
+  const MONTH_MAP: Record<string, string> = {
+    JANEIRO: '01', FEVEREIRO: '02', 'MARÇO': '03', ABRIL: '04',
+    MAIO: '05', JUNHO: '06', JULHO: '07', AGOSTO: '08',
+    SETEMBRO: '09', OUTUBRO: '10', NOVEMBRO: '11', DEZEMBRO: '12',
+  }
+
+  // Search first 15 rows for "POSIÇÃO:" (case-insensitive, handles accents)
   outer: for (let i = 0; i < Math.min(rawRows.length, 15); i++) {
     for (let j = 0; j < Math.min((rawRows[i] ?? []).length, 6); j++) {
       const cell = str(rawRows[i]?.[j])
-      if (cell && cell.includes('Posição:')) {
-        const dateStr = cell.replace(/.*Posição:\s*/i, '').trim()
+      if (cell && cell.toLowerCase().includes('posição:')) {
+        const colonIdx = cell.indexOf(':')
+        const dateStr = cell.slice(colonIdx + 1).trim()
         result.referenceDate = dateStr
         const parts = dateStr.split('/')
-        if (parts.length === 3) result.monthRef = `${parts[2]}-${parts[1]}`
+        if (parts.length === 3) {
+          // Format: DD/MM/YYYY
+          result.monthRef = `${parts[2]}-${parts[1]}`
+        } else {
+          // Format: "ABRIL DE 2026" or "ABRIL 2026"
+          const upper = dateStr.toUpperCase()
+          const yearMatch = upper.match(/\d{4}/)
+          if (yearMatch) {
+            for (const [monthName, monthNum] of Object.entries(MONTH_MAP)) {
+              if (upper.includes(monthName)) {
+                result.monthRef = `${yearMatch[0]}-${monthNum}`
+                break
+              }
+            }
+          }
+        }
         break outer
       }
     }
@@ -129,10 +151,18 @@ function parseRows(rawRows: (string | number | null | ExcelJS.CellValue)[][]): P
     'RECURSOS ADMINISTRADOS PELO TESOURO': 'TESOURO',
     'DEMAIS RECURSOS - PODER EXECUTIVO': 'DEMAIS',
     'DEMAIS RECURSOS – PODER EXECUTIVO': 'DEMAIS',
+    'RECURSOS EXTRAORÇAMENTÁRIOS': 'EXTRAORCAMENTARIOS',
     'SUBTOTAL': 'SUBTOTAL',
     'RECURSOS VINCULADOS À PREVIDÊNCIA SOCIAL': 'PREVIDENCIA',
     'TOTAL': 'TOTAL',
   }
+
+  // Detect format by inspecting column 9 of the header row.
+  // Old format has a "Pressões" column at position 9, shifting IX/X/XI to cols 10/11/12.
+  // New format removed that column, so IX/X/XI are at cols 9/10/11.
+  const headerRow = rawRows[dataStart - 1] ?? []
+  const col9Header = (str(headerRow[9]) ?? '').toLowerCase()
+  const hasPressoesCol = col9Header.includes('press')
 
   let rowOrder = 0
   let currentGroup: string | null = null
@@ -172,10 +202,12 @@ function parseRows(rawRows: (string | number | null | ExcelJS.CellValue)[][]): P
       colVI:   0,
       colVII:  0,
       colVIII: num(row[8]),
-      colIX:   0,
-      colX:    0,
+      // Old format: col9="Pressões"(ignored), col10=IX-not-mapped, col11=XI, col12=XII
+      // New format: col9=IX, col10=X, col11=XI (no col12)
+      colIX:   hasPressoesCol ? 0 : num(row[9]),
+      colX:    hasPressoesCol ? 0 : num(row[10]),
       colXI:   num(row[11]),
-      colXII:  num(row[12]),
+      colXII:  hasPressoesCol ? num(row[12]) : 0,
     })
   }
 
