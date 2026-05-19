@@ -35,15 +35,23 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({ months, rows: [], referenceDate: null, uploadedAt: null })
   }
 
-  // Build tree structure
-  const lines = upload.lines
-  const groupLines = lines.filter(l => l.isGroup || l.isSubtotal || l.isTotal)
-  const detailLines = lines.filter(l => !l.isGroup && !l.isSubtotal && !l.isTotal)
+  // Build 3-level tree using rowOrder sequence + level field (0/1/2)
+  type Line = typeof upload.lines[number]
+  type TreeNode = Line & { children: TreeNode[] }
+  function buildTree(flatLines: Line[]): TreeNode[] {
+    const result: TreeNode[] = []
+    const stack: TreeNode[] = []
+    for (const line of flatLines) {
+      const node: TreeNode = { ...line, children: [] }
+      while (stack.length && stack[stack.length - 1].level >= node.level) stack.pop()
+      if (stack.length === 0) result.push(node)
+      else stack[stack.length - 1].children.push(node)
+      stack.push(node)
+    }
+    return result
+  }
 
-  const rows = groupLines.map(g => ({
-    ...g,
-    children: g.isGroup ? detailLines.filter(d => d.groupKey === g.groupKey) : [],
-  }))
+  const rows = buildTree(upload.lines)
 
   const uploadedAt = upload.createdAt.toLocaleString('pt-BR', {
     day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit',

@@ -1,5 +1,5 @@
 'use client'
-import { useState } from 'react'
+import React, { useState } from 'react'
 import { computeExecutiveColumns, computeTrafficLight, formatBRL } from '@/lib/calculations/financialCalc'
 import TrafficLightBadge from './TrafficLightBadge'
 
@@ -40,17 +40,27 @@ const EXEC_COLS = [
 export default function FinancialExecutiveTable({ rows, referenceDate, uploadedAt }: Props) {
   const [expanded, setExpanded] = useState<Record<string, boolean>>(() => {
     const init: Record<string, boolean> = {}
-    rows.forEach(r => { if (r.isGroup && r.children?.length) init[r.id] = true })
+    const initExpand = (nodes: FinancialLineData[]) => {
+      nodes.forEach(r => {
+        if ((r.children?.length ?? 0) > 0) { init[r.id] = true; initExpand(r.children!) }
+      })
+    }
+    initExpand(rows)
     return init
   })
 
-  const toggleGroup = (id: string) => setExpanded(p => ({ ...p, [id]: !p[id] }))
+  const toggle = (id: string) => setExpanded(p => ({ ...p, [id]: !p[id] }))
 
-  function renderRow(row: FinancialLineData, isChild = false) {
+  function renderRow(row: FinancialLineData, depth = 0): React.ReactNode {
     const dark = row.isGroup || row.isSubtotal || row.isTotal
-    const bg = row.isTotal ? '#0F1624' : row.isSubtotal ? '#1e293b' : row.isGroup ? '#1e3a5f' : 'var(--color-background-primary)'
-    const tc = dark ? 'white' : 'var(--color-text-primary)'
+    const bg = row.isTotal ? '#0F1624'
+      : row.isSubtotal ? '#1e293b'
+      : row.isGroup ? '#1e3a5f'
+      : depth === 1 ? '#162032'
+      : 'var(--color-background-primary)'
+    const tc = (dark || depth === 1) ? 'white' : 'var(--color-text-primary)'
     const hasKids = (row.children?.length ?? 0) > 0
+    const canToggle = hasKids
     const viPreenchido = row.colVIAdjusted !== null
     const ixPreenchido = row.colIXAdjusted !== null
     const ec = computeExecutiveColumns({
@@ -61,57 +71,55 @@ export default function FinancialExecutiveTable({ rows, referenceDate, uploadedA
     const light = computeTrafficLight(ec.col7, ec.col1, viPreenchido, ixPreenchido)
     const vals = [ec.col1, ec.col2, ec.col3, ec.col4, ec.col5, ec.col6, ec.col7]
     const bd = '1px solid rgba(128,128,128,0.12)'
+    const padLeft = dark ? 10 : depth === 1 ? 18 : depth === 2 ? 28 : 10
 
     return (
-      <tr
-        key={row.id}
-        onClick={() => row.isGroup && hasKids && toggleGroup(row.id)}
-        style={{
-          background: bg, color: tc,
-          cursor: row.isGroup && hasKids ? 'pointer' : 'default',
-          borderBottom: '0.5px solid rgba(100,100,100,0.15)',
-        }}
-      >
-        <td style={{
-          padding: isChild ? '7px 10px 7px 20px' : row.isGroup ? '9px 10px' : '8px 10px 8px 18px',
-          fontWeight: dark ? 500 : 400, fontSize: dark ? 12 : 11,
-          position: 'sticky', left: 0, background: bg, color: tc, zIndex: 1,
-          overflow: 'hidden', maxWidth: 0,
-        }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
-            {row.isGroup && hasKids && (
-              <span style={{ fontSize: 8, opacity: 0.65, flexShrink: 0, width: 9 }}>
-                {expanded[row.id] ? '▼' : '▶'}
-              </span>
-            )}
-            <span style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-              {row.rowLabel}
-            </span>
-          </div>
-        </td>
-        {vals.map((v, i) => (
-          <td key={i} style={{
-            textAlign: 'right', fontVariantNumeric: 'tabular-nums',
-            color: v < 0 ? (dark ? '#fca5a5' : '#dc2626') : tc,
-            fontSize: 12, whiteSpace: 'nowrap', padding: '8px 9px', borderLeft: bd,
+      <React.Fragment key={row.id}>
+        <tr
+          onClick={() => canToggle && toggle(row.id)}
+          style={{
+            background: bg, color: tc,
+            cursor: canToggle ? 'pointer' : 'default',
+            borderBottom: '0.5px solid rgba(100,100,100,0.15)',
+          }}
+        >
+          <td style={{
+            padding: `${dark ? 9 : 7}px 10px ${dark ? 9 : 7}px ${padLeft}px`,
+            fontWeight: dark ? 500 : depth === 1 ? 500 : 400,
+            fontSize: dark ? 12 : depth === 1 ? 11 : 11,
+            position: 'sticky', left: 0, background: bg, color: tc, zIndex: 1,
+            overflow: 'hidden', maxWidth: 0,
           }}>
-            {formatBRL(v)}
+            <div style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
+              {canToggle && (
+                <span style={{ fontSize: 8, opacity: 0.65, flexShrink: 0, width: 9 }}>
+                  {expanded[row.id] ? '▼' : '▶'}
+                </span>
+              )}
+              <span style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                {row.rowLabel}
+              </span>
+            </div>
           </td>
-        ))}
-        <td style={{ padding: '8px 9px', textAlign: 'center', borderLeft: bd }}>
-          <TrafficLightBadge light={light} />
-        </td>
-      </tr>
+          {vals.map((v, i) => (
+            <td key={i} style={{
+              textAlign: 'right', fontVariantNumeric: 'tabular-nums',
+              color: v < 0 ? (dark || depth === 1 ? '#fca5a5' : '#dc2626') : tc,
+              fontSize: 12, whiteSpace: 'nowrap', padding: '8px 9px', borderLeft: bd,
+            }}>
+              {formatBRL(v)}
+            </td>
+          ))}
+          <td style={{ padding: '8px 9px', textAlign: 'center', borderLeft: bd }}>
+            <TrafficLightBadge light={light} />
+          </td>
+        </tr>
+        {hasKids && expanded[row.id] && row.children!.map(child => renderRow(child, depth + 1))}
+      </React.Fragment>
     )
   }
 
-  const allRows: React.ReactNode[] = []
-  rows.forEach(row => {
-    allRows.push(renderRow(row))
-    if (row.isGroup && row.children?.length && expanded[row.id]) {
-      row.children.forEach(child => allRows.push(renderRow(child, true)))
-    }
-  })
+  const allRows = rows.map(row => renderRow(row, 0))
 
   return (
     <div style={{ flex: 1, overflow: 'auto', padding: '8px 18px 14px' }}>

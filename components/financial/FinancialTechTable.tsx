@@ -1,5 +1,5 @@
 'use client'
-import { useState } from 'react'
+import React, { useState } from 'react'
 import { formatBRL } from '@/lib/calculations/financialCalc'
 import type { FinancialLineData } from './FinancialExecutiveTable'
 
@@ -27,9 +27,16 @@ interface Props {
 export default function FinancialTechTable({ rows, referenceDate, uploadedAt }: Props) {
   const [expanded, setExpanded] = useState<Record<string, boolean>>(() => {
     const init: Record<string, boolean> = {}
-    rows.forEach(r => { if (r.isGroup && r.children?.length) init[r.id] = true })
+    const initExpand = (nodes: FinancialLineData[]) => {
+      nodes.forEach(r => {
+        if ((r.children?.length ?? 0) > 0) { init[r.id] = true; initExpand(r.children!) }
+      })
+    }
+    initExpand(rows)
     return init
   })
+
+  const toggle = (id: string) => setExpanded(p => ({ ...p, [id]: !p[id] }))
 
   function getVal(row: FinancialLineData, key: string): number {
     if (key === 'colVI') return row.colVIAdjusted ?? row.colVI
@@ -46,60 +53,61 @@ export default function FinancialTechTable({ rows, referenceDate, uploadedAt }: 
     return (row as any)[key] ?? 0
   }
 
-  function renderRow(row: FinancialLineData, isChild = false) {
+  function renderRow(row: FinancialLineData, depth = 0): React.ReactNode {
     const dark = row.isGroup || row.isSubtotal || row.isTotal
-    const bg = row.isTotal ? '#0F1624' : row.isSubtotal ? '#1e293b' : row.isGroup ? '#1e3a5f' : 'var(--color-background-primary)'
-    const tc = dark ? 'white' : 'var(--color-text-primary)'
+    const bg = row.isTotal ? '#0F1624'
+      : row.isSubtotal ? '#1e293b'
+      : row.isGroup ? '#1e3a5f'
+      : depth === 1 ? '#162032'
+      : 'var(--color-background-primary)'
+    const tc = (dark || depth === 1) ? 'white' : 'var(--color-text-primary)'
     const hasKids = (row.children?.length ?? 0) > 0
     const bd = '1px solid rgba(128,128,128,0.12)'
+    const padLeft = dark ? 10 : depth === 1 ? 18 : depth === 2 ? 28 : 10
 
     return (
-      <tr
-        key={row.id}
-        onClick={() => row.isGroup && hasKids && setExpanded(p => ({ ...p, [row.id]: !p[row.id] }))}
-        style={{ background: bg, color: tc, cursor: row.isGroup && hasKids ? 'pointer' : 'default', borderBottom: '0.5px solid rgba(100,100,100,0.15)' }}
-      >
-        <td style={{
-          padding: isChild ? '7px 10px 7px 20px' : row.isGroup ? '9px 10px' : '8px 10px 8px 18px',
-          fontWeight: dark ? 500 : 400, fontSize: dark ? 12 : 11,
-          position: 'sticky', left: 0, background: bg, color: tc, zIndex: 1,
-          overflow: 'hidden', maxWidth: 0,
-        }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
-            {row.isGroup && hasKids && (
-              <span style={{ fontSize: 8, opacity: 0.65, flexShrink: 0, width: 9 }}>
-                {expanded[row.id] ? '▼' : '▶'}
+      <React.Fragment key={row.id}>
+        <tr
+          onClick={() => hasKids && toggle(row.id)}
+          style={{ background: bg, color: tc, cursor: hasKids ? 'pointer' : 'default', borderBottom: '0.5px solid rgba(100,100,100,0.15)' }}
+        >
+          <td style={{
+            padding: `${dark ? 9 : 7}px 10px ${dark ? 9 : 7}px ${padLeft}px`,
+            fontWeight: dark ? 500 : depth === 1 ? 500 : 400, fontSize: dark ? 12 : 11,
+            position: 'sticky', left: 0, background: bg, color: tc, zIndex: 1,
+            overflow: 'hidden', maxWidth: 0,
+          }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
+              {hasKids && (
+                <span style={{ fontSize: 8, opacity: 0.65, flexShrink: 0, width: 9 }}>
+                  {expanded[row.id] ? '▼' : '▶'}
+                </span>
+              )}
+              <span style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                {row.rowLabel}
               </span>
-            )}
-            <span style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-              {row.rowLabel}
-            </span>
-          </div>
-        </td>
-        {TECH_HDRS.map(({ k, manual }) => {
-          const v = getVal(row, k)
-          return (
-            <td key={k} style={{
-              textAlign: 'right', fontVariantNumeric: 'tabular-nums',
-              color: v < 0 ? (dark ? '#fca5a5' : '#dc2626') : tc,
-              fontSize: 11, whiteSpace: 'nowrap', padding: '7px 7px', borderLeft: bd,
-              background: manual ? (dark ? 'rgba(234,179,8,0.15)' : '#fefce8') : 'transparent',
-            }}>
-              {formatBRL(v)}
-            </td>
-          )
-        })}
-      </tr>
+            </div>
+          </td>
+          {TECH_HDRS.map(({ k, manual }) => {
+            const v = getVal(row, k)
+            return (
+              <td key={k} style={{
+                textAlign: 'right', fontVariantNumeric: 'tabular-nums',
+                color: v < 0 ? (dark || depth === 1 ? '#fca5a5' : '#dc2626') : tc,
+                fontSize: 11, whiteSpace: 'nowrap', padding: '7px 7px', borderLeft: bd,
+                background: manual ? (dark || depth === 1 ? 'rgba(234,179,8,0.15)' : '#fefce8') : 'transparent',
+              }}>
+                {formatBRL(v)}
+              </td>
+            )
+          })}
+        </tr>
+        {hasKids && expanded[row.id] && row.children!.map(child => renderRow(child, depth + 1))}
+      </React.Fragment>
     )
   }
 
-  const allRows: React.ReactNode[] = []
-  rows.forEach(row => {
-    allRows.push(renderRow(row))
-    if (row.isGroup && row.children?.length && expanded[row.id]) {
-      row.children.forEach(child => allRows.push(renderRow(child, true)))
-    }
-  })
+  const allRows = rows.map(row => renderRow(row, 0))
 
   return (
     <div style={{ flex: 1, overflow: 'auto', padding: '8px 18px 14px' }}>
