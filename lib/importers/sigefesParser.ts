@@ -178,13 +178,14 @@ function parseRows(rawRows: (string | number | null | ExcelJS.CellValue)[][]): P
     const leadingSpaces = firstNonSpace === -1 ? rawLabel.length : firstNonSpace
     const actualLevel = Math.floor(leadingSpaces / 3)
 
-    // Discard level-2+ rows (individual funds/agencies): their parent at level 1
-    // already carries the pre-totaled values in the source file.
-    if (actualLevel > 1) continue
+    // Discard level-3+ rows (sub-items within agencies): these 23 rows are too granular
+    // and their parent at level 2 already carries the pre-totaled values.
+    // Level 2 (168 rows) = individual funds/agencies — the meaningful new detail.
+    if (actualLevel > 2) continue
 
     let isGroup = false, isSubtotal = false, isTotal = false
     let groupKey: string | null = null
-    let level = actualLevel > 0 ? 1 : 0
+    let level = Math.min(actualLevel, 2)
 
     for (const [pattern, key] of Object.entries(GROUP_KEYS)) {
       if (label.toUpperCase().includes(pattern)) {
