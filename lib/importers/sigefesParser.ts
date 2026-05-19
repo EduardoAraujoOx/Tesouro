@@ -151,7 +151,6 @@ function parseRows(rawRows: (string | number | null | ExcelJS.CellValue)[][]): P
     'RECURSOS ADMINISTRADOS PELO TESOURO': 'TESOURO',
     'DEMAIS RECURSOS - PODER EXECUTIVO': 'DEMAIS',
     'DEMAIS RECURSOS – PODER EXECUTIVO': 'DEMAIS',
-    'RECURSOS EXTRAORÇAMENTÁRIOS': 'EXTRAORCAMENTARIOS',
     'SUBTOTAL': 'SUBTOTAL',
     'RECURSOS VINCULADOS À PREVIDÊNCIA SOCIAL': 'PREVIDENCIA',
     'TOTAL': 'TOTAL',
@@ -175,10 +174,17 @@ function parseRows(rawRows: (string | number | null | ExcelJS.CellValue)[][]): P
     if (!rawLabel.trim() || rawLabel.toLowerCase().includes('sistema integrado')) continue
 
     const label = rawLabel.trim()
-    const hasIndent = rawLabel.startsWith('   ')
+    const firstNonSpace = rawLabel.search(/\S/)
+    const leadingSpaces = firstNonSpace === -1 ? rawLabel.length : firstNonSpace
+    const actualLevel = Math.floor(leadingSpaces / 3)
+
+    // Discard level-2+ rows (individual funds/agencies): their parent at level 1
+    // already carries the pre-totaled values in the source file.
+    if (actualLevel > 1) continue
+
     let isGroup = false, isSubtotal = false, isTotal = false
     let groupKey: string | null = null
-    let level = hasIndent ? 1 : 0
+    let level = actualLevel > 0 ? 1 : 0
 
     for (const [pattern, key] of Object.entries(GROUP_KEYS)) {
       if (label.toUpperCase().includes(pattern)) {
