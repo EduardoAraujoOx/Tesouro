@@ -38,18 +38,10 @@ const EXEC_COLS = [
 ]
 
 export default function FinancialExecutiveTable({ rows, referenceDate, uploadedAt }: Props) {
-  const [expanded, setExpanded] = useState<Record<string, boolean>>(() => {
-    const init: Record<string, boolean> = {}
-    const initExpand = (nodes: FinancialLineData[]) => {
-      nodes.forEach(r => {
-        if ((r.children?.length ?? 0) > 0) { init[r.id] = true; initExpand(r.children!) }
-      })
-    }
-    initExpand(rows)
-    return init
-  })
+  // expanded defaults to open for any id not explicitly set to false
+  const [expanded, setExpanded] = useState<Record<string, boolean>>({})
 
-  const toggle = (id: string) => setExpanded(p => ({ ...p, [id]: !p[id] }))
+  const toggle = (id: string) => setExpanded(p => ({ ...p, [id]: p[id] !== false ? false : true }))
 
   function renderRow(row: FinancialLineData, depth = 0): React.ReactNode {
     const dark = row.isGroup || row.isSubtotal || row.isTotal
@@ -93,7 +85,7 @@ export default function FinancialExecutiveTable({ rows, referenceDate, uploadedA
             <div style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
               {canToggle && (
                 <span style={{ fontSize: 8, opacity: 0.65, flexShrink: 0, width: 9 }}>
-                  {expanded[row.id] ? '▼' : '▶'}
+                  {expanded[row.id] !== false ? '▼' : '▶'}
                 </span>
               )}
               <span style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
@@ -114,7 +106,7 @@ export default function FinancialExecutiveTable({ rows, referenceDate, uploadedA
             <TrafficLightBadge light={light} />
           </td>
         </tr>
-        {hasKids && expanded[row.id] && row.children!.map(child => renderRow(child, depth + 1))}
+        {hasKids && expanded[row.id] !== false && row.children!.map(child => renderRow(child, depth + 1))}
       </React.Fragment>
     )
   }
