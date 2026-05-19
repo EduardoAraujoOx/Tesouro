@@ -134,13 +134,13 @@ function parseRows(rawRows: (string | number | null | ExcelJS.CellValue)[][]): P
 
   let dataStart = -1
   for (let i = 0; i < Math.min(rawRows.length, 15); i++) {
-    for (let j = 0; j < Math.min((rawRows[i] ?? []).length, 6); j++) {
-      const cell = str(rawRows[i]?.[j])
-      if (cell && cell.toLowerCase().includes('poder executivo')) {
-        dataStart = i + 1; break
-      }
+    // Only check col 0: the header label row has "Poder Executivo" in col 0.
+    // The SUGOV report title (col 1) also contains "PODER EXECUTIVO" and must not
+    // be mistaken for the header row.
+    const cell = str(rawRows[i]?.[0])
+    if (cell && cell.toLowerCase().includes('poder executivo')) {
+      dataStart = i + 1; break
     }
-    if (dataStart !== -1) break
   }
   if (dataStart === -1) {
     result.errors.push('Cabeçalho de dados não encontrado.')
