@@ -268,7 +268,16 @@ export default function ManualInputTable({ colKey, colLabel, apiEndpoint, month,
     const ws = XLSX.utils.aoa_to_sheet(rows)
     ws['!cols'] = [{ wch: 60 }, { wch: 22 }]
     XLSX.utils.book_append_sheet(wb, ws, 'Modelo')
-    XLSX.writeFile(wb, `modelo-col${colKey.toLowerCase()}.xlsx`)
+    const buf = XLSX.write(wb, { bookType: 'xlsx', type: 'array' })
+    const blob = new Blob([buf], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' })
+    const url = URL.createObjectURL(blob)
+    const a = document.createElement('a')
+    a.href = url
+    a.download = `modelo-col${colKey.toLowerCase()}.xlsx`
+    document.body.appendChild(a)
+    a.click()
+    document.body.removeChild(a)
+    URL.revokeObjectURL(url)
   }
 
   function processExcelFile(file: File) {
