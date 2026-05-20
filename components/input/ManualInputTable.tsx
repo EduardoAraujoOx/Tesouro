@@ -1,5 +1,6 @@
 'use client'
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
+import * as XLSX from 'xlsx'
 
 interface LineData {
   id: string
@@ -77,6 +78,9 @@ export default function ManualInputTable({ colKey, colLabel, apiEndpoint, month,
   const [inputMode, setInputMode] = useState<'digitar' | 'upload'>('digitar')
   const [confirmation, setConfirmation] = useState<ConfirmationData | null>(null)
   const [subExpanded, setSubExpanded] = useState<Record<string, boolean>>({})
+  const [uploadFeedback, setUploadFeedback] = useState<string | null>(null)
+  const [dragging, setDragging] = useState(false)
+  const fileInputRef = useRef<HTMLInputElement>(null)
 
   useEffect(() => { load() }, [month])
 
@@ -257,6 +261,51 @@ export default function ManualInputTable({ colKey, colLabel, apiEndpoint, month,
     return node.children.reduce((acc, c) => acc + nodeSum(c), 0)
   }
 
+  function downloadModelo() {
+    const wb = XLSX.utils.book_new()
+    const rows: (string | number)[][] = [['Fonte de Recurso', `Coluna ${colKey} — Valor (R$)`]]
+    lines.filter(l => l.level === 2).forEach(l => rows.push([l.rowLabel, '']))
+    const ws = XLSX.utils.aoa_to_sheet(rows)
+    ws['!cols'] = [{ wch: 60 }, { wch: 22 }]
+    XLSX.utils.book_append_sheet(wb, ws, 'Modelo')
+    XLSX.writeFile(wb, `modelo-col${colKey.toLowerCase()}.xlsx`)
+  }
+
+  function processExcelFile(file: File) {
+    const reader = new FileReader()
+    reader.onload = (e) => {
+      try {
+        const data = new Uint8Array(e.target!.result as ArrayBuffer)
+        const wb = XLSX.read(data, { type: 'array' })
+        const ws = wb.Sheets[wb.SheetNames[0]]
+        const rows = XLSX.utils.sheet_to_json<(string | number)[]>(ws, { header: 1 }) as (string | number)[][]
+
+        const labelMap: Record<string, string> = {}
+        lines.filter(l => l.level === 2).forEach(l => {
+          labelMap[l.rowLabel.trim().toLowerCase()] = l.id
+        })
+
+        const newVals: Record<string, string> = { ...vals }
+        let matched = 0
+        for (const row of rows.slice(1)) {
+          const label = String(row[0] ?? '').trim().toLowerCase()
+          const rawVal = row[1]
+          const id = labelMap[label]
+          if (!id || rawVal === null || rawVal === undefined || rawVal === '') continue
+          const num = typeof rawVal === 'number' ? rawVal : parseFloat(String(rawVal).replace(/\./g, '').replace(',', '.'))
+          if (!isNaN(num)) { newVals[id] = formatBRL(num); matched++ }
+        }
+
+        setVals(newVals)
+        setUploadFeedback(`✓ ${matched} linhas preenchidas a partir do arquivo. Revise e clique em "Enviar dados".`)
+        setInputMode('digitar')
+      } catch {
+        setUploadFeedback('Erro ao ler o arquivo. Certifique-se de que é um arquivo Excel (.xlsx/.xls).')
+      }
+    }
+    reader.readAsArrayBuffer(file)
+  }
+
   function renderInput(id: string) {
     return canEdit ? (
       <input
@@ -381,14 +430,56 @@ export default function ManualInputTable({ colKey, colLabel, apiEndpoint, month,
         </div>
       </div>
 
+      {uploadFeedback && (
+        <div style={{
+          marginBottom: 12, padding: '10px 14px', borderRadius: 7, fontSize: 12, fontWeight: 500,
+          background: uploadFeedback.startsWith('✓') ? '#dcfce7' : '#fee2e2',
+          color: uploadFeedback.startsWith('✓') ? '#15803d' : '#dc2626',
+          border: `0.5px solid ${uploadFeedback.startsWith('✓') ? '#86efac' : '#fca5a5'}`,
+        }}>
+          {uploadFeedback}
+        </div>
+      )}
+
       {inputMode === 'upload' && (
-        <div style={{ marginBottom: 14, border: '1.5px dashed var(--color-border-secondary)', borderRadius: 8, padding: '24px', textAlign: 'center', background: 'var(--color-background-secondary)' }}>
-          <div style={{ fontSize: 20, marginBottom: 6 }}>↑</div>
-          <div style={{ fontSize: 13, fontWeight: 500, marginBottom: 3, color: 'var(--color-text-primary)' }}>Arraste a planilha preenchida aqui</div>
-          <div style={{ fontSize: 11, color: 'var(--color-text-secondary)' }}>Col A: Fonte de Recurso · Col B: Valor em R$</div>
-          <div style={{ fontSize: 12, color: 'var(--color-text-secondary)', marginTop: 8 }}>
+        <div
+          onDragOver={e => { e.preventDefault(); setDragging(true) }}
+          onDragLeave={() => setDragging(false)}
+          onDrop={e => {
+            e.preventDefault(); setDragging(false)
+            const file = e.dataTransfer.files[0]
+            if (file) processExcelFile(file)
+          }}
+          style={{
+            marginBottom: 14, border: `1.5px dashed ${dragging ? '#1D4ED8' : 'var(--color-border-secondary)'}`,
+            borderRadius: 8, padding: '28px 24px', textAlign: 'center',
+            background: dragging ? 'rgba(29,78,216,0.06)' : 'var(--color-background-secondary)',
+            cursor: 'pointer', transition: 'all 0.15s',
+          }}
+          onClick={() => fileInputRef.current?.click()}
+        >
+          <input
+            ref={fileInputRef}
+            type="file"
+            accept=".xlsx,.xls"
+            style={{ display: 'none' }}
+            onChange={e => { const f = e.target.files?.[0]; if (f) processExcelFile(f); e.target.value = '' }}
+          />
+          <div style={{ fontSize: 24, marginBottom: 6 }}>↑</div>
+          <div style={{ fontSize: 13, fontWeight: 500, marginBottom: 3, color: 'var(--color-text-primary)' }}>
+            Arraste o arquivo aqui ou clique para selecionar
+          </div>
+          <div style={{ fontSize: 11, color: 'var(--color-text-secondary)' }}>
+            Col A: Fonte de Recurso · Col B: Valor em R$ · Formatos: .xlsx, .xls
+          </div>
+          <div style={{ fontSize: 12, color: 'var(--color-text-secondary)', marginTop: 10 }}>
             Sem o modelo?{' '}
-            <span style={{ color: '#1D4ED8', cursor: 'pointer', textDecoration: 'underline' }}>Baixar modelo Excel →</span>
+            <span
+              onClick={e => { e.stopPropagation(); downloadModelo() }}
+              style={{ color: '#1D4ED8', cursor: 'pointer', textDecoration: 'underline' }}
+            >
+              Baixar modelo Excel →
+            </span>
           </div>
         </div>
       )}
