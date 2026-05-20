@@ -89,7 +89,7 @@ export default function FinancialExecutiveTable({ rows, referenceDate, uploadedA
                   {expanded[row.id] !== false ? '▼' : '▶'}
                 </span>
               )}
-              <span style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+              <span title={row.rowLabel} style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                 {row.rowLabel}
               </span>
             </div>

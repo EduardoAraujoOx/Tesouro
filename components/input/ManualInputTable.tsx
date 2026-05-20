@@ -49,11 +49,55 @@ function formatDateTime(d: Date): string {
 
 function downloadModelo(lines: LineData[], colKey: string) {
   const wb = XLSX.utils.book_new()
-  const rows: (string | number)[][] = [['Fonte de Recurso', `Coluna ${colKey} — Valor (R$)`]]
-  lines.filter(l => l.level === 2).forEach(l => rows.push([l.rowLabel, '']))
+
+  // Header row
+  const rows: (string | number | null)[][] = [
+    [`Fonte de Recurso`, `Coluna ${colKey} — Valor (R$) — preencha apenas as linhas de fundo (sem fundo azul)`],
+  ]
+  // Styles: track which rows are headers/subtotals (cannot set bg in xlsx easily, use indentation)
+  const rowMeta: { level: number; isHeader: boolean; isSubtotal: boolean }[] = [
+    { level: -1, isHeader: true, isSubtotal: false },
+  ]
+
+  for (const l of lines) {
+    if (l.level === 0) {
+      rows.push([l.rowLabel, null])
+      rowMeta.push({ level: 0, isHeader: true, isSubtotal: l.isSubtotal || l.isTotal })
+    } else if (l.level === 1) {
+      rows.push(['    ' + l.rowLabel, null])
+      rowMeta.push({ level: 1, isHeader: true, isSubtotal: false })
+    } else {
+      rows.push(['        ' + l.rowLabel, ''])
+      rowMeta.push({ level: 2, isHeader: false, isSubtotal: false })
+    }
+  }
+
   const ws = XLSX.utils.aoa_to_sheet(rows)
-  ws['!cols'] = [{ wch: 60 }, { wch: 22 }]
-  XLSX.utils.book_append_sheet(wb, ws, 'Modelo')
+  ws['!cols'] = [{ wch: 70 }, { wch: 24 }]
+
+  // Apply bold + background to header rows via cell styles
+  const totalRows = rows.length
+  for (let r = 0; r < totalRows; r++) {
+    const meta = rowMeta[r]
+    const cellA = ws[XLSX.utils.encode_cell({ r, c: 0 })]
+    const cellB = ws[XLSX.utils.encode_cell({ r, c: 1 })]
+    if (!cellA) continue
+    const bold = meta.isHeader || meta.isSubtotal
+    const fgColor = meta.level === 0 ? '1e3a5f'
+      : meta.level === 1 ? '162032'
+      : meta.level === -1 ? '0F1624'
+      : 'FFFFFF'
+    const fontColor = (meta.isHeader || meta.level === -1) ? 'FFFFFF' : '000000'
+    const style = {
+      font: { bold, color: { rgb: fontColor } },
+      fill: { fgColor: { rgb: fgColor } },
+      alignment: { vertical: 'center' as const },
+    }
+    cellA.s = style
+    if (cellB) cellB.s = { ...style, alignment: { horizontal: 'right' as const, vertical: 'center' as const } }
+  }
+
+  XLSX.utils.book_append_sheet(wb, ws, `Coluna ${colKey}`)
   const buf = XLSX.write(wb, { bookType: 'xlsx', type: 'array' })
   const blob = new Blob([buf], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' })
   const url = URL.createObjectURL(blob)
