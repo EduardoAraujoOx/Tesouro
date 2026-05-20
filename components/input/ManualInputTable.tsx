@@ -1,5 +1,5 @@
 'use client'
-import React, { useState, useEffect, useRef } from 'react'
+import React, { useState, useRef, useId } from 'react'
 import * as XLSX from 'xlsx'
 
 interface LineData {
@@ -14,32 +14,6 @@ interface LineData {
   colIXAdjusted?: number | null
 }
 
-interface TreeNode extends LineData {
-  children: TreeNode[]
-}
-
-function buildTree(lines: LineData[]): TreeNode[] {
-  const result: TreeNode[] = []
-  const stack: TreeNode[] = []
-  for (const line of lines) {
-    if (line.isSubtotal || line.isTotal) continue
-    const node: TreeNode = { ...line, children: [] }
-    while (stack.length && stack[stack.length - 1].level >= node.level) stack.pop()
-    if (stack.length === 0) result.push(node)
-    else stack[stack.length - 1].children.push(node)
-    stack.push(node)
-  }
-  return result
-}
-
-interface ConfirmationData {
-  submittedAt: Date
-  monthRef: string
-  linesCount: number
-  total: number
-  submittedBy: string
-}
-
 interface Props {
   colKey: 'VI' | 'IX'
   colLabel: string
@@ -49,15 +23,20 @@ interface Props {
   saveMsg?: string
 }
 
-function parseBRL(s: string): number | null {
-  const clean = s.replace(/\./g, '').replace(',', '.').trim()
-  if (!clean) return null
-  const n = parseFloat(clean)
-  return isNaN(n) ? null : n
+type UploadState = 'idle' | 'parsing' | 'preview' | 'confirming' | 'done' | 'error'
+
+interface PreviewLine { id: string; label: string; value: number }
+
+interface PreviewData {
+  fileName: string
+  matched: number
+  total: number
+  lines: PreviewLine[]
+  uploadId: string
+  monthRef: string
 }
 
-function formatBRL(v: number | null | undefined): string {
-  if (v === null || v === undefined) return ''
+function formatBRL(v: number): string {
   return new Intl.NumberFormat('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(v)
 }
 
@@ -68,169 +47,166 @@ function formatDateTime(d: Date): string {
   })
 }
 
+function downloadModelo(lines: LineData[], colKey: string) {
+  const wb = XLSX.utils.book_new()
+  const rows: (string | number)[][] = [['Fonte de Recurso', `Coluna ${colKey} — Valor (R$)`]]
+  lines.filter(l => l.level === 2).forEach(l => rows.push([l.rowLabel, '']))
+  const ws = XLSX.utils.aoa_to_sheet(rows)
+  ws['!cols'] = [{ wch: 60 }, { wch: 22 }]
+  XLSX.utils.book_append_sheet(wb, ws, 'Modelo')
+  const buf = XLSX.write(wb, { bookType: 'xlsx', type: 'array' })
+  const blob = new Blob([buf], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' })
+  const url = URL.createObjectURL(blob)
+  const a = document.createElement('a')
+  a.href = url
+  a.download = `modelo-col${colKey.toLowerCase()}.xlsx`
+  document.body.appendChild(a)
+  a.click()
+  document.body.removeChild(a)
+  URL.revokeObjectURL(url)
+}
+
 export default function ManualInputTable({ colKey, colLabel, apiEndpoint, month, canEdit, saveMsg }: Props) {
-  const [lines, setLines] = useState<LineData[]>([])
-  const [vals, setVals] = useState<Record<string, string>>({})
-  const [uploadId, setUploadId] = useState<string>('')
-  const [monthRef, setMonthRef] = useState<string>('')
-  const [saving, setSaving] = useState(false)
-  const [loading, setLoading] = useState(true)
-  const [inputMode, setInputMode] = useState<'digitar' | 'upload'>('digitar')
-  const [confirmation, setConfirmation] = useState<ConfirmationData | null>(null)
-  const [subExpanded, setSubExpanded] = useState<Record<string, boolean>>({})
-  const [uploadFeedback, setUploadFeedback] = useState<string | null>(null)
+  const fileInputId = useId()
+  const [state, setState] = useState<UploadState>('idle')
+  const [preview, setPreview] = useState<PreviewData | null>(null)
+  const [completedAt, setCompletedAt] = useState<Date | null>(null)
+  const [error, setError] = useState('')
   const [dragging, setDragging] = useState(false)
-  const fileInputRef = useRef<HTMLInputElement>(null)
+  const [allLines, setAllLines] = useState<LineData[]>([])
+  const [loadedUploadId, setLoadedUploadId] = useState('')
+  const [loadedMonthRef, setLoadedMonthRef] = useState('')
+  const [loadingLines, setLoadingLines] = useState(true)
 
-  useEffect(() => { load() }, [month])
+  // Load existing lines from API (needed for label matching and modelo download)
+  React.useEffect(() => {
+    async function load() {
+      setLoadingLines(true)
+      try {
+        const url = month ? `${apiEndpoint}?month=${month}` : apiEndpoint
+        const res = await fetch(url)
+        const data = await res.json()
+        setAllLines(data.lines || [])
+        setLoadedUploadId(data.uploadId || '')
+        setLoadedMonthRef(data.monthRef || '')
+      } finally {
+        setLoadingLines(false)
+      }
+    }
+    load()
+  }, [month, apiEndpoint])
 
-  async function load() {
-    setLoading(true)
+  function parseExcelFile(file: File): Promise<PreviewData> {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader()
+      reader.onload = (e) => {
+        try {
+          const data = new Uint8Array(e.target!.result as ArrayBuffer)
+          const wb = XLSX.read(data, { type: 'array' })
+          const ws = wb.Sheets[wb.SheetNames[0]]
+          const rows = XLSX.utils.sheet_to_json<(string | number)[]>(ws, { header: 1 }) as (string | number)[][]
+
+          const level2Lines = allLines.filter(l => l.level === 2)
+          const labelMap: Record<string, LineData> = {}
+          level2Lines.forEach(l => { labelMap[l.rowLabel.trim().toLowerCase()] = l })
+
+          const matched: PreviewLine[] = []
+          for (const row of rows.slice(1)) {
+            const label = String(row[0] ?? '').trim()
+            const rawVal = row[1]
+            const line = labelMap[label.toLowerCase()]
+            if (!line || rawVal === null || rawVal === undefined || rawVal === '') continue
+            const num = typeof rawVal === 'number' ? rawVal : parseFloat(String(rawVal).replace(/\./g, '').replace(',', '.'))
+            if (!isNaN(num)) matched.push({ id: line.id, label: line.rowLabel, value: num })
+          }
+
+          resolve({
+            fileName: file.name,
+            matched: matched.length,
+            total: level2Lines.length,
+            lines: matched,
+            uploadId: loadedUploadId,
+            monthRef: loadedMonthRef,
+          })
+        } catch (err) {
+          reject(err)
+        }
+      }
+      reader.onerror = reject
+      reader.readAsArrayBuffer(file)
+    })
+  }
+
+  async function handleFile(file: File) {
+    if (!file.name.match(/\.(xlsx|xls)$/i)) {
+      setError('Formato inválido. Envie um arquivo .xlsx ou .xls.')
+      setState('error')
+      return
+    }
+    if (!loadedUploadId) {
+      setError('Nenhuma base SIGEFES encontrada. Faça o upload do SIGEFES antes.')
+      setState('error')
+      return
+    }
+    setState('parsing')
+    setError('')
     try {
-      const url = month ? `${apiEndpoint}?month=${month}` : apiEndpoint
-      const res = await fetch(url)
-      const data = await res.json()
-      const loadedLines: LineData[] = data.lines || []
-      setLines(loadedLines)
-      setUploadId(data.uploadId || '')
-      setMonthRef(data.monthRef || '')
-      const initial: Record<string, string> = {}
-      loadedLines.forEach((l: LineData) => {
-        const adj = colKey === 'VI' ? l.colVIAdjusted : l.colIXAdjusted
-        if (adj !== null && adj !== undefined) initial[l.id] = formatBRL(adj)
-      })
-      setVals(initial)
-      // Start all level-1 sub-groups expanded
-      const expandInit: Record<string, boolean> = {}
-      loadedLines.filter(l => l.level === 1).forEach(l => { expandInit[l.id] = true })
-      setSubExpanded(expandInit)
-    } finally {
-      setLoading(false)
+      const data = await parseExcelFile(file)
+      setPreview(data)
+      setState('preview')
+    } catch {
+      setError('Erro ao processar o arquivo. Verifique se é um Excel válido.')
+      setState('error')
     }
   }
 
-  function computeTotal(): number {
-    return lines
-      .filter(l => l.level === 2)
-      .reduce((acc, l) => acc + (parseBRL(vals[l.id] || '') ?? 0), 0)
-  }
-
-  async function handleSave() {
-    setSaving(true)
-    const total = computeTotal()
-    const detailLines = lines.filter(l => l.level === 2)
-    const filledCount = detailLines.filter(l => parseBRL(vals[l.id] || '') !== null).length
+  async function handleConfirm() {
+    if (!preview) return
+    setState('confirming')
     try {
-      const values = detailLines.map(l => ({ lineId: l.id, value: parseBRL(vals[l.id] || '') }))
+      const values = preview.lines.map(l => ({ lineId: l.id, value: l.value }))
+      // Also send nulls for level-2 lines not in the file (clear previous values)
+      const includedIds = new Set(preview.lines.map(l => l.id))
+      const cleared = allLines
+        .filter(l => l.level === 2 && !includedIds.has(l.id))
+        .map(l => ({ lineId: l.id, value: null }))
       const res = await fetch(apiEndpoint, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ uploadId, values }),
+        body: JSON.stringify({ uploadId: preview.uploadId, values: [...values, ...cleared] }),
       })
       if (!res.ok) throw new Error('Erro ao salvar')
-
-      setConfirmation({
-        submittedAt: new Date(),
-        monthRef,
-        linesCount: filledCount,
-        total,
-        submittedBy: saveMsg || '',
-      })
-    } finally {
-      setSaving(false)
+      setCompletedAt(new Date())
+      setState('done')
+    } catch {
+      setError('Erro ao salvar. Tente novamente.')
+      setState('error')
     }
   }
 
-  function handleNovoEnvio() {
-    setVals({})
-    setConfirmation(null)
+  function reset() { setState('idle'); setPreview(null); setError('') }
+
+  const card: React.CSSProperties = {
+    background: 'var(--color-background-primary)', borderRadius: 8,
+    border: '0.5px solid var(--color-border-secondary)',
+  }
+  const btnPrimary: React.CSSProperties = {
+    padding: '9px 18px', fontSize: 13, fontWeight: 500,
+    background: '#1D4ED8', color: 'white', border: 'none', borderRadius: 7, cursor: 'pointer',
+  }
+  const btnSecondary: React.CSSProperties = {
+    padding: '9px 14px', fontSize: 13, background: 'none',
+    border: '0.5px solid var(--color-border-secondary)', borderRadius: 7,
+    cursor: 'pointer', color: 'var(--color-text-secondary)',
   }
 
-  // ── Tela de confirmação ───────────────────────────────────────────────────────
-  if (confirmation) {
-    const colName = colKey === 'VI' ? 'Arrecadação Prevista' : 'Pressões Orçamentárias'
-    const colFull = `Coluna ${colKey} — ${colName}`
-    return (
-      <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 32 }}>
-        <div style={{ maxWidth: 480, width: '100%', textAlign: 'center' }}>
+  const colName = colKey === 'VI' ? 'Arrecadação Prevista' : 'Pressões Orçamentárias'
 
-          {/* Ícone de sucesso */}
-          <div style={{
-            width: 64, height: 64, borderRadius: 16, background: '#16a34a',
-            display: 'flex', alignItems: 'center', justifyContent: 'center',
-            margin: '0 auto 20px', fontSize: 32,
-          }}>
-            ✓
-          </div>
-
-          <div style={{ fontSize: 20, fontWeight: 700, color: 'var(--color-text-primary)', marginBottom: 4 }}>
-            Dados enviados com sucesso
-          </div>
-          <div style={{ fontSize: 13, color: 'var(--color-text-secondary)', marginBottom: 28 }}>
-            Concluído em {formatDateTime(confirmation.submittedAt)}
-          </div>
-
-          {/* Comprovante */}
-          <div style={{
-            background: 'var(--color-background-secondary)',
-            border: '0.5px solid var(--color-border-secondary)',
-            borderRadius: 10, padding: '18px 24px', textAlign: 'left', marginBottom: 24,
-          }}>
-            {[
-              ['Tipo de dado', colFull],
-              ['Mês de referência', confirmation.monthRef || '—'],
-              ['Linhas preenchidas', `${confirmation.linesCount}`],
-              ['Total informado', `R$ ${formatBRL(confirmation.total)}`],
-              ['Enviado por', confirmation.submittedBy || '—'],
-            ].map(([label, value]) => (
-              <div key={label} style={{ display: 'flex', justifyContent: 'space-between', padding: '7px 0', borderBottom: '0.5px solid var(--color-border-tertiary)' }}>
-                <span style={{ fontSize: 12, color: 'var(--color-text-secondary)' }}>{label}</span>
-                <span style={{ fontSize: 12, fontWeight: 500, color: 'var(--color-text-primary)', textAlign: 'right', maxWidth: 280 }}>{value}</span>
-              </div>
-            ))}
-          </div>
-
-          <div style={{ fontSize: 11, color: 'var(--color-text-secondary)', marginBottom: 20 }}>
-            Os dados foram registrados e já estão disponíveis no Dashboard.
-            Para fazer uma nova inserção, clique em "Novo envio" abaixo.
-          </div>
-
-          <div style={{ display: 'flex', gap: 10, justifyContent: 'center' }}>
-            <button
-              onClick={handleNovoEnvio}
-              style={{
-                padding: '10px 22px', fontSize: 13, fontWeight: 500,
-                background: '#1D4ED8', color: 'white',
-                border: 'none', borderRadius: 7, cursor: 'pointer',
-              }}
-            >
-              Novo envio
-            </button>
-            <a
-              href="/dashboard"
-              style={{
-                padding: '10px 22px', fontSize: 13, fontWeight: 500,
-                background: 'transparent', color: 'var(--color-text-secondary)',
-                border: '0.5px solid var(--color-border-secondary)',
-                borderRadius: 7, cursor: 'pointer', textDecoration: 'none',
-                display: 'inline-flex', alignItems: 'center',
-              }}
-            >
-              Ver Dashboard →
-            </a>
-          </div>
-        </div>
-      </div>
-    )
+  if (loadingLines) {
+    return <div style={{ padding: 32, color: 'var(--color-text-secondary)', fontSize: 13 }}>Carregando...</div>
   }
 
-  // ── Estados de carregamento e vazio ───────────────────────────────────────────
-  if (loading) return <div style={{ padding: 32, color: 'var(--color-text-secondary)', fontSize: 13 }}>Carregando...</div>
-
-  const subtotals = lines.filter(l => l.isSubtotal)
-  const totals    = lines.filter(l => l.isTotal)
-
-  if (lines.length === 0) {
+  if (allLines.length === 0) {
     return (
       <div style={{ padding: 32, textAlign: 'center', color: 'var(--color-text-secondary)' }}>
         <div style={{ fontSize: 32, marginBottom: 10 }}>📋</div>
@@ -253,282 +229,186 @@ export default function ManualInputTable({ colKey, colLabel, apiEndpoint, month,
     )
   }
 
-  const BD = '0.5px solid var(--color-border-tertiary)'
-  const tree = buildTree(lines)
-
-  function nodeSum(node: TreeNode): number {
-    if (node.children.length === 0) return parseBRL(vals[node.id] || '') ?? 0
-    return node.children.reduce((acc, c) => acc + nodeSum(c), 0)
-  }
-
-  function downloadModelo() {
-    const wb = XLSX.utils.book_new()
-    const rows: (string | number)[][] = [['Fonte de Recurso', `Coluna ${colKey} — Valor (R$)`]]
-    lines.filter(l => l.level === 2).forEach(l => rows.push([l.rowLabel, '']))
-    const ws = XLSX.utils.aoa_to_sheet(rows)
-    ws['!cols'] = [{ wch: 60 }, { wch: 22 }]
-    XLSX.utils.book_append_sheet(wb, ws, 'Modelo')
-    const buf = XLSX.write(wb, { bookType: 'xlsx', type: 'array' })
-    const blob = new Blob([buf], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' })
-    const url = URL.createObjectURL(blob)
-    const a = document.createElement('a')
-    a.href = url
-    a.download = `modelo-col${colKey.toLowerCase()}.xlsx`
-    document.body.appendChild(a)
-    a.click()
-    document.body.removeChild(a)
-    URL.revokeObjectURL(url)
-  }
-
-  function processExcelFile(file: File) {
-    const reader = new FileReader()
-    reader.onload = (e) => {
-      try {
-        const data = new Uint8Array(e.target!.result as ArrayBuffer)
-        const wb = XLSX.read(data, { type: 'array' })
-        const ws = wb.Sheets[wb.SheetNames[0]]
-        const rows = XLSX.utils.sheet_to_json<(string | number)[]>(ws, { header: 1 }) as (string | number)[][]
-
-        const labelMap: Record<string, string> = {}
-        lines.filter(l => l.level === 2).forEach(l => {
-          labelMap[l.rowLabel.trim().toLowerCase()] = l.id
-        })
-
-        const newVals: Record<string, string> = { ...vals }
-        let matched = 0
-        for (const row of rows.slice(1)) {
-          const label = String(row[0] ?? '').trim().toLowerCase()
-          const rawVal = row[1]
-          const id = labelMap[label]
-          if (!id || rawVal === null || rawVal === undefined || rawVal === '') continue
-          const num = typeof rawVal === 'number' ? rawVal : parseFloat(String(rawVal).replace(/\./g, '').replace(',', '.'))
-          if (!isNaN(num)) { newVals[id] = formatBRL(num); matched++ }
-        }
-
-        setVals(newVals)
-        setUploadFeedback(`✓ ${matched} linhas preenchidas a partir do arquivo. Revise e clique em "Enviar dados".`)
-        setInputMode('digitar')
-      } catch {
-        setUploadFeedback('Erro ao ler o arquivo. Certifique-se de que é um arquivo Excel (.xlsx/.xls).')
-      }
-    }
-    reader.readAsArrayBuffer(file)
-  }
-
-  function renderInput(id: string) {
-    return canEdit ? (
-      <input
-        type="text"
-        value={vals[id] || ''}
-        onChange={e => setVals(p => ({ ...p, [id]: e.target.value }))}
-        onBlur={e => {
-          const parsed = parseBRL(e.target.value)
-          if (parsed !== null) setVals(p => ({ ...p, [id]: formatBRL(parsed) }))
-        }}
-        placeholder="0,00"
-        style={{
-          width: 160, padding: '5px 8px', fontSize: 12,
-          border: '0.5px solid #fde047', borderRadius: 5,
-          textAlign: 'right', background: 'white',
-          color: '#0f172a', fontVariantNumeric: 'tabular-nums',
-        }}
-      />
-    ) : (
-      <span style={{ fontSize: 12, fontVariantNumeric: 'tabular-nums', color: '#0f172a' }}>
-        {vals[id] || '—'}
-      </span>
-    )
-  }
-
-  function renderTreeNode(node: TreeNode): React.ReactNode {
-    const hasSubs = node.children.length > 0
-
-    if (node.level === 0) {
-      // Group header (level 0): dark blue, shows sum of all its level-2 descendants
-      const sum = nodeSum(node)
-      return (
-        <React.Fragment key={node.id}>
-          <tr style={{ background: '#1e3a5f', color: 'white' }}>
-            <td style={{ padding: '8px 14px', fontSize: 12, fontWeight: 500 }}>
-              {node.rowLabel}
-            </td>
-            <td style={{ padding: '7px 10px', textAlign: 'right', background: 'rgba(234,179,8,0.15)', borderLeft: BD }}>
-              <span style={{ fontSize: 12, fontVariantNumeric: 'tabular-nums', color: 'rgba(255,255,255,0.5)', fontStyle: 'italic' }}>
-                {sum !== 0 ? formatBRL(sum) : '—'}
-              </span>
-            </td>
-          </tr>
-          {node.children.map(sub => renderTreeNode(sub))}
-        </React.Fragment>
-      )
-    }
-
-    if (node.level === 1) {
-      // Sub-category (level 1): collapsible header, shows sum of its level-2 children
-      const sum = nodeSum(node)
-      const open = subExpanded[node.id] ?? true
-      return (
-        <React.Fragment key={node.id}>
-          <tr
-            onClick={() => setSubExpanded(p => ({ ...p, [node.id]: !p[node.id] }))}
-            style={{ background: '#162032', color: 'white', cursor: hasSubs ? 'pointer' : 'default', borderBottom: BD }}
-          >
-            <td style={{ padding: '7px 14px 7px 22px', fontSize: 11, fontWeight: 500 }}>
-              {hasSubs && <span style={{ fontSize: 8, opacity: 0.65, marginRight: 5 }}>{open ? '▼' : '▶'}</span>}
-              {node.rowLabel}
-            </td>
-            <td style={{ padding: '6px 10px', textAlign: 'right', background: 'rgba(234,179,8,0.12)', borderLeft: BD }}>
-              <span style={{ fontSize: 11, fontVariantNumeric: 'tabular-nums', color: 'rgba(255,255,255,0.55)', fontStyle: 'italic' }}>
-                {sum !== 0 ? formatBRL(sum) : '—'}
-              </span>
-            </td>
-          </tr>
-          {hasSubs && open && node.children.map(item => renderTreeNode(item))}
-        </React.Fragment>
-      )
-    }
-
-    // Level 2: editable leaf item
-    return (
-      <tr key={node.id} style={{ borderBottom: BD, background: 'var(--color-background-primary)' }}>
-        <td style={{ padding: '6px 14px 6px 32px', color: 'var(--color-text-primary)', fontSize: 11, maxWidth: 340 }}>
-          {node.rowLabel}
-        </td>
-        <td style={{ padding: '4px 10px', textAlign: 'center', background: canEdit ? '#fefce8' : 'transparent', borderLeft: BD }}>
-          {renderInput(node.id)}
-        </td>
-      </tr>
-    )
-  }
-
-  function renderSummaryRow(label: string, value: number, bg: string, color: string) {
-    return (
-      <tr key={label} style={{ background: bg, color }}>
-        <td style={{ padding: '9px 14px', fontSize: 12, fontWeight: 600 }}>{label}</td>
-        <td style={{ padding: '9px 10px', textAlign: 'right', fontSize: 13, fontWeight: 700, fontVariantNumeric: 'tabular-nums', borderLeft: BD }}>
-          {formatBRL(value)}
-        </td>
-      </tr>
-    )
-  }
-
-  const grandTotal = computeTotal()
-
   return (
-    <div style={{ padding: '16px 22px', overflow: 'auto', flex: 1 }}>
-      <div style={{ marginBottom: 14 }}>
+    <div style={{ padding: '22px 26px', maxWidth: 700 }}>
+      <div style={{ marginBottom: 20 }}>
         <div style={{ fontSize: 15, fontWeight: 500, marginBottom: 4, color: 'var(--color-text-primary)' }}>{colLabel}</div>
         <div style={{ fontSize: 12, color: 'var(--color-text-secondary)' }}>
-          Preencha por fonte de recurso. Os subtotais são calculados automaticamente para conferência.
-          {!canEdit && <span style={{ marginLeft: 8, color: '#d97706', fontWeight: 500 }}>⚠ Você não tem permissão para editar estes valores.</span>}
+          Importe uma planilha Excel com Col A (Fonte de Recurso) e Col B (Valor em R$).
+          {!canEdit && <span style={{ marginLeft: 8, color: '#d97706', fontWeight: 500 }}>⚠ Você não tem permissão para editar.</span>}
         </div>
       </div>
 
-      {/* Mode toggle */}
-      <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 14 }}>
-        <div style={{ display: 'flex', border: '0.5px solid var(--color-border-secondary)', borderRadius: 6, overflow: 'hidden' }}>
-          {(['digitar', 'upload'] as const).map(m => (
-            <button key={m} onClick={() => setInputMode(m)} style={{
-              padding: '5px 13px', fontSize: 12, border: 'none', cursor: 'pointer',
-              background: inputMode === m ? '#1D4ED8' : 'transparent',
-              color: inputMode === m ? 'white' : 'var(--color-text-secondary)',
-            }}>
-              {m === 'digitar' ? '✏ Digitar' : '↑ Upload Excel'}
-            </button>
-          ))}
-        </div>
-      </div>
-
-      {uploadFeedback && (
-        <div style={{
-          marginBottom: 12, padding: '10px 14px', borderRadius: 7, fontSize: 12, fontWeight: 500,
-          background: uploadFeedback.startsWith('✓') ? '#dcfce7' : '#fee2e2',
-          color: uploadFeedback.startsWith('✓') ? '#15803d' : '#dc2626',
-          border: `0.5px solid ${uploadFeedback.startsWith('✓') ? '#86efac' : '#fca5a5'}`,
-        }}>
-          {uploadFeedback}
-        </div>
-      )}
-
-      {inputMode === 'upload' && (
-        <div
-          onDragOver={e => { e.preventDefault(); setDragging(true) }}
-          onDragLeave={() => setDragging(false)}
-          onDrop={e => {
-            e.preventDefault(); setDragging(false)
-            const file = e.dataTransfer.files[0]
-            if (file) processExcelFile(file)
-          }}
-          style={{
-            marginBottom: 14, border: `1.5px dashed ${dragging ? '#1D4ED8' : 'var(--color-border-secondary)'}`,
-            borderRadius: 8, padding: '28px 24px', textAlign: 'center',
-            background: dragging ? 'rgba(29,78,216,0.06)' : 'var(--color-background-secondary)',
-            cursor: 'pointer', transition: 'all 0.15s',
-          }}
-          onClick={() => fileInputRef.current?.click()}
-        >
+      {/* ── Idle / Error ── */}
+      {(state === 'idle' || state === 'error') && (
+        <>
+          <label
+            htmlFor={fileInputId}
+            onDragOver={e => { e.preventDefault(); setDragging(true) }}
+            onDragLeave={() => setDragging(false)}
+            onDrop={e => {
+              e.preventDefault(); setDragging(false)
+              const f = e.dataTransfer.files[0]
+              if (f) handleFile(f)
+            }}
+            style={{
+              display: 'block',
+              border: `1.5px dashed ${dragging ? '#1D4ED8' : 'var(--color-border-secondary)'}`,
+              borderRadius: 10, padding: '36px', textAlign: 'center', cursor: 'pointer',
+              background: dragging ? 'rgba(29,78,216,0.04)' : 'var(--color-background-secondary)',
+            }}
+          >
+            <div style={{ fontSize: 24, marginBottom: 8 }}>↑</div>
+            <div style={{ fontSize: 13, fontWeight: 500, marginBottom: 4, color: 'var(--color-text-primary)' }}>
+              Arraste ou toque para selecionar o arquivo
+            </div>
+            <div style={{ fontSize: 11, color: 'var(--color-text-secondary)' }}>
+              Aceita: .xlsx · .xls · Col A: Fonte · Col B: Valor
+            </div>
+          </label>
           <input
-            ref={fileInputRef}
+            id={fileInputId}
             type="file"
             accept=".xlsx,.xls"
             style={{ display: 'none' }}
-            onChange={e => { const f = e.target.files?.[0]; if (f) processExcelFile(f); e.target.value = '' }}
+            onChange={e => { const f = e.target.files?.[0]; if (f) handleFile(f); e.target.value = '' }}
           />
-          <div style={{ fontSize: 24, marginBottom: 6 }}>↑</div>
-          <div style={{ fontSize: 13, fontWeight: 500, marginBottom: 3, color: 'var(--color-text-primary)' }}>
-            Arraste o arquivo aqui ou clique para selecionar
-          </div>
-          <div style={{ fontSize: 11, color: 'var(--color-text-secondary)' }}>
-            Col A: Fonte de Recurso · Col B: Valor em R$ · Formatos: .xlsx, .xls
-          </div>
-          <div style={{ fontSize: 12, color: 'var(--color-text-secondary)', marginTop: 10 }}>
+          <div style={{ marginTop: 10, fontSize: 12, color: 'var(--color-text-secondary)' }}>
             Sem o modelo?{' '}
             <span
-              onClick={e => { e.stopPropagation(); downloadModelo() }}
+              onClick={() => downloadModelo(allLines, colKey)}
               style={{ color: '#1D4ED8', cursor: 'pointer', textDecoration: 'underline' }}
             >
-              Baixar modelo Excel →
+              Baixar modelo Excel com as {allLines.filter(l => l.level === 2).length} fontes de recurso →
             </span>
+          </div>
+          {error && (
+            <div style={{ fontSize: 12, color: '#dc2626', marginTop: 10, padding: '8px 12px', background: '#fef2f2', borderRadius: 6, border: '0.5px solid #fecaca' }}>
+              ❌ {error}
+            </div>
+          )}
+        </>
+      )}
+
+      {/* ── Parsing ── */}
+      {state === 'parsing' && (
+        <div style={{ ...card, padding: '32px', textAlign: 'center' }}>
+          <div style={{ fontSize: 13, color: 'var(--color-text-secondary)' }}>Processando arquivo...</div>
+        </div>
+      )}
+
+      {/* ── Preview ── */}
+      {(state === 'preview' || state === 'confirming') && preview && (
+        <div>
+          {/* File info */}
+          <div style={{ ...card, display: 'flex', alignItems: 'center', gap: 12, padding: '12px 14px', marginBottom: 12 }}>
+            <span style={{ fontSize: 20 }}>📄</span>
+            <div style={{ flex: 1 }}>
+              <div style={{ fontSize: 13, fontWeight: 500, color: 'var(--color-text-primary)' }}>{preview.fileName}</div>
+              <div style={{ fontSize: 11, color: 'var(--color-text-secondary)', marginTop: 2 }}>
+                {preview.matched} de {preview.total} fontes preenchidas · Coluna {colKey}
+              </div>
+            </div>
+            <button onClick={reset} style={{ background: 'none', border: 'none', cursor: 'pointer', fontSize: 18, color: 'var(--color-text-secondary)' }}>×</button>
+          </div>
+
+          {/* Validation summary */}
+          <div style={{ ...card, padding: '12px 14px', marginBottom: 12 }}>
+            <div style={{ fontSize: 12, fontWeight: 500, marginBottom: 8, color: 'var(--color-text-primary)' }}>Diagnóstico do arquivo</div>
+            <div style={{ display: 'flex', gap: 8, padding: '4px 0', fontSize: 12 }}>
+              <span>{preview.matched > 0 ? '✅' : '❌'}</span>
+              <span style={{ flex: 1, color: 'var(--color-text-primary)' }}>Linhas mapeadas por nome da fonte</span>
+              <span style={{ color: 'var(--color-text-secondary)', fontSize: 11 }}>
+                {preview.matched} de {preview.total} ({Math.round(preview.matched / preview.total * 100)}%)
+              </span>
+            </div>
+            <div style={{ display: 'flex', gap: 8, padding: '4px 0', fontSize: 12, borderTop: '0.5px solid var(--color-border-tertiary)' }}>
+              <span>{preview.lines.length > 0 ? '✅' : '⚠️'}</span>
+              <span style={{ flex: 1, color: 'var(--color-text-primary)' }}>Linhas com valor preenchido</span>
+              <span style={{ color: 'var(--color-text-secondary)', fontSize: 11 }}>
+                {formatBRL(preview.lines.reduce((s, l) => s + l.value, 0))} total
+              </span>
+            </div>
+          </div>
+
+          {preview.matched === 0 && (
+            <div style={{ background: '#fef2f2', border: '0.5px solid #fecaca', borderRadius: 8, padding: '10px 14px', marginBottom: 12, fontSize: 12, color: '#991b1b' }}>
+              ❌ Nenhuma fonte reconhecida. Use o modelo Excel para garantir os nomes corretos.
+            </div>
+          )}
+
+          {/* Data preview table */}
+          <div style={{ ...card, marginBottom: 12, overflow: 'hidden' }}>
+            <div style={{ padding: '10px 14px 8px', fontSize: 12, fontWeight: 500, color: 'var(--color-text-primary)', borderBottom: '0.5px solid var(--color-border-tertiary)' }}>
+              Prévia dos valores importados ({preview.lines.length} linhas)
+            </div>
+            <div style={{ overflowX: 'auto', maxHeight: 320, overflowY: 'auto' }}>
+              <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 11 }}>
+                <thead style={{ position: 'sticky', top: 0 }}>
+                  <tr style={{ background: '#1e3a5f', color: 'white' }}>
+                    <th style={{ padding: '6px 10px', textAlign: 'left', fontWeight: 500 }}>Fonte de Recurso</th>
+                    <th style={{ padding: '6px 10px', textAlign: 'right', fontWeight: 500, whiteSpace: 'nowrap' }}>
+                      Coluna {colKey} — {colName}
+                    </th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {preview.lines.map((l, i) => (
+                    <tr key={l.id} style={{ background: i % 2 === 0 ? 'var(--color-background-primary)' : 'var(--color-background-secondary)', borderBottom: '0.3px solid var(--color-border-tertiary)' }}>
+                      <td style={{ padding: '5px 10px', color: 'var(--color-text-primary)', maxWidth: 320, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                        {l.label}
+                      </td>
+                      <td style={{ padding: '5px 10px', textAlign: 'right', fontVariantNumeric: 'tabular-nums', color: l.value < 0 ? '#dc2626' : 'var(--color-text-primary)' }}>
+                        {formatBRL(l.value)}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <div style={{ display: 'flex', gap: 8 }}>
+            <button
+              onClick={handleConfirm}
+              disabled={preview.matched === 0 || state === 'confirming' || !canEdit}
+              style={{ ...btnPrimary, opacity: preview.matched === 0 || !canEdit ? 0.5 : 1, cursor: preview.matched === 0 || !canEdit ? 'not-allowed' : 'pointer' }}
+            >
+              {state === 'confirming' ? 'Salvando...' : 'Confirmar importação'}
+            </button>
+            <button onClick={reset} style={btnSecondary}>Cancelar</button>
           </div>
         </div>
       )}
 
-      {/* Table */}
-      <div style={{ border: BD, borderRadius: 8, overflow: 'hidden', marginBottom: 14 }}>
-        <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 12 }}>
-          <thead>
-            <tr style={{ background: '#0F1624', color: 'white' }}>
-              <th style={{ padding: '9px 14px', textAlign: 'left', fontSize: 11 }}>Fonte de Recurso</th>
-              <th style={{ padding: '9px 14px', textAlign: 'right', fontSize: 11, background: 'rgba(234,179,8,0.2)', width: 200 }}>
-                Coluna {colKey} — Valor (R$)
-              </th>
-            </tr>
-          </thead>
-          <tbody>
-            {tree.map(g => renderTreeNode(g))}
-            {subtotals.map(s => renderSummaryRow(s.rowLabel, grandTotal, '#1e293b', 'white'))}
-            {totals.map(t => renderSummaryRow(t.rowLabel, grandTotal, '#0F1624', 'white'))}
-            {subtotals.length === 0 && totals.length === 0 &&
-              renderSummaryRow('TOTAL (calculado)', grandTotal, '#0F1624', 'white')
-            }
-          </tbody>
-        </table>
-      </div>
-
-      {canEdit && (
-        <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-          <button
-            onClick={handleSave}
-            disabled={saving}
-            style={{
-              padding: '9px 18px', fontSize: 13, fontWeight: 500,
-              background: '#1D4ED8', color: 'white',
-              border: 'none', borderRadius: 7,
-              cursor: saving ? 'default' : 'pointer', opacity: saving ? 0.7 : 1,
-            }}
-          >
-            {saving ? 'Enviando...' : 'Enviar dados'}
-          </button>
+      {/* ── Done ── */}
+      {state === 'done' && preview && completedAt && (
+        <div style={{ ...card, padding: '32px 24px', textAlign: 'center' }}>
+          <div style={{ fontSize: 40, marginBottom: 12 }}>✅</div>
+          <div style={{ fontSize: 15, fontWeight: 600, marginBottom: 6, color: 'var(--color-text-primary)' }}>
+            Dados importados com sucesso
+          </div>
+          <div style={{ fontSize: 12, color: 'var(--color-text-secondary)', marginBottom: 20 }}>
+            Concluído em {formatDateTime(completedAt)}
+          </div>
+          <div style={{ display: 'inline-grid', gridTemplateColumns: 'auto auto', gap: '6px 24px', textAlign: 'left', marginBottom: 24, fontSize: 12 }}>
+            <span style={{ color: 'var(--color-text-secondary)' }}>Tipo de dado</span>
+            <span style={{ color: 'var(--color-text-primary)', fontWeight: 500 }}>Coluna {colKey} — {colName}</span>
+            <span style={{ color: 'var(--color-text-secondary)' }}>Mês de referência</span>
+            <span style={{ color: 'var(--color-text-primary)', fontWeight: 500 }}>{preview.monthRef || '—'}</span>
+            <span style={{ color: 'var(--color-text-secondary)' }}>Linhas importadas</span>
+            <span style={{ color: 'var(--color-text-primary)', fontWeight: 500 }}>{preview.matched}</span>
+            <span style={{ color: 'var(--color-text-secondary)' }}>Total informado</span>
+            <span style={{ color: 'var(--color-text-primary)', fontWeight: 500 }}>R$ {formatBRL(preview.lines.reduce((s, l) => s + l.value, 0))}</span>
+            <span style={{ color: 'var(--color-text-secondary)' }}>Enviado por</span>
+            <span style={{ color: 'var(--color-text-primary)', fontWeight: 500 }}>{saveMsg || '—'}</span>
+          </div>
+          <div style={{ display: 'flex', gap: 10, justifyContent: 'center' }}>
+            <button onClick={reset} style={btnSecondary}>Nova importação</button>
+            <a href="/dashboard" style={{ ...btnPrimary, textDecoration: 'none', display: 'inline-flex', alignItems: 'center' }}>
+              Ver Dashboard →
+            </a>
+          </div>
         </div>
       )}
     </div>
