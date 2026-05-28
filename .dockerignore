@@ -1,0 +1,12 @@
+node_modules
+.next
+.git
+.gitignore
+*.md
+.env
+.env.local
+.env.*.local
+npm-debug.log*
+*.xls
+*.xlsx
+*.html

@@ -2,6 +2,15 @@
 
 > Sistema web interno da **SEFAZ-ES / Subsecretaria do Tesouro Estadual** para monitoramento mensal da suficiência de caixa do Poder Executivo do Espírito Santo, em conformidade com o **Art. 42 da Lei de Responsabilidade Fiscal**.
 
+## Documentos
+
+| Documento | Descrição |
+|---|---|
+| **README.md** (este arquivo) | Visão geral, arquitetura e setup local |
+| **[DEPLOY.md](./DEPLOY.md)** | Guia completo de implantação em ambiente interno SEFAZ |
+| **[SPEC.md](./SPEC.md)** | Especificação técnica detalhada (modelo de dados, regras de negócio, telas) |
+| **[MAINTENANCE.md](./MAINTENANCE.md)** | Notas de manutenção, vulnerabilidades conhecidas e melhorias recomendadas |
+
 ---
 
 ## Visão geral
@@ -163,11 +172,17 @@ npm run build   # Build de produção (prisma generate + next build)
 
 ---
 
-## Deploy (Vercel)
+## Deploy — Ambiente Interno SEFAZ
 
-1. Conecte o repositório no [vercel.com](https://vercel.com)
-2. Configure as variáveis de ambiente (`DATABASE_URL`, `NEXTAUTH_SECRET`, `NEXTAUTH_URL`)
-3. O build command `prisma generate && next build` já está configurado em `package.json`
+Para implantação no ambiente interno da Secretaria, consulte o **[DEPLOY.md](./DEPLOY.md)**, que cobre:
+
+- Implantação via **Docker** (recomendado)
+- Instalação **manual** em servidor Linux
+- Configuração de PostgreSQL interno
+- Proxy reverso com Nginx
+- Serviço systemd para inicialização automática
+- Checklist de segurança pós-implantação
+- Backup e manutenção
 
 ---
 
