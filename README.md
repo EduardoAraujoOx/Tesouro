@@ -1,6 +1,6 @@
 # Disponibilidade Financeira Líquida — Poder Executivo ES
 
-> Sistema web interno da **SEFAZ-ES / Subsecretaria do Tesouro Estadual** para monitoramento mensal da suficiência de caixa do Poder Executivo do Espírito Santo, em conformidade com o **Art. 42 da Lei de Responsabilidade Fiscal**.
+> Sistema web interno da **SEFAZ-ES / Subsecretaria do Tesouro Estadual** para monitoramento mensal da suficiência de caixa do Poder Executivo do Espírito Santo, em conformidade com o **Art. 42 da Lei de Responsabilidade Fiscal (LRF)**.
 
 ## Documentos
 
