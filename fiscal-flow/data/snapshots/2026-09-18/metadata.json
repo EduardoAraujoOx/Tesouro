@@ -1,0 +1,24 @@
+{
+  "snapshot_date": "2026-09-18",
+  "sources": {
+    "execution_resource_id": "240f70ca-c810-442b-bade-bb0ea3280880",
+    "order_resource_id": "8bff110c-0f80-4eff-bc79-503a752bf923"
+  },
+  "payment_lag_quality": {
+    "raw_order_rows": 187137,
+    "deduplicated_order_rows": 93635,
+    "duplicate_rate": 0.49964465,
+    "missing_data_emissao_ob_after_dedup": 0,
+    "dedupe_key": [
+      "CodigoUg",
+      "CodigoNL",
+      "CodigoOB",
+      "ValorOB"
+    ]
+  },
+  "notes": [
+    "Snapshot calculado a partir de dados públicos do Portal de Dados Abertos do Espírito Santo.",
+    "A base de ordem cronológica contém apenas registros com DataEmissaoOB na extração; portanto não revela diretamente a idade do estoque liquidado e ainda não pago.",
+    "O escopo poder_executivo_aproximado usa a heurística CodigoUnidadeGestora >= 100000."
+  ]
+}
