@@ -11,8 +11,8 @@ const imagens = [
   {
     uso: 'Imagem principal da página inicial',
     titulo: 'Vista de Vitória com a Terceira Ponte',
-    autor: 'Imagem fornecida pela equipe do projeto (origem e direitos de uso a confirmar)',
-    licenca: 'A confirmar',
+    autor: 'Ilustração gerada por inteligência artificial, fornecida pela equipe do projeto',
+    licenca: 'Uso autorizado pela equipe do projeto',
     licencaUrl: null,
     fonte: null,
     nota: 'Redimensionada.',
