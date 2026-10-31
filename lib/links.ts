@@ -105,3 +105,19 @@ export const noticia = {
     'Pelo terceiro ano consecutivo, o Estado conquistou a Nota A+ da Secretaria do Tesouro Nacional e é primeiro lugar em Solidez Fiscal no Ranking de Competitividade dos Estados.',
   href: `${S}/espirito-santo-se-consolida-como-referencia-nacional-em-excelencia-na-gestao-fiscal`,
 }
+
+/** Números citados na notícia da SEFAZ de 26/10/2026 (fonte: noticia.href). */
+export const reconhecimentos = [
+  {
+    valor: 'A+',
+    rotuloAcessivel: 'Nota A mais',
+    titulo: 'Nota máxima da STN',
+    detalhe: 'Pelo terceiro ano consecutivo, segundo a Secretaria do Tesouro Nacional.',
+  },
+  {
+    valor: '1º',
+    rotuloAcessivel: 'Primeiro lugar',
+    titulo: 'Solidez Fiscal',
+    detalhe: 'No Ranking de Competitividade dos Estados, do Centro de Liderança Pública.',
+  },
+] as const

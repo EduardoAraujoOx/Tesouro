@@ -14,6 +14,9 @@
   --navy: 8 43 87;              /* #082B57 */
   --navy-deep: 5 32 63;
   --on-navy: 255 255 255;
+  --hero-overlay: 5 32 63;      /* azul-marinho profundo sobre a foto */
+  --btn-bg: 255 255 255;        /* botão primário sobre a foto */
+  --btn-fg: 8 43 87;
 }
 
 /* Alto contraste: fundo preto, texto branco, destaque amarelo (padrão de portais de governo). */
@@ -26,6 +29,9 @@
   --navy: 255 214 0;
   --navy-deep: 255 214 0;
   --on-navy: 0 0 0;
+  --hero-overlay: 0 0 0;
+  --btn-bg: 255 214 0;
+  --btn-fg: 0 0 0;
 }
 :root[data-contrast='alto'] img.invert-hc { filter: invert(1) hue-rotate(180deg); }
 
@@ -57,4 +63,20 @@ h1, h2, h3 { @apply font-serif text-navy; font-optical-sizing: auto; }
 
 .sr-only-focusable:not(:focus):not(:focus-within) {
   position: absolute; width: 1px; height: 1px; margin: -1px; padding: 0; overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0;
+}
+
+/* Degradê do hero: texto à esquerda sempre sobre fundo escuro (contraste), foto aparece à direita. */
+.hero-shade {
+  background:
+    linear-gradient(180deg, rgb(var(--hero-overlay) / .55) 0%, rgb(var(--hero-overlay) / .80) 100%);
+}
+@media (min-width: 1024px) {
+  .hero-shade {
+    background:
+      linear-gradient(90deg, rgb(var(--hero-overlay) / .95) 0%, rgb(var(--hero-overlay) / .86) 34%, rgb(var(--hero-overlay) / .38) 66%, rgb(var(--hero-overlay) / .10) 100%),
+      linear-gradient(0deg, rgb(var(--hero-overlay) / .55) 0%, transparent 35%);
+  }
+}
+.band-shade {
+  background: linear-gradient(90deg, rgb(var(--hero-overlay) / .92) 0%, rgb(var(--hero-overlay) / .70) 55%, rgb(var(--hero-overlay) / .25) 100%);
 }

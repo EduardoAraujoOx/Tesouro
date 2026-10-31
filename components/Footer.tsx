@@ -1,3 +1,4 @@
+import Link from 'next/link'
 import { IconExternal, IconPhone, IconPin } from './Icons'
 import { rodape } from '@/lib/links'
 
@@ -45,6 +46,7 @@ export function Footer() {
       <div className="border-t border-white/20">
         <p className="mx-auto max-w-page px-5 py-4 text-xs opacity-80 md:px-8">
           Os documentos são hospedados no site oficial da SEFAZ-ES, que permanece como fonte de referência.
+          {' '}<Link href="/creditos" className="underline underline-offset-4">Créditos das imagens</Link>
         </p>
       </div>
     </footer>

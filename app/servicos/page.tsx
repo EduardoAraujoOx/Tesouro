@@ -1,4 +1,5 @@
 import type { Metadata } from 'next'
+import { PageHeader } from '@/components/PageHeader'
 import { IconExternal } from '@/components/Icons'
 import { servicos } from '@/lib/links'
 import Link from 'next/link'
@@ -10,14 +11,12 @@ export const metadata: Metadata = {
 
 export default function Servicos() {
   return (
+    <>
+    <PageHeader titulo="Finanças: serviços e orientações">
+      Rotinas, sistemas e orientações do Tesouro Estadual voltadas a órgãos, gestores e servidores públicos.
+    </PageHeader>
     <div className="mx-auto max-w-page px-5 py-10 md:px-8 md:py-14">
-      <h1 className="text-4xl font-bold tracking-tight md:text-5xl">Finanças: serviços e orientações</h1>
-      <span className="accent-bar" aria-hidden="true" />
-      <p className="mt-5 max-w-3xl text-lg text-ink-soft">
-        Rotinas, sistemas e orientações do Tesouro Estadual voltadas a órgãos, gestores e servidores públicos.
-      </p>
-
-      <div className="mt-10 grid gap-10 md:grid-cols-3">
+      <div className="grid gap-10 md:grid-cols-3">
         {servicos.map((g) => (
           <section key={g.grupo} aria-labelledby={g.grupo.replace(/\W/g, '')}>
             <h2 id={g.grupo.replace(/\W/g, '')} className="text-2xl font-bold">{g.grupo}</h2>
@@ -39,5 +38,6 @@ export default function Servicos() {
         ))}
       </div>
     </div>
+    </>
   )
 }

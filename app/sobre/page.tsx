@@ -1,5 +1,6 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
+import { PageHeader } from '@/components/PageHeader'
 import { todas, geradoEm } from '@/lib/acervo'
 
 export const metadata: Metadata = {
@@ -20,16 +21,14 @@ const mapa = [
 
 export default function Sobre() {
   return (
+    <>
+    <PageHeader titulo="Conheça o Tesouro Estadual" imagem={{ src: '/img/ponte-panorama.jpg', alt: 'Panorama da Terceira Ponte e da baía de Vitória, visto do Convento da Penha' }}>
+      Este portal organiza as informações do Tesouro Estadual da Secretaria da Fazenda do Espírito Santo (SEFAZ-ES):
+      publicações fiscais e contábeis, dívida pública, transferências aos municípios e orientações para gestores.
+      Reúne hoje {todas.length} documentos, todos hospedados no site oficial da SEFAZ.
+    </PageHeader>
     <div className="mx-auto max-w-4xl px-5 py-10 md:px-8 md:py-14">
-      <h1 className="text-4xl font-bold tracking-tight md:text-5xl">Conheça o Tesouro Estadual</h1>
-      <span className="accent-bar" aria-hidden="true" />
-      <p className="mt-5 text-lg text-ink-soft">
-        Este portal organiza as informações do Tesouro Estadual da Secretaria da Fazenda do Espírito Santo (SEFAZ-ES):
-        publicações fiscais e contábeis, dados sobre a dívida pública, transferências aos municípios e orientações para gestores.
-        Reúne hoje {todas.length} documentos, todos hospedados no site oficial da SEFAZ.
-      </p>
-
-      <h2 className="mt-12 text-2xl font-bold">Onde encontrar cada informação</h2>
+      <h2 className="mt-2 text-2xl font-bold">Onde encontrar cada informação</h2>
       <span className="accent-bar" aria-hidden="true" />
       <ul className="mt-4 border-t border-line">
         {mapa.map(([titulo, texto, href]) => (
@@ -43,8 +42,9 @@ export default function Sobre() {
       </ul>
 
       <p className="mt-10 text-sm text-ink-soft">
-        Índice atualizado em {new Date(geradoEm).toLocaleDateString('pt-BR', { timeZone: 'America/Sao_Paulo' })}.
+        Foto do cabeçalho: LucFreitas, <Link href="/creditos" className="underline underline-offset-4">CC BY-SA 4.0</Link>. Índice atualizado em {new Date(geradoEm).toLocaleDateString('pt-BR', { timeZone: 'America/Sao_Paulo' })}.
       </p>
     </div>
+    </>
   )
 }

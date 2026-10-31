@@ -14,6 +14,8 @@ const config: Config = {
         ink: { DEFAULT: v('ink'), soft: v('ink-soft') },
         navy: { DEFAULT: v('navy'), deep: v('navy-deep') },
         'on-navy': v('on-navy'),
+        'hero-overlay': v('hero-overlay'),
+        herobtn: { DEFAULT: v('btn-bg'), fg: v('btn-fg') },
         skybrand: '#39B5E8',
         rosebrand: '#F28AB2',
       },
