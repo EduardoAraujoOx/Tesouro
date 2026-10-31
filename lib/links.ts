@@ -3,84 +3,90 @@
  * Todos os endereços externos foram verificados no site da SEFAZ (HTTP 200).
  */
 const S = 'https://sefaz.es.gov.br'
+const T = (slug: string) => `/tesouro/${slug}`
+const PAF = 'programa-de-reestruturacao-e-de-ajuste-fiscal-paf'
+const DIVIDA = 'relatorio-anual-da-divida-publica-e-do-progarma-de-ajuste-fiscal'
 
 export type Link = { rotulo: string; href: string; externo?: boolean }
 
 export const institucional: Link[] = [
   { rotulo: 'Conheça o Tesouro Estadual', href: '/sobre' },
-  { rotulo: 'Legislação do Tesouro Estadual', href: `${S}/demais-legislacoes-contabeis`, externo: true },
-  { rotulo: 'Prestação de Contas do Governador', href: `${S}/prestacao-de-contas-do-governador`, externo: true },
-  { rotulo: 'Fundo Soberano – FUNSES', href: `${S}/funses`, externo: true },
-  { rotulo: 'Programa de Ajuste Fiscal – PAF', href: '/publicacoes?tipo=divida-paf' },
+  { rotulo: 'Notícias', href: '/noticias' },
+  { rotulo: 'Legislação do Tesouro Estadual', href: T('demais-legislacoes-contabeis') },
+  { rotulo: 'Prestação de Contas do Governador', href: T('prestacao-de-contas-do-governador') },
+  { rotulo: 'Fundo Soberano – FUNSES', href: T('funses') },
+  { rotulo: 'Programa de Ajuste Fiscal – PAF', href: T(PAF) },
 ]
 
 export const menuPrincipal: Link[] = [
   { rotulo: 'Publicações', href: '/publicacoes' },
   { rotulo: 'Contabilidade', href: '/publicacoes?tipo=normas-contabeis' },
   { rotulo: 'Política Fiscal', href: '/publicacoes?tipo=lrf' },
-  { rotulo: 'Dívida Pública', href: '/publicacoes?tipo=divida-paf' },
-  { rotulo: 'Municípios', href: '/publicacoes?tipo=municipios' },
+  { rotulo: 'Dívida Pública', href: T(DIVIDA) },
+  { rotulo: 'Municípios', href: T('transferencias-constitucionais-aos-municipios') },
   { rotulo: 'Fale Conosco', href: '#contato' },
 ]
 
 // `curto` é o rótulo usado no celular, como no mockup mobile.
 export const acessoRapido = [
-  { rotulo: 'Resultado do Tesouro', curto: 'Resultado do Tesouro', href: '/publicacoes?tipo=resultado-tesouro', icone: 'bars' },
-  { rotulo: 'Dívida Pública', curto: 'Dívida Pública', href: '/publicacoes?tipo=divida-paf', icone: 'coins' },
+  { rotulo: 'Resultado do Tesouro', curto: 'Resultado do Tesouro', href: T('resultado-do-tesouro-estadual'), icone: 'bars' },
+  { rotulo: 'Dívida Pública', curto: 'Dívida Pública', href: T(DIVIDA), icone: 'coins' },
   { rotulo: 'Contabilidade Aplicada', curto: 'Contabilidade', href: '/publicacoes?tipo=normas-contabeis', icone: 'doc' },
-  { rotulo: 'Transferências aos Municípios', curto: 'Municípios', href: '/publicacoes?tipo=municipios', icone: 'people' },
+  { rotulo: 'Transferências aos Municípios', curto: 'Municípios', href: T('transferencias-constitucionais-aos-municipios'), icone: 'people' },
 ] as const
 
 export const orientacoes = [
   {
     titulo: 'Orientação Orçamentária',
     texto: 'Diretrizes, manuais e orientações sobre execução orçamentária.',
-    href: `${S}/execucao-financeira-tesouro`,
+    href: T('grupodearquivos-notas-tecnicas'),
     icone: 'doc',
   },
   {
     titulo: 'Orientação Contábil',
     texto: 'Normas, procedimentos e orientações de contabilidade aplicada ao setor público.',
-    href: `${S}/manual-de-contabilidade-mcont`,
+    href: T('manual-de-contabilidade-mcont'),
     icone: 'calc',
   },
   {
     titulo: 'Orientação Financeira',
     texto: 'Procedimentos, rotinas e orientações sobre gestão financeira e tesouraria.',
-    href: '/servicos',
+    href: T('execucao-financeira-tesouro'),
     icone: 'coins',
   },
 ] as const
 
 /** Serviços para gestores e servidores (área "Finanças" do Tesouro na SEFAZ). */
-export const servicos: { grupo: string; itens: (Link & { texto?: string })[] }[] = [
+export const servicos: { grupo: string; itens: Link[] }[] = [
   {
     grupo: 'Contas e pagamentos',
     itens: [
-      { rotulo: 'Abertura de Contas Bancárias', href: `${S}/abertura-de-contas-bancarias`, externo: true },
+      { rotulo: 'Abertura de Contas Bancárias', href: T('abertura-de-contas-bancarias') },
       { rotulo: 'Processamento Bancário', href: 'https://portaltesouro.sefaz.es.gov.br/processamento-arquivos-bancarios-v2/', externo: true },
-      { rotulo: 'Execução Financeira', href: `${S}/execucao-financeira-tesouro`, externo: true },
+      { rotulo: 'Execução Financeira (orientações)', href: T('execucao-financeira-tesouro') },
       { rotulo: 'Cotas Financeiras (Portaria 34-R)', href: `${S}/Media/Tesouro%20Estadual/Contabilidade%20Aplicada%20ao%20Setor/Formul%C3%A1rio%20-%20Portaria%2034-R%20de%2017mar25.pdf`, externo: true },
+      { rotulo: 'Notas Técnicas', href: T('grupodearquivos-notas-tecnicas') },
     ],
   },
   {
     grupo: 'Obrigações e transferências',
     itens: [
-      { rotulo: 'Obrigações de Pequeno Valor (OPV) – Não Dativos', href: `${S}/obrigacoes-de-pequeno-valor-opv-nao-dativos`, externo: true },
-      { rotulo: 'Obrigações de Pequeno Valor (OPV) – Dativos', href: `${S}/obrigacoes-de-pequeno-valor-opv-dativos`, externo: true },
-      { rotulo: 'Transferências Especiais', href: `${S}/transferencias-especiais`, externo: true },
+      { rotulo: 'Obrigações de Pequeno Valor (OPV) – Não Dativos', href: T('obrigacoes-de-pequeno-valor-opv-nao-dativos') },
+      { rotulo: 'Obrigações de Pequeno Valor (OPV) – Dativos', href: T('obrigacoes-de-pequeno-valor-opv-dativos') },
+      { rotulo: 'Transferências Especiais', href: T('transferencias-especiais') },
       { rotulo: 'Transferências aos Municípios (consulta)', href: 'https://s1-internet.sefaz.es.gov.br/site-ipm-internet/transferencias/liberacao_anteriores', externo: true },
-      { rotulo: 'Boletim Informativo de Repasses', href: `${S}/boletim-informativo-2`, externo: true },
+      { rotulo: 'Boletim Informativo de Repasses', href: T('boletim-informativo-2') },
     ],
   },
   {
     grupo: 'Sistemas e normas',
     itens: [
-      { rotulo: 'SIGEFES', href: `${S}/sigefes-links`, externo: true },
-      { rotulo: 'SIAFEM', href: `${S}/siafem`, externo: true },
-      { rotulo: 'Manual de Contabilidade – MCONT', href: `${S}/manual-de-contabilidade-mcont`, externo: true },
+      { rotulo: 'SIGEFES', href: T('sigefes-links') },
+      { rotulo: 'SIAFEM', href: T('siafem') },
+      { rotulo: 'Manual de Contabilidade – MCONT', href: T('manual-de-contabilidade-mcont') },
       { rotulo: 'Balancetes contábeis', href: 'https://internet.sefaz.es.gov.br/contas/contabilidade/balancetes.php', externo: true },
-      { rotulo: 'Normas e procedimentos contábeis', href: '/publicacoes?tipo=normas-contabeis' },
+      { rotulo: 'Normas – Sistema de Contabilidade', href: T('sistema-de-contabilidade') },
+      { rotulo: 'Normas – Sistema Financeiro', href: T('sistema-financeiro') },
     ],
   },
 ]
@@ -97,12 +103,4 @@ export const rodape = {
   telefone: '(27) 3347-5102',
   faleConosco: `${S}/fale-conosco`,
   atendimento: `${S}/local-e-horario-de-atendimento`,
-}
-
-export const noticia = {
-  data: '2026-10-26',
-  titulo: 'Espírito Santo se consolida como referência nacional em excelência na gestão fiscal',
-  resumo:
-    'Pelo terceiro ano consecutivo, o Estado conquistou a Nota A+ da Secretaria do Tesouro Nacional e é o primeiro lugar em Solidez Fiscal no Ranking de Competitividade dos Estados, do Centro de Liderança Pública.',
-  href: `${S}/espirito-santo-se-consolida-como-referencia-nacional-em-excelencia-na-gestao-fiscal`,
 }

@@ -80,3 +80,14 @@ h1, h2, h3 { @apply font-serif text-navy; font-optical-sizing: auto; }
 .band-shade {
   background: linear-gradient(90deg, rgb(var(--hero-overlay) / .92) 0%, rgb(var(--hero-overlay) / .70) 55%, rgb(var(--hero-overlay) / .25) 100%);
 }
+
+/* Texto corrido vindo das páginas da SEFAZ (HTML saneado pelo rastreador). */
+.prose-tesouro { @apply text-[1.0625rem] leading-relaxed text-ink; overflow-wrap: anywhere; }
+.prose-tesouro > * + * { @apply mt-4; }
+.prose-tesouro p strong:only-child { @apply font-serif text-xl text-navy; }
+.prose-tesouro ul, .prose-tesouro ol { @apply space-y-1.5 pl-6; }
+.prose-tesouro ul { list-style: disc; }
+.prose-tesouro ol { list-style: decimal; }
+.prose-tesouro a { @apply font-medium text-navy underline underline-offset-4; }
+.prose-tesouro a:hover { text-decoration-thickness: 2px; }
+.prose-tesouro blockquote { @apply border-l-4 border-line pl-4 text-ink-soft; }

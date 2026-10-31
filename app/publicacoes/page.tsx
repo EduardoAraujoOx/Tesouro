@@ -10,8 +10,8 @@ export const metadata: Metadata = {
 }
 
 export default function Publicacoes() {
-  const itens = todas.map(({ id, tipo, titulo, ano, periodo, ordem, atualizadoEm, tamanho, formato, url }) => ({
-    id, tipo, titulo, ano, periodo, ordem, atualizadoEm, tamanho, formato, url,
+  const itens = todas.map(({ id, tipo, pagina, titulo, descricao, grupo, ano, periodo, ordem, atualizadoEm, tamanho, formato, url }) => ({
+    id, tipo, pagina, titulo, descricao, grupo, ano, periodo, ordem, atualizadoEm, tamanho, formato, url,
   }))
   return (
     <>

@@ -7,27 +7,42 @@ que ocupava este repositório; aquele sistema está preservado no branch
 
 ## Como funciona
 
-O site é **estático** (Next.js 15 + Tailwind), sem banco de dados e sem login. Os documentos continuam
-hospedados no site oficial da SEFAZ (`sefaz.es.gov.br`), que é a fonte de referência; o portal mantém apenas
-um **índice** em `data/acervo.json` (≈ 500 documentos) e aponta para os arquivos originais.
+O site é **estático** (Next.js 15 + Tailwind), sem banco de dados e sem login. Todo o conteúdo vem de duas
+fontes públicas, lidas por scripts e guardadas em `data/`:
+
+| Arquivo | Origem | Conteúdo |
+|---|---|---|
+| `data/paginas.json` | 35 páginas do Tesouro em `sefaz.es.gov.br` | texto (HTML saneado) e grupos de arquivos de cada área |
+| `data/acervo.json` | as mesmas páginas | lista plana dos ≈ 730 arquivos, usada na busca de `/publicacoes` |
+| `data/noticias.json` | `sefaz.es.gov.br/noticias` | notícias da SEFAZ filtradas por temas do Tesouro |
+
+Os **PDFs não são copiados**: o portal aponta para o arquivo oficial na SEFAZ, que continua sendo a fonte única
+da verdade (evita versões desatualizadas de documentos fiscais e um repositório com gigabytes de arquivos).
 
 | Rota | Conteúdo |
 |---|---|
-| `/` | Página inicial (hero, acesso rápido, destaques, notícias, orientações) |
-| `/publicacoes` | Acervo completo com busca, filtro por tipo e por ano (`?tipo=` e `?q=` na URL) |
+| `/` | Página inicial (hero, acesso rápido, última notícia, destaques, notícias, orientações) |
+| `/tesouro/[área]` | Uma página para cada área do Tesouro (35), com o texto original e os documentos |
+| `/publicacoes` | Busca em todo o acervo, com filtro por tipo e por ano (`?tipo=` e `?q=` na URL) |
+| `/noticias` | Notícias do Tesouro publicadas pela SEFAZ |
 | `/servicos` | "Finanças": serviços e orientações para órgãos, gestores e servidores |
-| `/sobre` | O que o Tesouro publica e onde encontrar cada coisa |
+| `/sobre`, `/creditos` | Mapa do portal; créditos das imagens |
 
-## Atualizar o acervo
+## Atualizar o conteúdo
 
 ```bash
-npm run acervo        # python3 scripts/atualizar_acervo.py (só biblioteca padrão)
-git add data/acervo.json && git commit -m "Atualiza acervo"
+npm run acervo   # atualizar_conteudo.py (páginas e arquivos) + atualizar_noticias.py (notícias); só biblioteca padrão
+git add data && git commit -m "Atualiza conteúdo"
 ```
 
-Atenção: a data exibida pela SEFAZ em cada linha é a de **atualização do arquivo**, não a do período de
-referência. Por isso o portal ordena e destaca pelo período (`ano` + `periodo`) e rotula a data como
-"Atualizado em". Páginas da SEFAZ que o script ainda não lê: *Execução Financeira* e *MCONT* (links diretos).
+Detalhes importantes:
+
+- A data que a SEFAZ mostra em cada linha é a de **atualização do arquivo**, não a do período de referência. O portal
+  ordena e destaca pelo período (`ano` + `periodo`, extraídos do título) e rotula a data como "Atualizado em".
+- Para incluir uma página nova do Tesouro, acrescente o endereço em `PAGINAS` (`scripts/atualizar_conteudo.py`).
+- O filtro de notícias está em `PALAVRAS` / `EXCLUIR` (`scripts/atualizar_noticias.py`); ajuste conforme a Ascom preferir.
+- O texto das páginas passa por um sanitizador (somente `p`, `ul`, `ol`, `li`, `a`, ênfases); formulários, imagens e
+  scripts da SEFAZ não são reproduzidos. Cada página traz o link para a original.
 
 ## Desenvolvimento
 
@@ -49,8 +64,9 @@ nos modos normal e alto contraste.
 
 - **Fotos**: a imagem do hero é uma ilustração gerada por IA, fornecida pela equipe do projeto; as demais vêm do Wikimedia Commons (domínio público). Créditos em `/creditos`. Para trocar qualquer foto, substitua o arquivo em `public/img/`.
 - **Brasão e logomarca**: uso institucional a aprovar; arquivo em `public/img/logo-tesouro-estadual.png`.
-- **"Orientação Orçamentária"** aponta hoje para *Execução Financeira* na SEFAZ; confirmar o destino correto.
 - **Texto institucional** ("Conheça o Tesouro") é só um mapa do portal; faltam texto e competências oficiais.
+- **Notícias**: a seleção usa palavras-chave; a Ascom pode querer um critério editorial próprio. A faixa "Notícia" abaixo do acesso rápido mostra a mais recente.
+- **Orientações**: "Orçamentária" leva às Notas Técnicas (SUBSET, ex.: renúncia na estimativa de receita da LOA); "Contábil" ao MCONT; "Financeira" a Execução Financeira. Confirmar se é o destino desejado.
 - **Menu**: segue o mockup. "Política Fiscal" leva aos relatórios fiscais (RREO/RGF); a área de serviços para gestores ("Finanças") fica em `/servicos`, acessível por "Orientação Financeira" e pelo mapa em `/sobre`.
 - **E-mail do Tesouro**: o mockup trazia um endereço fictício; o rodapé usa o telefone e o endereço reais da SEFAZ.
 - **Domínio de produção** sob `es.gov.br`: depende de SEFAZ/Prodest. Em `*.vercel.app` o site serve para homologação.

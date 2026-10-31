@@ -3,7 +3,8 @@ import Link from 'next/link'
 import { PublicationRow } from '@/components/PublicationRow'
 import { SectionTitle } from '@/components/SectionTitle'
 import { IconArrow, iconePorNome } from '@/components/Icons'
-import { acessoRapido, noticia, orientacoes } from '@/lib/links'
+import { acessoRapido, orientacoes } from '@/lib/links'
+import { noticias } from '@/lib/noticias'
 import { formatarData, maisRecente, ultimasAtualizacoes } from '@/lib/acervo'
 
 const btnPrimario =
@@ -78,10 +79,10 @@ function AcessoRapido() {
 }
 
 function Destaques() {
-  const resultado = maisRecente(['resultado-tesouro'])
-  const divida = maisRecente(['divida-paf'])
-  const rgf = maisRecente(['rgf'])
-  const rreo = maisRecente(['rreo'])
+  const resultado = maisRecente({ pagina: 'resultado-do-tesouro-estadual' })
+  const divida = maisRecente({ pagina: 'relatorio-anual-da-divida-publica-e-do-progarma-de-ajuste-fiscal' })
+  const rgf = maisRecente({ tipos: ['rgf'] })
+  const rreo = maisRecente({ tipos: ['rreo'] })
 
   return (
     <section aria-labelledby="destaques" className="mx-auto mt-14 max-w-page px-5 md:px-8">
@@ -103,6 +104,7 @@ function Destaques() {
             descricao="Desempenho fiscal, receitas, despesas e resultado primário do Estado."
             atualizadoEm={formatarData(resultado.atualizadoEm)}
             tamanho={resultado.tamanho}
+            formato={resultado.formato}
             href={resultado.url}
             acao="Baixar PDF"
           />
@@ -113,6 +115,7 @@ function Destaques() {
             descricao="Evolução, composição e indicadores da dívida pública estadual."
             atualizadoEm={formatarData(divida.atualizadoEm)}
             tamanho={divida.tamanho}
+            formato={divida.formato}
             href={divida.url}
             acao="Baixar PDF"
           />
@@ -132,47 +135,71 @@ function Destaques() {
   )
 }
 
+function FaixaNoticia() {
+  const n = noticias[0]
+  if (!n) return null
+  return (
+    <aside aria-label="Última notícia" className="border-b border-line bg-surface">
+      <div className="mx-auto flex max-w-page items-center gap-3 px-5 py-3 md:px-8">
+        <span className="shrink-0 rounded bg-navy px-2 py-0.5 text-xs font-bold uppercase tracking-wider text-on-navy">Notícia</span>
+        <time dateTime={n.data} className="hidden shrink-0 text-sm text-ink-soft sm:inline">{formatarData(n.data)}</time>
+        <a
+          href={n.href}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="relative min-w-0 flex-1 truncate text-[0.9375rem] font-semibold text-ink underline-offset-4 hover:underline"
+        >
+          {n.titulo}<span className="sr-only"> (abre em nova aba)</span>
+        </a>
+        <Link href="/noticias" className="hidden shrink-0 items-center gap-1.5 text-sm font-semibold text-navy underline-offset-4 hover:underline md:inline-flex">
+          Mais notícias <IconArrow className="h-4 w-4" />
+        </Link>
+      </div>
+    </aside>
+  )
+}
+
 function Noticias() {
   const ult = ultimasAtualizacoes(3)
+  const duas = noticias.slice(1, 3)
   return (
     <section aria-labelledby="noticias" className="mx-auto mt-14 max-w-page px-5 md:px-8">
       <SectionTitle
         id="noticias"
         action={
-          <a href="https://sefaz.es.gov.br" target="_blank" rel="noopener noreferrer" className="inline-flex min-h-11 shrink-0 items-center gap-2 whitespace-nowrap text-sm font-semibold text-navy underline-offset-4 hover:underline">
+          <Link href="/noticias" className="inline-flex min-h-11 shrink-0 items-center gap-2 whitespace-nowrap text-sm font-semibold text-navy underline-offset-4 hover:underline">
             <span>Ver todas<span className="hidden sm:inline"> as notícias</span></span> <IconArrow className="h-[18px] w-[18px]" />
-            <span className="sr-only">(site da SEFAZ, abre em nova aba)</span>
-          </a>
+          </Link>
         }
       >
         Notícias e atualizações
       </SectionTitle>
 
       <div className="mt-5 grid gap-8 border-t border-line pt-5 md:grid-cols-2 md:gap-0">
-        <article className="md:pr-10">
-          <p className="text-sm text-ink-soft"><time dateTime={noticia.data}>{formatarData(noticia.data)}</time></p>
-          <h3 className="mt-1 !font-sans text-xl font-semibold leading-snug !text-ink">
-            <a href={noticia.href} target="_blank" rel="noopener noreferrer" className="underline-offset-4 hover:underline">
-              {noticia.titulo}<span className="sr-only"> (abre em nova aba)</span>
-            </a>
-          </h3>
-          <p className="mt-2 text-ink-soft">{noticia.resumo}</p>
-        </article>
-
-        <div className="md:border-l md:border-line md:pl-10">
-          <h3 className="!font-sans text-xl font-semibold !text-ink">Últimas atualizações do acervo</h3>
-          <ul className="mt-3 space-y-3">
-            {ult.map((p) => (
-              <li key={p.id}>
-                <p className="text-sm text-ink-soft">{formatarData(p.atualizadoEm)}{p.tamanho ? ` · PDF · ${p.tamanho}` : ''}</p>
-                <a href={p.url} target="_blank" rel="noopener noreferrer" className="font-medium text-ink underline-offset-4 hover:underline">
-                  {p.titulo}<span className="sr-only"> (PDF, abre em nova aba)</span>
-                </a>
-              </li>
-            ))}
-          </ul>
-        </div>
+        {duas.map((n, i) => (
+          <article key={n.href} className={i === 0 ? 'md:pr-10' : 'md:border-l md:border-line md:pl-10'}>
+            <p className="text-sm text-ink-soft"><time dateTime={n.data}>{formatarData(n.data)}</time></p>
+            <h3 className="mt-1 !font-sans text-xl font-semibold leading-snug !text-ink">
+              <a href={n.href} target="_blank" rel="noopener noreferrer" className="underline-offset-4 hover:underline">
+                {n.titulo}<span className="sr-only"> (abre em nova aba)</span>
+              </a>
+            </h3>
+            {n.resumo && <p className="mt-2 line-clamp-3 text-ink-soft">{n.resumo}</p>}
+          </article>
+        ))}
       </div>
+
+      <h3 className="mt-10 !font-sans text-lg font-semibold !text-ink">Últimas atualizações do acervo</h3>
+      <ul className="mt-3 grid gap-x-10 gap-y-4 border-t border-line pt-4 md:grid-cols-3">
+        {ult.map((p) => (
+          <li key={p.id}>
+            <p className="text-sm text-ink-soft">{formatarData(p.atualizadoEm)}{p.tamanho ? ` · ${p.formato.toUpperCase()} · ${p.tamanho}` : ''}</p>
+            <a href={p.url} target="_blank" rel="noopener noreferrer" className="font-medium text-ink underline-offset-4 hover:underline">
+              {p.titulo}<span className="sr-only"> (abre em nova aba)</span>
+            </a>
+          </li>
+        ))}
+      </ul>
     </section>
   )
 }
@@ -218,6 +245,7 @@ export default function Home() {
     <>
       <Hero />
       <AcessoRapido />
+      <FaixaNoticia />
       <Destaques />
       <Noticias />
       <Orientacoes />

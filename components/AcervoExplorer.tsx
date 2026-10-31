@@ -4,6 +4,7 @@ import { useMemo, useState } from 'react'
 import { useSearchParams } from 'next/navigation'
 import { PublicationRow } from './PublicationRow'
 import type { Publicacao } from '@/lib/acervo'
+import { acaoDoFormato } from '@/lib/paginas'
 
 type Tipo = { id: string; rotulo: string; tipos: string[] }
 
@@ -18,7 +19,7 @@ function fmt(iso: string | null) {
 
 const PASSO = 40
 
-export function AcervoExplorer({ itens, tipos }: { itens: Publicacao[]; tipos: Tipo[] }) {
+export function AcervoExplorer({ itens, tipos, mostrarTipo = true }: { itens: Publicacao[]; tipos: Tipo[]; mostrarTipo?: boolean }) {
   const sp = useSearchParams()
   const tipoInicial = tipos.some((t) => t.id === sp.get('tipo')) ? sp.get('tipo')! : ''
   const [q, setQ] = useState(sp.get('q') ?? '')
@@ -56,7 +57,7 @@ export function AcervoExplorer({ itens, tipos }: { itens: Publicacao[]; tipos: T
   const grupos = useMemo(() => {
     const m = new Map<string, Publicacao[]>()
     for (const p of visiveis) {
-      const k = p.ano ? String(p.ano) : 'Sem ano de referência'
+      const k = p.ano ? String(p.ano) : 'Outros documentos'
       m.set(k, [...(m.get(k) ?? []), p])
     }
     return Array.from(m.entries())
@@ -71,16 +72,17 @@ export function AcervoExplorer({ itens, tipos }: { itens: Publicacao[]; tipos: T
         role="search"
         aria-label="Filtrar publicações"
         onSubmit={(e) => e.preventDefault()}
-        className="grid gap-4 rounded-brand bg-surface p-5 md:grid-cols-[2fr_2fr_1fr]"
+        className={`grid gap-4 rounded-brand bg-surface p-5 ${mostrarTipo ? 'md:grid-cols-[2fr_2fr_1fr]' : 'md:grid-cols-[3fr_1fr]'}`}
       >
         <div>
           <label htmlFor="f-q" className="mb-1.5 block text-sm font-semibold">Buscar</label>
           <input
-            id="f-q" type="search" value={q} placeholder="Ex.: RGF 2026, dívida, municípios"
+            id="f-q" type="search" value={q} placeholder={mostrarTipo ? 'Ex.: RGF 2026, dívida, municípios' : 'Ex.: 2026, bimestre, portaria'}
             className={campo}
             onChange={(e) => { setQ(e.target.value); setLimite(PASSO); sincronizarUrl(e.target.value, tipo) }}
           />
         </div>
+        {mostrarTipo && (
         <div>
           <label htmlFor="f-tipo" className="mb-1.5 block text-sm font-semibold">Tipo de publicação</label>
           <select
@@ -91,6 +93,7 @@ export function AcervoExplorer({ itens, tipos }: { itens: Publicacao[]; tipos: T
             {tipos.map((t) => <option key={t.id} value={t.id}>{t.rotulo}</option>)}
           </select>
         </div>
+        )}
         <div>
           <label htmlFor="f-ano" className="mb-1.5 block text-sm font-semibold">Ano</label>
           <select id="f-ano" value={ano} className={campo} onChange={(e) => { setAno(e.target.value); setLimite(PASSO) }}>
@@ -115,10 +118,12 @@ export function AcervoExplorer({ itens, tipos }: { itens: Publicacao[]; tipos: T
               <PublicationRow
                 key={p.id}
                 titulo={p.titulo}
+                descricao={p.descricao || undefined}
                 atualizadoEm={fmt(p.atualizadoEm)}
                 tamanho={p.tamanho}
+                formato={p.formato}
                 href={p.url}
-                acao={p.formato === 'pdf' ? 'Baixar PDF' : 'Acessar'}
+                acao={acaoDoFormato(p.formato)}
               />
             ))}
           </ul>

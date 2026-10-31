@@ -5,19 +5,20 @@ type Props = {
   descricao?: string
   atualizadoEm?: string // já formatado
   tamanho?: string | null
+  formato?: string
   href: string
   acao: string // "Baixar PDF" | "Acessar"
   externo?: boolean
 }
 
-export function PublicationRow({ titulo, descricao, atualizadoEm, tamanho, href, acao, externo = true }: Props) {
+export function PublicationRow({ titulo, descricao, atualizadoEm, tamanho, formato, href, acao, externo = true }: Props) {
   const extra = externo ? { target: '_blank', rel: 'noopener noreferrer' } : {}
   return (
     <li className="grid grid-cols-[auto_1fr] items-center gap-x-4 gap-y-1 border-b border-line py-4 sm:grid-cols-[auto_1fr_auto] sm:gap-x-5">
       <IconPdf className="row-span-2 h-8 w-7 text-navy sm:row-span-1" />
       <div className="min-w-0 sm:border-l sm:border-line sm:pl-5">
-        <p className="font-sans text-[1.0625rem] font-semibold leading-snug text-ink">{titulo}</p>
-        {descricao && <p className="mt-0.5 text-[0.9375rem] text-ink-soft">{descricao}</p>}
+        <p className="break-words font-sans text-[1.0625rem] font-semibold leading-snug text-ink [overflow-wrap:anywhere]">{titulo}</p>
+        {descricao && <p className="mt-0.5 break-words text-[0.9375rem] text-ink-soft [overflow-wrap:anywhere]">{descricao}</p>}
         {(atualizadoEm || tamanho) && (
           <p className="mt-1 flex flex-wrap items-center gap-x-3 text-sm text-ink-soft">
             {atualizadoEm && (
@@ -25,7 +26,7 @@ export function PublicationRow({ titulo, descricao, atualizadoEm, tamanho, href,
                 <IconCalendar className="h-4 w-4" /> Atualizado em {atualizadoEm}
               </span>
             )}
-            {tamanho && <span>{acao === 'Baixar PDF' ? `PDF · ${tamanho}` : tamanho}</span>}
+            {(tamanho || formato) && <span>{[formato && formato !== 'link' ? formato.toUpperCase() : null, tamanho].filter(Boolean).join(' · ')}</span>}
           </p>
         )}
       </div>
