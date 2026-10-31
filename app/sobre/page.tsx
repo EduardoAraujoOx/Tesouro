@@ -22,7 +22,7 @@ const mapa = [
 export default function Sobre() {
   return (
     <>
-    <PageHeader titulo="Conheça o Tesouro Estadual" imagem={{ src: '/img/ponte-panorama.jpg', alt: 'Panorama da Terceira Ponte e da baía de Vitória, visto do Convento da Penha' }}>
+    <PageHeader titulo="Conheça o Tesouro Estadual" imagem={{ src: '/img/vitoria-noite.jpg', alt: 'Terceira Ponte iluminada à noite, com os prédios de Vitória ao fundo' }}>
       Este portal organiza as informações do Tesouro Estadual da Secretaria da Fazenda do Espírito Santo (SEFAZ-ES):
       publicações fiscais e contábeis, dívida pública, transferências aos municípios e orientações para gestores.
       Reúne hoje {todas.length} documentos, todos hospedados no site oficial da SEFAZ.
@@ -42,7 +42,7 @@ export default function Sobre() {
       </ul>
 
       <p className="mt-10 text-sm text-ink-soft">
-        Foto do cabeçalho: LucFreitas, <Link href="/creditos" className="underline underline-offset-4">CC BY-SA 4.0</Link>. Índice atualizado em {new Date(geradoEm).toLocaleDateString('pt-BR', { timeZone: 'America/Sao_Paulo' })}.
+        Foto do cabeçalho: Vitor Jubini/MTur, domínio público (<Link href="/creditos" className="underline underline-offset-4">créditos</Link>). Índice atualizado em {new Date(geradoEm).toLocaleDateString('pt-BR', { timeZone: 'America/Sao_Paulo' })}.
       </p>
     </div>
     </>

@@ -7,33 +7,23 @@ import { acessoRapido, noticia, orientacoes, reconhecimentos } from '@/lib/links
 import { formatarData, maisRecente, ultimasAtualizacoes } from '@/lib/acervo'
 
 const btnPrimario =
-  'group inline-flex min-h-12 items-center justify-center gap-3 rounded-brand bg-herobtn px-6 text-base font-semibold text-herobtn-fg shadow-lg shadow-black/20 transition hover:-translate-y-0.5 hover:shadow-xl focus-visible:outline-white'
+  'group inline-flex min-h-12 items-center justify-center gap-3 rounded-brand bg-navy px-6 text-base font-semibold text-on-navy shadow-lg shadow-navy/20 transition hover:-translate-y-0.5 hover:bg-navy-deep hover:shadow-xl'
 const btnSecundario =
-  'group inline-flex min-h-12 items-center justify-center gap-3 rounded-brand border border-white/80 bg-white/5 px-6 text-base font-semibold text-white backdrop-blur-sm transition hover:-translate-y-0.5 hover:bg-white/15 focus-visible:outline-white'
+  'group inline-flex min-h-12 items-center justify-center gap-3 rounded-brand border border-navy bg-paper px-6 text-base font-semibold text-navy transition hover:-translate-y-0.5 hover:bg-surface'
 
 function Hero() {
   return (
-    <section aria-labelledby="titulo-hero" className="on-dark relative isolate overflow-hidden bg-hero-overlay text-white">
-      <Image
-        src="/img/hero-vitoria.jpg"
-        alt="Terceira Ponte iluminada à noite, com os prédios de Vitória ao fundo"
-        fill
-        priority
-        sizes="100vw"
-        className="-z-20 object-cover object-[62%_55%]"
-      />
-      <div aria-hidden="true" className="hero-shade absolute inset-0 -z-10" />
-
-      <div className="mx-auto max-w-page px-5 pb-28 pt-14 md:px-8 md:pb-36 md:pt-20 lg:pt-24">
-        <div className="max-w-[44rem]">
+    <section aria-labelledby="titulo-hero" className="relative isolate overflow-hidden bg-paper">
+      <div className="mx-auto max-w-page lg:grid lg:min-h-[34rem] lg:grid-cols-12 lg:items-center">
+        <div className="relative z-10 px-5 pb-8 pt-10 md:px-8 md:pt-16 lg:col-span-6 lg:py-24 lg:pb-32 xl:col-span-6">
           <span className="accent-bar !mt-0 mb-6 !w-20" aria-hidden="true" />
           <h1
             id="titulo-hero"
-            className="text-[2.5rem] font-bold leading-[1.05] tracking-tight !text-white sm:text-5xl lg:text-[3.5rem] xl:text-[4rem]"
+            className="text-[2.5rem] font-bold leading-[1.05] tracking-tight !text-ink sm:text-5xl lg:text-[3.25rem] xl:text-[3.75rem]"
           >
             Transparência e responsabilidade na gestão das finanças públicas
           </h1>
-          <p className="mt-6 max-w-lg text-lg leading-relaxed text-white/95">
+          <p className="mt-6 max-w-md text-lg leading-relaxed text-ink-soft">
             Informações fiscais, contabilidade, dívida pública e publicações do Tesouro Estadual.
           </p>
           <div className="mt-9 flex flex-col gap-3 sm:flex-row">
@@ -45,6 +35,17 @@ function Hero() {
             </Link>
           </div>
         </div>
+
+        <div className="relative h-72 sm:h-96 lg:absolute lg:inset-y-0 lg:right-0 lg:h-auto lg:w-[62%]">
+          <Image
+            src="/img/hero-vitoria-dia.jpg"
+            alt="Vista de Vitória com a Terceira Ponte cruzando a baía e o Convento da Penha ao fundo"
+            fill
+            priority
+            sizes="(min-width: 1024px) 62vw, 100vw"
+            className="object-cover object-[68%_50%] [mask-image:linear-gradient(to_bottom,transparent,#000_30%)] lg:[mask-image:linear-gradient(to_right,transparent,#000_34%)]"
+          />
+        </div>
       </div>
     </section>
   )
@@ -52,7 +53,7 @@ function Hero() {
 
 function AcessoRapido() {
   return (
-    <section aria-labelledby="acesso-rapido" className="relative z-10 mx-auto -mt-16 max-w-page px-5 md:-mt-20 md:px-8">
+    <section aria-labelledby="acesso-rapido" className="relative z-10 mx-auto -mt-20 max-w-page px-5 md:-mt-24 md:px-8 lg:-mt-20">
       <div className="overflow-hidden rounded-brand border border-line bg-paper shadow-[0_24px_60px_-24px_rgba(8,43,87,0.45)] lg:flex lg:items-stretch">
         <h2
           id="acesso-rapido"

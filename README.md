@@ -47,7 +47,7 @@ nos modos normal e alto contraste.
 
 ## Pendências de conteúdo (validar com a Subsecretaria / ASCOM)
 
-- **Fotos**: obtidas no Wikimedia Commons (domínio público e CC BY-SA 4.0), com créditos em `/creditos`. Se a Ascom tiver acervo próprio de fotos, basta trocar os arquivos em `public/img/`.
+- **Fotos**: a imagem do hero foi fornecida pela equipe do projeto (confirmar origem e direitos de uso); as demais vêm do Wikimedia Commons (domínio público e CC BY-SA 4.0). Créditos em `/creditos`. Para trocar qualquer foto, substitua o arquivo em `public/img/`.
 - **Brasão e logomarca**: uso institucional a aprovar; arquivo em `public/img/logo-tesouro-estadual.png`.
 - **"Orientação Orçamentária"** aponta hoje para *Execução Financeira* na SEFAZ; confirmar o destino correto.
 - **Texto institucional** ("Conheça o Tesouro") é só um mapa do portal; faltam texto e competências oficiais.
