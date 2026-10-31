@@ -18,15 +18,6 @@ const imagens = [
     nota: 'Redimensionada.',
   },
   {
-    uso: 'Notícia em destaque na página inicial',
-    titulo: 'Vista aérea de Vitória',
-    autor: 'Bento Mattos',
-    licenca: 'CC BY-SA 4.0',
-    licencaUrl: 'https://creativecommons.org/licenses/by-sa/4.0/deed.pt-br',
-    fonte: 'https://commons.wikimedia.org/wiki/File:Vista_Aérea_de_Vitória.jpg',
-    nota: 'Recortada (parte inferior) e redimensionada.',
-  },
-  {
     uso: 'Faixa da página "Conheça o Tesouro"',
     titulo: 'Terceira Ponte, Vitória (ES), à noite',
     autor: 'Vitor Jubini / Ministério do Turismo',

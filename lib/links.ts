@@ -17,17 +17,18 @@ export const institucional: Link[] = [
 export const menuPrincipal: Link[] = [
   { rotulo: 'Publicações', href: '/publicacoes' },
   { rotulo: 'Contabilidade', href: '/publicacoes?tipo=normas-contabeis' },
-  { rotulo: 'Finanças', href: '/servicos' },
+  { rotulo: 'Política Fiscal', href: '/publicacoes?tipo=lrf' },
   { rotulo: 'Dívida Pública', href: '/publicacoes?tipo=divida-paf' },
   { rotulo: 'Municípios', href: '/publicacoes?tipo=municipios' },
   { rotulo: 'Fale Conosco', href: '#contato' },
 ]
 
+// `curto` é o rótulo usado no celular, como no mockup mobile.
 export const acessoRapido = [
-  { rotulo: 'Resultado do Tesouro', href: '/publicacoes?tipo=resultado-tesouro', icone: 'bars' },
-  { rotulo: 'Dívida Pública', href: '/publicacoes?tipo=divida-paf', icone: 'coins' },
-  { rotulo: 'Contabilidade Aplicada', href: '/publicacoes?tipo=normas-contabeis', icone: 'doc' },
-  { rotulo: 'Transferências aos Municípios', href: '/publicacoes?tipo=municipios', icone: 'people' },
+  { rotulo: 'Resultado do Tesouro', curto: 'Resultado do Tesouro', href: '/publicacoes?tipo=resultado-tesouro', icone: 'bars' },
+  { rotulo: 'Dívida Pública', curto: 'Dívida Pública', href: '/publicacoes?tipo=divida-paf', icone: 'coins' },
+  { rotulo: 'Contabilidade Aplicada', curto: 'Contabilidade', href: '/publicacoes?tipo=normas-contabeis', icone: 'doc' },
+  { rotulo: 'Transferências aos Municípios', curto: 'Municípios', href: '/publicacoes?tipo=municipios', icone: 'people' },
 ] as const
 
 export const orientacoes = [
@@ -102,22 +103,6 @@ export const noticia = {
   data: '2026-10-26',
   titulo: 'Espírito Santo se consolida como referência nacional em excelência na gestão fiscal',
   resumo:
-    'Pelo terceiro ano consecutivo, o Estado conquistou a Nota A+ da Secretaria do Tesouro Nacional e é primeiro lugar em Solidez Fiscal no Ranking de Competitividade dos Estados.',
+    'Pelo terceiro ano consecutivo, o Estado conquistou a Nota A+ da Secretaria do Tesouro Nacional e é o primeiro lugar em Solidez Fiscal no Ranking de Competitividade dos Estados, do Centro de Liderança Pública.',
   href: `${S}/espirito-santo-se-consolida-como-referencia-nacional-em-excelencia-na-gestao-fiscal`,
 }
-
-/** Números citados na notícia da SEFAZ de 26/10/2026 (fonte: noticia.href). */
-export const reconhecimentos = [
-  {
-    valor: 'A+',
-    rotuloAcessivel: 'Nota A mais',
-    titulo: 'Nota máxima da STN',
-    detalhe: 'Pelo terceiro ano consecutivo, segundo a Secretaria do Tesouro Nacional.',
-  },
-  {
-    valor: '1º',
-    rotuloAcessivel: 'Primeiro lugar',
-    titulo: 'Solidez Fiscal',
-    detalhe: 'No Ranking de Competitividade dos Estados, do Centro de Liderança Pública.',
-  },
-] as const

@@ -115,7 +115,7 @@ export function Header() {
                 onClick={() => setInstAberto((v) => !v)}
               >
                 Institucional <IconChevron className="h-4 w-4" />
-                <span className="accent-bar absolute -bottom-px left-0 mt-0 w-full opacity-0 transition-opacity group-hover:opacity-100 group-aria-expanded:opacity-100" style={{ height: 3 }} />
+                <span className={`accent-bar absolute -bottom-px left-0 mt-0 w-full transition-opacity group-hover:opacity-100 group-aria-expanded:opacity-100 ${pathname === '/' ? 'opacity-100' : 'opacity-0'}`} style={{ height: 3 }} />
               </button>
               {instAberto && (
                 <ul className="absolute left-0 top-full z-30 mt-px w-80 rounded-b-brand border border-line bg-paper py-2 shadow-lg">

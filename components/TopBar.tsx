@@ -58,8 +58,8 @@ export function TopBar() {
         <div className="hidden items-center gap-1 md:flex" role="group" aria-label="Recursos de acessibilidade">
           <button type="button" className={`${btn} disabled:opacity-40`} onClick={alternarContraste} aria-pressed={alto}>
             <IconAccess className="mr-1.5 h-[18px] w-[18px]" />
-            <IconContrast className="mr-1.5 h-[18px] w-[18px]" />
-            Alto contraste
+            Acessibilidade<span className="sr-only">: alto contraste</span>
+            <IconContrast className="ml-2 h-[18px] w-[18px]" />
           </button>
           <span aria-hidden="true" className="mx-2 h-4 w-px bg-current opacity-40" />
           <button type="button" className={btn} onClick={() => passo(-1)} disabled={tam === 'sm'}>A−<span className="sr-only"> diminuir o tamanho do texto</span></button>

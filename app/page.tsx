@@ -2,14 +2,14 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { PublicationRow } from '@/components/PublicationRow'
 import { SectionTitle } from '@/components/SectionTitle'
-import { IconArrow, IconExternal, iconePorNome } from '@/components/Icons'
-import { acessoRapido, noticia, orientacoes, reconhecimentos } from '@/lib/links'
+import { IconArrow, iconePorNome } from '@/components/Icons'
+import { acessoRapido, noticia, orientacoes } from '@/lib/links'
 import { formatarData, maisRecente, ultimasAtualizacoes } from '@/lib/acervo'
 
 const btnPrimario =
-  'group inline-flex min-h-12 items-center justify-center gap-3 rounded-brand bg-navy px-6 text-base font-semibold text-on-navy shadow-lg shadow-navy/20 transition hover:-translate-y-0.5 hover:bg-navy-deep hover:shadow-xl'
+  'group inline-flex min-h-12 items-center justify-center gap-3 rounded-brand bg-navy px-6 text-base font-semibold text-on-navy transition hover:bg-navy-deep'
 const btnSecundario =
-  'group inline-flex min-h-12 items-center justify-center gap-3 rounded-brand border border-navy bg-paper px-6 text-base font-semibold text-navy transition hover:-translate-y-0.5 hover:bg-surface'
+  'group inline-flex min-h-12 items-center justify-center gap-3 rounded-brand border border-navy bg-paper px-6 text-base font-semibold text-navy transition hover:bg-surface'
 
 function Hero() {
   return (
@@ -28,10 +28,10 @@ function Hero() {
           </p>
           <div className="mt-9 flex flex-col gap-3 sm:flex-row">
             <Link href="/publicacoes" className={btnPrimario}>
-              Acessar publicações <IconArrow className="h-5 w-5 transition group-hover:translate-x-1" />
+              Acessar publicações <IconArrow className="h-5 w-5" />
             </Link>
             <Link href="/sobre" className={btnSecundario}>
-              Conheça o Tesouro <IconArrow className="h-5 w-5 transition group-hover:translate-x-1" />
+              Conheça o Tesouro <IconArrow className="h-5 w-5" />
             </Link>
           </div>
         </div>
@@ -53,25 +53,20 @@ function Hero() {
 
 function AcessoRapido() {
   return (
-    <section aria-labelledby="acesso-rapido" className="relative z-10 mx-auto -mt-20 max-w-page px-5 md:-mt-24 md:px-8 lg:-mt-20">
-      <div className="overflow-hidden rounded-brand border border-line bg-paper shadow-[0_24px_60px_-24px_rgba(8,43,87,0.45)] lg:flex lg:items-stretch">
-        <h2
-          id="acesso-rapido"
-          className="flex items-center gap-3 border-b border-line px-6 py-5 text-[1.5rem] font-bold lg:w-60 lg:shrink-0 lg:border-b-0 lg:border-r"
-        >
+    <section aria-labelledby="acesso-rapido" className="border-y border-line bg-paper">
+      <div className="mx-auto max-w-page px-5 py-5 md:px-8 lg:flex lg:items-center lg:gap-8">
+        <h2 id="acesso-rapido" className="mb-3 flex items-center gap-3 text-[1.75rem] font-bold lg:mb-0 lg:shrink-0">
           <span aria-hidden="true" className="inline-block h-9 w-1 shrink-0" style={{ background: 'linear-gradient(#39B5E8 50%, #F28AB2 50%)' }} />
           Acesso rápido
         </h2>
-        <ul className="grid flex-1 grid-cols-2 lg:grid-cols-4">
+        <ul className="grid grid-cols-2 lg:flex lg:flex-1 lg:justify-between">
           {acessoRapido.map((a, i) => {
             const Icone = iconePorNome[a.icone]
             return (
-              <li key={a.rotulo} className={`border-line ${i % 2 === 1 ? 'border-l' : ''} ${i >= 2 ? 'border-t lg:border-t-0' : ''} ${i > 0 ? 'lg:border-l' : ''}`}>
-                <Link href={a.href} className="group flex h-full min-h-20 flex-col items-start gap-3 px-4 py-4 transition hover:bg-surface sm:flex-row sm:items-center sm:gap-4 sm:px-5">
-                  <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-surface text-navy transition group-hover:bg-navy group-hover:text-on-navy">
-                    <Icone className="h-6 w-6" strokeWidth={1.5} />
-                  </span>
-                  <span className="min-w-0 text-[0.9375rem] font-semibold leading-snug text-ink">{a.rotulo}</span>
+              <li key={a.rotulo} className={`border-line ${i % 2 === 1 ? 'border-l pl-4' : ''} ${i >= 2 ? 'border-t lg:border-t-0' : ''} lg:flex-1 lg:border-l lg:pl-6`}>
+                <Link href={a.href} className="flex min-h-14 items-center gap-3 py-3 text-[0.9375rem] font-medium leading-tight text-ink underline-offset-4 hover:underline">
+                  <Icone className="h-9 w-9 shrink-0 text-navy" strokeWidth={1.4} />
+                  <span><span className="lg:hidden">{a.curto}</span><span className="hidden lg:inline">{a.rotulo}</span></span>
                 </Link>
               </li>
             )
@@ -89,7 +84,7 @@ function Destaques() {
   const rreo = maisRecente(['rreo'])
 
   return (
-    <section aria-labelledby="destaques" className="mx-auto mt-16 max-w-page px-5 md:px-8">
+    <section aria-labelledby="destaques" className="mx-auto mt-14 max-w-page px-5 md:px-8">
       <SectionTitle
         id="destaques"
         action={
@@ -140,100 +135,69 @@ function Destaques() {
 function Noticias() {
   const ult = ultimasAtualizacoes(3)
   return (
-    <section aria-labelledby="noticias" className="mx-auto mt-20 max-w-page px-5 md:px-8">
-      <SectionTitle id="noticias">Notícias e atualizações</SectionTitle>
-
-      {/* Destaque editorial: notícia real da SEFAZ + números do reconhecimento */}
-      <article className="mt-6 overflow-hidden rounded-brand border border-line bg-paper shadow-[0_18px_44px_-28px_rgba(8,43,87,0.45)] lg:grid lg:grid-cols-12">
-        <figure className="relative lg:col-span-5">
-          <div className="relative aspect-[16/10] lg:absolute lg:inset-0 lg:aspect-auto">
-            <Image
-              src="/img/vitoria-aerea.jpg"
-              alt="Vista aérea de Vitória, com a Terceira Ponte cruzando a baía"
-              fill
-              sizes="(min-width: 1024px) 40vw, 100vw"
-              className="object-cover"
-            />
-          </div>
-          <figcaption className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/65 to-transparent px-4 pb-2 pt-8 text-xs text-white">
-            Foto: Bento Mattos, <Link href="/creditos" className="underline underline-offset-2">CC BY-SA 4.0</Link>
-          </figcaption>
-        </figure>
-
-        <div className="p-6 md:p-8 lg:col-span-7 lg:p-10">
-          <p className="text-sm font-semibold uppercase tracking-wider text-ink-soft">
-            Notícia · <time dateTime={noticia.data}>{formatarData(noticia.data)}</time>
-          </p>
-          <h3 className="mt-2 text-2xl font-bold leading-snug md:text-[1.75rem]">{noticia.titulo}</h3>
-          <p className="mt-3 text-ink-soft">{noticia.resumo}</p>
-
-          <dl className="mt-6 grid gap-5 border-t border-line pt-6 sm:grid-cols-2">
-            {reconhecimentos.map((r) => (
-              <div key={r.valor} className="flex items-center gap-4">
-                <dt className="font-serif text-5xl font-bold leading-none text-navy md:text-6xl" aria-label={r.rotuloAcessivel}>{r.valor}</dt>
-                <dd className="text-[0.9375rem] leading-snug text-ink-soft">
-                  <span className="block font-semibold text-ink">{r.titulo}</span>
-                  {r.detalhe}
-                </dd>
-              </div>
-            ))}
-          </dl>
-
-          <a
-            href={noticia.href}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="mt-7 inline-flex min-h-11 items-center gap-2 font-semibold text-navy underline-offset-4 hover:underline"
-          >
-            Ler a notícia completa na SEFAZ <IconExternal className="h-4 w-4" /><span className="sr-only">(abre em nova aba)</span>
+    <section aria-labelledby="noticias" className="mx-auto mt-14 max-w-page px-5 md:px-8">
+      <SectionTitle
+        id="noticias"
+        action={
+          <a href="https://sefaz.es.gov.br" target="_blank" rel="noopener noreferrer" className="inline-flex min-h-11 shrink-0 items-center gap-2 whitespace-nowrap text-sm font-semibold text-navy underline-offset-4 hover:underline">
+            <span>Ver todas<span className="hidden sm:inline"> as notícias</span></span> <IconArrow className="h-[18px] w-[18px]" />
+            <span className="sr-only">(site da SEFAZ, abre em nova aba)</span>
           </a>
-        </div>
-      </article>
+        }
+      >
+        Notícias e atualizações
+      </SectionTitle>
 
-      <h3 className="mt-10 !font-sans text-lg font-semibold !text-ink">Últimas atualizações do acervo</h3>
-      <ul className="mt-3 grid gap-4 md:grid-cols-3">
-        {ult.map((p) => (
-          <li key={p.id}>
-            <a
-              href={p.url}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="group block h-full rounded-brand border border-line p-4 transition hover:-translate-y-0.5 hover:border-navy hover:shadow-md"
-            >
-              <span className="block text-sm text-ink-soft">{formatarData(p.atualizadoEm)}{p.tamanho ? ` · PDF · ${p.tamanho}` : ''}</span>
-              <span className="mt-1 block font-semibold leading-snug text-ink group-hover:underline underline-offset-4">{p.titulo}</span>
-              <span className="sr-only">(abre em nova aba)</span>
+      <div className="mt-5 grid gap-8 border-t border-line pt-5 md:grid-cols-2 md:gap-0">
+        <article className="md:pr-10">
+          <p className="text-sm text-ink-soft"><time dateTime={noticia.data}>{formatarData(noticia.data)}</time></p>
+          <h3 className="mt-1 !font-sans text-xl font-semibold leading-snug !text-ink">
+            <a href={noticia.href} target="_blank" rel="noopener noreferrer" className="underline-offset-4 hover:underline">
+              {noticia.titulo}<span className="sr-only"> (abre em nova aba)</span>
             </a>
-          </li>
-        ))}
-      </ul>
+          </h3>
+          <p className="mt-2 text-ink-soft">{noticia.resumo}</p>
+        </article>
+
+        <div className="md:border-l md:border-line md:pl-10">
+          <h3 className="!font-sans text-xl font-semibold !text-ink">Últimas atualizações do acervo</h3>
+          <ul className="mt-3 space-y-3">
+            {ult.map((p) => (
+              <li key={p.id}>
+                <p className="text-sm text-ink-soft">{formatarData(p.atualizadoEm)}{p.tamanho ? ` · PDF · ${p.tamanho}` : ''}</p>
+                <a href={p.url} target="_blank" rel="noopener noreferrer" className="font-medium text-ink underline-offset-4 hover:underline">
+                  {p.titulo}<span className="sr-only"> (PDF, abre em nova aba)</span>
+                </a>
+              </li>
+            ))}
+          </ul>
+        </div>
+      </div>
     </section>
   )
 }
 
 function Orientacoes() {
   return (
-    <section aria-labelledby="orientacoes" className="mx-auto mt-20 max-w-page px-5 md:px-8">
+    <section aria-labelledby="orientacoes" className="mx-auto mt-14 max-w-page px-5 md:px-8">
       <SectionTitle id="orientacoes">Orientações</SectionTitle>
-      <ul className="mt-6 grid gap-4 md:grid-cols-3">
-        {orientacoes.map((o) => {
+      <ul className="mt-5 grid gap-3 md:grid-cols-3 md:gap-0">
+        {orientacoes.map((o, i) => {
           const Icone = iconePorNome[o.icone]
           const externo = o.href.startsWith('http')
           const conteudo = (
             <>
-              <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-surface text-navy transition group-hover:bg-navy group-hover:text-on-navy">
-                <Icone className="h-6 w-6" strokeWidth={1.5} />
-              </span>
+              <Icone className="mt-0.5 h-10 w-10 shrink-0 text-navy" strokeWidth={1.3} />
               <span className="min-w-0">
                 <span className="flex items-center gap-2 font-sans text-[1.0625rem] font-semibold text-ink">
-                  {o.titulo} <IconArrow className="h-[18px] w-[18px] transition group-hover:translate-x-1" />
+                  {o.titulo} <IconArrow className="h-[18px] w-[18px]" />
                   {externo && <span className="sr-only">(abre em nova aba)</span>}
                 </span>
                 <span className="mt-1 block text-[0.9375rem] text-ink-soft">{o.texto}</span>
               </span>
             </>
           )
-          const cls = 'group flex h-full gap-4 rounded-brand border border-line p-5 transition hover:-translate-y-0.5 hover:border-navy hover:shadow-md'
+          const cls = `flex h-full gap-4 rounded-brand border border-line p-4 hover:bg-surface md:rounded-none md:border-0 md:py-3 ${i === 0 ? 'md:pl-0 md:pr-8' : 'md:border-l md:px-8'}`
           return (
             <li key={o.titulo}>
               {externo ? (
