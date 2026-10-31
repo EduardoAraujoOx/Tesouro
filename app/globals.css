@@ -1,79 +1,60 @@
+@import '@fontsource-variable/inter';
+@import '@fontsource-variable/source-serif-4/opsz.css';
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-/* Light theme (default) */
 :root {
-  --color-background-primary: #ffffff;
-  --color-background-secondary: #f8fafc;
-  --color-background-tertiary: #f1f5f9;
-  --color-text-primary: #0f172a;
-  --color-text-secondary: #64748b;
-  --color-border-primary: #cbd5e1;
-  --color-border-secondary: #e2e8f0;
-  --color-border-tertiary: #f1f5f9;
-  --color-sidebar-bg: #0F1624;
-  --color-negative: #dc2626;
-  --color-positive: #16a34a;
+  --paper: 255 255 255;
+  --surface: 246 248 251;       /* #F6F8FB */
+  --line: 217 224 232;          /* #D9E0E8 */
+  --ink: 13 31 60;              /* #0D1F3C */
+  --ink-soft: 59 74 99;         /* #3B4A63 */
+  --navy: 8 43 87;              /* #082B57 */
+  --navy-deep: 5 32 63;
+  --on-navy: 255 255 255;
 }
 
-/* Dark theme */
-[data-theme="dark"] {
-  --color-background-primary: #0f172a;
-  --color-background-secondary: #1e293b;
-  --color-background-tertiary: #0f172a;
-  --color-text-primary: #f1f5f9;
-  --color-text-secondary: #94a3b8;
-  --color-border-primary: #334155;
-  --color-border-secondary: #1e293b;
-  --color-border-tertiary: #1e293b;
-  --color-sidebar-bg: #020617;
-  --color-negative: #fca5a5;
-  --color-positive: #86efac;
+/* Alto contraste: fundo preto, texto branco, destaque amarelo (padrão de portais de governo). */
+:root[data-contrast='alto'] {
+  --paper: 0 0 0;
+  --surface: 17 17 17;
+  --line: 255 255 255;
+  --ink: 255 255 255;
+  --ink-soft: 255 255 255;
+  --navy: 255 214 0;
+  --navy-deep: 255 214 0;
+  --on-navy: 0 0 0;
+}
+:root[data-contrast='alto'] img.invert-hc { filter: invert(1) hue-rotate(180deg); }
+
+/* Tamanho da fonte (A- / A / A+): todo o layout usa rem. */
+:root[data-font='sm'] { font-size: 87.5%; }
+:root[data-font='lg'] { font-size: 112.5%; }
+:root[data-font='xl'] { font-size: 125%; }
+
+html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; }
+body { @apply bg-paper font-sans text-ink antialiased; font-size: 1rem; line-height: 1.6; }
+h1, h2, h3 { @apply font-serif text-navy; font-optical-sizing: auto; }
+
+:focus-visible { outline: 3px solid rgb(var(--navy)); outline-offset: 3px; border-radius: 4px; }
+:root[data-contrast='alto'] :focus-visible { outline-color: #fff; }
+.on-dark :focus-visible { outline-color: #fff; }
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
 }
 
-* { box-sizing: border-box; }
-
-body {
-  font-family: system-ui, -apple-system, sans-serif;
-  background: var(--color-background-tertiary);
-  color: var(--color-text-primary);
-  margin: 0;
-  padding: 0;
-  transition: background 0.2s, color 0.2s;
+/* Marca gráfica: barra azul-clara + rosa sob títulos (apenas decorativa). */
+@layer components {
+  .accent-bar {
+    display: block; width: 3.5rem; height: 3px; margin-top: .5rem;
+    background: linear-gradient(90deg, #39B5E8 50%, #F28AB2 50%);
+  }
 }
 
-/* Tabular numbers for financial data */
-.tabular-nums {
-  font-variant-numeric: tabular-nums;
-}
-
-/* Negative values */
-.negative {
-  color: var(--color-negative);
-}
-
-/* Scrollbar styling */
-::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
-}
-::-webkit-scrollbar-track {
-  background: transparent;
-}
-::-webkit-scrollbar-thumb {
-  background: var(--color-border-primary);
-  border-radius: 3px;
-}
-
-/* Input yellow highlight for VI/IX */
-.vi-ix-input {
-  background: #fefce8;
-  border: 0.5px solid #fde047;
-  border-radius: 5px;
-}
-
-[data-theme="dark"] .vi-ix-input {
-  background: rgba(234, 179, 8, 0.15);
-  border-color: rgba(234, 179, 8, 0.4);
+.sr-only-focusable:not(:focus):not(:focus-within) {
+  position: absolute; width: 1px; height: 1px; margin: -1px; padding: 0; overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0;
 }

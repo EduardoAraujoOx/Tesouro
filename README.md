@@ -1,193 +1,57 @@
-# Disponibilidade Financeira Líquida — Poder Executivo ES
+# Portal do Tesouro Estadual – Espírito Santo
 
-> Sistema web interno da **SEFAZ-ES / Subsecretaria do Tesouro Estadual** para monitoramento mensal da suficiência de caixa do Poder Executivo do Espírito Santo, em conformidade com o **Art. 42 da Lei de Responsabilidade Fiscal (LRF)**.
+Portal público do Tesouro Estadual (SEFAZ-ES): transparência fiscal, publicações, dívida pública,
+transferências aos municípios e orientações para gestores. Substitui o sistema interno do Art. 42 da LRF
+que ocupava este repositório; aquele sistema está preservado no branch
+[`legacy/radar-fiscal-art42`](../../tree/legacy/radar-fiscal-art42).
 
-## Documentos
+## Como funciona
 
-| Documento | Descrição |
+O site é **estático** (Next.js 15 + Tailwind), sem banco de dados e sem login. Os documentos continuam
+hospedados no site oficial da SEFAZ (`sefaz.es.gov.br`), que é a fonte de referência; o portal mantém apenas
+um **índice** em `data/acervo.json` (≈ 500 documentos) e aponta para os arquivos originais.
+
+| Rota | Conteúdo |
 |---|---|
-| **README.md** (este arquivo) | Visão geral, arquitetura e setup local |
-| **[DEPLOY.md](./DEPLOY.md)** | Guia completo de implantação em ambiente interno SEFAZ |
-| **[SPEC.md](./SPEC.md)** | Especificação técnica detalhada (modelo de dados, regras de negócio, telas) |
-| **[MAINTENANCE.md](./MAINTENANCE.md)** | Notas de manutenção, vulnerabilidades conhecidas e melhorias recomendadas |
+| `/` | Página inicial (hero, acesso rápido, destaques, notícias, orientações) |
+| `/publicacoes` | Acervo completo com busca, filtro por tipo e por ano (`?tipo=` e `?q=` na URL) |
+| `/servicos` | "Finanças": serviços e orientações para órgãos, gestores e servidores |
+| `/sobre` | O que o Tesouro publica e onde encontrar cada coisa |
 
----
-
-## Visão geral
-
-O sistema consolida, em tempo real, três fontes de dados fiscais — base SIGEFES, arrecadação prevista (SUBSET) e pressões orçamentárias (SEP) — e gera um painel executivo de 7 colunas derivadas com farol de suficiência por fonte de recurso. O resultado é exportável em PDF institucional e Excel analítico, com rastreabilidade completa de cada importação.
-
-### Painel executivo
-
-| Coluna | Descrição | Origem SIGEFES |
-|---|---|---|
-| 1 — Caixa bruto | Disponibilidade bruta de referência | Col I |
-| 2 — Obrigações | Compromissos já assumidos | Col II + III + IV |
-| 3 — Caixa líquido | Posição líquida atual | Col V |
-| 4 — Arrecadação prevista | Entrada esperada até o encerramento | Col VI (ajuste SUBSET) |
-| 5 — Total disponível | Caixa líquido + arrecadação | Col VII |
-| 6 — Pressões futuras | Demandas de despesa mapeadas | Col VIII + IX (ajuste SEP) |
-| **7 — Saldo Art. 42** | **Col 5 − Col 6** | Resultado final |
-
-**Farol de suficiência** calculado automaticamente por linha:
-
-- Verde — Saldo ≥ 0 e ≥ 10 % do caixa bruto
-- Amarelo — Saldo ≥ 0, mas abaixo de 10 %
-- Vermelho — Saldo negativo
-- Cinza — Arrecadação ou pressão pendentes de input manual
-
----
-
-## Stack tecnológica
-
-| Camada | Tecnologia |
-|---|---|
-| Framework | Next.js 14 (App Router) |
-| Linguagem | TypeScript 5 (strict) |
-| ORM | Prisma 7 com `@prisma/adapter-pg` |
-| Banco de dados | PostgreSQL via Supabase (Transaction Pooler) |
-| Autenticação | NextAuth v4 — Credentials + bcryptjs |
-| Exportação PDF | HTML server-side formatado para `window.print()` |
-| Exportação Excel | ExcelJS — 2 abas: Radar Fiscal + Colunas Técnicas |
-| Deploy | Vercel (Edge Network) |
-| Segurança | HTTP Security Headers (CSP, HSTS, X-Frame-Options…) |
-
----
-
-## Arquitetura de módulos
-
-```
-app/
-├── (auth)/login/          # Página de autenticação
-├── (protected)/
-│   ├── dashboard/         # Painel executivo principal
-│   ├── insercao/
-│   │   ├── upload/        # Upload da planilha SIGEFES (.xlsx)
-│   │   ├── arrecadacao/   # Input manual — Col VI (SUBSET)
-│   │   └── pressoes/      # Input manual — Col IX (SEP)
-│   ├── historico/         # Histórico de importações e exportações
-│   ├── memoria/           # Memória de cálculo + glossário das colunas
-│   └── admin/usuarios/    # Gestão de usuários (ADMIN only)
-api/
-├── auth/                  # NextAuth handlers
-├── sigefes/               # Upload + parsing da planilha SIGEFES
-├── arrecadacao/           # CRUD Col VI por fonte de recurso
-├── pressoes/              # CRUD Col IX por fonte de recurso
-├── dashboard/             # Dados consolidados do painel
-├── historico/             # Listagem de uploads e exportações
-├── export/
-│   ├── pdf/               # HTML formatado para impressão/PDF
-│   └── excel/             # Arquivo .xlsx com ExcelJS
-└── admin/usuarios/        # CRUD de usuários (somente ADMIN)
-
-components/
-├── financial/             # Tabela executiva + badge de farol
-├── input/                 # Formulários de arrecadação e pressões
-├── layout/                # Sidebar + HeaderBar responsivos
-├── memoria/               # Componentes de memória de cálculo
-└── ui/                    # Primitivos reutilizáveis
-
-lib/
-├── auth/                  # Configuração NextAuth + authOptions
-├── calculations/          # computeExecutiveColumns + computeTrafficLight
-├── db/                    # Cliente Prisma singleton com adapter-pg
-├── excel/                 # Parser da planilha SIGEFES
-└── importers/             # Lógica de importação e deduplicação
-```
-
----
-
-## Modelo de dados
-
-```
-SigefesUpload      — registro de cada importação (monthRef, isLatest)
-  └── FinancialLine  — linhas hierárquicas com colunas I–XII + ajustes manuais
-ManualArrecadacao  — overrides de Col VI por fonte (SUBSET)
-ManualPressao      — overrides de Col IX por fonte (SEP)
-PdfExport          — log de cada exportação PDF gerada
-User               — usuários do sistema (roles: VIEWER / EDITOR / ADMIN)
-```
-
-A flag `isLatest = true` garante que o dashboard sempre exibe apenas a importação mais recente por mês de referência, preservando o histórico completo.
-
----
-
-## Segurança
-
-- **Autenticação obrigatória** em todas as rotas protegidas via NextAuth middleware
-- **RBAC**: `VIEWER` (leitura), `EDITOR` (uploads e inputs manuais), `ADMIN` (gestão de usuários)
-- **HTTP Security Headers** aplicados globalmente via `next.config.mjs`:
-  - `Content-Security-Policy` — permite apenas origens explicitamente autorizadas
-  - `Strict-Transport-Security` — HTTPS forçado por 2 anos, elegível para preload list
-  - `X-Frame-Options: SAMEORIGIN` — impede clickjacking
-  - `X-Content-Type-Options: nosniff`
-  - `Permissions-Policy` — desativa câmera, microfone e geolocalização
-  - `Referrer-Policy: strict-origin-when-cross-origin`
-
----
-
-## Setup local
-
-### Pré-requisitos
-
-- Node.js ≥ 20
-- Banco PostgreSQL (Supabase ou local)
-
-### Instalação
+## Atualizar o acervo
 
 ```bash
-git clone https://github.com/eduardoaraujoox/tesouro
-cd tesouro
+npm run acervo        # python3 scripts/atualizar_acervo.py (só biblioteca padrão)
+git add data/acervo.json && git commit -m "Atualiza acervo"
+```
+
+Atenção: a data exibida pela SEFAZ em cada linha é a de **atualização do arquivo**, não a do período de
+referência. Por isso o portal ordena e destaca pelo período (`ano` + `periodo`) e rotula a data como
+"Atualizado em". Páginas da SEFAZ que o script ainda não lê: *Execução Financeira* e *MCONT* (links diretos).
+
+## Desenvolvimento
+
+```bash
 npm install
+npm run dev           # http://localhost:3000
+npm run build && npm start
 ```
 
-### Variáveis de ambiente
+## Identidade visual e acessibilidade
 
-Copie `.env.example` para `.env` e preencha:
+Tokens em `tailwind.config.ts` / `app/globals.css` (azul-marinho `#082B57`; azul-claro `#39B5E8` e rosa `#F28AB2`
+apenas como acento gráfico, nunca como cor de texto). Fontes autohospedadas (`@fontsource`), sem requisições a
+terceiros. Recursos: link "ir para o conteúdo", alto contraste, A−/A/A+ (persistidos), foco visível, navegação
+por teclado, `lang="pt-BR"`. Auditoria `axe-core` (WCAG 2.1 A/AA) sem violações nas 4 rotas, em desktop e celular,
+nos modos normal e alto contraste.
 
-```env
-DATABASE_URL="postgresql://..."    # Supabase Transaction Pooler (porta 6543)
-NEXTAUTH_SECRET="..."              # String aleatória para assinar sessões JWT
-NEXTAUTH_URL="http://localhost:3000"
-```
+## Pendências de conteúdo (validar com a Subsecretaria / ASCOM)
 
-### Banco de dados
-
-```bash
-# Aplica o schema ao banco
-npx prisma db push
-
-# Seed com dados de exemplo (opcional)
-npx prisma db seed
-```
-
-Para Supabase, rode `supabase_setup.sql` diretamente no SQL Editor para criar schema e dados iniciais em uma única execução.
-
-### Desenvolvimento
-
-```bash
-npm run dev     # Inicia em http://localhost:3000
-npm run build   # Build de produção (prisma generate + next build)
-```
-
----
-
-## Deploy — Ambiente Interno SEFAZ
-
-Para implantação no ambiente interno da Secretaria, consulte o **[DEPLOY.md](./DEPLOY.md)**, que cobre:
-
-- Implantação via **Docker** (recomendado)
-- Instalação **manual** em servidor Linux
-- Configuração de PostgreSQL interno
-- Proxy reverso com Nginx
-- Serviço systemd para inicialização automática
-- Checklist de segurança pós-implantação
-- Backup e manutenção
-
----
-
-## Contexto institucional
-
-Este sistema foi desenvolvido para a **Subsecretaria do Tesouro Estadual** da Secretaria de Estado da Fazenda do Espírito Santo (SEFAZ-ES), substituindo o controle manual em planilha Excel por monitoramento web em tempo real.
-
-O Art. 42 da LRF veda que o titular de Poder ou órgão, nos últimos dois quadrimestres do mandato, contraia obrigações de despesa que não possam ser cumpridas integralmente dentro do exercício — ou que tenham parcelas a serem pagas no exercício seguinte sem disponibilidade financeira suficiente. Este sistema automatiza a verificação dessa condição, por fonte de recurso, com rastreabilidade de cada importação e input manual realizado.
+- **Foto do hero**: recorte provisório do mockup (baixa resolução). Substituir por foto licenciada em `public/img/hero-vitoria.jpg`.
+- **Brasão e logomarca**: uso institucional a aprovar; arquivo em `public/img/logo-tesouro-estadual.png`.
+- **"Orientação Orçamentária"** aponta hoje para *Execução Financeira* na SEFAZ; confirmar o destino correto.
+- **Texto institucional** ("Conheça o Tesouro") é só um mapa do portal; faltam texto e competências oficiais.
+- **Menu**: "Política Fiscal" (mockup) foi trocado por "Finanças", pois não há conteúdo de política fiscal hoje.
+- **E-mail do Tesouro**: o mockup trazia um endereço fictício; o rodapé usa o telefone e o endereço reais da SEFAZ.
+- **Domínio de produção** sob `es.gov.br`: depende de SEFAZ/Prodest. Em `*.vercel.app` o site serve para homologação.
+- **Estatísticas de acesso**: `@vercel/analytics` está incluído; ative *Web Analytics* no projeto do Vercel.
