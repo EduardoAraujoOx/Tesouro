@@ -21,7 +21,7 @@ export const institucional: Link[] = [
 export const menuPrincipal: Link[] = [
   { rotulo: 'Publicações', href: '/publicacoes' },
   { rotulo: 'Contabilidade', href: '/publicacoes?tipo=normas-contabeis' },
-  { rotulo: 'Política Fiscal', href: '/publicacoes?tipo=lrf' },
+  { rotulo: 'Política Fiscal', href: '/indicadores' },
   { rotulo: 'Dívida Pública', href: T(DIVIDA) },
   { rotulo: 'Municípios', href: T('transferencias-constitucionais-aos-municipios') },
   { rotulo: 'Fale Conosco', href: '#contato' },

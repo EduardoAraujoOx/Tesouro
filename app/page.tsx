@@ -5,7 +5,8 @@ import { SectionTitle } from '@/components/SectionTitle'
 import { IconArrow, iconePorNome } from '@/components/Icons'
 import { acessoRapido, orientacoes } from '@/lib/links'
 import { NoticiaImagem } from '@/components/NoticiaImagem'
-import { noticiaPorTrecho, paraHome, type Noticia } from '@/lib/noticias'
+import { PainelFiscal } from '@/components/PainelFiscal'
+import { paraHome, type Noticia } from '@/lib/noticias'
 import { formatarData, maisRecente, ultimasAtualizacoes } from '@/lib/acervo'
 
 const btnPrimario =
@@ -210,41 +211,6 @@ function NoticiasPrincipais() {
   )
 }
 
-/** Reconhecimentos citados nas notícias da SEFAZ; cada número leva à matéria de origem. */
-function Reconhecimentos() {
-  const stn = noticiaPorTrecho('excelencia-na-gestao-fiscal')
-  const qualidade = noticiaPorTrecho('nota-a-em-ranking-nacional-de-qualidade')
-  const itens = [
-    { valor: 'A+', rotulo: 'Nota máxima da STN', texto: 'Pelo terceiro ano consecutivo, a melhor classificação do Tesouro Nacional.', n: stn },
-    { valor: '1º', rotulo: 'Solidez Fiscal', texto: 'Primeiro lugar no Ranking de Competitividade dos Estados, do Centro de Liderança Pública.', n: stn },
-    { valor: 'A', rotulo: 'Informação contábil e fiscal', texto: 'Nota A no ranking nacional de qualidade da informação contábil e fiscal, pelo 4º ano consecutivo.', n: qualidade },
-  ]
-  return (
-    <section aria-labelledby="reconhecimentos" className="on-dark mt-14 bg-navy text-on-navy md:mt-20">
-      <div className="mx-auto max-w-page px-5 py-12 md:px-8 md:py-16">
-        <h2 id="reconhecimentos" className="max-w-2xl text-headline !text-on-navy">
-          Uma gestão fiscal reconhecida nacionalmente
-        </h2>
-        <span className="accent-bar" aria-hidden="true" />
-        <ul className="mt-9 grid gap-8 md:grid-cols-3 md:gap-0">
-          {itens.map((it, i) => (
-            <li key={it.valor + it.rotulo} className={`md:px-8 ${i === 0 ? 'md:pl-0' : 'md:border-l md:border-white/25'}`}>
-              <p className="font-serif text-numeral font-semibold" aria-label={it.valor === 'A+' ? 'Nota A mais' : it.valor === '1º' ? 'Primeiro lugar' : 'Nota A'}>{it.valor}</p>
-              <p className="mt-3 text-lead font-semibold">{it.rotulo}</p>
-              <p className="mt-1 text-body opacity-90">{it.texto}</p>
-              {it.n && (
-                <a href={it.n.href} target="_blank" rel="noopener noreferrer" className="mt-3 inline-flex min-h-11 items-center gap-2 text-small font-semibold underline underline-offset-4">
-                  Leia a notícia <IconArrow className="h-4 w-4" /><span className="sr-only">(abre em nova aba)</span>
-                </a>
-              )}
-            </li>
-          ))}
-        </ul>
-      </div>
-    </section>
-  )
-}
-
 function MaisNoticias() {
   const lista = paraHome().grade
   if (lista.length === 0) return null
@@ -340,7 +306,7 @@ export default function Home() {
       <Hero />
       <NoticiasPrincipais />
       <div className="mt-12 md:mt-16"><AcessoRapido /></div>
-      <Reconhecimentos />
+      <PainelFiscal />
       <MaisNoticias />
       <Destaques />
       <UltimasAtualizacoes />

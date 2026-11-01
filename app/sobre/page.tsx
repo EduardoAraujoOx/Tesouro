@@ -21,6 +21,7 @@ const mapa = [
   ['Tesouro Cidadão', 'Versões em linguagem acessível do Balanço, do RREO e do RGF.', '/publicacoes?tipo=cidadao'],
   ['Fundo Soberano (FUNSES)', 'Relatório de desempenho e regimento do comitê gestor.', '/tesouro/funses'],
   ['Finanças: serviços e orientações', 'Contas bancárias, obrigações de pequeno valor, transferências especiais e sistemas.', '/servicos'],
+  ['Painel fiscal', 'Nota da CAPAG e limites da Lei de Responsabilidade Fiscal, com séries históricas e dados abertos.', '/indicadores'],
   ['Notícias', 'Notícias da SEFAZ sobre gestão fiscal, contabilidade e dívida.', '/noticias'],
 ] as const
 

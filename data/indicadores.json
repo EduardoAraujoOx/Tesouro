@@ -1,0 +1,940 @@
+{
+ "geradoEm": "2026-11-01T09:32:27+00:00",
+ "fontes": {
+  "siconfi": "https://apidatalake.tesouro.gov.br/docs/siconfi/",
+  "capag": "https://www.tesourotransparente.gov.br/ckan/dataset/capag-estados"
+ },
+ "capag": {
+  "conjuntoAtualizadoEm": "2026-03-10",
+  "serie": [
+   {
+    "ano": 2018,
+    "classificacao": "A",
+    "endividamento": 55.3,
+    "notaEndividamento": null,
+    "poupanca": 89.07,
+    "notaPoupanca": null,
+    "liquidez": 11.69,
+    "notaLiquidez": null,
+    "qualidadeInformacao": null
+   },
+   {
+    "ano": 2019,
+    "classificacao": "A",
+    "endividamento": 50.1,
+    "notaEndividamento": "A",
+    "poupanca": 88.33,
+    "notaPoupanca": "A",
+    "liquidez": 8.9,
+    "notaLiquidez": "A",
+    "qualidadeInformacao": null
+   },
+   {
+    "ano": 2020,
+    "classificacao": "A",
+    "endividamento": 44.52,
+    "notaEndividamento": "A",
+    "poupanca": 83.96,
+    "notaPoupanca": "A",
+    "liquidez": 6.26,
+    "notaLiquidez": "A",
+    "qualidadeInformacao": null
+   },
+   {
+    "ano": 2021,
+    "classificacao": "A",
+    "endividamento": 47.25,
+    "notaEndividamento": "A",
+    "poupanca": 83.83,
+    "notaPoupanca": "A",
+    "liquidez": 3.25,
+    "notaLiquidez": "A",
+    "qualidadeInformacao": null
+   },
+   {
+    "ano": 2022,
+    "classificacao": "A",
+    "endividamento": 39.2,
+    "notaEndividamento": "A",
+    "poupanca": 82.09,
+    "notaPoupanca": "A",
+    "liquidez": 3.1,
+    "notaLiquidez": "A",
+    "qualidadeInformacao": null
+   },
+   {
+    "ano": 2023,
+    "classificacao": "A",
+    "endividamento": 34.21,
+    "notaEndividamento": "A",
+    "poupanca": 80.57,
+    "notaPoupanca": "A",
+    "liquidez": 6.98,
+    "notaLiquidez": "A",
+    "qualidadeInformacao": null
+   },
+   {
+    "ano": 2024,
+    "classificacao": "A+",
+    "endividamento": 33.75,
+    "notaEndividamento": "A",
+    "poupanca": 81.72,
+    "notaPoupanca": "A",
+    "liquidez": 11.49,
+    "notaLiquidez": "A",
+    "qualidadeInformacao": "A"
+   },
+   {
+    "ano": 2025,
+    "classificacao": "A+",
+    "endividamento": 31.88,
+    "notaEndividamento": "A",
+    "poupanca": 77.75,
+    "notaPoupanca": "A",
+    "liquidez": 7.48,
+    "notaLiquidez": "A",
+    "qualidadeInformacao": "A"
+   }
+  ]
+ },
+ "lrf": {
+  "serie": [
+   {
+    "ano": 2019,
+    "quad": 1,
+    "pessoal": {
+     "valor": 40.63,
+     "limite": 49.0,
+     "prudencial": 46.55,
+     "alerta": 44.1,
+     "montante": 5731812500.98,
+     "rcl_ajustada": null
+    },
+    "divida": {
+     "valor": 6.57,
+     "dc": 48.99,
+     "limite": 200.0,
+     "alerta": 180.0,
+     "dcl_montante": 926255965.25,
+     "deducoes": 5986094946.35,
+     "caixa_bruta": 4509901530.65,
+     "haveres": 1568354042.77,
+     "rcl_ajustada": null,
+     "limiteFixo": true
+    },
+    "garantias": {
+     "valor": 0.36,
+     "limite": 22.0,
+     "alerta": 19.8,
+     "montante": 51163026.9,
+     "limiteFixo": true
+    },
+    "credito": {
+     "valor": 0.97,
+     "limite": 16.0,
+     "alerta": 14.4,
+     "montante": 137416261.53
+    }
+   },
+   {
+    "ano": 2019,
+    "quad": 2,
+    "pessoal": {
+     "valor": 39.57,
+     "limite": 49.0,
+     "prudencial": 46.55,
+     "alerta": 44.1,
+     "montante": 5780215576.45,
+     "rcl_ajustada": null
+    },
+    "divida": {
+     "valor": 6.19,
+     "dc": 47.52,
+     "limite": 200.0,
+     "alerta": 180.0,
+     "dcl_montante": 904757026.73,
+     "deducoes": 6037550267.93,
+     "caixa_bruta": 5106202705.03,
+     "haveres": 1058859595.29,
+     "rcl_ajustada": null,
+     "limiteFixo": true
+    },
+    "garantias": {
+     "valor": 0.36,
+     "limite": 22.0,
+     "alerta": 19.8,
+     "montante": 52461838.95,
+     "limiteFixo": true
+    },
+    "credito": {
+     "valor": 1.44,
+     "limite": 16.0,
+     "alerta": 14.4,
+     "montante": 210664812.71
+    }
+   },
+   {
+    "ano": 2019,
+    "quad": 3,
+    "pessoal": {
+     "valor": 36.34,
+     "limite": 49.0,
+     "prudencial": 46.55,
+     "alerta": 44.1,
+     "montante": 5745534447.55,
+     "rcl_ajustada": null
+    },
+    "divida": {
+     "valor": 14.04,
+     "dc": 44.52,
+     "limite": 200.0,
+     "alerta": 180.0,
+     "dcl_montante": 2223050665.95,
+     "deducoes": 4825903193.48,
+     "caixa_bruta": 5098057847.13,
+     "haveres": 54622153.17,
+     "rcl_ajustada": null,
+     "limiteFixo": true
+    },
+    "garantias": {
+     "valor": 0.34,
+     "limite": 22.0,
+     "alerta": 19.8,
+     "montante": 53101198.13,
+     "limiteFixo": true
+    },
+    "credito": {
+     "valor": 2.18,
+     "limite": 16.0,
+     "alerta": 14.4,
+     "montante": 345694762.87
+    }
+   },
+   {
+    "ano": 2020,
+    "quad": 1,
+    "pessoal": {
+     "valor": 38.91,
+     "limite": 49.0,
+     "prudencial": 46.55,
+     "alerta": 44.1,
+     "montante": 5871603988.13,
+     "rcl_ajustada": null
+    },
+    "divida": {
+     "valor": 13.46,
+     "dc": 49.2,
+     "limite": 200.0,
+     "alerta": 180.0,
+     "dcl_montante": 2038672546.2,
+     "deducoes": 5410671767.83,
+     "caixa_bruta": 5432018683.8,
+     "haveres": 103336728.76,
+     "rcl_ajustada": null,
+     "limiteFixo": true
+    },
+    "garantias": {
+     "valor": 0.35,
+     "limite": 22.0,
+     "alerta": 19.8,
+     "montante": 52429286.3,
+     "limiteFixo": true
+    },
+    "credito": {
+     "valor": 0.86,
+     "limite": 16.0,
+     "alerta": 14.4,
+     "montante": 130422847.19
+    }
+   },
+   {
+    "ano": 2020,
+    "quad": 2,
+    "pessoal": {
+     "valor": 39.66,
+     "limite": 49.0,
+     "prudencial": 46.55,
+     "alerta": 44.1,
+     "montante": 5949698896.41,
+     "rcl_ajustada": null
+    },
+    "divida": {
+     "valor": 10.3,
+     "dc": 49.09,
+     "limite": 200.0,
+     "alerta": 180.0,
+     "dcl_montante": 1555239227.64,
+     "deducoes": 5857772243.29,
+     "caixa_bruta": 5876352234.4,
+     "haveres": 85981089.95,
+     "rcl_ajustada": null,
+     "limiteFixo": true
+    },
+    "garantias": {
+     "valor": 0.34,
+     "limite": 22.0,
+     "alerta": 19.8,
+     "montante": 51743835.11,
+     "limiteFixo": true
+    },
+    "credito": {
+     "valor": 0.97,
+     "limite": 16.0,
+     "alerta": 14.4,
+     "montante": 146044694.91
+    }
+   },
+   {
+    "ano": 2020,
+    "quad": 3,
+    "pessoal": {
+     "valor": 38.81,
+     "limite": 49.0,
+     "prudencial": 46.55,
+     "alerta": 44.1,
+     "montante": 6045015125.18,
+     "rcl_ajustada": null
+    },
+    "divida": {
+     "valor": 9.06,
+     "dc": 47.4,
+     "limite": 200.0,
+     "alerta": 180.0,
+     "dcl_montante": 1415320262.92,
+     "deducoes": 5992007569.9,
+     "caixa_bruta": 6205184961.47,
+     "haveres": 69904973.37,
+     "rcl_ajustada": null,
+     "limiteFixo": true
+    },
+    "garantias": {
+     "valor": 0.34,
+     "limite": 22.0,
+     "alerta": 19.8,
+     "montante": 52635762.25,
+     "limiteFixo": true
+    },
+    "credito": {
+     "valor": 1.55,
+     "limite": 16.0,
+     "alerta": 14.4,
+     "montante": 241512029.81
+    }
+   },
+   {
+    "ano": 2021,
+    "quad": 1,
+    "pessoal": {
+     "valor": 37.11,
+     "limite": 49.0,
+     "prudencial": 46.55,
+     "alerta": 44.1,
+     "montante": 6039877916.4,
+     "rcl_ajustada": null
+    },
+    "divida": {
+     "valor": 4.14,
+     "dc": 44.91,
+     "limite": 200.0,
+     "alerta": 180.0,
+     "dcl_montante": 675790331.74,
+     "deducoes": 6655875475.42,
+     "caixa_bruta": 6629549788.45,
+     "haveres": 141347148.23,
+     "rcl_ajustada": null,
+     "limiteFixo": true
+    },
+    "garantias": {
+     "valor": 0.32,
+     "limite": 22.0,
+     "alerta": 19.8,
+     "montante": 51900171.3,
+     "limiteFixo": true
+    },
+    "credito": {
+     "valor": 0.08,
+     "limite": 16.0,
+     "alerta": 14.4,
+     "montante": 12651273.76
+    }
+   },
+   {
+    "ano": 2021,
+    "quad": 2,
+    "pessoal": {
+     "valor": 34.87,
+     "limite": 49.0,
+     "prudencial": 46.55,
+     "alerta": 44.1,
+     "montante": 6098833375.18,
+     "rcl_ajustada": null
+    },
+    "divida": {
+     "valor": -2.51,
+     "dc": 41.28,
+     "limite": 200.0,
+     "alerta": 180.0,
+     "dcl_montante": -439959959.73,
+     "deducoes": 7667365925.57,
+     "caixa_bruta": 7644858647.72,
+     "haveres": 118918426.24,
+     "rcl_ajustada": null,
+     "limiteFixo": true
+    },
+    "garantias": {
+     "valor": 0.29,
+     "limite": 22.0,
+     "alerta": 19.8,
+     "montante": 51209553.56,
+     "limiteFixo": true
+    },
+    "credito": {
+     "valor": 0.8,
+     "limite": 16.0,
+     "alerta": 14.4,
+     "montante": 140575135.44
+    }
+   },
+   {
+    "ano": 2021,
+    "quad": 3,
+    "pessoal": {
+     "valor": 34.81,
+     "limite": 49.0,
+     "prudencial": 46.55,
+     "alerta": 44.1,
+     "montante": 6535667071.56,
+     "rcl_ajustada": null
+    },
+    "divida": {
+     "valor": -0.82,
+     "dc": 39.28,
+     "limite": 200.0,
+     "alerta": 180.0,
+     "dcl_montante": -153394286.9,
+     "deducoes": 7537294333.02,
+     "caixa_bruta": 7873828901.06,
+     "haveres": 156974853.99,
+     "rcl_ajustada": null,
+     "limiteFixo": true
+    },
+    "garantias": {
+     "valor": 0.27,
+     "limite": 22.0,
+     "alerta": 19.8,
+     "montante": 50443123.91,
+     "limiteFixo": true
+    },
+    "credito": {
+     "valor": 1.25,
+     "limite": 16.0,
+     "alerta": 14.4,
+     "montante": 235240780.98
+    }
+   },
+   {
+    "ano": 2022,
+    "quad": 1,
+    "pessoal": {
+     "valor": 39.14,
+     "limite": 49.0,
+     "prudencial": 46.55,
+     "alerta": 44.1,
+     "montante": 7912366225.0,
+     "rcl_ajustada": null
+    },
+    "divida": {
+     "valor": -6.28,
+     "dc": 35.83,
+     "limite": 200.0,
+     "alerta": 180.0,
+     "dcl_montante": -1271453141.06,
+     "deducoes": 8523823717.21,
+     "caixa_bruta": 8633074814.76,
+     "haveres": 541298984.65,
+     "rcl_ajustada": null,
+     "limiteFixo": true
+    },
+    "garantias": {
+     "valor": 0.66,
+     "limite": 22.0,
+     "alerta": 19.8,
+     "montante": 134122064.3,
+     "limiteFixo": true
+    },
+    "credito": {
+     "valor": 0.86,
+     "limite": 16.0,
+     "alerta": 14.4,
+     "montante": 174398804.39
+    }
+   },
+   {
+    "ano": 2022,
+    "quad": 2,
+    "pessoal": {
+     "valor": 37.2,
+     "limite": 49.0,
+     "prudencial": 46.55,
+     "alerta": 44.1,
+     "montante": 7941658260.49,
+     "rcl_ajustada": null
+    },
+    "divida": {
+     "valor": -12.05,
+     "dc": 34.19,
+     "limite": 200.0,
+     "alerta": 180.0,
+     "dcl_montante": -2577928064.04,
+     "deducoes": 9892270968.3,
+     "caixa_bruta": 9946471650.33,
+     "haveres": 635564237.55,
+     "rcl_ajustada": null,
+     "limiteFixo": true
+    },
+    "garantias": {
+     "valor": 0.24,
+     "limite": 22.0,
+     "alerta": 19.8,
+     "montante": 51706666.16,
+     "limiteFixo": true
+    },
+    "credito": {
+     "valor": 1.49,
+     "limite": 16.0,
+     "alerta": 14.4,
+     "montante": 319662571.82
+    }
+   },
+   {
+    "ano": 2022,
+    "quad": 3,
+    "pessoal": {
+     "valor": 37.48,
+     "limite": 49.0,
+     "prudencial": 46.55,
+     "alerta": 44.1,
+     "montante": 7943796746.4,
+     "rcl_ajustada": null
+    },
+    "divida": {
+     "valor": -4.15,
+     "dc": 34.22,
+     "limite": 200.0,
+     "alerta": 180.0,
+     "dcl_montante": -881047592.28,
+     "deducoes": 8150143032.05,
+     "caixa_bruta": 8892099669.06,
+     "haveres": 697380898.24,
+     "rcl_ajustada": null,
+     "limiteFixo": true
+    },
+    "garantias": {
+     "valor": 0.65,
+     "limite": 22.0,
+     "alerta": 19.8,
+     "montante": 137794265.99,
+     "limiteFixo": true
+    },
+    "credito": {
+     "valor": 2.43,
+     "limite": 16.0,
+     "alerta": 14.4,
+     "montante": 515356237.11
+    }
+   },
+   {
+    "ano": 2023,
+    "quad": 1,
+    "pessoal": {
+     "valor": 38.65,
+     "limite": 49.0,
+     "prudencial": 46.55,
+     "alerta": 44.1,
+     "montante": 8152995973.79,
+     "rcl_ajustada": null
+    },
+    "divida": {
+     "valor": -9.6,
+     "dc": 34.22,
+     "limite": 200.0,
+     "alerta": 180.0,
+     "dcl_montante": -2030003265.06,
+     "deducoes": 9265267653.96,
+     "caixa_bruta": 9410327985.29,
+     "haveres": 692044705.66,
+     "rcl_ajustada": null,
+     "limiteFixo": true
+    },
+    "garantias": {
+     "valor": 0.64,
+     "limite": 22.0,
+     "alerta": 19.8,
+     "montante": 135111547.94,
+     "limiteFixo": true
+    },
+    "credito": {
+     "valor": 0.57,
+     "limite": 16.0,
+     "alerta": 14.4,
+     "montante": 120356073.43
+    }
+   },
+   {
+    "ano": 2023,
+    "quad": 2,
+    "pessoal": {
+     "valor": 40.12,
+     "limite": 49.0,
+     "prudencial": 46.55,
+     "alerta": 44.1,
+     "montante": 8398069007.22,
+     "rcl_ajustada": null
+    },
+    "divida": {
+     "valor": -12.18,
+     "dc": 35.0,
+     "limite": 200.0,
+     "alerta": 180.0,
+     "dcl_montante": -2550200429.12,
+     "deducoes": 9877238000.27,
+     "caixa_bruta": 9827726307.22,
+     "haveres": 749561220.16,
+     "rcl_ajustada": null,
+     "limiteFixo": true
+    },
+    "garantias": {
+     "valor": 0.65,
+     "limite": 22.0,
+     "alerta": 19.8,
+     "montante": 136582879.77,
+     "limiteFixo": true
+    },
+    "credito": {
+     "valor": 1.56,
+     "limite": 16.0,
+     "alerta": 14.4,
+     "montante": 327605710.05
+    }
+   },
+   {
+    "ano": 2023,
+    "quad": 3,
+    "pessoal": {
+     "valor": 38.29,
+     "limite": 49.0,
+     "prudencial": 46.55,
+     "alerta": 44.1,
+     "montante": 8540463514.25,
+     "rcl_ajustada": null
+    },
+    "divida": {
+     "valor": -6.64,
+     "dc": 33.72,
+     "limite": 200.0,
+     "alerta": 180.0,
+     "dcl_montante": -1482685202.11,
+     "deducoes": 9013242526.87,
+     "caixa_bruta": 9408450951.99,
+     "haveres": 820335665.97,
+     "rcl_ajustada": null,
+     "limiteFixo": true
+    },
+    "garantias": {
+     "valor": 0.78,
+     "limite": 22.0,
+     "alerta": 19.8,
+     "montante": 173169868.66,
+     "limiteFixo": true
+    },
+    "credito": {
+     "valor": 2.38,
+     "limite": 16.0,
+     "alerta": 14.4,
+     "montante": 531031718.84
+    }
+   },
+   {
+    "ano": 2024,
+    "quad": 1,
+    "pessoal": {
+     "valor": 37.83,
+     "limite": 49.0,
+     "prudencial": 46.55,
+     "alerta": 44.1,
+     "montante": 8891666255.71,
+     "rcl_ajustada": null
+    },
+    "divida": {
+     "valor": -8.99,
+     "dc": 33.07,
+     "limite": 200.0,
+     "alerta": 180.0,
+     "dcl_montante": -2115561553.06,
+     "deducoes": 9900398553.61,
+     "caixa_bruta": 9941815437.62,
+     "haveres": 882168741.58,
+     "rcl_ajustada": 23541608403.89
+    },
+    "garantias": {
+     "valor": 0.72,
+     "limite": 22.0,
+     "alerta": 19.8,
+     "montante": 169731096.57
+    },
+    "credito": {
+     "valor": 1.03,
+     "limite": 16.0,
+     "alerta": 14.4,
+     "montante": 242230587.36
+    }
+   },
+   {
+    "ano": 2024,
+    "quad": 2,
+    "pessoal": {
+     "valor": 37.14,
+     "limite": 49.0,
+     "prudencial": 46.55,
+     "alerta": 44.1,
+     "montante": 9124934661.72,
+     "rcl_ajustada": null
+    },
+    "divida": {
+     "valor": -7.91,
+     "dc": 32.91,
+     "limite": 200.0,
+     "alerta": 180.0,
+     "dcl_montante": -1947136767.11,
+     "deducoes": 10044424886.75,
+     "caixa_bruta": 9861962477.34,
+     "haveres": 987997892.67,
+     "rcl_ajustada": 24606667974.54
+    },
+    "garantias": {
+     "valor": 0.71,
+     "limite": 22.0,
+     "alerta": 19.8,
+     "montante": 173596456.66
+    },
+    "credito": {
+     "valor": 1.98,
+     "limite": 16.0,
+     "alerta": 14.4,
+     "montante": 487099229.78
+    }
+   },
+   {
+    "ano": 2024,
+    "quad": 3,
+    "pessoal": {
+     "valor": 36.05,
+     "limite": 49.0,
+     "prudencial": 46.55,
+     "alerta": 44.1,
+     "montante": 9445071057.65,
+     "rcl_ajustada": null
+    },
+    "divida": {
+     "valor": -9.76,
+     "dc": 31.97,
+     "limite": 200.0,
+     "alerta": 180.0,
+     "dcl_montante": -2564649397.74,
+     "deducoes": 10967849483.64,
+     "caixa_bruta": 10118955583.04,
+     "haveres": 1995212225.46,
+     "rcl_ajustada": 26287070552.92
+    },
+    "garantias": {
+     "valor": 0.72,
+     "limite": 22.0,
+     "alerta": 19.8,
+     "montante": 188064816.53
+    },
+    "credito": {
+     "valor": 2.74,
+     "limite": 16.0,
+     "alerta": 14.4,
+     "montante": 719597927.73
+    }
+   },
+   {
+    "ano": 2025,
+    "quad": 1,
+    "pessoal": {
+     "valor": 36.2,
+     "limite": 49.0,
+     "prudencial": 46.55,
+     "alerta": 44.1,
+     "montante": 9609170094.4,
+     "rcl_ajustada": null
+    },
+    "divida": {
+     "valor": -10.66,
+     "dc": 30.57,
+     "limite": 200.0,
+     "alerta": 180.0,
+     "dcl_montante": -2836651954.43,
+     "deducoes": 10974397459.32,
+     "caixa_bruta": 9897226055.3,
+     "haveres": 2005526070.94,
+     "rcl_ajustada": 26621838368.27
+    },
+    "garantias": {
+     "valor": 0.69,
+     "limite": 22.0,
+     "alerta": 19.8,
+     "montante": 184711921.26
+    },
+    "credito": {
+     "valor": 0.35,
+     "limite": 16.0,
+     "alerta": 14.4,
+     "montante": 93736153.34
+    }
+   },
+   {
+    "ano": 2025,
+    "quad": 2,
+    "pessoal": {
+     "valor": 35.26,
+     "limite": 49.0,
+     "prudencial": 46.55,
+     "alerta": 44.1,
+     "montante": 9827294519.31,
+     "rcl_ajustada": null
+    },
+    "divida": {
+     "valor": -60.11,
+     "dc": 28.96,
+     "limite": 200.0,
+     "alerta": 180.0,
+     "dcl_montante": -16798115675.48,
+     "deducoes": 24892285469.69,
+     "caixa_bruta": 11433728529.67,
+     "haveres": 14342047654.02,
+     "rcl_ajustada": 27946065781.49
+    },
+    "garantias": {
+     "valor": 0.73,
+     "limite": 22.0,
+     "alerta": 19.8,
+     "montante": 204811824.81
+    },
+    "credito": {
+     "valor": 1.0,
+     "limite": 16.0,
+     "alerta": 14.4,
+     "montante": 279738451.87
+    }
+   },
+   {
+    "ano": 2025,
+    "quad": 3,
+    "pessoal": {
+     "valor": 35.41,
+     "limite": 49.0,
+     "prudencial": 46.55,
+     "alerta": 44.1,
+     "montante": 9932700147.95,
+     "rcl_ajustada": null
+    },
+    "divida": {
+     "valor": -52.5,
+     "dc": 29.55,
+     "limite": 200.0,
+     "alerta": 180.0,
+     "dcl_montante": -14728876229.25,
+     "deducoes": 23020206006.46,
+     "caixa_bruta": 10374190095.6,
+     "haveres": 13846188949.76,
+     "rcl_ajustada": 28056831874.16
+    },
+    "garantias": {
+     "valor": 0.76,
+     "limite": 22.0,
+     "alerta": 19.8,
+     "montante": 212407743.07
+    },
+    "credito": {
+     "valor": 2.16,
+     "limite": 16.0,
+     "alerta": 14.4,
+     "montante": 605363396.82
+    }
+   },
+   {
+    "ano": 2026,
+    "quad": 1,
+    "pessoal": {
+     "valor": 34.53,
+     "limite": 49.0,
+     "prudencial": 46.55,
+     "alerta": 44.1,
+     "montante": 10304972199.98,
+     "rcl_ajustada": null
+    },
+    "divida": {
+     "valor": -54.72,
+     "dc": 27.27,
+     "limite": 200.0,
+     "alerta": 180.0,
+     "dcl_montante": -16367714543.19,
+     "deducoes": 24525794548.15,
+     "caixa_bruta": 11578356244.7,
+     "haveres": 13908106875.42,
+     "rcl_ajustada": 29910676657.47
+    },
+    "garantias": {
+     "valor": 0.69,
+     "limite": 22.0,
+     "alerta": 19.8,
+     "montante": 207338625.45
+    },
+    "credito": {
+     "valor": 0.74,
+     "limite": 16.0,
+     "alerta": 14.4,
+     "montante": 220618425.78
+    }
+   },
+   {
+    "ano": 2026,
+    "quad": 2,
+    "pessoal": {
+     "valor": 34.19,
+     "limite": 49.0,
+     "prudencial": 46.55,
+     "alerta": 44.1,
+     "montante": 10564542164.25,
+     "rcl_ajustada": null
+    },
+    "divida": {
+     "valor": -53.35,
+     "dc": 27.96,
+     "limite": 200.0,
+     "alerta": 180.0,
+     "dcl_montante": -16532444071.68,
+     "deducoes": 25198059399.02,
+     "caixa_bruta": 12030590758.78,
+     "haveres": 14140053504.8,
+     "rcl_ajustada": 30989302948.03
+    },
+    "garantias": {
+     "valor": 0.69,
+     "limite": 22.0,
+     "alerta": 19.8,
+     "montante": 214606452.19
+    },
+    "credito": {
+     "valor": 1.81,
+     "limite": 16.0,
+     "alerta": 14.4,
+     "montante": 561227059.96
+    },
+    "entregaEm": "2026-09-30"
+   }
+  ]
+ }
+}

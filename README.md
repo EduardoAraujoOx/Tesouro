@@ -15,6 +15,7 @@ fontes públicas, lidas por scripts e guardadas em `data/`:
 | `data/paginas.json` | 35 páginas do Tesouro em `sefaz.es.gov.br` | texto (HTML saneado) e grupos de arquivos de cada área |
 | `data/acervo.json` | as mesmas páginas | lista plana dos ≈ 730 arquivos, usada na busca de `/publicacoes` |
 | `data/noticias.json` | `sefaz.es.gov.br/noticias` | notícias da SEFAZ filtradas por temas do Tesouro, com imagem reduzida em `public/img/noticias/` (requer `pip install pillow`) |
+| `data/indicadores.json` | API do Siconfi (RGF do Poder Executivo, 2019 em diante) e dados abertos da CAPAG (Tesouro Transparente) | painel fiscal: limites da LRF por quadrimestre e notas da CAPAG; gera também `public/dados/*.csv` |
 | `data/curadoria-noticias.json` | edição manual | notícia de capa (`destaque`) e correções do tipo de imagem (`foto` ou `arte`) |
 
 Os **PDFs não são copiados**: o portal aponta para o arquivo oficial na SEFAZ, que continua sendo a fonte única
@@ -25,6 +26,7 @@ da verdade (evita versões desatualizadas de documentos fiscais e um repositóri
 | `/` | Página inicial (hero, acesso rápido, última notícia, destaques, notícias, orientações) |
 | `/tesouro/[área]` | Uma página para cada área do Tesouro (35), com o texto original e os documentos |
 | `/publicacoes` | Busca em todo o acervo, com filtro por tipo e por ano (`?tipo=` e `?q=` na URL) |
+| `/indicadores` | Painel fiscal: CAPAG, limites da LRF, séries históricas, metodologia e CSVs (ligada ao item "Política Fiscal" do menu) |
 | `/noticias` | Notícias do Tesouro publicadas pela SEFAZ |
 | `/servicos` | "Finanças": serviços e orientações para órgãos, gestores e servidores |
 | `/sobre`, `/creditos` | Mapa do portal; créditos das imagens |
@@ -32,7 +34,7 @@ da verdade (evita versões desatualizadas de documentos fiscais e um repositóri
 ## Atualizar o conteúdo
 
 ```bash
-npm run acervo   # atualizar_conteudo.py (páginas e arquivos) + atualizar_noticias.py (notícias); só biblioteca padrão
+npm run acervo   # conteúdo (SEFAZ) + notícias + indicadores (Siconfi e CAPAG); só biblioteca padrão (notícias pedem pillow)
 git add data && git commit -m "Atualiza conteúdo"
 ```
 
@@ -40,6 +42,7 @@ Detalhes importantes:
 
 - A data que a SEFAZ mostra em cada linha é a de **atualização do arquivo**, não a do período de referência. O portal
   ordena e destaca pelo período (`ano` + `periodo`, extraídos do título) e rotula a data como "Atualizado em".
+- **Painel fiscal**: o script `atualizar_indicadores.py` não recalcula nada além de razões entre valores publicados. A CAPAG de uma edição nova entra sozinha quando o Tesouro Nacional a publica nos dados abertos (a de 2026 ainda não estava lá). O degrau da dívida líquida em 2025 (item "demais haveres financeiros") é um fato do próprio RGF e aparece como nota; confirmar o texto com a Subsecretaria. Limites de dívida e garantias anteriores a 2024 usam o valor fixo das Resoluções do Senado (200% e 22%).
 - Para incluir uma página nova do Tesouro, acrescente o endereço em `PAGINAS` (`scripts/atualizar_conteudo.py`).
 - A página inicial é conduzida pelas notícias: a de capa vem de `destaque` (ou a mais recente), seguida de 3 laterais e 6 em grade. Fotos são cortadas em 16:10; cartões gráficos (`arte`) aparecem inteiros.
 - Os reconhecimentos (A+, 1º lugar, nota A) são os citados nas notícias da SEFAZ; se mudarem, edite `Reconhecimentos` em `app/page.tsx`.
