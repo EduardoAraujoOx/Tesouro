@@ -110,6 +110,123 @@ class Lista(HTMLParser):
                 self.cur["data"] = m.group(1)
 
 
+PERMITIDAS_CORPO = {"p", "strong", "em", "ul", "ol", "li", "a", "blockquote", "h2", "h3", "br"}
+ALIAS_CORPO = {"b": "strong", "i": "em", "h1": "h2", "h2": "h2", "h3": "h2", "h4": "h3", "h5": "h3", "h6": "h3"}
+DESCARTAR_CORPO = {"script", "style", "iframe", "svg", "button", "form", "noscript"}
+
+
+def href_absoluto(href: str):
+    href = (href or "").strip()
+    if not href or href.startswith(("#", "javascript:", "\\")):
+        return None
+    if href.startswith(("mailto:", "tel:")):
+        return href
+    from urllib.parse import urljoin
+    url = urljoin(BASE + "/", href)
+    return url if url.startswith(("http://", "https://")) else None
+
+
+class Corpo(HTMLParser):
+    """Extrai o texto de `div.noticia-texto` e o reescreve só com marcas simples (sem estilos do Word, imagens ou scripts)."""
+
+    def __init__(self):
+        super().__init__(convert_charrefs=True)
+        self.dentro = False
+        self.nivel = 0
+        self.saida = []
+        self.pilha = []
+        self.descarta = 0
+        self.ignoradas = {}
+
+    def handle_starttag(self, tag, attrs):
+        a = dict(attrs)
+        if not self.dentro:
+            if tag == "div" and "noticia-texto" in (a.get("class") or ""):
+                self.dentro, self.nivel = True, 1
+            return
+        if tag == "div":
+            self.nivel += 1
+            return
+        if tag in DESCARTAR_CORPO:
+            self.descarta += 1
+            return
+        t = ALIAS_CORPO.get(tag, tag)
+        if t == "br":
+            self.saida.append("<br>")
+            return
+        if t in PERMITIDAS_CORPO:
+            if t == "a":
+                href = href_absoluto(a.get("href", ""))
+                if not href:
+                    self.pilha.append("a-vazio")
+                    return
+                self.pilha.append("a")
+                self.saida.append(f'<a href="{html.escape(href, quote=True)}">')
+                return
+            self.pilha.append(t)
+            self.saida.append(f"<{t}>")
+        elif tag not in {"span", "o:p", "font", "u", "sup", "sub", "div", "figure", "figcaption"}:
+            self.ignoradas[tag] = self.ignoradas.get(tag, 0) + 1
+
+    def handle_endtag(self, tag):
+        if not self.dentro:
+            return
+        if tag == "div":
+            self.nivel -= 1
+            if self.nivel == 0:
+                self.dentro = False
+            return
+        if tag in DESCARTAR_CORPO:
+            self.descarta = max(0, self.descarta - 1)
+            return
+        t = ALIAS_CORPO.get(tag, tag)
+        if t in PERMITIDAS_CORPO and t != "br" and self.pilha:
+            # fecha até a marca correspondente (HTML do Word costuma vir mal fechado)
+            while self.pilha:
+                topo = self.pilha.pop()
+                if topo == "a-vazio":
+                    if t == "a":
+                        break
+                    continue
+                self.saida.append(f"</{topo}>")
+                if topo == t:
+                    break
+
+    def handle_data(self, data):
+        if self.dentro and not self.descarta:
+            self.saida.append(html.escape(sem_travessao(data.replace("\xa0", " ")), quote=False))
+
+    def resultado(self) -> str:
+        h = "".join(self.saida)
+        while self.pilha:
+            topo = self.pilha.pop()
+            if topo != "a-vazio":
+                h += f"</{topo}>"
+        h = re.sub(r"[ \t\r\n]+", " ", h)
+        h = re.sub(r"<(p|strong|em|blockquote|h2|h3|li)>\s*</\1>", "", h)
+        h = re.sub(r"<(p|strong|em|blockquote|h2|h3|li)>\s*</\1>", "", h)
+        h = re.sub(r"(<br>\s*){3,}", "<br><br>", h)
+        h = re.sub(r"\s*(<(?:/?(?:p|ul|ol|li|blockquote|h2|h3)|br)>)\s*", r"\1", h)
+        return h.strip()
+
+
+def baixar_corpos(noticias):
+    """Traz o texto completo de cada matéria, para que ela abra dentro do portal."""
+    for n in noticias:
+        n["slug"] = n["href"].rsplit("/", 1)[-1]
+        try:
+            c = Corpo()
+            c.feed(baixar(n["href"]))
+            n["corpo"] = c.resultado()
+            if c.ignoradas:
+                print("   marcas descartadas em", n["slug"][:50], c.ignoradas)
+        except Exception as e:  # noqa: BLE001
+            print("   sem corpo:", n["slug"], e)
+            n["corpo"] = ""
+        time.sleep(0.4)
+
+
+
 def tipo_imagem(im) -> str:
     """'arte' = cartão gráfico (fundo chapado, texto embutido); 'foto' = fotografia. Heurística simples."""
     t = im.convert("RGB").resize((48, 27))
@@ -196,6 +313,7 @@ def main():
     achadas.sort(key=lambda n: n["data"], reverse=True)
     achadas = achadas[:MAXIMO]
     baixar_imagens(achadas)
+    baixar_corpos(achadas)
     try:
         capas = json.loads(CURADORIA.read_text(encoding="utf-8")).get("destaques", [])
     except Exception:  # noqa: BLE001
