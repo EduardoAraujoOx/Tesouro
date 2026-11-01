@@ -1,9 +1,10 @@
 'use client'
 
+import Link from 'next/link'
 import { useCallback, useEffect, useId, useRef, useState, type KeyboardEvent } from 'react'
 import { NoticiaImagem } from './NoticiaImagem'
-import { IconExternal, IconPause, IconPlay } from './Icons'
-import type { Noticia } from '@/lib/noticias'
+import { IconArrow, IconPause, IconPlay } from './Icons'
+import { hrefNoticia, type Noticia } from '@/lib/noticias'
 
 export type ItemCarrossel = Noticia & { dataFmt: string }
 
@@ -91,7 +92,7 @@ export function CarrosselNoticias({ itens }: { itens: ItemCarrossel[] }) {
           const ligado = i === ativo
           return (
             <div
-              key={n.href}
+              key={n.slug}
               role="tabpanel"
               id={`${id}-p${i}`}
               aria-labelledby={`${id}-t${i}`}
@@ -104,18 +105,16 @@ export function CarrosselNoticias({ itens }: { itens: ItemCarrossel[] }) {
                 <div className="mt-5">
                   <p className="text-small text-ink-soft"><time dateTime={n.data}>{n.dataFmt}</time></p>
                   <h3 className="mt-2 text-headline">
-                    <a
-                      href={n.href}
-                      target="_blank"
-                      rel="noopener noreferrer"
+                    <Link
+                      href={hrefNoticia(n)}
                       className="underline-offset-4 after:absolute after:inset-0 after:content-[''] group-hover:underline"
                     >
-                      {n.titulo}<span className="sr-only"> (abre em nova aba)</span>
-                    </a>
+                      {n.titulo}
+                    </Link>
                   </h3>
                   {n.resumo && <p className="mt-3 line-clamp-3 text-lead text-ink-soft">{n.resumo}</p>}
                   <p className="mt-3 inline-flex items-center gap-2 text-small font-semibold text-navy" aria-hidden="true">
-                    Ler no site da SEFAZ <IconExternal className="h-4 w-4" />
+                    Ler a notícia <IconArrow className="h-4 w-4" />
                   </p>
                 </div>
               </article>
@@ -131,7 +130,7 @@ export function CarrosselNoticias({ itens }: { itens: ItemCarrossel[] }) {
             const ligado = i === ativo
             return (
               <button
-                key={n.href}
+                key={n.slug}
                 ref={(el) => { abas.current[i] = el }}
                 type="button"
                 role="tab"

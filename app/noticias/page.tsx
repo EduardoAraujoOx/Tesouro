@@ -1,9 +1,10 @@
 import type { Metadata } from 'next'
+import Link from 'next/link'
 import { IconExternal } from '@/components/Icons'
 import { NoticiaImagem } from '@/components/NoticiaImagem'
 import { PageHeader } from '@/components/PageHeader'
 import { formatarData } from '@/lib/acervo'
-import { fonteNoticias, noticias } from '@/lib/noticias'
+import { fonteNoticias, hrefNoticia, noticias } from '@/lib/noticias'
 
 export const metadata: Metadata = {
   title: 'Notícias',
@@ -19,14 +20,14 @@ export default function Noticias() {
       <div className="mx-auto max-w-page px-5 py-10 md:px-8 md:py-12">
         <ul className="grid gap-x-8 gap-y-12 sm:grid-cols-2 lg:grid-cols-3">
           {noticias.map((n, i) => (
-            <li key={n.href}>
+            <li key={n.slug}>
               <article className="group relative">
                 <NoticiaImagem n={n} sizes="(min-width: 1024px) 30vw, (min-width: 640px) 45vw, 100vw" prioridade={i < 3} className="aspect-[16/10] rounded-brand" />
                 <p className="mt-4 text-small text-ink-soft"><time dateTime={n.data}>{formatarData(n.data)}</time></p>
                 <h2 className="mt-1 text-title !text-ink">
-                  <a href={n.href} target="_blank" rel="noopener noreferrer" className="underline-offset-4 after:absolute after:inset-0 after:content-[''] group-hover:underline">
-                    {n.titulo}<span className="sr-only"> (abre em nova aba)</span>
-                  </a>
+                  <Link href={hrefNoticia(n)} className="underline-offset-4 after:absolute after:inset-0 after:content-[''] group-hover:underline">
+                    {n.titulo}
+                  </Link>
                 </h2>
                 {n.resumo && <p className="mt-2 line-clamp-3 text-ink-soft">{n.resumo}</p>}
               </article>

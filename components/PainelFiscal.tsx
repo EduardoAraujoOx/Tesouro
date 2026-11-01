@@ -3,7 +3,7 @@ import { IconArrow } from './Icons'
 import { Medidor } from './Medidor'
 import { formatarData } from '@/lib/acervo'
 import { ORDEM_LRF, pct, rotuloPeriodo, serieCapag, ultimaCapag, ultimoLrf } from '@/lib/indicadores'
-import { noticiaPorTrecho } from '@/lib/noticias'
+import { hrefNoticia, noticiaPorTrecho } from '@/lib/noticias'
 
 const NOTAS = [
   { chave: 'endividamento', nota: 'notaEndividamento', nome: 'Endividamento', texto: 'Peso da dívida em relação à receita' },
@@ -57,7 +57,7 @@ export function PainelFiscal() {
               Nota {c.qualidadeInformacao} em qualidade da informação contábil e fiscal no Siconfi.
               {noticia && (
                 <> Em 2026, o Estado manteve a nota A+ pelo terceiro ano consecutivo.{' '}
-                  <a href={noticia.href} target="_blank" rel="noopener noreferrer" className="font-semibold text-navy underline underline-offset-4">Leia a notícia<span className="sr-only"> (abre em nova aba)</span></a>.</>
+                  <Link href={hrefNoticia(noticia)} className="font-semibold text-navy underline underline-offset-4">Leia a notícia</Link>.</>
               )}
             </p>
             <p className="mt-4 text-label font-semibold uppercase text-ink-soft">Histórico</p>
