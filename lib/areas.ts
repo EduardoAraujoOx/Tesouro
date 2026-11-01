@@ -1,7 +1,8 @@
 /**
  * Áreas da Subsecretaria do Tesouro Estadual (SUBSET) que recebem mensagens pelo Fale conosco.
  *
- * Fonte: Decreto nº 5.892-R, de 29/11/2024 (Anexo III, organograma, e arts. 8 a 13, competências).
+ * Fontes: Lei nº 12.379, de 27/03/2025 (criou a Gerência de Fundos e Análise Econômico-Financeira de Projetos, GEFAP) e
+ * Decreto nº 6.005-R, de 07/04/2025 (Anexo III, organograma, e arts. 4 a 14, competências), que alterou o Decreto nº 5.892-R/2024.
  * Onde o decreto descreve a competência, o texto de `assuntos` a resume; nas demais unidades, repete apenas o nome da área.
  * ATENÇÃO: a estrutura muda por decreto. A Subsecretaria deve validar esta lista, revisar `assuntos`
  * e informar o e-mail de cada área (`email`). Sem `email`, a mensagem vai para o endereço padrão (variável CONTATO_EMAIL_PADRAO).
@@ -24,17 +25,28 @@ export const AREAS: Area[] = [
   },
 
   // Gerência de Encargos Gerais e Regularidade Fiscal
-  { id: 'geref', sigla: 'GEREF', nome: 'Gerência de Encargos Gerais e Regularidade Fiscal do Estado', nivel: 'gerencia', pai: 'subset', assuntos: 'Encargos gerais do Estado e regularidade fiscal do Estado.' },
-  { id: 'suref', sigla: 'SUREF', nome: 'Subgerência de Regularidade Fiscal do Estado', nivel: 'subgerencia', pai: 'geref', assuntos: 'Regularidade fiscal do Estado.' },
-  { id: 'sueng', sigla: 'SUENG', nome: 'Subgerência de Encargos Gerais do Estado', nivel: 'subgerencia', pai: 'geref', assuntos: 'Encargos gerais do Estado.' },
+  {
+    id: 'geref', sigla: 'GEREF', nome: 'Gerência de Encargos Gerais e Regularidade Fiscal do Estado', nivel: 'gerencia', pai: 'subset',
+    assuntos: 'Encargos gerais do Estado (precatórios, sentenças judiciais, restituição de tributos e participações societárias), conformidade da receita e dos repasses aos municípios, e regularidade fiscal do Estado.',
+  },
+  {
+    id: 'suref', sigla: 'SUREF', nome: 'Subgerência de Regularidade Fiscal do Estado', nivel: 'subgerencia', pai: 'geref',
+    assuntos: 'Regularidade fiscal do Estado: manutenção da adimplência no CAUC, representação junto à Receita Federal e à PGFN, e orientação aos órgãos sobre obrigações acessórias e provas de regularidade.',
+  },
+  {
+    id: 'sueng', sigla: 'SUENG', nome: 'Subgerência de Encargos Gerais do Estado', nivel: 'subgerencia', pai: 'geref',
+    assuntos: 'Encargos gerais do Estado: conferência da receita, repasses da receita tributária aos municípios e ao FUNDEB, quitação de sentenças judiciais e repasses de precatórios aos Tribunais.',
+  },
 
   // Gerência de Administração e Fiscalização Financeira
   {
     id: 'gefin', sigla: 'GEFIN', nome: 'Gerência de Administração e Fiscalização Financeira do Estado', nivel: 'gerencia', pai: 'subset',
     assuntos: 'Administração financeira e fiscal do Estado: Conta Única, liberação de recursos às unidades gestoras, ordens bancárias, repasses aos demais Poderes e orientação aos Grupos Financeiros Setoriais.',
   },
-  { id: 'susif', sigla: 'SUSIF', nome: 'Subgerência de Gestão do Sistema de Finanças Públicas do Estado', nivel: 'subgerencia', pai: 'gefin', assuntos: 'Gestão do sistema de finanças públicas do Estado.' },
-  { id: 'sugef', sigla: 'SUGEF', nome: 'Subgerência de Gestão do Fundo Soberano', nivel: 'subgerencia', pai: 'gefin', assuntos: 'Gestão do Fundo Soberano do Espírito Santo.' },
+  {
+    id: 'susif', sigla: 'SUSIF', nome: 'Subgerência de Gestão do Sistema de Finanças Públicas do Estado', nivel: 'subgerencia', pai: 'gefin',
+    assuntos: 'Gestão do SIGEFES e dos demais sistemas do Tesouro: regras de negócio, perfis de acesso, integrações e extrações de dados.',
+  },
   { id: 'supef', sigla: 'SUPEF', nome: 'Subgerência de Programação e Gestão Financeira', nivel: 'subgerencia', pai: 'gefin', assuntos: 'Programação e gestão financeira.' },
   {
     id: 'sucog', sigla: 'SUCOG', nome: 'Subgerência de Controle Fiscal e do Gasto Público', nivel: 'subgerencia', pai: 'gefin',
@@ -62,10 +74,29 @@ export const AREAS: Area[] = [
   },
 
   // Gerência de Política Fiscal e da Dívida Pública
-  { id: 'gepof', sigla: 'GEPOF', nome: 'Gerência de Política Fiscal e da Dívida Pública do Estado', nivel: 'gerencia', pai: 'subset', assuntos: 'Política fiscal e dívida pública do Estado.' },
+  {
+    id: 'gepof', sigla: 'GEPOF', nome: 'Gerência de Política Fiscal e da Dívida Pública do Estado', nivel: 'gerencia', pai: 'subset',
+    assuntos: 'Dívida pública contratual, Programa de Reestruturação e Ajuste Fiscal (PAF), capacidade de pagamento e de endividamento, operações de crédito, riscos fiscais e metas fiscais.',
+  },
   { id: 'supfi', sigla: 'SUPFI', nome: 'Subgerência de Política Fiscal', nivel: 'subgerencia', pai: 'gepof', assuntos: 'Política fiscal.' },
-  { id: 'sudip', sigla: 'SUDIP', nome: 'Subgerência da Dívida Pública', nivel: 'subgerencia', pai: 'gepof', assuntos: 'Dívida pública.' },
-  { id: 'suapi', sigla: 'SUAPI', nome: 'Subgerência de Análise Econômico-Fiscal de Projetos de Investimento Público', nivel: 'subgerencia', pai: 'gepof', assuntos: 'Análise econômico-fiscal de projetos de investimento público.' },
+  {
+    id: 'sudip', sigla: 'SUDIP', nome: 'Subgerência da Dívida Pública', nivel: 'subgerencia', pai: 'gepof',
+    assuntos: 'Planejamento, controle e auditoria financeira da dívida pública contratual do Poder Executivo, e assessoramento sobre capacidade de pagamento e de endividamento.',
+  },
+
+  // Gerência de Fundos e Análise Econômico-Financeira de Projetos (criada pela Lei 12.379/2025)
+  {
+    id: 'gefap', sigla: 'GEFAP', nome: 'Gerência de Fundos e Análise Econômico-Financeira de Projetos', nivel: 'gerencia', pai: 'subset',
+    assuntos: 'Fundos públicos vinculados ao Tesouro Estadual (como o Fundo Soberano e o FUNDAP): gestão financeira, contábil e orçamentária, relatórios e prestação de contas, e análise econômico-fiscal de parcerias público-privadas (PPPs) e concessões.',
+  },
+  {
+    id: 'suauc', sigla: 'SUAUC', nome: 'Subgerência de Auditoria e Compliance', nivel: 'subgerencia', pai: 'gefap',
+    assuntos: 'Auditoria e política de compliance dos fundos públicos do Tesouro, conciliação bancária das contas do Fundo Soberano e de outros fundos, e controle dos financiamentos do FUNDAP.',
+  },
+  {
+    id: 'suavi', sigla: 'SUAVI', nome: 'Subgerência de Avaliação de Investimentos e Análise Econômica', nivel: 'subgerencia', pai: 'gefap',
+    assuntos: 'Aplicações financeiras dos fundos, análises macroeconômicas e de comércio exterior, e análise econômico-fiscal de projetos de PPPs, concessões e investimentos públicos.',
+  },
 ]
 
 export const areaPorId = (id: string) => AREAS.find((a) => a.id === id)

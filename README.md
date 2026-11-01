@@ -109,4 +109,4 @@ Para ativar o envio, defina na Vercel (Settings, Environment Variables):
 
 Sem essas variáveis o formulário mostra o aviso "Envio em implantação" e não entrega mensagens. Em desenvolvimento, `CONTATO_MODO_TESTE=1` valida e devolve o protocolo sem enviar nada.
 
-As áreas ficam em `lib/areas.ts`, montadas a partir do Decreto nº 5.892-R/2024 (Anexo III e competências). **A estrutura muda por decreto: a Subsecretaria deve validar a lista, revisar os assuntos de cada área e informar o e-mail de cada uma** (campo `email`; sem ele, vale `CONTATO_EMAIL_PADRAO`). Para uma proteção mais forte contra robôs, considere o Vercel BotID ou o Cloudflare Turnstile.
+As áreas ficam em `lib/areas.ts`, montadas a partir do Lei nº 12.379/2025 e Decreto nº 6.005-R/2025 (Anexo III e competências). **A estrutura muda por decreto: a Subsecretaria deve validar a lista, revisar os assuntos de cada área e informar o e-mail de cada uma** (campo `email`; sem ele, vale `CONTATO_EMAIL_PADRAO`). Para uma proteção mais forte contra robôs, considere o Vercel BotID ou o Cloudflare Turnstile.
