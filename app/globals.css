@@ -17,6 +17,8 @@
   --hero-overlay: 5 32 63;      /* azul-marinho profundo sobre a foto */
   --btn-bg: 255 255 255;        /* botão primário sobre a foto */
   --btn-fg: 8 43 87;
+  --serie2: 163 23 79;          /* #A3174F, segunda série dos gráficos */
+  --serie3: 10 108 126;         /* #0A6C7E, terceira série */
 }
 
 /* Alto contraste: fundo preto, texto branco, destaque amarelo (padrão de portais de governo). */
@@ -32,6 +34,8 @@
   --hero-overlay: 0 0 0;
   --btn-bg: 255 214 0;
   --btn-fg: 0 0 0;
+  --serie2: 255 255 255;
+  --serie3: 0 255 255;
 }
 :root[data-contrast='alto'] img.invert-hc { filter: invert(1) hue-rotate(180deg); }
 

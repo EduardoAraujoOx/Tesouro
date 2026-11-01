@@ -4,7 +4,8 @@ import { INDICADORES_LRF, pct, rotuloPeriodo, situacao, type ChaveLrf, type Peri
  * Medidor de um limite da LRF. A barra vai de 0 ao limite legal; as marcas indicam alerta e limite prudencial.
  * Não depende de cor: valor, limite e situação aparecem em texto e na descrição do gráfico.
  */
-export function Medidor({ chave, periodo }: { chave: ChaveLrf; periodo: PeriodoLrf }) {
+export function Medidor({ chave, periodo, nivel = 4 }: { chave: ChaveLrf; periodo: PeriodoLrf; nivel?: 3 | 4 }) {
+  const Titulo = nivel === 3 ? 'h3' : 'h4'
   const def = INDICADORES_LRF[chave]
   const d = periodo[chave]
   const s = situacao(d)
@@ -19,7 +20,7 @@ export function Medidor({ chave, periodo }: { chave: ChaveLrf; periodo: PeriodoL
   return (
     <div role="group" aria-labelledby={idTitulo}>
       <div className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1">
-        <h4 id={idTitulo} className="!font-sans text-body font-semibold !text-ink">{def.curto}</h4>
+        <Titulo id={idTitulo} className="!font-sans text-body font-semibold !text-ink">{def.curto}</Titulo>
         <p className="text-small text-ink-soft">
           <strong className="text-title font-semibold text-ink">{pct(d.valor)}</strong> da RCL · limite {pct(d.limite, 0)}
         </p>
