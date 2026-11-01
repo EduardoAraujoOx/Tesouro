@@ -10,16 +10,16 @@ export function Footer() {
           <div className="flex gap-4">
             <span aria-hidden="true" className="w-1 shrink-0 self-stretch" style={{ background: 'linear-gradient(#39B5E8 50%, #F28AB2 50%)' }} />
             <div>
-              <p className="font-serif text-xl font-semibold !text-on-navy">Tesouro Estadual do Espírito Santo</p>
-              <p className="mt-1 text-[0.9375rem] opacity-90">Secretaria da Fazenda – SEFAZ</p>
-              <p className="text-[0.9375rem] opacity-90">Governo do Estado do Espírito Santo</p>
+              <p className="font-serif text-title font-semibold !text-on-navy">Tesouro Estadual do Espírito Santo</p>
+              <p className="mt-1 text-body opacity-90">Secretaria da Fazenda (SEFAZ)</p>
+              <p className="text-body opacity-90">Governo do Estado do Espírito Santo</p>
             </div>
           </div>
         </div>
 
         <nav aria-label="Links institucionais" className="md:border-l md:border-white/25 md:px-10">
-          <h2 className="!font-sans text-base font-semibold !text-on-navy">Links institucionais</h2>
-          <ul className="mt-3 space-y-2 text-[0.9375rem]">
+          <h2 className="!font-sans text-body font-semibold !text-on-navy">Links institucionais</h2>
+          <ul className="mt-3 space-y-2 text-body">
             {rodape.institucional.map((l) => (
               <li key={l.href}>
                 <a href={l.href} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1.5 underline-offset-4 hover:underline">
@@ -31,8 +31,8 @@ export function Footer() {
         </nav>
 
         <div className="md:border-l md:border-white/25 md:pl-10">
-          <h2 className="!font-sans text-base font-semibold !text-on-navy">Contato</h2>
-          <ul className="mt-3 space-y-2.5 text-[0.9375rem]">
+          <h2 className="!font-sans text-body font-semibold !text-on-navy">Contato</h2>
+          <ul className="mt-3 space-y-2.5 text-body">
             <li className="flex gap-2.5"><IconPin className="mt-0.5 h-5 w-5 shrink-0" /><span>{rodape.endereco}</span></li>
             <li className="flex gap-2.5"><IconPhone className="mt-0.5 h-5 w-5 shrink-0" /><a href="tel:+552733475102" className="hover:underline">{rodape.telefone}</a></li>
             <li className="pt-1">
@@ -44,7 +44,7 @@ export function Footer() {
         </div>
       </div>
       <div className="border-t border-white/20">
-        <p className="mx-auto max-w-page px-5 py-4 text-xs opacity-80 md:px-8">
+        <p className="mx-auto max-w-page px-5 py-4 text-small opacity-80 md:px-8">
           Os documentos são hospedados no site oficial da SEFAZ-ES, que permanece como fonte de referência.
           {' '}<Link href="/creditos" className="underline underline-offset-4">Créditos das imagens</Link>
         </p>

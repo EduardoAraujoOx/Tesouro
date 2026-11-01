@@ -64,7 +64,7 @@ export function AcervoExplorer({ itens, tipos, mostrarTipo = true }: { itens: Pu
   }, [visiveis])
 
   const campo =
-    'h-12 w-full rounded-brand border border-ink-soft/50 bg-paper px-4 text-[0.9375rem] text-ink focus-visible:outline-offset-0'
+    'h-12 w-full rounded-brand border border-ink-soft/50 bg-paper px-4 text-body text-ink focus-visible:outline-offset-0'
 
   return (
     <div>
@@ -75,7 +75,7 @@ export function AcervoExplorer({ itens, tipos, mostrarTipo = true }: { itens: Pu
         className={`grid gap-4 rounded-brand bg-surface p-5 ${mostrarTipo ? 'md:grid-cols-[2fr_2fr_1fr]' : 'md:grid-cols-[3fr_1fr]'}`}
       >
         <div>
-          <label htmlFor="f-q" className="mb-1.5 block text-sm font-semibold">Buscar</label>
+          <label htmlFor="f-q" className="mb-1.5 block text-small font-semibold">Buscar</label>
           <input
             id="f-q" type="search" value={q} placeholder={mostrarTipo ? 'Ex.: RGF 2026, dívida, municípios' : 'Ex.: 2026, bimestre, portaria'}
             className={campo}
@@ -84,7 +84,7 @@ export function AcervoExplorer({ itens, tipos, mostrarTipo = true }: { itens: Pu
         </div>
         {mostrarTipo && (
         <div>
-          <label htmlFor="f-tipo" className="mb-1.5 block text-sm font-semibold">Tipo de publicação</label>
+          <label htmlFor="f-tipo" className="mb-1.5 block text-small font-semibold">Tipo de publicação</label>
           <select
             id="f-tipo" value={tipo} className={campo}
             onChange={(e) => { setTipo(e.target.value); setAno(''); setLimite(PASSO); sincronizarUrl(q, e.target.value) }}
@@ -95,7 +95,7 @@ export function AcervoExplorer({ itens, tipos, mostrarTipo = true }: { itens: Pu
         </div>
         )}
         <div>
-          <label htmlFor="f-ano" className="mb-1.5 block text-sm font-semibold">Ano</label>
+          <label htmlFor="f-ano" className="mb-1.5 block text-small font-semibold">Ano</label>
           <select id="f-ano" value={ano} className={campo} onChange={(e) => { setAno(e.target.value); setLimite(PASSO) }}>
             <option value="">Todos</option>
             {anos.map((a) => <option key={a} value={a}>{a}</option>)}
@@ -103,7 +103,7 @@ export function AcervoExplorer({ itens, tipos, mostrarTipo = true }: { itens: Pu
         </div>
       </form>
 
-      <p role="status" aria-live="polite" className="mt-6 text-sm text-ink-soft">
+      <p role="status" aria-live="polite" className="mt-6 text-small text-ink-soft">
         {resultado.length === 0
           ? 'Nenhuma publicação encontrada. Tente outro termo ou limpe os filtros.'
           : `${resultado.length} ${resultado.length === 1 ? 'publicação encontrada' : 'publicações encontradas'}.`}
@@ -111,7 +111,7 @@ export function AcervoExplorer({ itens, tipos, mostrarTipo = true }: { itens: Pu
 
       {grupos.map(([anoGrupo, lista]) => (
         <section key={anoGrupo} aria-labelledby={`ano-${anoGrupo.replace(/\W/g, '')}`} className="mt-8">
-          <h2 id={`ano-${anoGrupo.replace(/\W/g, '')}`} className="text-2xl font-bold">{anoGrupo}</h2>
+          <h2 id={`ano-${anoGrupo.replace(/\W/g, '')}`} className="text-title">{anoGrupo}</h2>
           <span className="accent-bar" aria-hidden="true" />
           <ul className="mt-3 border-t border-line">
             {lista.map((p) => (

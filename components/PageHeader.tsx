@@ -12,7 +12,7 @@ type Props = {
 /** Cabeçalho das páginas internas. Com `imagem`, vira uma faixa fotográfica; sem ela, uma faixa clara e discreta. */
 export function PageHeader({ titulo, children, trilha, imagem }: Props) {
   const crumbs = (cls: string) => (
-    <nav aria-label="Você está em" className={`text-sm ${cls}`}>
+    <nav aria-label="Você está em" className={`text-small ${cls}`}>
       <ol className="flex items-center gap-2">
         <li><Link href="/" className="underline-offset-4 hover:underline">Início</Link></li>
         <li aria-hidden="true">/</li>
@@ -28,9 +28,9 @@ export function PageHeader({ titulo, children, trilha, imagem }: Props) {
         <div aria-hidden="true" className="band-shade absolute inset-0 -z-10" />
         <div className="on-dark mx-auto max-w-page px-5 py-14 text-white md:px-8 md:py-20">
           {crumbs('text-white/85')}
-          <h1 id="titulo-pagina" className="mt-4 text-4xl font-bold tracking-tight !text-white md:text-5xl">{titulo}</h1>
+          <h1 id="titulo-pagina" className="mt-4 text-headline !text-white">{titulo}</h1>
           <span className="accent-bar" aria-hidden="true" />
-          {children && <div className="mt-5 max-w-2xl text-lg text-white/95">{children}</div>}
+          {children && <div className="mt-5 max-w-2xl text-lead text-white/95">{children}</div>}
         </div>
       </section>
     )
@@ -40,9 +40,9 @@ export function PageHeader({ titulo, children, trilha, imagem }: Props) {
     <section aria-labelledby="titulo-pagina" className="border-b border-line bg-surface">
       <div className="mx-auto max-w-page px-5 py-10 md:px-8 md:py-14">
         {crumbs('text-ink-soft')}
-        <h1 id="titulo-pagina" className="mt-3 text-4xl font-bold tracking-tight md:text-5xl">{titulo}</h1>
+        <h1 id="titulo-pagina" className="mt-3 text-headline">{titulo}</h1>
         <span className="accent-bar" aria-hidden="true" />
-        {children && <div className="mt-5 max-w-3xl text-lg text-ink-soft">{children}</div>}
+        {children && <div className="mt-5 max-w-3xl text-lead text-ink-soft">{children}</div>}
       </div>
     </section>
   )

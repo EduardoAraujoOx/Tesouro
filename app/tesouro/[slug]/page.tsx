@@ -53,13 +53,13 @@ export default async function PaginaTesouro({ params }: { params: Promise<Params
                 return <div key={i} className="prose-tesouro mt-6 first:mt-0" dangerouslySetInnerHTML={{ __html: prepararHtml(s.html) }} />
               }
               if (s.tipo === 'subtitulo') {
-                return <h2 key={i} className="mt-10 text-2xl font-bold leading-snug first:mt-0">{s.texto}</h2>
+                return <h2 key={i} className="mt-10 text-title first:mt-0">{s.texto}</h2>
               }
               return (
                 <section key={i} className="mt-8 first:mt-0">
                   {s.titulo && (
                     <>
-                      <h2 className="text-2xl font-bold leading-snug">{s.titulo}</h2>
+                      <h2 className="text-title">{s.titulo}</h2>
                       <span className="accent-bar" aria-hidden="true" />
                     </>
                   )}
@@ -83,7 +83,7 @@ export default async function PaginaTesouro({ params }: { params: Promise<Params
           </div>
         )}
 
-        <p className="mt-12 border-t border-line pt-4 text-sm text-ink-soft">
+        <p className="mt-12 border-t border-line pt-4 text-small text-ink-soft">
           Conteúdo reproduzido da{' '}
           <a href={pagina.fonte} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 font-medium text-navy underline underline-offset-4">
             página oficial na SEFAZ <IconExternal className="h-3.5 w-3.5" /><span className="sr-only">(abre em nova aba)</span>

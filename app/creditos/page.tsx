@@ -39,8 +39,8 @@ export default function Creditos() {
         <ul className="border-t border-line">
           {imagens.map((i) => (
             <li key={i.titulo} className="border-b border-line py-6">
-              <p className="text-sm font-semibold uppercase tracking-wider text-ink-soft">{i.uso}</p>
-              <h2 className="mt-1 !font-sans text-xl font-semibold !text-ink">{i.titulo}</h2>
+              <p className="text-label font-semibold uppercase text-ink-soft">{i.uso}</p>
+              <h2 className="mt-1 !font-sans text-title font-semibold !text-ink">{i.titulo}</h2>
               <p className="mt-2 text-ink-soft">
                 Autoria: <strong className="text-ink">{i.autor}</strong> · Licença:{' '}
                 {i.licencaUrl ? (
@@ -58,7 +58,17 @@ export default function Creditos() {
             </li>
           ))}
         </ul>
-        <h2 className="mt-10 text-2xl font-bold">Tipografia</h2>
+        <h2 className="mt-10 text-title">Imagens das notícias</h2>
+        <span className="accent-bar" aria-hidden="true" />
+        <p className="mt-4 text-ink-soft">
+          As fotografias e os cartões que ilustram as notícias são do material de comunicação do Governo do Estado do
+          Espírito Santo (SEFAZ-ES e Secom-ES), reproduzidos, em tamanho reduzido, das matérias publicadas em{' '}
+          <a href="https://sefaz.es.gov.br/noticias" target="_blank" rel="noopener noreferrer" className="font-medium text-navy underline underline-offset-4">
+            sefaz.es.gov.br/noticias<span className="sr-only"> (abre em nova aba)</span>
+          </a>
+          . Cada notícia leva ao texto original.
+        </p>
+        <h2 className="mt-10 text-title">Tipografia</h2>
         <span className="accent-bar" aria-hidden="true" />
         <p className="mt-4 text-ink-soft">
           Inter e Source Serif 4, distribuídas sob a licença SIL Open Font License 1.1 e servidas pelo próprio portal.

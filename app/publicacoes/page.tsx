@@ -25,7 +25,7 @@ export default function Publicacoes() {
           <AcervoExplorer itens={itens} tipos={TIPOS} />
         </Suspense>
       </div>
-      <p className="mt-10 text-xs text-ink-soft">Índice do acervo atualizado em {new Date(geradoEm).toLocaleDateString('pt-BR', { timeZone: 'America/Sao_Paulo' })}.</p>
+      <p className="mt-10 text-small text-ink-soft">Índice do acervo atualizado em {new Date(geradoEm).toLocaleDateString('pt-BR', { timeZone: 'America/Sao_Paulo' })}.</p>
     </div>
     </>
   )

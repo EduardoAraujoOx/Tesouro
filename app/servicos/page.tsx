@@ -19,7 +19,7 @@ export default function Servicos() {
       <div className="grid gap-10 md:grid-cols-3">
         {servicos.map((g) => (
           <section key={g.grupo} aria-labelledby={g.grupo.replace(/\W/g, '')}>
-            <h2 id={g.grupo.replace(/\W/g, '')} className="text-2xl font-bold">{g.grupo}</h2>
+            <h2 id={g.grupo.replace(/\W/g, '')} className="text-title">{g.grupo}</h2>
             <span className="accent-bar" aria-hidden="true" />
             <ul className="mt-3 border-t border-line">
               {g.itens.map((l) => (

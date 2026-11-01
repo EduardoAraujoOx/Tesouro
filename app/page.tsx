@@ -4,47 +4,49 @@ import { PublicationRow } from '@/components/PublicationRow'
 import { SectionTitle } from '@/components/SectionTitle'
 import { IconArrow, iconePorNome } from '@/components/Icons'
 import { acessoRapido, orientacoes } from '@/lib/links'
-import { noticias } from '@/lib/noticias'
-import { formatarData, maisRecente, ultimasAtualizacoes } from '@/lib/acervo'
+import { CarrosselNoticias } from '@/components/CarrosselNoticias'
+import { PainelFiscal } from '@/components/PainelFiscal'
+import { paraCarrossel } from '@/lib/noticias'
+import { formatarData, maisRecente } from '@/lib/acervo'
 
 const btnPrimario =
-  'group inline-flex min-h-12 items-center justify-center gap-3 rounded-brand bg-navy px-6 text-base font-semibold text-on-navy transition hover:bg-navy-deep'
-const btnSecundario =
-  'group inline-flex min-h-12 items-center justify-center gap-3 rounded-brand border border-navy bg-paper px-6 text-base font-semibold text-navy transition hover:bg-surface'
+  'group inline-flex min-h-12 items-center justify-center gap-3 rounded-brand bg-navy px-6 text-body font-semibold text-on-navy transition hover:bg-navy-deep'
+const linkTerciario =
+  'group inline-flex min-h-12 items-center gap-2 text-body font-semibold text-navy underline underline-offset-4 hover:decoration-2'
 
 function Hero() {
   return (
     <section aria-labelledby="titulo-hero" className="relative isolate overflow-hidden bg-paper">
-      <div className="mx-auto max-w-page lg:grid lg:min-h-[34rem] lg:grid-cols-12 lg:items-center">
-        <div className="relative z-10 px-5 pb-8 pt-10 md:px-8 md:pt-16 lg:col-span-6 lg:py-24 lg:pb-32 xl:col-span-6">
-          <span className="accent-bar !mt-0 mb-6 !w-20" aria-hidden="true" />
+      <div className="mx-auto max-w-page lg:grid lg:min-h-[17.5rem] lg:grid-cols-12 lg:items-center">
+        <div className="relative z-10 px-5 pb-6 pt-8 md:px-8 md:pt-10 lg:col-span-6 lg:py-9">
+          <span className="accent-bar !mt-0 mb-4 !w-20" aria-hidden="true" />
           <h1
             id="titulo-hero"
-            className="text-[2.5rem] font-bold leading-[1.05] tracking-tight !text-ink sm:text-5xl lg:text-[3.25rem] xl:text-[3.75rem]"
+            className="text-display !text-ink"
           >
             Transparência e responsabilidade na gestão das finanças públicas
           </h1>
-          <p className="mt-6 max-w-md text-lg leading-relaxed text-ink-soft">
+          <p className="mt-3 max-w-md text-lead text-ink-soft">
             Informações fiscais, contabilidade, dívida pública e publicações do Tesouro Estadual.
           </p>
-          <div className="mt-9 flex flex-col gap-3 sm:flex-row">
-            <Link href="/publicacoes" className={btnPrimario}>
+          <div className="mt-5 flex flex-col gap-1 sm:flex-row sm:items-center sm:gap-6">
+            <Link href="/publicacoes" className={`${btnPrimario} w-full sm:w-auto`}>
               Acessar publicações <IconArrow className="h-5 w-5" />
             </Link>
-            <Link href="/sobre" className={btnSecundario}>
-              Conheça o Tesouro <IconArrow className="h-5 w-5" />
+            <Link href="/sobre" className={linkTerciario}>
+              Conheça o Tesouro <IconArrow className="h-[18px] w-[18px]" />
             </Link>
           </div>
         </div>
 
-        <div className="relative h-72 sm:h-96 lg:absolute lg:inset-y-0 lg:right-0 lg:h-auto lg:w-[62%]">
+        <div className="relative h-28 sm:h-56 lg:absolute lg:inset-y-0 lg:right-0 lg:h-auto lg:w-[62%]">
           <Image
             src="/img/hero-vitoria-dia.jpg"
             alt="Vista de Vitória com a Terceira Ponte cruzando a baía e o Convento da Penha ao fundo"
             fill
             priority
             sizes="(min-width: 1024px) 62vw, 100vw"
-            className="object-cover object-[68%_50%] [mask-image:linear-gradient(to_bottom,transparent,#000_30%)] lg:[mask-image:linear-gradient(to_right,transparent,#000_34%)]"
+            className="object-cover object-[68%_45%] [mask-image:linear-gradient(to_bottom,transparent,#000_30%)] lg:[mask-image:linear-gradient(to_right,transparent,#000_34%)]"
           />
         </div>
       </div>
@@ -56,7 +58,7 @@ function AcessoRapido() {
   return (
     <section aria-labelledby="acesso-rapido" className="border-y border-line bg-paper">
       <div className="mx-auto max-w-page px-5 py-5 md:px-8 lg:flex lg:items-center lg:gap-8">
-        <h2 id="acesso-rapido" className="mb-3 flex items-center gap-3 text-[1.75rem] font-bold lg:mb-0 lg:shrink-0">
+        <h2 id="acesso-rapido" className="mb-3 flex items-center gap-3 text-section lg:mb-0 lg:shrink-0">
           <span aria-hidden="true" className="inline-block h-9 w-1 shrink-0" style={{ background: 'linear-gradient(#39B5E8 50%, #F28AB2 50%)' }} />
           Acesso rápido
         </h2>
@@ -65,7 +67,7 @@ function AcessoRapido() {
             const Icone = iconePorNome[a.icone]
             return (
               <li key={a.rotulo} className={`border-line ${i % 2 === 1 ? 'border-l pl-4' : ''} ${i >= 2 ? 'border-t lg:border-t-0' : ''} lg:flex-1 lg:border-l lg:pl-6`}>
-                <Link href={a.href} className="flex min-h-14 items-center gap-3 py-3 text-[0.9375rem] font-medium leading-tight text-ink underline-offset-4 hover:underline">
+                <Link href={a.href} className="flex min-h-14 items-center gap-3 py-3 text-body font-medium leading-tight text-ink underline-offset-4 hover:underline">
                   <Icone className="h-9 w-9 shrink-0 text-navy" strokeWidth={1.4} />
                   <span><span className="lg:hidden">{a.curto}</span><span className="hidden lg:inline">{a.rotulo}</span></span>
                 </Link>
@@ -89,7 +91,7 @@ function Destaques() {
       <SectionTitle
         id="destaques"
         action={
-          <Link href="/publicacoes" className="inline-flex min-h-11 shrink-0 items-center gap-2 whitespace-nowrap text-sm font-semibold text-navy hover:underline underline-offset-4">
+          <Link href="/publicacoes" className="inline-flex min-h-11 shrink-0 items-center gap-2 whitespace-nowrap text-small font-semibold text-navy hover:underline underline-offset-4">
             <span>Ver todas<span className="hidden sm:inline"> as publicações</span></span> <IconArrow className="h-[18px] w-[18px]" />
           </Link>
         }
@@ -123,7 +125,7 @@ function Destaques() {
         {(rgf || rreo) && (
           <PublicationRow
             titulo="Relatórios Fiscais (LRF)"
-            descricao={`Exigidos pela Lei de Responsabilidade Fiscal. Mais recentes: ${rgf?.titulo.replace('RGF — ', 'RGF, ')}; ${rreo?.titulo.replace('RREO — ', 'RREO, ')}.`}
+            descricao={`Exigidos pela Lei de Responsabilidade Fiscal. Mais recentes: ${rgf?.titulo}; ${rreo?.titulo}.`}
             atualizadoEm={formatarData(rgf?.atualizadoEm ?? null)}
             href="/publicacoes?tipo=lrf"
             acao="Acessar"
@@ -135,71 +137,22 @@ function Destaques() {
   )
 }
 
-function FaixaNoticia() {
-  const n = noticias[0]
-  if (!n) return null
+function NoticiasPrincipais() {
+  const itens = paraCarrossel(3).map((n) => ({ ...n, dataFmt: formatarData(n.data) }))
+  if (itens.length === 0) return null
   return (
-    <aside aria-label="Última notícia" className="border-b border-line bg-surface">
-      <div className="mx-auto flex max-w-page items-center gap-3 px-5 py-3 md:px-8">
-        <span className="shrink-0 rounded bg-navy px-2 py-0.5 text-xs font-bold uppercase tracking-wider text-on-navy">Notícia</span>
-        <time dateTime={n.data} className="hidden shrink-0 text-sm text-ink-soft sm:inline">{formatarData(n.data)}</time>
-        <a
-          href={n.href}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="relative min-w-0 flex-1 truncate text-[0.9375rem] font-semibold text-ink underline-offset-4 hover:underline"
-        >
-          {n.titulo}<span className="sr-only"> (abre em nova aba)</span>
-        </a>
-        <Link href="/noticias" className="hidden shrink-0 items-center gap-1.5 text-sm font-semibold text-navy underline-offset-4 hover:underline md:inline-flex">
-          Mais notícias <IconArrow className="h-4 w-4" />
-        </Link>
-      </div>
-    </aside>
-  )
-}
-
-function Noticias() {
-  const ult = ultimasAtualizacoes(3)
-  const duas = noticias.slice(1, 3)
-  return (
-    <section aria-labelledby="noticias" className="mx-auto mt-14 max-w-page px-5 md:px-8">
+    <section aria-labelledby="noticias" className="mx-auto max-w-page px-5 pt-8 md:px-8 md:pt-10">
       <SectionTitle
         id="noticias"
         action={
-          <Link href="/noticias" className="inline-flex min-h-11 shrink-0 items-center gap-2 whitespace-nowrap text-sm font-semibold text-navy underline-offset-4 hover:underline">
+          <Link href="/noticias" className="inline-flex min-h-11 shrink-0 items-center gap-2 whitespace-nowrap text-small font-semibold text-navy underline-offset-4 hover:underline">
             <span>Ver todas<span className="hidden sm:inline"> as notícias</span></span> <IconArrow className="h-[18px] w-[18px]" />
           </Link>
         }
       >
-        Notícias e atualizações
+        Notícias
       </SectionTitle>
-
-      <div className="mt-5 grid gap-8 border-t border-line pt-5 md:grid-cols-2 md:gap-0">
-        {duas.map((n, i) => (
-          <article key={n.href} className={i === 0 ? 'md:pr-10' : 'md:border-l md:border-line md:pl-10'}>
-            <p className="text-sm text-ink-soft"><time dateTime={n.data}>{formatarData(n.data)}</time></p>
-            <h3 className="mt-1 !font-sans text-xl font-semibold leading-snug !text-ink">
-              <a href={n.href} target="_blank" rel="noopener noreferrer" className="underline-offset-4 hover:underline">
-                {n.titulo}<span className="sr-only"> (abre em nova aba)</span>
-              </a>
-            </h3>
-            {n.resumo && <p className="mt-2 line-clamp-3 text-ink-soft">{n.resumo}</p>}
-          </article>
-        ))}
-      </div>
-
-      <h3 className="mt-10 !font-sans text-lg font-semibold !text-ink">Últimas atualizações do acervo</h3>
-      <ul className="mt-3 grid gap-x-10 gap-y-4 border-t border-line pt-4 md:grid-cols-3">
-        {ult.map((p) => (
-          <li key={p.id}>
-            <p className="text-sm text-ink-soft">{formatarData(p.atualizadoEm)}{p.tamanho ? ` · ${p.formato.toUpperCase()} · ${p.tamanho}` : ''}</p>
-            <a href={p.url} target="_blank" rel="noopener noreferrer" className="font-medium text-ink underline-offset-4 hover:underline">
-              {p.titulo}<span className="sr-only"> (abre em nova aba)</span>
-            </a>
-          </li>
-        ))}
-      </ul>
+      <div className="mt-6"><CarrosselNoticias itens={itens} /></div>
     </section>
   )
 }
@@ -216,11 +169,11 @@ function Orientacoes() {
             <>
               <Icone className="mt-0.5 h-10 w-10 shrink-0 text-navy" strokeWidth={1.3} />
               <span className="min-w-0">
-                <span className="flex items-center gap-2 font-sans text-[1.0625rem] font-semibold text-ink">
+                <span className="flex items-center gap-2 font-sans text-lead font-semibold text-ink">
                   {o.titulo} <IconArrow className="h-[18px] w-[18px]" />
                   {externo && <span className="sr-only">(abre em nova aba)</span>}
                 </span>
-                <span className="mt-1 block text-[0.9375rem] text-ink-soft">{o.texto}</span>
+                <span className="mt-1 block text-body text-ink-soft">{o.texto}</span>
               </span>
             </>
           )
@@ -244,10 +197,10 @@ export default function Home() {
   return (
     <>
       <Hero />
-      <AcessoRapido />
-      <FaixaNoticia />
+      <NoticiasPrincipais />
+      <div className="mt-12 md:mt-16"><AcessoRapido /></div>
+      <PainelFiscal />
       <Destaques />
-      <Noticias />
       <Orientacoes />
     </>
   )

@@ -9,22 +9,42 @@ const DIVIDA = 'relatorio-anual-da-divida-publica-e-do-progarma-de-ajuste-fiscal
 
 export type Link = { rotulo: string; href: string; externo?: boolean }
 
-export const institucional: Link[] = [
-  { rotulo: 'Conheça o Tesouro Estadual', href: '/sobre' },
-  { rotulo: 'Notícias', href: '/noticias' },
-  { rotulo: 'Legislação do Tesouro Estadual', href: T('demais-legislacoes-contabeis') },
-  { rotulo: 'Prestação de Contas do Governador', href: T('prestacao-de-contas-do-governador') },
-  { rotulo: 'Fundo Soberano – FUNSES', href: T('funses') },
-  { rotulo: 'Programa de Ajuste Fiscal – PAF', href: T(PAF) },
-]
+export type ItemMenu = { rotulo: string; href?: string; filhos?: Link[]; prefixos?: string[] }
 
-export const menuPrincipal: Link[] = [
-  { rotulo: 'Publicações', href: '/publicacoes' },
-  { rotulo: 'Contabilidade', href: '/publicacoes?tipo=normas-contabeis' },
-  { rotulo: 'Política Fiscal', href: '/publicacoes?tipo=lrf' },
-  { rotulo: 'Dívida Pública', href: T(DIVIDA) },
-  { rotulo: 'Municípios', href: T('transferencias-constitucionais-aos-municipios') },
-  { rotulo: 'Fale Conosco', href: '#contato' },
+/**
+ * Menu principal: seis itens, cada um responde a uma pergunta diferente (sem sobreposição):
+ * o que há de novo (Notícias), como está o Estado (Painel fiscal), onde estão os documentos (Publicações, por assunto),
+ * o que preciso para trabalhar (Serviços), quem somos (Institucional) e como falar com o Tesouro (Fale conosco).
+ */
+export const menu: ItemMenu[] = [
+  { rotulo: 'Notícias', href: '/noticias', prefixos: ['/noticias'] },
+  { rotulo: 'Painel fiscal', href: '/indicadores', prefixos: ['/indicadores'] },
+  {
+    rotulo: 'Publicações',
+    prefixos: ['/publicacoes', '/tesouro/'],
+    filhos: [
+      { rotulo: 'Relatórios fiscais (RREO e RGF)', href: '/publicacoes?tipo=lrf' },
+      { rotulo: 'Resultado do Tesouro Estadual', href: T('resultado-do-tesouro-estadual') },
+      { rotulo: 'Dívida pública', href: T(DIVIDA) },
+      { rotulo: 'Programa de Ajuste Fiscal (PAF)', href: T(PAF) },
+      { rotulo: 'Prestação de Contas do Governador', href: T('prestacao-de-contas-do-governador') },
+      { rotulo: 'Transferências aos municípios', href: T('transferencias-constitucionais-aos-municipios') },
+      { rotulo: 'Contabilidade aplicada', href: '/publicacoes?tipo=normas-contabeis' },
+      { rotulo: 'Tesouro Cidadão', href: '/publicacoes?tipo=cidadao' },
+      { rotulo: 'Todas as publicações', href: '/publicacoes' },
+    ],
+  },
+  { rotulo: 'Serviços', href: '/servicos', prefixos: ['/servicos'] },
+  {
+    rotulo: 'Institucional',
+    prefixos: ['/sobre', '/creditos'],
+    filhos: [
+      { rotulo: 'Conheça o Tesouro Estadual', href: '/sobre' },
+      { rotulo: 'Legislação do Tesouro Estadual', href: T('demais-legislacoes-contabeis') },
+      { rotulo: 'Fundo Soberano (FUNSES)', href: T('funses') },
+    ],
+  },
+  { rotulo: 'Fale conosco', href: '#contato' },
 ]
 
 // `curto` é o rótulo usado no celular, como no mockup mobile.
@@ -71,8 +91,8 @@ export const servicos: { grupo: string; itens: Link[] }[] = [
   {
     grupo: 'Obrigações e transferências',
     itens: [
-      { rotulo: 'Obrigações de Pequeno Valor (OPV) – Não Dativos', href: T('obrigacoes-de-pequeno-valor-opv-nao-dativos') },
-      { rotulo: 'Obrigações de Pequeno Valor (OPV) – Dativos', href: T('obrigacoes-de-pequeno-valor-opv-dativos') },
+      { rotulo: 'OPV, credores não dativos', href: T('obrigacoes-de-pequeno-valor-opv-nao-dativos') },
+      { rotulo: 'OPV, credores dativos', href: T('obrigacoes-de-pequeno-valor-opv-dativos') },
       { rotulo: 'Transferências Especiais', href: T('transferencias-especiais') },
       { rotulo: 'Transferências aos Municípios (consulta)', href: 'https://s1-internet.sefaz.es.gov.br/site-ipm-internet/transferencias/liberacao_anteriores', externo: true },
       { rotulo: 'Boletim Informativo de Repasses', href: T('boletim-informativo-2') },
@@ -83,10 +103,10 @@ export const servicos: { grupo: string; itens: Link[] }[] = [
     itens: [
       { rotulo: 'SIGEFES', href: T('sigefes-links') },
       { rotulo: 'SIAFEM', href: T('siafem') },
-      { rotulo: 'Manual de Contabilidade – MCONT', href: T('manual-de-contabilidade-mcont') },
+      { rotulo: 'Manual de Contabilidade (MCONT)', href: T('manual-de-contabilidade-mcont') },
       { rotulo: 'Balancetes contábeis', href: 'https://internet.sefaz.es.gov.br/contas/contabilidade/balancetes.php', externo: true },
-      { rotulo: 'Normas – Sistema de Contabilidade', href: T('sistema-de-contabilidade') },
-      { rotulo: 'Normas – Sistema Financeiro', href: T('sistema-financeiro') },
+      { rotulo: 'Normas do Sistema de Contabilidade', href: T('sistema-de-contabilidade') },
+      { rotulo: 'Normas do Sistema Financeiro', href: T('sistema-financeiro') },
     ],
   },
 ]
@@ -99,7 +119,7 @@ export const rodape = {
     { rotulo: 'Ouvidoria', href: 'https://ouvidoria.es.gov.br/', externo: true },
     { rotulo: 'Aviso de Privacidade', href: `${S}/tratamento-de-dados-pessoais`, externo: true },
   ] satisfies Link[],
-  endereco: 'Av. João Batista Parra, 600 – Enseada do Suá, Vitória – ES · CEP 29050-375',
+  endereco: 'Av. João Batista Parra, 600, Enseada do Suá, Vitória/ES, CEP 29050-375',
   telefone: '(27) 3347-5102',
   faleConosco: `${S}/fale-conosco`,
   atendimento: `${S}/local-e-horario-de-atendimento`,

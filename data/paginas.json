@@ -1,5 +1,5 @@
 {
- "geradoEm": "2026-10-31T23:48:28+00:00",
+ "geradoEm": "2026-11-01T09:55:08+00:00",
  "fonte": "https://sefaz.es.gov.br",
  "paginas": [
   {
@@ -21,7 +21,7 @@
        "tamanho": "6 MB",
        "formato": "pdf",
        "url": "https://sefaz.es.gov.br/media/Tesouro%20Estadual/RTE%201%20QUAD%202025%20%283%29.pdf",
-       "exibicao": "Resultado do Tesouro Estadual — 1º quadrimestre de 2025"
+       "exibicao": "Resultado do Tesouro Estadual do 1º quadrimestre de 2025"
       },
       {
        "titulo": "Segundo Quadrimestre de 2025",
@@ -30,7 +30,7 @@
        "tamanho": "7 MB",
        "formato": "pdf",
        "url": "https://sefaz.es.gov.br/media/Tesouro%20Estadual/RTE%202025%20-%202%C2%B0%20Quadrimestre%20%283%29.pdf",
-       "exibicao": "Resultado do Tesouro Estadual — 2º quadrimestre de 2025"
+       "exibicao": "Resultado do Tesouro Estadual do 2º quadrimestre de 2025"
       },
       {
        "titulo": "Terceiro Quadrimestre de 2025",
@@ -39,7 +39,7 @@
        "tamanho": "7 MB",
        "formato": "pdf",
        "url": "https://sefaz.es.gov.br/media/Tesouro%20Estadual/RTE%202025%20-%203%C2%B0%20Quadrimestre%20%283%29.pdf",
-       "exibicao": "Resultado do Tesouro Estadual — 3º quadrimestre de 2025"
+       "exibicao": "Resultado do Tesouro Estadual do 3º quadrimestre de 2025"
       }
      ]
     },
@@ -54,7 +54,7 @@
        "tamanho": "17 MB",
        "formato": "pdf",
        "url": "https://sefaz.es.gov.br/media/Tesouro%20Estadual/RTE%202024%20-%201%C2%B0%20Quadrimestre%20final.pdf",
-       "exibicao": "Resultado do Tesouro Estadual — 1º quadrimestre de 2024"
+       "exibicao": "Resultado do Tesouro Estadual do 1º quadrimestre de 2024"
       },
       {
        "titulo": "Segundo Quadrimestre de 2024",
@@ -63,7 +63,7 @@
        "tamanho": "12 MB",
        "formato": "pdf",
        "url": "https://sefaz.es.gov.br/media/RTE/RTE%202024%20-%202%C2%B0%20Quadrimestre%20%284%29.pdf",
-       "exibicao": "Resultado do Tesouro Estadual — 2º quadrimestre de 2024"
+       "exibicao": "Resultado do Tesouro Estadual do 2º quadrimestre de 2024"
       },
       {
        "titulo": "Resultado do Tesouro Estadual - 2024",
@@ -102,7 +102,7 @@
        "tamanho": "13 MB",
        "formato": "pdf",
        "url": "https://sefaz.es.gov.br/media/RTE/2022/Resultado%20do%20Tesouro%20Estadual%201%20Quadrimestre.pdf",
-       "exibicao": "Resultado do Tesouro Estadual — 1º quadrimestre de 2022"
+       "exibicao": "Resultado do Tesouro Estadual do 1º quadrimestre de 2022"
       },
       {
        "titulo": "Segundo Quadrimestre de 2022",
@@ -111,7 +111,7 @@
        "tamanho": "14 MB",
        "formato": "pdf",
        "url": "https://sefaz.es.gov.br/media/RTE/2022/Resultado%20do%20Tesouro%20Estadual%202%20Quadrimestre.pdf",
-       "exibicao": "Resultado do Tesouro Estadual — 2º quadrimestre de 2022"
+       "exibicao": "Resultado do Tesouro Estadual do 2º quadrimestre de 2022"
       },
       {
        "titulo": "Terceiro Quadrimestre de 2022",
@@ -120,7 +120,7 @@
        "tamanho": "7 MB",
        "formato": "pdf",
        "url": "https://sefaz.es.gov.br/media/Tesouro%20Estadual/Relat%C3%B3rios%20Fiscais/Resultado%20do%20Tesouro%20%28Modificado%29%20%282%29.pdf",
-       "exibicao": "Resultado do Tesouro Estadual — 3º quadrimestre de 2022"
+       "exibicao": "Resultado do Tesouro Estadual do 3º quadrimestre de 2022"
       }
      ]
     },
@@ -135,7 +135,7 @@
        "tamanho": "14 MB",
        "formato": "pdf",
        "url": "https://sefaz.es.gov.br/media/Tesouro%20Estadual/Relat%C3%B3rios%20Fiscais/Resultado%20do%20Tesouro%20Estadual/Primeiro%20Quadrimestre%20de%202021.pdf",
-       "exibicao": "Resultado do Tesouro Estadual — 1º quadrimestre de 2021"
+       "exibicao": "Resultado do Tesouro Estadual do 1º quadrimestre de 2021"
       },
       {
        "titulo": "Segundo Quadrimestre de 2021",
@@ -144,7 +144,7 @@
        "tamanho": "20 MB",
        "formato": "pdf",
        "url": "https://sefaz.es.gov.br/media/Acesso%20Rapido/RTE%20-%202%C2%BA%20Quadrimestre%202021.pdf",
-       "exibicao": "Resultado do Tesouro Estadual — 2º quadrimestre de 2021"
+       "exibicao": "Resultado do Tesouro Estadual do 2º quadrimestre de 2021"
       },
       {
        "titulo": "Terceiro Quadrimestre de 2021",
@@ -153,7 +153,7 @@
        "tamanho": "21 MB",
        "formato": "pdf",
        "url": "https://sefaz.es.gov.br/media/Tesouro%20Estadual/Relat%C3%B3rios%20Fiscais/Resultado%20do%20Tesouro%20Estadual/RTE%203%C2%BA%20quadrimestre%202021.pdf",
-       "exibicao": "Resultado do Tesouro Estadual — 3º quadrimestre de 2021"
+       "exibicao": "Resultado do Tesouro Estadual do 3º quadrimestre de 2021"
       }
      ]
     },
@@ -168,7 +168,7 @@
        "tamanho": "2 MB",
        "formato": "pdf",
        "url": "https://sefaz.es.gov.br/media/Tesouro%20Estadual/Pol%C3%ADtica%20Fiscal/Resultado%20do%20Tesouro%20Estadual/2020%20-%20Resultado%20do%20Tesouro%20Estadual/Primeiro%20Quadrimestre%20de%202020.pdf",
-       "exibicao": "Resultado do Tesouro Estadual — 1º quadrimestre de 2020"
+       "exibicao": "Resultado do Tesouro Estadual do 1º quadrimestre de 2020"
       },
       {
        "titulo": "Segundo Quadrimestre de 2020",
@@ -177,7 +177,7 @@
        "tamanho": "5 MB",
        "formato": "pdf",
        "url": "https://sefaz.es.gov.br/media/Tesouro%20Estadual/Pol%C3%ADtica%20Fiscal/Resultado%20do%20Tesouro%20Estadual/2020%20-%20Resultado%20do%20Tesouro%20Estadual/Segundo_Quadrimestre_de_2020.pdf",
-       "exibicao": "Resultado do Tesouro Estadual — 2º quadrimestre de 2020"
+       "exibicao": "Resultado do Tesouro Estadual do 2º quadrimestre de 2020"
       },
       {
        "titulo": "Terceiro Quadrimestre de 2020",
@@ -186,7 +186,7 @@
        "tamanho": "11 MB",
        "formato": "pdf",
        "url": "https://sefaz.es.gov.br/media/Tesouro%20Estadual/Relat%C3%B3rios%20Fiscais/Relat%C3%B3rio%20Anual/Terceiro%20Quadrimestre%20de%202020.pdf",
-       "exibicao": "Resultado do Tesouro Estadual — 3º quadrimestre de 2020"
+       "exibicao": "Resultado do Tesouro Estadual do 3º quadrimestre de 2020"
       }
      ]
     },
@@ -201,7 +201,7 @@
        "tamanho": "2 MB",
        "formato": "pdf",
        "url": "https://sefaz.es.gov.br/media/Tesouro%20Estadual/Pol%C3%ADtica%20Fiscal/Resultado%20do%20Tesouro%20Estadual/2019%20-%20Resultado%20do%20Tesouro%20Estadual/Terceiro%20Quadrimestre%20de%202019.pdf",
-       "exibicao": "Resultado do Tesouro Estadual — 3º quadrimestre de 2019"
+       "exibicao": "Resultado do Tesouro Estadual do 3º quadrimestre de 2019"
       }
      ]
     },
@@ -216,7 +216,7 @@
        "tamanho": "877 KB",
        "formato": "pdf",
        "url": "https://sefaz.es.gov.br/media/Tesouro%20Estadual/Pol%C3%ADtica%20Fiscal/Resultado%20do%20Tesouro%20Estadual/2018%20-%20Resultado%20do%20Tesouro%20Estadual/Primeiro%20Bimestre%20de%202018.pdf",
-       "exibicao": "Resultado do Tesouro Estadual — 1º bimestre de 2018"
+       "exibicao": "Resultado do Tesouro Estadual do 1º bimestre de 2018"
       },
       {
        "titulo": "Segundo Bimestre de 2018",
@@ -225,7 +225,7 @@
        "tamanho": "901 KB",
        "formato": "pdf",
        "url": "https://sefaz.es.gov.br/media/Tesouro%20Estadual/Pol%C3%ADtica%20Fiscal/Resultado%20do%20Tesouro%20Estadual/2018%20-%20Resultado%20do%20Tesouro%20Estadual/Segundo%20Bimestre%20de%202018.pdf",
-       "exibicao": "Resultado do Tesouro Estadual — 2º bimestre de 2018"
+       "exibicao": "Resultado do Tesouro Estadual do 2º bimestre de 2018"
       },
       {
        "titulo": "Terceiro Bimestre de 2018",
@@ -234,7 +234,7 @@
        "tamanho": "922 KB",
        "formato": "pdf",
        "url": "https://sefaz.es.gov.br/media/Tesouro%20Estadual/Pol%C3%ADtica%20Fiscal/Resultado%20do%20Tesouro%20Estadual/2018%20-%20Resultado%20do%20Tesouro%20Estadual/Terceiro%20Bimestre%20de%202018.pdf",
-       "exibicao": "Resultado do Tesouro Estadual — 3º bimestre de 2018"
+       "exibicao": "Resultado do Tesouro Estadual do 3º bimestre de 2018"
       },
       {
        "titulo": "Quarto Bimestre de 2018",
@@ -243,7 +243,7 @@
        "tamanho": "919 KB",
        "formato": "pdf",
        "url": "https://sefaz.es.gov.br/media/Tesouro%20Estadual/Pol%C3%ADtica%20Fiscal/Resultado%20do%20Tesouro%20Estadual/2018%20-%20Resultado%20do%20Tesouro%20Estadual/Quarto%20Bimestre%20de%202018.pdf",
-       "exibicao": "Resultado do Tesouro Estadual — 4º bimestre de 2018"
+       "exibicao": "Resultado do Tesouro Estadual do 4º bimestre de 2018"
       },
       {
        "titulo": "Quinto Bimestre de 2018",
@@ -252,7 +252,7 @@
        "tamanho": "855 KB",
        "formato": "pdf",
        "url": "https://sefaz.es.gov.br/media/Tesouro%20Estadual/Pol%C3%ADtica%20Fiscal/Resultado%20do%20Tesouro%20Estadual/2018%20-%20Resultado%20do%20Tesouro%20Estadual/Quinto%20Bimestre%20de%202018.pdf",
-       "exibicao": "Resultado do Tesouro Estadual — 5º bimestre de 2018"
+       "exibicao": "Resultado do Tesouro Estadual do 5º bimestre de 2018"
       }
      ]
     },
@@ -267,7 +267,7 @@
        "tamanho": "1 MB",
        "formato": "pdf",
        "url": "https://sefaz.es.gov.br/media/Tesouro%20Estadual/Pol%C3%ADtica%20Fiscal/Resultado%20do%20Tesouro%20Estadual/2017%20-%20Resultado%20do%20Tesouro%20Estadual/Primeiro%20Bimestre%20de%202017.pdf",
-       "exibicao": "Resultado do Tesouro Estadual — 1º bimestre de 2017"
+       "exibicao": "Resultado do Tesouro Estadual do 1º bimestre de 2017"
       },
       {
        "titulo": "Segundo Bimestre de 2017",
@@ -276,7 +276,7 @@
        "tamanho": "600 KB",
        "formato": "pdf",
        "url": "https://sefaz.es.gov.br/media/Tesouro%20Estadual/Pol%C3%ADtica%20Fiscal/Resultado%20do%20Tesouro%20Estadual/2017%20-%20Resultado%20do%20Tesouro%20Estadual/Segundo%20Bimestre%20de%202017.pdf",
-       "exibicao": "Resultado do Tesouro Estadual — 2º bimestre de 2017"
+       "exibicao": "Resultado do Tesouro Estadual do 2º bimestre de 2017"
       },
       {
        "titulo": "Terceiro Bimestre de 2017",
@@ -285,7 +285,7 @@
        "tamanho": "603 KB",
        "formato": "pdf",
        "url": "https://sefaz.es.gov.br/media/Tesouro%20Estadual/Pol%C3%ADtica%20Fiscal/Resultado%20do%20Tesouro%20Estadual/2017%20-%20Resultado%20do%20Tesouro%20Estadual/Terceiro%20Bimestre%20de%202017.pdf",
-       "exibicao": "Resultado do Tesouro Estadual — 3º bimestre de 2017"
+       "exibicao": "Resultado do Tesouro Estadual do 3º bimestre de 2017"
       },
       {
        "titulo": "Quarto Bimestre de 2017",
@@ -294,7 +294,7 @@
        "tamanho": "642 KB",
        "formato": "pdf",
        "url": "https://sefaz.es.gov.br/media/Tesouro%20Estadual/Pol%C3%ADtica%20Fiscal/Resultado%20do%20Tesouro%20Estadual/2017%20-%20Resultado%20do%20Tesouro%20Estadual/Quarto%20Bimestre%20de%202017.pdf",
-       "exibicao": "Resultado do Tesouro Estadual — 4º bimestre de 2017"
+       "exibicao": "Resultado do Tesouro Estadual do 4º bimestre de 2017"
       },
       {
        "titulo": "Quinto Bimestre de 2017",
@@ -303,7 +303,7 @@
        "tamanho": "649 KB",
        "formato": "pdf",
        "url": "https://sefaz.es.gov.br/media/Tesouro%20Estadual/Pol%C3%ADtica%20Fiscal/Resultado%20do%20Tesouro%20Estadual/2017%20-%20Resultado%20do%20Tesouro%20Estadual/Quinto%20Bimestre%20de%202017.pdf",
-       "exibicao": "Resultado do Tesouro Estadual — 5º bimestre de 2017"
+       "exibicao": "Resultado do Tesouro Estadual do 5º bimestre de 2017"
       },
       {
        "titulo": "Sexto Bimestre de 2017",
@@ -312,7 +312,7 @@
        "tamanho": "743 KB",
        "formato": "pdf",
        "url": "https://sefaz.es.gov.br/media/Tesouro%20Estadual/Pol%C3%ADtica%20Fiscal/Resultado%20do%20Tesouro%20Estadual/2017%20-%20Resultado%20do%20Tesouro%20Estadual/Sexto%20Bimestre%20de%202017.pdf",
-       "exibicao": "Resultado do Tesouro Estadual — 6º bimestre de 2017"
+       "exibicao": "Resultado do Tesouro Estadual do 6º bimestre de 2017"
       }
      ]
     },
@@ -327,7 +327,7 @@
        "tamanho": "752 KB",
        "formato": "pdf",
        "url": "https://sefaz.es.gov.br/media/Tesouro%20Estadual/Pol%C3%ADtica%20Fiscal/Resultado%20do%20Tesouro%20Estadual/2016%20-%20Resultado%20do%20Tesouro%20Estadual/Primeiro%20Bimestre%20de%202016.pdf",
-       "exibicao": "Resultado do Tesouro Estadual — 1º bimestre de 2016"
+       "exibicao": "Resultado do Tesouro Estadual do 1º bimestre de 2016"
       },
       {
        "titulo": "Segundo Bimestre de 2016",
@@ -336,7 +336,7 @@
        "tamanho": "1 MB",
        "formato": "pdf",
        "url": "https://sefaz.es.gov.br/media/Tesouro%20Estadual/Pol%C3%ADtica%20Fiscal/Resultado%20do%20Tesouro%20Estadual/2016%20-%20Resultado%20do%20Tesouro%20Estadual/Segundo%20Bimestre%20de%202016.pdf",
-       "exibicao": "Resultado do Tesouro Estadual — 2º bimestre de 2016"
+       "exibicao": "Resultado do Tesouro Estadual do 2º bimestre de 2016"
       },
       {
        "titulo": "Terceiro Bimestre de 2016",
@@ -345,7 +345,7 @@
        "tamanho": "1 MB",
        "formato": "pdf",
        "url": "https://sefaz.es.gov.br/media/Tesouro%20Estadual/Pol%C3%ADtica%20Fiscal/Resultado%20do%20Tesouro%20Estadual/2016%20-%20Resultado%20do%20Tesouro%20Estadual/Terceiro%20Bimestre%20de%202016.pdf",
-       "exibicao": "Resultado do Tesouro Estadual — 3º bimestre de 2016"
+       "exibicao": "Resultado do Tesouro Estadual do 3º bimestre de 2016"
       },
       {
        "titulo": "Quarto Bimestre de 2016",
@@ -354,7 +354,7 @@
        "tamanho": "1 MB",
        "formato": "pdf",
        "url": "https://sefaz.es.gov.br/media/Tesouro%20Estadual/Pol%C3%ADtica%20Fiscal/Resultado%20do%20Tesouro%20Estadual/2016%20-%20Resultado%20do%20Tesouro%20Estadual/Quarto%20Bimestre%20de%202016.pdf",
-       "exibicao": "Resultado do Tesouro Estadual — 4º bimestre de 2016"
+       "exibicao": "Resultado do Tesouro Estadual do 4º bimestre de 2016"
       },
       {
        "titulo": "Quinto Bimestre de 2016",
@@ -363,7 +363,7 @@
        "tamanho": "1 MB",
        "formato": "pdf",
        "url": "https://sefaz.es.gov.br/media/Tesouro%20Estadual/Pol%C3%ADtica%20Fiscal/Resultado%20do%20Tesouro%20Estadual/2016%20-%20Resultado%20do%20Tesouro%20Estadual/Quinto%20Bimestre%20de%202016.pdf",
-       "exibicao": "Resultado do Tesouro Estadual — 5º bimestre de 2016"
+       "exibicao": "Resultado do Tesouro Estadual do 5º bimestre de 2016"
       },
       {
        "titulo": "Sexto Bimestre de 2016",
@@ -372,7 +372,7 @@
        "tamanho": "1 MB",
        "formato": "pdf",
        "url": "https://sefaz.es.gov.br/media/Tesouro%20Estadual/Pol%C3%ADtica%20Fiscal/Resultado%20do%20Tesouro%20Estadual/2016%20-%20Resultado%20do%20Tesouro%20Estadual/Sexto%20Bimestre%20de%202016.pdf",
-       "exibicao": "Resultado do Tesouro Estadual — 6º bimestre de 2016"
+       "exibicao": "Resultado do Tesouro Estadual do 6º bimestre de 2016"
       }
      ]
     },
@@ -387,7 +387,7 @@
        "tamanho": "791 KB",
        "formato": "pdf",
        "url": "https://sefaz.es.gov.br/media/Tesouro%20Estadual/Pol%C3%ADtica%20Fiscal/Resultado%20do%20Tesouro%20Estadual/2015%20-%20Resultado%20do%20Tesouro%20Estadual/Dezembro%202015.pdf",
-       "exibicao": "Resultado do Tesouro Estadual — Dezembro de 2015"
+       "exibicao": "Resultado do Tesouro Estadual de dezembro de 2015"
       },
       {
        "titulo": "Outubro 2015",
@@ -396,7 +396,7 @@
        "tamanho": "799 KB",
        "formato": "pdf",
        "url": "https://sefaz.es.gov.br/media/Tesouro%20Estadual/Pol%C3%ADtica%20Fiscal/Resultado%20do%20Tesouro%20Estadual/2015%20-%20Resultado%20do%20Tesouro%20Estadual/Outubro%202015.pdf",
-       "exibicao": "Resultado do Tesouro Estadual — Outubro de 2015"
+       "exibicao": "Resultado do Tesouro Estadual de outubro de 2015"
       },
       {
        "titulo": "Agosto 2015",
@@ -405,7 +405,7 @@
        "tamanho": "696 KB",
        "formato": "pdf",
        "url": "https://sefaz.es.gov.br/media/Tesouro%20Estadual/Pol%C3%ADtica%20Fiscal/Resultado%20do%20Tesouro%20Estadual/2015%20-%20Resultado%20do%20Tesouro%20Estadual/Agosto%202015.pdf",
-       "exibicao": "Resultado do Tesouro Estadual — Agosto de 2015"
+       "exibicao": "Resultado do Tesouro Estadual de agosto de 2015"
       }
      ]
     },
@@ -420,7 +420,7 @@
        "tamanho": "660 KB",
        "formato": "pdf",
        "url": "https://sefaz.es.gov.br/media/Tesouro%20Estadual/Pol%C3%ADtica%20Fiscal/Resultado%20do%20Tesouro%20Estadual/Resultado%20do%20Tesouro%20Estadual%20-%20Anos%20Anteriores/Dezembro%202014.pdf",
-       "exibicao": "Resultado do Tesouro Estadual — Dezembro de 2014"
+       "exibicao": "Resultado do Tesouro Estadual de dezembro de 2014"
       },
       {
        "titulo": "Novembro 2014",
@@ -429,7 +429,7 @@
        "tamanho": "2 MB",
        "formato": "pdf",
        "url": "https://sefaz.es.gov.br/media/Tesouro%20Estadual/Pol%C3%ADtica%20Fiscal/Resultado%20do%20Tesouro%20Estadual/Resultado%20do%20Tesouro%20Estadual%20-%20Anos%20Anteriores/Novembro%202014.pdf",
-       "exibicao": "Resultado do Tesouro Estadual — Novembro de 2014"
+       "exibicao": "Resultado do Tesouro Estadual de novembro de 2014"
       },
       {
        "titulo": "Outubro 2014",
@@ -438,7 +438,7 @@
        "tamanho": "2 MB",
        "formato": "pdf",
        "url": "https://sefaz.es.gov.br/media/Tesouro%20Estadual/Pol%C3%ADtica%20Fiscal/Resultado%20do%20Tesouro%20Estadual/Resultado%20do%20Tesouro%20Estadual%20-%20Anos%20Anteriores/Outubro%202014.pdf",
-       "exibicao": "Resultado do Tesouro Estadual — Outubro de 2014"
+       "exibicao": "Resultado do Tesouro Estadual de outubro de 2014"
       },
       {
        "titulo": "Setembro 2014",
@@ -447,7 +447,7 @@
        "tamanho": "2 MB",
        "formato": "pdf",
        "url": "https://sefaz.es.gov.br/media/Tesouro%20Estadual/Pol%C3%ADtica%20Fiscal/Resultado%20do%20Tesouro%20Estadual/Resultado%20do%20Tesouro%20Estadual%20-%20Anos%20Anteriores/Setembro%202014.pdf",
-       "exibicao": "Resultado do Tesouro Estadual — Setembro de 2014"
+       "exibicao": "Resultado do Tesouro Estadual de setembro de 2014"
       },
       {
        "titulo": "Agosto 2014",
@@ -456,7 +456,7 @@
        "tamanho": "2 MB",
        "formato": "pdf",
        "url": "https://sefaz.es.gov.br/media/Tesouro%20Estadual/Pol%C3%ADtica%20Fiscal/Resultado%20do%20Tesouro%20Estadual/Resultado%20do%20Tesouro%20Estadual%20-%20Anos%20Anteriores/Agosto%202014.pdf",
-       "exibicao": "Resultado do Tesouro Estadual — Agosto de 2014"
+       "exibicao": "Resultado do Tesouro Estadual de agosto de 2014"
       },
       {
        "titulo": "Julho 2014",
@@ -465,7 +465,7 @@
        "tamanho": "2 MB",
        "formato": "pdf",
        "url": "https://sefaz.es.gov.br/media/Tesouro%20Estadual/Pol%C3%ADtica%20Fiscal/Resultado%20do%20Tesouro%20Estadual/Resultado%20do%20Tesouro%20Estadual%20-%20Anos%20Anteriores/Julho%202014.pdf",
-       "exibicao": "Resultado do Tesouro Estadual — Julho de 2014"
+       "exibicao": "Resultado do Tesouro Estadual de julho de 2014"
       },
       {
        "titulo": "Junho 2014",
@@ -474,7 +474,7 @@
        "tamanho": "2 MB",
        "formato": "pdf",
        "url": "https://sefaz.es.gov.br/media/Tesouro%20Estadual/Pol%C3%ADtica%20Fiscal/Resultado%20do%20Tesouro%20Estadual/Resultado%20do%20Tesouro%20Estadual%20-%20Anos%20Anteriores/Junho%202014.pdf",
-       "exibicao": "Resultado do Tesouro Estadual — Junho de 2014"
+       "exibicao": "Resultado do Tesouro Estadual de junho de 2014"
       },
       {
        "titulo": "Maio 2014",
@@ -483,7 +483,7 @@
        "tamanho": "1 MB",
        "formato": "pdf",
        "url": "https://sefaz.es.gov.br/media/Tesouro%20Estadual/Pol%C3%ADtica%20Fiscal/Resultado%20do%20Tesouro%20Estadual/Resultado%20do%20Tesouro%20Estadual%20-%20Anos%20Anteriores/Maio%202014.pdf",
-       "exibicao": "Resultado do Tesouro Estadual — Maio de 2014"
+       "exibicao": "Resultado do Tesouro Estadual de maio de 2014"
       },
       {
        "titulo": "Abril 2014",
@@ -492,7 +492,7 @@
        "tamanho": "2 MB",
        "formato": "pdf",
        "url": "https://sefaz.es.gov.br/media/Tesouro%20Estadual/Pol%C3%ADtica%20Fiscal/Resultado%20do%20Tesouro%20Estadual/Resultado%20do%20Tesouro%20Estadual%20-%20Anos%20Anteriores/Abril%202014.pdf",
-       "exibicao": "Resultado do Tesouro Estadual — Abril de 2014"
+       "exibicao": "Resultado do Tesouro Estadual de abril de 2014"
       },
       {
        "titulo": "Março 2014",
@@ -501,7 +501,7 @@
        "tamanho": "2 MB",
        "formato": "pdf",
        "url": "https://sefaz.es.gov.br/media/Tesouro%20Estadual/Pol%C3%ADtica%20Fiscal/Resultado%20do%20Tesouro%20Estadual/Resultado%20do%20Tesouro%20Estadual%20-%20Anos%20Anteriores/Mar%C3%A7o%202014.pdf",
-       "exibicao": "Resultado do Tesouro Estadual — Março de 2014"
+       "exibicao": "Resultado do Tesouro Estadual de março de 2014"
       },
       {
        "titulo": "Dezembro 2013",
@@ -510,7 +510,7 @@
        "tamanho": "2 MB",
        "formato": "pdf",
        "url": "https://sefaz.es.gov.br/media/Tesouro%20Estadual/Pol%C3%ADtica%20Fiscal/Resultado%20do%20Tesouro%20Estadual/Resultado%20do%20Tesouro%20Estadual%20-%20Anos%20Anteriores/Dezembro%202013.pdf",
-       "exibicao": "Resultado do Tesouro Estadual — Dezembro de 2013"
+       "exibicao": "Resultado do Tesouro Estadual de dezembro de 2013"
       },
       {
        "titulo": "Novembro 2013",
@@ -519,7 +519,7 @@
        "tamanho": "633 KB",
        "formato": "pdf",
        "url": "https://sefaz.es.gov.br/media/Tesouro%20Estadual/Pol%C3%ADtica%20Fiscal/Resultado%20do%20Tesouro%20Estadual/Resultado%20do%20Tesouro%20Estadual%20-%20Anos%20Anteriores/Novembro%202013.pdf",
-       "exibicao": "Resultado do Tesouro Estadual — Novembro de 2013"
+       "exibicao": "Resultado do Tesouro Estadual de novembro de 2013"
       },
       {
        "titulo": "Outubro 2013",
@@ -528,7 +528,7 @@
        "tamanho": "2 MB",
        "formato": "pdf",
        "url": "https://sefaz.es.gov.br/media/Tesouro%20Estadual/Pol%C3%ADtica%20Fiscal/Resultado%20do%20Tesouro%20Estadual/Resultado%20do%20Tesouro%20Estadual%20-%20Anos%20Anteriores/Outubro%202013.pdf",
-       "exibicao": "Resultado do Tesouro Estadual — Outubro de 2013"
+       "exibicao": "Resultado do Tesouro Estadual de outubro de 2013"
       },
       {
        "titulo": "Setembro 2013",
@@ -537,7 +537,7 @@
        "tamanho": "2 MB",
        "formato": "pdf",
        "url": "https://sefaz.es.gov.br/media/Tesouro%20Estadual/Pol%C3%ADtica%20Fiscal/Resultado%20do%20Tesouro%20Estadual/Resultado%20do%20Tesouro%20Estadual%20-%20Anos%20Anteriores/Setembro%202013.pdf",
-       "exibicao": "Resultado do Tesouro Estadual — Setembro de 2013"
+       "exibicao": "Resultado do Tesouro Estadual de setembro de 2013"
       },
       {
        "titulo": "Agosto 2013",
@@ -546,7 +546,7 @@
        "tamanho": "850 KB",
        "formato": "pdf",
        "url": "https://sefaz.es.gov.br/media/Tesouro%20Estadual/Pol%C3%ADtica%20Fiscal/Resultado%20do%20Tesouro%20Estadual/Resultado%20do%20Tesouro%20Estadual%20-%20Anos%20Anteriores/Agosto%202013.pdf",
-       "exibicao": "Resultado do Tesouro Estadual — Agosto de 2013"
+       "exibicao": "Resultado do Tesouro Estadual de agosto de 2013"
       },
       {
        "titulo": "Julho 2013",
@@ -555,7 +555,7 @@
        "tamanho": "2 MB",
        "formato": "pdf",
        "url": "https://sefaz.es.gov.br/media/Tesouro%20Estadual/Pol%C3%ADtica%20Fiscal/Resultado%20do%20Tesouro%20Estadual/Resultado%20do%20Tesouro%20Estadual%20-%20Anos%20Anteriores/Julho%202013.pdf",
-       "exibicao": "Resultado do Tesouro Estadual — Julho de 2013"
+       "exibicao": "Resultado do Tesouro Estadual de julho de 2013"
       },
       {
        "titulo": "Junho 2013",
@@ -564,7 +564,7 @@
        "tamanho": "2 MB",
        "formato": "pdf",
        "url": "https://sefaz.es.gov.br/media/Tesouro%20Estadual/Pol%C3%ADtica%20Fiscal/Resultado%20do%20Tesouro%20Estadual/Resultado%20do%20Tesouro%20Estadual%20-%20Anos%20Anteriores/Junho%202013.pdf",
-       "exibicao": "Resultado do Tesouro Estadual — Junho de 2013"
+       "exibicao": "Resultado do Tesouro Estadual de junho de 2013"
       },
       {
        "titulo": "Maio 2013",
@@ -573,7 +573,7 @@
        "tamanho": "556 KB",
        "formato": "pdf",
        "url": "https://sefaz.es.gov.br/media/Tesouro%20Estadual/Pol%C3%ADtica%20Fiscal/Resultado%20do%20Tesouro%20Estadual/Resultado%20do%20Tesouro%20Estadual%20-%20Anos%20Anteriores/Maio%202013.pdf",
-       "exibicao": "Resultado do Tesouro Estadual — Maio de 2013"
+       "exibicao": "Resultado do Tesouro Estadual de maio de 2013"
       },
       {
        "titulo": "Abril 2013",
@@ -582,7 +582,7 @@
        "tamanho": "1 MB",
        "formato": "pdf",
        "url": "https://sefaz.es.gov.br/media/Tesouro%20Estadual/Pol%C3%ADtica%20Fiscal/Resultado%20do%20Tesouro%20Estadual/Resultado%20do%20Tesouro%20Estadual%20-%20Anos%20Anteriores/Abril%202013.pdf",
-       "exibicao": "Resultado do Tesouro Estadual — Abril de 2013"
+       "exibicao": "Resultado do Tesouro Estadual de abril de 2013"
       },
       {
        "titulo": "Março 2013",
@@ -591,7 +591,7 @@
        "tamanho": "2 MB",
        "formato": "pdf",
        "url": "https://sefaz.es.gov.br/media/Tesouro%20Estadual/Pol%C3%ADtica%20Fiscal/Resultado%20do%20Tesouro%20Estadual/Resultado%20do%20Tesouro%20Estadual%20-%20Anos%20Anteriores/Mar%C3%A7o%202013.pdf",
-       "exibicao": "Resultado do Tesouro Estadual — Março de 2013"
+       "exibicao": "Resultado do Tesouro Estadual de março de 2013"
       },
       {
        "titulo": "Fevereiro 2013",
@@ -600,7 +600,7 @@
        "tamanho": "2 MB",
        "formato": "pdf",
        "url": "https://sefaz.es.gov.br/media/Tesouro%20Estadual/Pol%C3%ADtica%20Fiscal/Resultado%20do%20Tesouro%20Estadual/Resultado%20do%20Tesouro%20Estadual%20-%20Anos%20Anteriores/Fevereiro%202013.pdf",
-       "exibicao": "Resultado do Tesouro Estadual — Fevereiro de 2013"
+       "exibicao": "Resultado do Tesouro Estadual de fevereiro de 2013"
       },
       {
        "titulo": "Janeiro 2013",
@@ -609,7 +609,7 @@
        "tamanho": "1 MB",
        "formato": "pdf",
        "url": "https://sefaz.es.gov.br/media/Tesouro%20Estadual/Pol%C3%ADtica%20Fiscal/Resultado%20do%20Tesouro%20Estadual/Resultado%20do%20Tesouro%20Estadual%20-%20Anos%20Anteriores/Janeiro%202013.pdf",
-       "exibicao": "Resultado do Tesouro Estadual — Janeiro de 2013"
+       "exibicao": "Resultado do Tesouro Estadual de janeiro de 2013"
       },
       {
        "titulo": "Dezembro 2012",
@@ -618,7 +618,7 @@
        "tamanho": "2 MB",
        "formato": "pdf",
        "url": "https://sefaz.es.gov.br/media/Tesouro%20Estadual/Pol%C3%ADtica%20Fiscal/Resultado%20do%20Tesouro%20Estadual/Resultado%20do%20Tesouro%20Estadual%20-%20Anos%20Anteriores/Dezembro%202012.pdf",
-       "exibicao": "Resultado do Tesouro Estadual — Dezembro de 2012"
+       "exibicao": "Resultado do Tesouro Estadual de dezembro de 2012"
       },
       {
        "titulo": "Novembro 2012",
@@ -627,7 +627,7 @@
        "tamanho": "530 KB",
        "formato": "pdf",
        "url": "https://sefaz.es.gov.br/media/Tesouro%20Estadual/Pol%C3%ADtica%20Fiscal/Resultado%20do%20Tesouro%20Estadual/Resultado%20do%20Tesouro%20Estadual%20-%20Anos%20Anteriores/Novembro%202012.pdf",
-       "exibicao": "Resultado do Tesouro Estadual — Novembro de 2012"
+       "exibicao": "Resultado do Tesouro Estadual de novembro de 2012"
       },
       {
        "titulo": "Outubro 2012",
@@ -636,7 +636,7 @@
        "tamanho": "2 MB",
        "formato": "pdf",
        "url": "https://sefaz.es.gov.br/media/Tesouro%20Estadual/Pol%C3%ADtica%20Fiscal/Resultado%20do%20Tesouro%20Estadual/Resultado%20do%20Tesouro%20Estadual%20-%20Anos%20Anteriores/Outubro%202012.pdf",
-       "exibicao": "Resultado do Tesouro Estadual — Outubro de 2012"
+       "exibicao": "Resultado do Tesouro Estadual de outubro de 2012"
       },
       {
        "titulo": "Setembro 2012",
@@ -645,7 +645,7 @@
        "tamanho": "2 MB",
        "formato": "pdf",
        "url": "https://sefaz.es.gov.br/media/Tesouro%20Estadual/Pol%C3%ADtica%20Fiscal/Resultado%20do%20Tesouro%20Estadual/Resultado%20do%20Tesouro%20Estadual%20-%20Anos%20Anteriores/Setembro%202012.pdf",
-       "exibicao": "Resultado do Tesouro Estadual — Setembro de 2012"
+       "exibicao": "Resultado do Tesouro Estadual de setembro de 2012"
       },
       {
        "titulo": "Agosto 2012",
@@ -654,7 +654,7 @@
        "tamanho": "2 MB",
        "formato": "pdf",
        "url": "https://sefaz.es.gov.br/media/Tesouro%20Estadual/Pol%C3%ADtica%20Fiscal/Resultado%20do%20Tesouro%20Estadual/Resultado%20do%20Tesouro%20Estadual%20-%20Anos%20Anteriores/Agosto%202012.pdf",
-       "exibicao": "Resultado do Tesouro Estadual — Agosto de 2012"
+       "exibicao": "Resultado do Tesouro Estadual de agosto de 2012"
       }
      ]
     }
@@ -663,7 +663,7 @@
   {
    "slug": "rreo",
    "slugSefaz": "rreo",
-   "titulo": "Relatório Resumido da Execução Orçamentária – RREO",
+   "titulo": "Relatório Resumido da Execução Orçamentária (RREO)",
    "secao": "Relatórios fiscais",
    "categoria": "rreo",
    "fonte": "https://sefaz.es.gov.br/rreo",
@@ -679,7 +679,7 @@
        "tamanho": "3 MB",
        "formato": "pdf",
        "url": "https://sefaz.es.gov.br/media/Tesouro%20Estadual/RREO/01%20-%20ANEXO%201%20-%20Balanco%20Orcamentario%201bim2026-combined.pdf",
-       "exibicao": "RREO — 1º bimestre de 2026"
+       "exibicao": "RREO do 1º bimestre de 2026"
       },
       {
        "titulo": "RREO - 2° bimestre 2026",
@@ -688,7 +688,7 @@
        "tamanho": "3 MB",
        "formato": "pdf",
        "url": "https://sefaz.es.gov.br/media/Tesouro%20Estadual/RREO%202bim%202026%201.pdf",
-       "exibicao": "RREO — 2º bimestre de 2026"
+       "exibicao": "RREO do 2º bimestre de 2026"
       },
       {
        "titulo": "RREO - 3° bimestre 2026",
@@ -697,7 +697,7 @@
        "tamanho": "3 MB",
        "formato": "pdf",
        "url": "https://sefaz.es.gov.br/media/Tesouro%20Estadual/RREO/rreo-3bimestre-2026.pdf",
-       "exibicao": "RREO — 3º bimestre de 2026"
+       "exibicao": "RREO do 3º bimestre de 2026"
       },
       {
        "titulo": "RREO - 4º Bimestre 2026",
@@ -706,7 +706,7 @@
        "tamanho": "854 KB",
        "formato": "pdf",
        "url": "https://sefaz.es.gov.br/media/AcessoInforma%C3%A7%C3%A3o/2026/rreo-4bi.pdf",
-       "exibicao": "RREO — 4º bimestre de 2026"
+       "exibicao": "RREO do 4º bimestre de 2026"
       }
      ]
     },
@@ -721,7 +721,7 @@
        "tamanho": "3 MB",
        "formato": "pdf",
        "url": "https://sefaz.es.gov.br/media/Tesouro%20Estadual/RREO/01%20-%20ANEXO%201%20-%20Balanco%20Orcamentario1bim2025-combined.pdf",
-       "exibicao": "RREO — 1º bimestre de 2025"
+       "exibicao": "RREO do 1º bimestre de 2025"
       },
       {
        "titulo": "RREO - 2° bimestre 2025",
@@ -730,7 +730,7 @@
        "tamanho": "3 MB",
        "formato": "pdf",
        "url": "https://sefaz.es.gov.br/media/Tesouro%20Estadual/RREO/01%20-%20ANEXO%201%20-%20Balanco%20Orcamentario2bim2025-combined.pdf",
-       "exibicao": "RREO — 2º bimestre de 2025"
+       "exibicao": "RREO do 2º bimestre de 2025"
       },
       {
        "titulo": "RREO - 3° bimestre 2025",
@@ -739,7 +739,7 @@
        "tamanho": "4 MB",
        "formato": "pdf",
        "url": "https://sefaz.es.gov.br/media/Tesouro%20Estadual/RREO/3.pdf",
-       "exibicao": "RREO — 3º bimestre de 2025"
+       "exibicao": "RREO do 3º bimestre de 2025"
       },
       {
        "titulo": "RREO - 4° bimestre 2025",
@@ -748,7 +748,7 @@
        "tamanho": "4 MB",
        "formato": "pdf",
        "url": "https://sefaz.es.gov.br/media/Tesouro%20Estadual/RREO/4%20Bimes.pdf",
-       "exibicao": "RREO — 4º bimestre de 2025"
+       "exibicao": "RREO do 4º bimestre de 2025"
       },
       {
        "titulo": "RREO - 5° bimestre 2025",
@@ -757,7 +757,7 @@
        "tamanho": "4 MB",
        "formato": "pdf",
        "url": "https://sefaz.es.gov.br/media/Tesouro%20Estadual/5%20Bimes.pdf",
-       "exibicao": "RREO — 5º bimestre de 2025"
+       "exibicao": "RREO do 5º bimestre de 2025"
       },
       {
        "titulo": "RREO - 6° bimestre 2025",
@@ -766,7 +766,7 @@
        "tamanho": "4 MB",
        "formato": "pdf",
        "url": "https://sefaz.es.gov.br/media/Tesouro%20Estadual/RREO/rreo-6b-2025.pdf",
-       "exibicao": "RREO — 6º bimestre de 2025"
+       "exibicao": "RREO do 6º bimestre de 2025"
       }
      ]
     },
@@ -781,7 +781,7 @@
        "tamanho": "3 MB",
        "formato": "pdf",
        "url": "https://sefaz.es.gov.br/media/Tesouro%20Estadual/RREO/1%20bim%202024.pdf",
-       "exibicao": "RREO — 1º bimestre de 2024"
+       "exibicao": "RREO do 1º bimestre de 2024"
       },
       {
        "titulo": "RREO - 2° bimestre 2024",
@@ -790,7 +790,7 @@
        "tamanho": "3 MB",
        "formato": "pdf",
        "url": "https://sefaz.es.gov.br/media/Tesouro%20Estadual/RREO/2%20bim%202024.pdf",
-       "exibicao": "RREO — 2º bimestre de 2024"
+       "exibicao": "RREO do 2º bimestre de 2024"
       },
       {
        "titulo": "RREO - 3° bimestre 2024",
@@ -799,7 +799,7 @@
        "tamanho": "4 MB",
        "formato": "pdf",
        "url": "https://sefaz.es.gov.br/media/Tesouro%20Estadual/RREO/3%20bim%202024.pdf",
-       "exibicao": "RREO — 3º bimestre de 2024"
+       "exibicao": "RREO do 3º bimestre de 2024"
       },
       {
        "titulo": "RREO - 4° bimestre 2024",
@@ -808,7 +808,7 @@
        "tamanho": "4 MB",
        "formato": "pdf",
        "url": "https://sefaz.es.gov.br/media/Tesouro%20Estadual/RREO/4%20bim%202024.pdf",
-       "exibicao": "RREO — 4º bimestre de 2024"
+       "exibicao": "RREO do 4º bimestre de 2024"
       },
       {
        "titulo": "RREO - 5° bimestre 2024",
@@ -817,7 +817,7 @@
        "tamanho": "4 MB",
        "formato": "pdf",
        "url": "https://sefaz.es.gov.br/media/Tesouro%20Estadual/RREO/5%20bim%202024.pdf",
-       "exibicao": "RREO — 5º bimestre de 2024"
+       "exibicao": "RREO do 5º bimestre de 2024"
       },
       {
        "titulo": "RREO - 6° bimestre 2024",
@@ -826,7 +826,7 @@
        "tamanho": "5 MB",
        "formato": "pdf",
        "url": "https://sefaz.es.gov.br/media/Tesouro%20Estadual/RREO/6%20bim%202024.pdf",
-       "exibicao": "RREO — 6º bimestre de 2024"
+       "exibicao": "RREO do 6º bimestre de 2024"
       }
      ]
     },
@@ -841,7 +841,7 @@
        "tamanho": "3 MB",
        "formato": "pdf",
        "url": "https://sefaz.es.gov.br/media/Tesouro%20Estadual/RREO%201bime%202023.pdf",
-       "exibicao": "RREO — 1º bimestre de 2023"
+       "exibicao": "RREO do 1º bimestre de 2023"
       },
       {
        "titulo": "RREO - 2° bimestre 2023",
@@ -850,7 +850,7 @@
        "tamanho": "4 MB",
        "formato": "pdf",
        "url": "https://sefaz.es.gov.br/media/Tesouro%20Estadual/RREO%202bime%202023.pdf",
-       "exibicao": "RREO — 2º bimestre de 2023"
+       "exibicao": "RREO do 2º bimestre de 2023"
       },
       {
        "titulo": "RREO - 3° bimestre 2023",
@@ -859,7 +859,7 @@
        "tamanho": "1 MB",
        "formato": "pdf",
        "url": "https://sefaz.es.gov.br/media/Tesouro%20Estadual/RREO%203bime%202023.pdf",
-       "exibicao": "RREO — 3º bimestre de 2023"
+       "exibicao": "RREO do 3º bimestre de 2023"
       },
       {
        "titulo": "RREO - 4° bimestre 2023",
@@ -868,7 +868,7 @@
        "tamanho": "4 MB",
        "formato": "pdf",
        "url": "https://sefaz.es.gov.br/media/Tesouro%20Estadual/RREO%204bime%202023.pdf",
-       "exibicao": "RREO — 4º bimestre de 2023"
+       "exibicao": "RREO do 4º bimestre de 2023"
       },
       {
        "titulo": "RREO - 5° bimestre 2023",
@@ -877,7 +877,7 @@
        "tamanho": "3 MB",
        "formato": "pdf",
        "url": "https://sefaz.es.gov.br/media/Tesouro%20Estadual/RREO%205bime%202023.pdf",
-       "exibicao": "RREO — 5º bimestre de 2023"
+       "exibicao": "RREO do 5º bimestre de 2023"
       },
       {
        "titulo": "RREO - 6° bimestre 2023",
@@ -886,7 +886,7 @@
        "tamanho": "1 MB",
        "formato": "pdf",
        "url": "https://sefaz.es.gov.br/media/Tesouro%20Estadual/RREO%206bime%202023.pdf",
-       "exibicao": "RREO — 6º bimestre de 2023"
+       "exibicao": "RREO do 6º bimestre de 2023"
       }
      ]
     },
@@ -901,7 +901,7 @@
        "tamanho": "3 MB",
        "formato": "pdf",
        "url": "https://sefaz.es.gov.br/media/Tesouro%20Estadual/RREO/RREO%201bim%202022%201.pdf",
-       "exibicao": "RREO — 1º bimestre de 2022"
+       "exibicao": "RREO do 1º bimestre de 2022"
       },
       {
        "titulo": "RREO - 2° bimestre 2022",
@@ -910,7 +910,7 @@
        "tamanho": "3 MB",
        "formato": "pdf",
        "url": "https://sefaz.es.gov.br/media/Tesouro%20Estadual/RREO/RREO%202bim%202022%201.pdf",
-       "exibicao": "RREO — 2º bimestre de 2022"
+       "exibicao": "RREO do 2º bimestre de 2022"
       },
       {
        "titulo": "RREO - 3° bimestre 2022",
@@ -919,7 +919,7 @@
        "tamanho": "2 MB",
        "formato": "pdf",
        "url": "https://sefaz.es.gov.br/media/Tesouro%20Estadual/RREO/RREO%203bim%202022%201.pdf",
-       "exibicao": "RREO — 3º bimestre de 2022"
+       "exibicao": "RREO do 3º bimestre de 2022"
       },
       {
        "titulo": "RREO - 4° bimestre 2022",
@@ -928,7 +928,7 @@
        "tamanho": "3 MB",
        "formato": "pdf",
        "url": "https://sefaz.es.gov.br/media/Tesouro%20Estadual/RREO/RREO%204bim%202022%201.pdf",
-       "exibicao": "RREO — 4º bimestre de 2022"
+       "exibicao": "RREO do 4º bimestre de 2022"
       },
       {
        "titulo": "RREO - 5° bimestre 2022",
@@ -937,7 +937,7 @@
        "tamanho": "2 MB",
        "formato": "pdf",
        "url": "https://sefaz.es.gov.br/media/Tesouro%20Estadual/RREO/RREO%205bim%202022%201.pdf",
-       "exibicao": "RREO — 5º bimestre de 2022"
+       "exibicao": "RREO do 5º bimestre de 2022"
       },
       {
        "titulo": "RREO - 6° bimestre 2022",
@@ -946,7 +946,7 @@
        "tamanho": "1 MB",
        "formato": "pdf",
        "url": "https://sefaz.es.gov.br/media/Tesouro%20Estadual/RREO/RREO%206bim%202022%201-1.pdf",
-       "exibicao": "RREO — 6º bimestre de 2022"
+       "exibicao": "RREO do 6º bimestre de 2022"
       }
      ]
     },
@@ -961,7 +961,7 @@
        "tamanho": "961 KB",
        "formato": "pdf",
        "url": "https://sefaz.es.gov.br/media/Tesouro%20Estadual/RREO/RREO%201Bim%202021.pdf",
-       "exibicao": "RREO — 1º bimestre de 2021"
+       "exibicao": "RREO do 1º bimestre de 2021"
       },
       {
        "titulo": "RREO - 2° bimestre 2021",
@@ -970,7 +970,7 @@
        "tamanho": "2 MB",
        "formato": "pdf",
        "url": "https://sefaz.es.gov.br/media/Tesouro%20Estadual/RREO/RREO%202bim%202021.pdf",
-       "exibicao": "RREO — 2º bimestre de 2021"
+       "exibicao": "RREO do 2º bimestre de 2021"
       },
       {
        "titulo": "RREO - 3° bimestre 2021",
@@ -979,7 +979,7 @@
        "tamanho": "2 MB",
        "formato": "pdf",
        "url": "https://sefaz.es.gov.br/media/Tesouro%20Estadual/RREO/RREO%203bim%202021.pdf",
-       "exibicao": "RREO — 3º bimestre de 2021"
+       "exibicao": "RREO do 3º bimestre de 2021"
       },
       {
        "titulo": "RREO - 4° bimestre 2021",
@@ -988,7 +988,7 @@
        "tamanho": "706 KB",
        "formato": "pdf",
        "url": "https://sefaz.es.gov.br/media/Tesouro%20Estadual/RREO/RREO%204bim%202021.pdf",
-       "exibicao": "RREO — 4º bimestre de 2021"
+       "exibicao": "RREO do 4º bimestre de 2021"
       },
       {
        "titulo": "RREO - 5° bimestre 2021",
@@ -997,7 +997,7 @@
        "tamanho": "930 KB",
        "formato": "pdf",
        "url": "https://sefaz.es.gov.br/media/Tesouro%20Estadual/RREO/RREO%205bim%202021.pdf",
-       "exibicao": "RREO — 5º bimestre de 2021"
+       "exibicao": "RREO do 5º bimestre de 2021"
       },
       {
        "titulo": "RREO - 6° bimestre 2021",
@@ -1006,7 +1006,7 @@
        "tamanho": "832 KB",
        "formato": "pdf",
        "url": "https://sefaz.es.gov.br/media/Tesouro%20Estadual/RREO/RREO%206BIM%202021.pdf",
-       "exibicao": "RREO — 6º bimestre de 2021"
+       "exibicao": "RREO do 6º bimestre de 2021"
       }
      ]
     },
@@ -1021,7 +1021,7 @@
        "tamanho": "907 KB",
        "formato": "pdf",
        "url": "https://sefaz.es.gov.br/media/Tesouro%20Estadual/RREO/rreo-1bim.pdf",
-       "exibicao": "RREO — 1º bimestre de 2020"
+       "exibicao": "RREO do 1º bimestre de 2020"
       },
       {
        "titulo": "RREO - 2º Bimestre 2020",
@@ -1030,7 +1030,7 @@
        "tamanho": "949 KB",
        "formato": "pdf",
        "url": "https://sefaz.es.gov.br/media/Tesouro%20Estadual/RREO/rreo-2-bim.pdf",
-       "exibicao": "RREO — 2º bimestre de 2020"
+       "exibicao": "RREO do 2º bimestre de 2020"
       },
       {
        "titulo": "RREO - 3º Bimestre 2020",
@@ -1039,7 +1039,7 @@
        "tamanho": "922 KB",
        "formato": "pdf",
        "url": "https://sefaz.es.gov.br/media/Tesouro%20Estadual/RREO/rreo-3-bim.pdf",
-       "exibicao": "RREO — 3º bimestre de 2020"
+       "exibicao": "RREO do 3º bimestre de 2020"
       },
       {
        "titulo": "RREO - 4º Bimestre 2020",
@@ -1048,7 +1048,7 @@
        "tamanho": "995 KB",
        "formato": "pdf",
        "url": "https://sefaz.es.gov.br/media/Tesouro%20Estadual/RREO/rreo-4-bim.pdf",
-       "exibicao": "RREO — 4º bimestre de 2020"
+       "exibicao": "RREO do 4º bimestre de 2020"
       },
       {
        "titulo": "RREO - 5º Bimestre 2020",
@@ -1057,7 +1057,7 @@
        "tamanho": "925 KB",
        "formato": "pdf",
        "url": "https://sefaz.es.gov.br/media/Tesouro%20Estadual/RREO/rreo-5-bim.pdf",
-       "exibicao": "RREO — 5º bimestre de 2020"
+       "exibicao": "RREO do 5º bimestre de 2020"
       },
       {
        "titulo": "RREO - 6º Bimestre 2020",
@@ -1066,7 +1066,7 @@
        "tamanho": "1 MB",
        "formato": "pdf",
        "url": "https://sefaz.es.gov.br/media/Tesouro%20Estadual/RREO/rreo-6-bim.pdf",
-       "exibicao": "RREO — 6º bimestre de 2020"
+       "exibicao": "RREO do 6º bimestre de 2020"
       }
      ]
     },
@@ -1081,7 +1081,7 @@
        "tamanho": "805 KB",
        "formato": "pdf",
        "url": "https://sefaz.es.gov.br/media/Tesouro%20Estadual/RREO/rreo-1o-b-2019.pdf",
-       "exibicao": "RREO — 1º bimestre de 2019"
+       "exibicao": "RREO do 1º bimestre de 2019"
       },
       {
        "titulo": "RREO - 2º Bimestre 2019",
@@ -1090,7 +1090,7 @@
        "tamanho": "4 MB",
        "formato": "pdf",
        "url": "https://sefaz.es.gov.br/media/Tesouro%20Estadual/RREO/rreo-2o-b-2019.pdf",
-       "exibicao": "RREO — 2º bimestre de 2019"
+       "exibicao": "RREO do 2º bimestre de 2019"
       },
       {
        "titulo": "RREO - 3º Bimestre 2019",
@@ -1099,7 +1099,7 @@
        "tamanho": "874 KB",
        "formato": "pdf",
        "url": "https://sefaz.es.gov.br/media/Tesouro%20Estadual/RREO/rreo-3o-b-2019.pdf",
-       "exibicao": "RREO — 3º bimestre de 2019"
+       "exibicao": "RREO do 3º bimestre de 2019"
       },
       {
        "titulo": "RREO - 4º Bimestre 2019",
@@ -1108,7 +1108,7 @@
        "tamanho": "1 MB",
        "formato": "pdf",
        "url": "https://sefaz.es.gov.br/media/Tesouro%20Estadual/RREO/rreo-4o-b-2019.pdf",
-       "exibicao": "RREO — 4º bimestre de 2019"
+       "exibicao": "RREO do 4º bimestre de 2019"
       },
       {
        "titulo": "RREO - 5º Bimestre 2019",
@@ -1117,7 +1117,7 @@
        "tamanho": "906 KB",
        "formato": "pdf",
        "url": "https://sefaz.es.gov.br/media/Tesouro%20Estadual/RREO/rreo-5o-b-2019.pdf",
-       "exibicao": "RREO — 5º bimestre de 2019"
+       "exibicao": "RREO do 5º bimestre de 2019"
       },
       {
        "titulo": "RREO - 6º Bimestre 2019",
@@ -1126,7 +1126,7 @@
        "tamanho": "1 MB",
        "formato": "pdf",
        "url": "https://sefaz.es.gov.br/media/Tesouro%20Estadual/RREO/rreo-6o-b-2019.pdf",
-       "exibicao": "RREO — 6º bimestre de 2019"
+       "exibicao": "RREO do 6º bimestre de 2019"
       }
      ]
     },
@@ -1141,7 +1141,7 @@
        "tamanho": "3 MB",
        "formato": "pdf",
        "url": "https://sefaz.es.gov.br/media/Tesouro%20Estadual/RREO/rreo_1b-2018.pdf",
-       "exibicao": "RREO — 1º bimestre de 2018"
+       "exibicao": "RREO do 1º bimestre de 2018"
       },
       {
        "titulo": "RREO - 2º Bimestre 2018",
@@ -1150,7 +1150,7 @@
        "tamanho": "3 MB",
        "formato": "pdf",
        "url": "https://sefaz.es.gov.br/media/Tesouro%20Estadual/RREO/rreo_2b-2018.pdf",
-       "exibicao": "RREO — 2º bimestre de 2018"
+       "exibicao": "RREO do 2º bimestre de 2018"
       },
       {
        "titulo": "RREO - 3º Bimestre 2018",
@@ -1159,7 +1159,7 @@
        "tamanho": "2 MB",
        "formato": "pdf",
        "url": "https://sefaz.es.gov.br/media/Tesouro%20Estadual/RREO/rreo_3b-2018.pdf",
-       "exibicao": "RREO — 3º bimestre de 2018"
+       "exibicao": "RREO do 3º bimestre de 2018"
       },
       {
        "titulo": "RREO - 4º Bimestre 2018",
@@ -1168,7 +1168,7 @@
        "tamanho": "2 MB",
        "formato": "pdf",
        "url": "https://sefaz.es.gov.br/media/Tesouro%20Estadual/RREO/rreo_4b-2018.pdf",
-       "exibicao": "RREO — 4º bimestre de 2018"
+       "exibicao": "RREO do 4º bimestre de 2018"
       },
       {
        "titulo": "RREO - 5º Bimestre 2018",
@@ -1177,7 +1177,7 @@
        "tamanho": "903 KB",
        "formato": "pdf",
        "url": "https://sefaz.es.gov.br/media/Tesouro%20Estadual/RREO/rreo_5b-2018.pdf",
-       "exibicao": "RREO — 5º bimestre de 2018"
+       "exibicao": "RREO do 5º bimestre de 2018"
       },
       {
        "titulo": "RREO - 6º Bimestre 2018",
@@ -1186,7 +1186,7 @@
        "tamanho": "1 MB",
        "formato": "pdf",
        "url": "https://sefaz.es.gov.br/media/Tesouro%20Estadual/RREO/rreo_6b-2018.pdf",
-       "exibicao": "RREO — 6º bimestre de 2018"
+       "exibicao": "RREO do 6º bimestre de 2018"
       }
      ]
     },
@@ -1201,7 +1201,7 @@
        "tamanho": "2 MB",
        "formato": "pdf",
        "url": "https://sefaz.es.gov.br/media/Tesouro%20Estadual/RREO/rreo-1b-2017.pdf",
-       "exibicao": "RREO — 1º bimestre de 2017"
+       "exibicao": "RREO do 1º bimestre de 2017"
       },
       {
        "titulo": "RREO - 2º Bimestre 2017",
@@ -1210,7 +1210,7 @@
        "tamanho": "2 MB",
        "formato": "pdf",
        "url": "https://sefaz.es.gov.br/media/Tesouro%20Estadual/RREO/rreo-2b-2017.pdf",
-       "exibicao": "RREO — 2º bimestre de 2017"
+       "exibicao": "RREO do 2º bimestre de 2017"
       },
       {
        "titulo": "RREO - 3º Bimestre 2017",
@@ -1219,7 +1219,7 @@
        "tamanho": "2 MB",
        "formato": "pdf",
        "url": "https://sefaz.es.gov.br/media/Tesouro%20Estadual/RREO/rreo-3b-2017.pdf",
-       "exibicao": "RREO — 3º bimestre de 2017"
+       "exibicao": "RREO do 3º bimestre de 2017"
       },
       {
        "titulo": "RREO - 4º Bimestre 2017",
@@ -1228,7 +1228,7 @@
        "tamanho": "2 MB",
        "formato": "pdf",
        "url": "https://sefaz.es.gov.br/media/Tesouro%20Estadual/RREO/rreo-4b-2017.pdf",
-       "exibicao": "RREO — 4º bimestre de 2017"
+       "exibicao": "RREO do 4º bimestre de 2017"
       },
       {
        "titulo": "RREO - 5º Bimestre 2017",
@@ -1237,7 +1237,7 @@
        "tamanho": "2 MB",
        "formato": "pdf",
        "url": "https://sefaz.es.gov.br/media/Tesouro%20Estadual/RREO/rreo-5b-2017.pdf",
-       "exibicao": "RREO — 5º bimestre de 2017"
+       "exibicao": "RREO do 5º bimestre de 2017"
       },
       {
        "titulo": "RREO - 6º Bimestre 2017",
@@ -1246,7 +1246,7 @@
        "tamanho": "4 MB",
        "formato": "pdf",
        "url": "https://sefaz.es.gov.br/media/Tesouro%20Estadual/RREO/rreo-6b-2017.pdf",
-       "exibicao": "RREO — 6º bimestre de 2017"
+       "exibicao": "RREO do 6º bimestre de 2017"
       }
      ]
     },
@@ -1261,7 +1261,7 @@
        "tamanho": "2 MB",
        "formato": "pdf",
        "url": "https://sefaz.es.gov.br/media/AcessoInforma%C3%A7%C3%A3o/rreo-1-bimestre-2016.pdf",
-       "exibicao": "RREO — 1º bimestre de 2016"
+       "exibicao": "RREO do 1º bimestre de 2016"
       },
       {
        "titulo": "RREO - 2º Bimestre 2016",
@@ -1270,7 +1270,7 @@
        "tamanho": "2 MB",
        "formato": "pdf",
        "url": "https://sefaz.es.gov.br/media/AcessoInforma%C3%A7%C3%A3o/rreo-2-bimestre-2016.pdf",
-       "exibicao": "RREO — 2º bimestre de 2016"
+       "exibicao": "RREO do 2º bimestre de 2016"
       },
       {
        "titulo": "RREO - 3º Bimestre 2016",
@@ -1279,7 +1279,7 @@
        "tamanho": "2 MB",
        "formato": "pdf",
        "url": "https://sefaz.es.gov.br/media/AcessoInforma%C3%A7%C3%A3o/rreo-3-bimestre-2016.pdf",
-       "exibicao": "RREO — 3º bimestre de 2016"
+       "exibicao": "RREO do 3º bimestre de 2016"
       },
       {
        "titulo": "RREO - 4º Bimestre 2016",
@@ -1288,7 +1288,7 @@
        "tamanho": "2 MB",
        "formato": "pdf",
        "url": "https://sefaz.es.gov.br/media/AcessoInforma%C3%A7%C3%A3o/rreo-4-bimestre-2016.pdf",
-       "exibicao": "RREO — 4º bimestre de 2016"
+       "exibicao": "RREO do 4º bimestre de 2016"
       },
       {
        "titulo": "RREO - 5º Bimestre 2016",
@@ -1297,7 +1297,7 @@
        "tamanho": "2 MB",
        "formato": "pdf",
        "url": "https://sefaz.es.gov.br/media/AcessoInforma%C3%A7%C3%A3o/rreo-5-bimestre-2016.pdf",
-       "exibicao": "RREO — 5º bimestre de 2016"
+       "exibicao": "RREO do 5º bimestre de 2016"
       },
       {
        "titulo": "RREO - 6º Bimestre 2016",
@@ -1306,7 +1306,7 @@
        "tamanho": "2 MB",
        "formato": "pdf",
        "url": "https://sefaz.es.gov.br/media/AcessoInforma%C3%A7%C3%A3o/rreo-6-bimestre-2016.pdf",
-       "exibicao": "RREO — 6º bimestre de 2016"
+       "exibicao": "RREO do 6º bimestre de 2016"
       }
      ]
     },
@@ -1321,7 +1321,7 @@
        "tamanho": "2 MB",
        "formato": "pdf",
        "url": "https://sefaz.es.gov.br/media/AcessoInforma%C3%A7%C3%A3o/rreo-1-bi.pdf",
-       "exibicao": "RREO — 1º bimestre de 2015"
+       "exibicao": "RREO do 1º bimestre de 2015"
       },
       {
        "titulo": "RREO - 2º Bimestre 2015",
@@ -1330,7 +1330,7 @@
        "tamanho": "2 MB",
        "formato": "pdf",
        "url": "https://sefaz.es.gov.br/media/AcessoInforma%C3%A7%C3%A3o/rreo-2-bi.pdf",
-       "exibicao": "RREO — 2º bimestre de 2015"
+       "exibicao": "RREO do 2º bimestre de 2015"
       },
       {
        "titulo": "RREO - 3º Bimestre 2015",
@@ -1339,7 +1339,7 @@
        "tamanho": "2 MB",
        "formato": "pdf",
        "url": "https://sefaz.es.gov.br/media/AcessoInforma%C3%A7%C3%A3o/rreo-3-bi.pdf",
-       "exibicao": "RREO — 3º bimestre de 2015"
+       "exibicao": "RREO do 3º bimestre de 2015"
       },
       {
        "titulo": "RREO - 4º Bimestre 2015",
@@ -1348,7 +1348,7 @@
        "tamanho": "2 MB",
        "formato": "pdf",
        "url": "https://sefaz.es.gov.br/media/AcessoInforma%C3%A7%C3%A3o/rreo-4-bi.pdf",
-       "exibicao": "RREO — 4º bimestre de 2015"
+       "exibicao": "RREO do 4º bimestre de 2015"
       },
       {
        "titulo": "RREO - 5º Bimestre 2015",
@@ -1357,7 +1357,7 @@
        "tamanho": "2 MB",
        "formato": "pdf",
        "url": "https://sefaz.es.gov.br/media/AcessoInforma%C3%A7%C3%A3o/rreo-5-bi.pdf",
-       "exibicao": "RREO — 5º bimestre de 2015"
+       "exibicao": "RREO do 5º bimestre de 2015"
       },
       {
        "titulo": "RREO - 6º Bimestre 2015",
@@ -1366,7 +1366,7 @@
        "tamanho": "2 MB",
        "formato": "pdf",
        "url": "https://sefaz.es.gov.br/media/AcessoInforma%C3%A7%C3%A3o/rreo-6-bi.pdf",
-       "exibicao": "RREO — 6º bimestre de 2015"
+       "exibicao": "RREO do 6º bimestre de 2015"
       }
      ]
     },
@@ -1381,7 +1381,7 @@
        "tamanho": "2 MB",
        "formato": "pdf",
        "url": "https://sefaz.es.gov.br/media/AcessoInforma%C3%A7%C3%A3o/rreo%202014/rreo-1-bi.pdf",
-       "exibicao": "RREO — 1º bimestre de 2014"
+       "exibicao": "RREO do 1º bimestre de 2014"
       },
       {
        "titulo": "RREO - 2º Bimestre 2014",
@@ -1390,7 +1390,7 @@
        "tamanho": "2 MB",
        "formato": "pdf",
        "url": "https://sefaz.es.gov.br/media/AcessoInforma%C3%A7%C3%A3o/rreo%202014/rreo-2-bi.pdf",
-       "exibicao": "RREO — 2º bimestre de 2014"
+       "exibicao": "RREO do 2º bimestre de 2014"
       },
       {
        "titulo": "RREO - 3º Bimestre 2014",
@@ -1399,7 +1399,7 @@
        "tamanho": "2 MB",
        "formato": "pdf",
        "url": "https://sefaz.es.gov.br/media/AcessoInforma%C3%A7%C3%A3o/rreo%202014/rreo-3-bi.pdf",
-       "exibicao": "RREO — 3º bimestre de 2014"
+       "exibicao": "RREO do 3º bimestre de 2014"
       },
       {
        "titulo": "RREO - 4º Bimestre 2014",
@@ -1408,7 +1408,7 @@
        "tamanho": "1 MB",
        "formato": "pdf",
        "url": "https://sefaz.es.gov.br/media/AcessoInforma%C3%A7%C3%A3o/rreo%202014/rreo-4-bi.pdf",
-       "exibicao": "RREO — 4º bimestre de 2014"
+       "exibicao": "RREO do 4º bimestre de 2014"
       },
       {
        "titulo": "RREO - 5º Bimestre 2014",
@@ -1417,7 +1417,7 @@
        "tamanho": "691 KB",
        "formato": "pdf",
        "url": "https://sefaz.es.gov.br/media/AcessoInforma%C3%A7%C3%A3o/rreo%202014/rreo-5-bi.pdf",
-       "exibicao": "RREO — 5º bimestre de 2014"
+       "exibicao": "RREO do 5º bimestre de 2014"
       },
       {
        "titulo": "RREO - 6º Bimestre 2014",
@@ -1426,7 +1426,7 @@
        "tamanho": "2 MB",
        "formato": "pdf",
        "url": "https://sefaz.es.gov.br/media/AcessoInforma%C3%A7%C3%A3o/rreo%202014/rreo-6-bi.pdf",
-       "exibicao": "RREO — 6º bimestre de 2014"
+       "exibicao": "RREO do 6º bimestre de 2014"
       }
      ]
     },
@@ -1441,7 +1441,7 @@
        "tamanho": "1 MB",
        "formato": "pdf",
        "url": "https://sefaz.es.gov.br/media/AcessoInforma%C3%A7%C3%A3o/2013/rreo-1-bi.pdf",
-       "exibicao": "RREO — 1º bimestre de 2013"
+       "exibicao": "RREO do 1º bimestre de 2013"
       },
       {
        "titulo": "RREO - 2º Bimestre 2013",
@@ -1450,7 +1450,7 @@
        "tamanho": "2 MB",
        "formato": "pdf",
        "url": "https://sefaz.es.gov.br/media/AcessoInforma%C3%A7%C3%A3o/2013/rreo-2-bi.pdf",
-       "exibicao": "RREO — 2º bimestre de 2013"
+       "exibicao": "RREO do 2º bimestre de 2013"
       },
       {
        "titulo": "RREO - 3º Bimestre 2013",
@@ -1459,7 +1459,7 @@
        "tamanho": "1 MB",
        "formato": "pdf",
        "url": "https://sefaz.es.gov.br/media/AcessoInforma%C3%A7%C3%A3o/2013/rreo-3-bi.pdf",
-       "exibicao": "RREO — 3º bimestre de 2013"
+       "exibicao": "RREO do 3º bimestre de 2013"
       },
       {
        "titulo": "RREO - 4º Bimestre 2013",
@@ -1468,7 +1468,7 @@
        "tamanho": "2 MB",
        "formato": "pdf",
        "url": "https://sefaz.es.gov.br/media/AcessoInforma%C3%A7%C3%A3o/2013/rreo-4-bi.pdf",
-       "exibicao": "RREO — 4º bimestre de 2013"
+       "exibicao": "RREO do 4º bimestre de 2013"
       },
       {
        "titulo": "RREO - 5º Bimestre 2013",
@@ -1477,7 +1477,7 @@
        "tamanho": "2 MB",
        "formato": "pdf",
        "url": "https://sefaz.es.gov.br/media/AcessoInforma%C3%A7%C3%A3o/2013/rreo-5-bi.pdf",
-       "exibicao": "RREO — 5º bimestre de 2013"
+       "exibicao": "RREO do 5º bimestre de 2013"
       },
       {
        "titulo": "RREO - 6º Bimestre 2013",
@@ -1486,7 +1486,7 @@
        "tamanho": "2 MB",
        "formato": "pdf",
        "url": "https://sefaz.es.gov.br/media/AcessoInforma%C3%A7%C3%A3o/2013/rreo-6-bi.pdf",
-       "exibicao": "RREO — 6º bimestre de 2013"
+       "exibicao": "RREO do 6º bimestre de 2013"
       }
      ]
     },
@@ -1501,7 +1501,7 @@
        "tamanho": "566 KB",
        "formato": "pdf",
        "url": "https://sefaz.es.gov.br/media/AcessoInforma%C3%A7%C3%A3o/2012/rreo-1-bi.pdf",
-       "exibicao": "RREO — 1º bimestre de 2012"
+       "exibicao": "RREO do 1º bimestre de 2012"
       },
       {
        "titulo": "RREO - 2º Bimestre 2012",
@@ -1510,7 +1510,7 @@
        "tamanho": "716 KB",
        "formato": "pdf",
        "url": "https://sefaz.es.gov.br/media/AcessoInforma%C3%A7%C3%A3o/2012/rreo-2-bi.pdf",
-       "exibicao": "RREO — 2º bimestre de 2012"
+       "exibicao": "RREO do 2º bimestre de 2012"
       },
       {
        "titulo": "RREO - 3º Bimestre 2012",
@@ -1519,7 +1519,7 @@
        "tamanho": "2 MB",
        "formato": "pdf",
        "url": "https://sefaz.es.gov.br/media/AcessoInforma%C3%A7%C3%A3o/2012/rreo-3-bi.pdf",
-       "exibicao": "RREO — 3º bimestre de 2012"
+       "exibicao": "RREO do 3º bimestre de 2012"
       },
       {
        "titulo": "RREO - 4º Bimestre 2012",
@@ -1528,7 +1528,7 @@
        "tamanho": "1 MB",
        "formato": "pdf",
        "url": "https://sefaz.es.gov.br/media/AcessoInforma%C3%A7%C3%A3o/2012/rreo-4-bi.pdf",
-       "exibicao": "RREO — 4º bimestre de 2012"
+       "exibicao": "RREO do 4º bimestre de 2012"
       },
       {
        "titulo": "RREO - 5º Bimestre 2012",
@@ -1537,7 +1537,7 @@
        "tamanho": "1 MB",
        "formato": "pdf",
        "url": "https://sefaz.es.gov.br/media/AcessoInforma%C3%A7%C3%A3o/2012/rreo-5-bi.pdf",
-       "exibicao": "RREO — 5º bimestre de 2012"
+       "exibicao": "RREO do 5º bimestre de 2012"
       },
       {
        "titulo": "RREO - 6º Bimestre 2012",
@@ -1546,7 +1546,7 @@
        "tamanho": "3 MB",
        "formato": "pdf",
        "url": "https://sefaz.es.gov.br/media/AcessoInforma%C3%A7%C3%A3o/2012/rreo-6-bi.pdf",
-       "exibicao": "RREO — 6º bimestre de 2012"
+       "exibicao": "RREO do 6º bimestre de 2012"
       }
      ]
     },
@@ -1561,7 +1561,7 @@
        "tamanho": "632 KB",
        "formato": "pdf",
        "url": "https://sefaz.es.gov.br/media/AcessoInforma%C3%A7%C3%A3o/2011/rreo-1-bi.pdf",
-       "exibicao": "RREO — 1º bimestre de 2011"
+       "exibicao": "RREO do 1º bimestre de 2011"
       },
       {
        "titulo": "RREO - 2º Bimestre 2011",
@@ -1570,7 +1570,7 @@
        "tamanho": "594 KB",
        "formato": "pdf",
        "url": "https://sefaz.es.gov.br/media/AcessoInforma%C3%A7%C3%A3o/2011/rreo-2-bi.pdf",
-       "exibicao": "RREO — 2º bimestre de 2011"
+       "exibicao": "RREO do 2º bimestre de 2011"
       },
       {
        "titulo": "RREO - 3º Bimestre 2011",
@@ -1579,7 +1579,7 @@
        "tamanho": "326 KB",
        "formato": "pdf",
        "url": "https://sefaz.es.gov.br/media/AcessoInforma%C3%A7%C3%A3o/2011/rgf-3-qua.pdf",
-       "exibicao": "RREO — 3º bimestre de 2011"
+       "exibicao": "RREO do 3º bimestre de 2011"
       },
       {
        "titulo": "RREO - 4º Bimestre 2011",
@@ -1588,7 +1588,7 @@
        "tamanho": "576 KB",
        "formato": "pdf",
        "url": "https://sefaz.es.gov.br/media/AcessoInforma%C3%A7%C3%A3o/2011/rreo-4-bi.pdf",
-       "exibicao": "RREO — 4º bimestre de 2011"
+       "exibicao": "RREO do 4º bimestre de 2011"
       },
       {
        "titulo": "RREO - 5º Bimestre 2011",
@@ -1597,7 +1597,7 @@
        "tamanho": "562 KB",
        "formato": "pdf",
        "url": "https://sefaz.es.gov.br/media/AcessoInforma%C3%A7%C3%A3o/2011/rreo-5-bi.pdf",
-       "exibicao": "RREO — 5º bimestre de 2011"
+       "exibicao": "RREO do 5º bimestre de 2011"
       },
       {
        "titulo": "RREO - 6º Bimestre 2011",
@@ -1606,7 +1606,7 @@
        "tamanho": "1018 KB",
        "formato": "pdf",
        "url": "https://sefaz.es.gov.br/media/AcessoInforma%C3%A7%C3%A3o/2011/rreo-6-bi.pdf",
-       "exibicao": "RREO — 6º bimestre de 2011"
+       "exibicao": "RREO do 6º bimestre de 2011"
       }
      ]
     },
@@ -1621,7 +1621,7 @@
        "tamanho": "517 KB",
        "formato": "pdf",
        "url": "https://sefaz.es.gov.br/media/AcessoInforma%C3%A7%C3%A3o/2010/rreo-1-bi.pdf",
-       "exibicao": "RREO — 1º bimestre de 2010"
+       "exibicao": "RREO do 1º bimestre de 2010"
       },
       {
        "titulo": "RREO - 2º Bimestre 2010",
@@ -1630,7 +1630,7 @@
        "tamanho": "578 KB",
        "formato": "pdf",
        "url": "https://sefaz.es.gov.br/media/AcessoInforma%C3%A7%C3%A3o/2010/rreo-2-bi.pdf",
-       "exibicao": "RREO — 2º bimestre de 2010"
+       "exibicao": "RREO do 2º bimestre de 2010"
       },
       {
        "titulo": "RREO - 3º Bimestre 2010",
@@ -1639,7 +1639,7 @@
        "tamanho": "650 KB",
        "formato": "pdf",
        "url": "https://sefaz.es.gov.br/media/AcessoInforma%C3%A7%C3%A3o/2010/rreo-3-bi.pdf",
-       "exibicao": "RREO — 3º bimestre de 2010"
+       "exibicao": "RREO do 3º bimestre de 2010"
       },
       {
        "titulo": "RREO - 4º Bimestre 2010",
@@ -1648,7 +1648,7 @@
        "tamanho": "595 KB",
        "formato": "pdf",
        "url": "https://sefaz.es.gov.br/media/AcessoInforma%C3%A7%C3%A3o/2010/rreo-4-bi.pdf",
-       "exibicao": "RREO — 4º bimestre de 2010"
+       "exibicao": "RREO do 4º bimestre de 2010"
       },
       {
        "titulo": "RREO - 5º Bimestre 2010",
@@ -1657,7 +1657,7 @@
        "tamanho": "596 KB",
        "formato": "pdf",
        "url": "https://sefaz.es.gov.br/media/AcessoInforma%C3%A7%C3%A3o/2010/rreo-5-bi.pdf",
-       "exibicao": "RREO — 5º bimestre de 2010"
+       "exibicao": "RREO do 5º bimestre de 2010"
       },
       {
        "titulo": "RREO - 6º Bimestre 2010",
@@ -1666,7 +1666,7 @@
        "tamanho": "7 MB",
        "formato": "pdf",
        "url": "https://sefaz.es.gov.br/media/AcessoInforma%C3%A7%C3%A3o/2010/rreo-6-bi.pdf",
-       "exibicao": "RREO — 6º bimestre de 2010"
+       "exibicao": "RREO do 6º bimestre de 2010"
       }
      ]
     },
@@ -1681,7 +1681,7 @@
        "tamanho": "947 KB",
        "formato": "pdf",
        "url": "https://sefaz.es.gov.br/media/AcessoInforma%C3%A7%C3%A3o/2009/rreo-1-bi.pdf",
-       "exibicao": "RREO — 1º bimestre de 2009"
+       "exibicao": "RREO do 1º bimestre de 2009"
       },
       {
        "titulo": "RREO - 2º Bimestre 2009",
@@ -1690,7 +1690,7 @@
        "tamanho": "478 KB",
        "formato": "pdf",
        "url": "https://sefaz.es.gov.br/media/AcessoInforma%C3%A7%C3%A3o/2009/rreo-2-bi.pdf",
-       "exibicao": "RREO — 2º bimestre de 2009"
+       "exibicao": "RREO do 2º bimestre de 2009"
       },
       {
        "titulo": "RREO - 3º Bimestre 2009",
@@ -1699,7 +1699,7 @@
        "tamanho": "533 KB",
        "formato": "pdf",
        "url": "https://sefaz.es.gov.br/media/AcessoInforma%C3%A7%C3%A3o/2009/rreo-3-bi.pdf",
-       "exibicao": "RREO — 3º bimestre de 2009"
+       "exibicao": "RREO do 3º bimestre de 2009"
       },
       {
        "titulo": "RREO - 4º Bimestre 2009",
@@ -1708,7 +1708,7 @@
        "tamanho": "491 KB",
        "formato": "pdf",
        "url": "https://sefaz.es.gov.br/media/AcessoInforma%C3%A7%C3%A3o/2009/rreo-4-bi.pdf",
-       "exibicao": "RREO — 4º bimestre de 2009"
+       "exibicao": "RREO do 4º bimestre de 2009"
       },
       {
        "titulo": "RREO - 5º Bimestre 2009",
@@ -1717,7 +1717,7 @@
        "tamanho": "939 KB",
        "formato": "pdf",
        "url": "https://sefaz.es.gov.br/media/AcessoInforma%C3%A7%C3%A3o/2009/rreo-5-bi.pdf",
-       "exibicao": "RREO — 5º bimestre de 2009"
+       "exibicao": "RREO do 5º bimestre de 2009"
       },
       {
        "titulo": "RREO - 6º Bimestre 2009",
@@ -1726,7 +1726,7 @@
        "tamanho": "465 KB",
        "formato": "pdf",
        "url": "https://sefaz.es.gov.br/media/AcessoInforma%C3%A7%C3%A3o/2009/rreo-6-bi.pdf",
-       "exibicao": "RREO — 6º bimestre de 2009"
+       "exibicao": "RREO do 6º bimestre de 2009"
       }
      ]
     },
@@ -1741,7 +1741,7 @@
        "tamanho": "678 KB",
        "formato": "pdf",
        "url": "https://sefaz.es.gov.br/media/AcessoInforma%C3%A7%C3%A3o/2008/rreo-1bi.pdf",
-       "exibicao": "RREO — 1º bimestre de 2008"
+       "exibicao": "RREO do 1º bimestre de 2008"
       },
       {
        "titulo": "RREO - 2º Bimestre 2008",
@@ -1750,7 +1750,7 @@
        "tamanho": "431 KB",
        "formato": "pdf",
        "url": "https://sefaz.es.gov.br/media/AcessoInforma%C3%A7%C3%A3o/2008/rreo-2bi.pdf",
-       "exibicao": "RREO — 2º bimestre de 2008"
+       "exibicao": "RREO do 2º bimestre de 2008"
       },
       {
        "titulo": "RREO - 3º Bimestre 2008",
@@ -1759,7 +1759,7 @@
        "tamanho": "385 KB",
        "formato": "pdf",
        "url": "https://sefaz.es.gov.br/media/AcessoInforma%C3%A7%C3%A3o/2008/rreo-3bi.pdf",
-       "exibicao": "RREO — 3º bimestre de 2008"
+       "exibicao": "RREO do 3º bimestre de 2008"
       },
       {
        "titulo": "RREO - 4º Bimestre 2008",
@@ -1768,7 +1768,7 @@
        "tamanho": "478 KB",
        "formato": "pdf",
        "url": "https://sefaz.es.gov.br/media/AcessoInforma%C3%A7%C3%A3o/2008/rreo-4bi.pdf",
-       "exibicao": "RREO — 4º bimestre de 2008"
+       "exibicao": "RREO do 4º bimestre de 2008"
       },
       {
        "titulo": "RREO - 5º Bimestre 2008",
@@ -1777,7 +1777,7 @@
        "tamanho": "584 KB",
        "formato": "pdf",
        "url": "https://sefaz.es.gov.br/media/AcessoInforma%C3%A7%C3%A3o/2008/rreo-5bi.pdf",
-       "exibicao": "RREO — 5º bimestre de 2008"
+       "exibicao": "RREO do 5º bimestre de 2008"
       },
       {
        "titulo": "RREO - 6º Bimestre 2008",
@@ -1786,7 +1786,7 @@
        "tamanho": "318 KB",
        "formato": "pdf",
        "url": "https://sefaz.es.gov.br/media/AcessoInforma%C3%A7%C3%A3o/2008/rreo-6bi.pdf",
-       "exibicao": "RREO — 6º bimestre de 2008"
+       "exibicao": "RREO do 6º bimestre de 2008"
       }
      ]
     },
@@ -1801,7 +1801,7 @@
        "tamanho": "922 KB",
        "formato": "pdf",
        "url": "https://sefaz.es.gov.br/media/AcessoInforma%C3%A7%C3%A3o/2007/rreo-1bi.pdf",
-       "exibicao": "RREO — 1º bimestre de 2007"
+       "exibicao": "RREO do 1º bimestre de 2007"
       },
       {
        "titulo": "RREO - 2º Bimestre 2007",
@@ -1810,7 +1810,7 @@
        "tamanho": "1 MB",
        "formato": "pdf",
        "url": "https://sefaz.es.gov.br/media/AcessoInforma%C3%A7%C3%A3o/2007/rreo-2bi.pdf",
-       "exibicao": "RREO — 2º bimestre de 2007"
+       "exibicao": "RREO do 2º bimestre de 2007"
       },
       {
        "titulo": "RREO - 3º Bimestre 2007",
@@ -1819,7 +1819,7 @@
        "tamanho": "1012 KB",
        "formato": "pdf",
        "url": "https://sefaz.es.gov.br/media/AcessoInforma%C3%A7%C3%A3o/2007/rreo-3bi.pdf",
-       "exibicao": "RREO — 3º bimestre de 2007"
+       "exibicao": "RREO do 3º bimestre de 2007"
       },
       {
        "titulo": "RREO - 4º Bimestre 2007",
@@ -1828,7 +1828,7 @@
        "tamanho": "850 KB",
        "formato": "pdf",
        "url": "https://sefaz.es.gov.br/media/AcessoInforma%C3%A7%C3%A3o/2007/rreo-4bi.pdf",
-       "exibicao": "RREO — 4º bimestre de 2007"
+       "exibicao": "RREO do 4º bimestre de 2007"
       },
       {
        "titulo": "RREO - 5º Bimestre 2007",
@@ -1837,7 +1837,7 @@
        "tamanho": "417 KB",
        "formato": "pdf",
        "url": "https://sefaz.es.gov.br/media/AcessoInforma%C3%A7%C3%A3o/2007/rreo-5bi.pdf",
-       "exibicao": "RREO — 5º bimestre de 2007"
+       "exibicao": "RREO do 5º bimestre de 2007"
       },
       {
        "titulo": "RREO - 6º Bimestre 2007",
@@ -1846,7 +1846,7 @@
        "tamanho": "236 KB",
        "formato": "pdf",
        "url": "https://sefaz.es.gov.br/media/AcessoInforma%C3%A7%C3%A3o/2007/rreo-6bi.pdf",
-       "exibicao": "RREO — 6º bimestre de 2007"
+       "exibicao": "RREO do 6º bimestre de 2007"
       }
      ]
     },
@@ -1861,7 +1861,7 @@
        "tamanho": "105 KB",
        "formato": "pdf",
        "url": "https://sefaz.es.gov.br/media/AcessoInforma%C3%A7%C3%A3o/2006/rreo-1bi.pdf",
-       "exibicao": "RREO — 1º bimestre de 2006"
+       "exibicao": "RREO do 1º bimestre de 2006"
       },
       {
        "titulo": "RREO - 2º Bimestre 2006",
@@ -1870,7 +1870,7 @@
        "tamanho": "104 KB",
        "formato": "pdf",
        "url": "https://sefaz.es.gov.br/media/AcessoInforma%C3%A7%C3%A3o/2006/rreo-2bi.pdf",
-       "exibicao": "RREO — 2º bimestre de 2006"
+       "exibicao": "RREO do 2º bimestre de 2006"
       },
       {
        "titulo": "RREO - 3º Bimestre 2006",
@@ -1879,7 +1879,7 @@
        "tamanho": "121 KB",
        "formato": "pdf",
        "url": "https://sefaz.es.gov.br/media/AcessoInforma%C3%A7%C3%A3o/2006/rreo-3bi.pdf",
-       "exibicao": "RREO — 3º bimestre de 2006"
+       "exibicao": "RREO do 3º bimestre de 2006"
       },
       {
        "titulo": "RREO - 4º Bimestre 2006",
@@ -1888,7 +1888,7 @@
        "tamanho": "113 KB",
        "formato": "pdf",
        "url": "https://sefaz.es.gov.br/media/AcessoInforma%C3%A7%C3%A3o/2006/rreo-4bi.pdf",
-       "exibicao": "RREO — 4º bimestre de 2006"
+       "exibicao": "RREO do 4º bimestre de 2006"
       },
       {
        "titulo": "RREO - 5º Bimestre 2006",
@@ -1897,7 +1897,7 @@
        "tamanho": "1 MB",
        "formato": "pdf",
        "url": "https://sefaz.es.gov.br/media/AcessoInforma%C3%A7%C3%A3o/2006/rreo-5bi.pdf",
-       "exibicao": "RREO — 5º bimestre de 2006"
+       "exibicao": "RREO do 5º bimestre de 2006"
       },
       {
        "titulo": "RREO - 6º Bimestre 2006",
@@ -1906,7 +1906,7 @@
        "tamanho": "2 MB",
        "formato": "pdf",
        "url": "https://sefaz.es.gov.br/media/AcessoInforma%C3%A7%C3%A3o/2006/rreo-6bi.pdf",
-       "exibicao": "RREO — 6º bimestre de 2006"
+       "exibicao": "RREO do 6º bimestre de 2006"
       }
      ]
     },
@@ -1921,7 +1921,7 @@
        "tamanho": "93 KB",
        "formato": "pdf",
        "url": "https://sefaz.es.gov.br/media/AcessoInforma%C3%A7%C3%A3o/2005/rreo-1bi.pdf",
-       "exibicao": "RREO — 1º bimestre de 2005"
+       "exibicao": "RREO do 1º bimestre de 2005"
       },
       {
        "titulo": "RREO - 2º Bimestre 2005",
@@ -1930,7 +1930,7 @@
        "tamanho": "95 KB",
        "formato": "pdf",
        "url": "https://sefaz.es.gov.br/media/AcessoInforma%C3%A7%C3%A3o/2005/rreo-2bi.pdf",
-       "exibicao": "RREO — 2º bimestre de 2005"
+       "exibicao": "RREO do 2º bimestre de 2005"
       },
       {
        "titulo": "RREO - 3º Bimestre 2005",
@@ -1939,7 +1939,7 @@
        "tamanho": "103 KB",
        "formato": "pdf",
        "url": "https://sefaz.es.gov.br/media/AcessoInforma%C3%A7%C3%A3o/2005/rreo-3bi.pdf",
-       "exibicao": "RREO — 3º bimestre de 2005"
+       "exibicao": "RREO do 3º bimestre de 2005"
       },
       {
        "titulo": "RREO - 4º Bimestre 2005",
@@ -1948,7 +1948,7 @@
        "tamanho": "94 KB",
        "formato": "pdf",
        "url": "https://sefaz.es.gov.br/media/AcessoInforma%C3%A7%C3%A3o/2005/rreo-4bi.pdf",
-       "exibicao": "RREO — 4º bimestre de 2005"
+       "exibicao": "RREO do 4º bimestre de 2005"
       },
       {
        "titulo": "RREO - 5º Bimestre 2005",
@@ -1957,7 +1957,7 @@
        "tamanho": "79 KB",
        "formato": "pdf",
        "url": "https://sefaz.es.gov.br/media/AcessoInforma%C3%A7%C3%A3o/2005/rreo-5bi.pdf",
-       "exibicao": "RREO — 5º bimestre de 2005"
+       "exibicao": "RREO do 5º bimestre de 2005"
       },
       {
        "titulo": "RREO - 6º Bimestre 2005",
@@ -1966,7 +1966,7 @@
        "tamanho": "126 KB",
        "formato": "pdf",
        "url": "https://sefaz.es.gov.br/media/AcessoInforma%C3%A7%C3%A3o/2005/rreo-6bi.pdf",
-       "exibicao": "RREO — 6º bimestre de 2005"
+       "exibicao": "RREO do 6º bimestre de 2005"
       }
      ]
     },
@@ -1981,7 +1981,7 @@
        "tamanho": "88 KB",
        "formato": "pdf",
        "url": "https://sefaz.es.gov.br/media/AcessoInforma%C3%A7%C3%A3o/2004/rreo-1bi.pdf",
-       "exibicao": "RREO — 1º bimestre de 2004"
+       "exibicao": "RREO do 1º bimestre de 2004"
       },
       {
        "titulo": "RREO - 2º Bimestre 2004",
@@ -1990,7 +1990,7 @@
        "tamanho": "157 KB",
        "formato": "pdf",
        "url": "https://sefaz.es.gov.br/media/AcessoInforma%C3%A7%C3%A3o/2004/rreo-2bi.pdf",
-       "exibicao": "RREO — 2º bimestre de 2004"
+       "exibicao": "RREO do 2º bimestre de 2004"
       },
       {
        "titulo": "RREO - 3º Bimestre 2004",
@@ -1999,7 +1999,7 @@
        "tamanho": "79 KB",
        "formato": "pdf",
        "url": "https://sefaz.es.gov.br/media/AcessoInforma%C3%A7%C3%A3o/2004/rreo-3bi.pdf",
-       "exibicao": "RREO — 3º bimestre de 2004"
+       "exibicao": "RREO do 3º bimestre de 2004"
       },
       {
        "titulo": "RREO - 4º Bimestre 2004",
@@ -2008,7 +2008,7 @@
        "tamanho": "77 KB",
        "formato": "pdf",
        "url": "https://sefaz.es.gov.br/media/AcessoInforma%C3%A7%C3%A3o/2004/rreo-4bi.pdf",
-       "exibicao": "RREO — 4º bimestre de 2004"
+       "exibicao": "RREO do 4º bimestre de 2004"
       },
       {
        "titulo": "RREO - 5º Bimestre 2004",
@@ -2017,7 +2017,7 @@
        "tamanho": "76 KB",
        "formato": "pdf",
        "url": "https://sefaz.es.gov.br/media/AcessoInforma%C3%A7%C3%A3o/2004/rreo-5bi.pdf",
-       "exibicao": "RREO — 5º bimestre de 2004"
+       "exibicao": "RREO do 5º bimestre de 2004"
       },
       {
        "titulo": "RREO - 6º Bimestre 2004",
@@ -2026,7 +2026,7 @@
        "tamanho": "90 KB",
        "formato": "pdf",
        "url": "https://sefaz.es.gov.br/media/AcessoInforma%C3%A7%C3%A3o/2004/rreo-6bi.pdf",
-       "exibicao": "RREO — 6º bimestre de 2004"
+       "exibicao": "RREO do 6º bimestre de 2004"
       }
      ]
     },
@@ -2041,7 +2041,7 @@
        "tamanho": "72 KB",
        "formato": "pdf",
        "url": "https://sefaz.es.gov.br/media/AcessoInforma%C3%A7%C3%A3o/2003/rreo-1bi.pdf",
-       "exibicao": "RREO — 1º bimestre de 2003"
+       "exibicao": "RREO do 1º bimestre de 2003"
       },
       {
        "titulo": "RREO - 2º Bimestre 2003",
@@ -2050,7 +2050,7 @@
        "tamanho": "72 KB",
        "formato": "pdf",
        "url": "https://sefaz.es.gov.br/media/AcessoInforma%C3%A7%C3%A3o/2003/rreo-2bi.pdf",
-       "exibicao": "RREO — 2º bimestre de 2003"
+       "exibicao": "RREO do 2º bimestre de 2003"
       },
       {
        "titulo": "RREO - 3º Bimestre 2003",
@@ -2059,7 +2059,7 @@
        "tamanho": "72 KB",
        "formato": "pdf",
        "url": "https://sefaz.es.gov.br/media/AcessoInforma%C3%A7%C3%A3o/2003/rreo-3bi.pdf",
-       "exibicao": "RREO — 3º bimestre de 2003"
+       "exibicao": "RREO do 3º bimestre de 2003"
       },
       {
        "titulo": "RREO - 4º Bimestre 2003",
@@ -2068,7 +2068,7 @@
        "tamanho": "71 KB",
        "formato": "pdf",
        "url": "https://sefaz.es.gov.br/media/AcessoInforma%C3%A7%C3%A3o/2003/rreo-4bi.pdf",
-       "exibicao": "RREO — 4º bimestre de 2003"
+       "exibicao": "RREO do 4º bimestre de 2003"
       },
       {
        "titulo": "RREO - 5º Bimestre 2003",
@@ -2077,7 +2077,7 @@
        "tamanho": "84 KB",
        "formato": "pdf",
        "url": "https://sefaz.es.gov.br/media/AcessoInforma%C3%A7%C3%A3o/2003/rreo-5bi.pdf",
-       "exibicao": "RREO — 5º bimestre de 2003"
+       "exibicao": "RREO do 5º bimestre de 2003"
       },
       {
        "titulo": "RREO - 6º Bimestre 2003",
@@ -2086,7 +2086,7 @@
        "tamanho": "105 KB",
        "formato": "pdf",
        "url": "https://sefaz.es.gov.br/media/AcessoInforma%C3%A7%C3%A3o/2003/rreo-6bi.pdf",
-       "exibicao": "RREO — 6º bimestre de 2003"
+       "exibicao": "RREO do 6º bimestre de 2003"
       }
      ]
     },
@@ -2101,7 +2101,7 @@
        "tamanho": "603 KB",
        "formato": "pdf",
        "url": "https://sefaz.es.gov.br/media/AcessoInforma%C3%A7%C3%A3o/2002/rreo-1bi.pdf",
-       "exibicao": "RREO — 1º bimestre de 2002"
+       "exibicao": "RREO do 1º bimestre de 2002"
       },
       {
        "titulo": "RREO - 2º Bimestre 2002",
@@ -2110,7 +2110,7 @@
        "tamanho": "604 KB",
        "formato": "pdf",
        "url": "https://sefaz.es.gov.br/media/AcessoInforma%C3%A7%C3%A3o/2002/rreo-2bi.pdf",
-       "exibicao": "RREO — 2º bimestre de 2002"
+       "exibicao": "RREO do 2º bimestre de 2002"
       },
       {
        "titulo": "RREO - 3º Bimestre 2002",
@@ -2119,7 +2119,7 @@
        "tamanho": "703 KB",
        "formato": "pdf",
        "url": "https://sefaz.es.gov.br/media/AcessoInforma%C3%A7%C3%A3o/2002/rreo-3bi.pdf",
-       "exibicao": "RREO — 3º bimestre de 2002"
+       "exibicao": "RREO do 3º bimestre de 2002"
       },
       {
        "titulo": "RREO - 4º Bimestre 2002",
@@ -2128,7 +2128,7 @@
        "tamanho": "650 KB",
        "formato": "pdf",
        "url": "https://sefaz.es.gov.br/media/AcessoInforma%C3%A7%C3%A3o/2002/rreo-4bi.pdf",
-       "exibicao": "RREO — 4º bimestre de 2002"
+       "exibicao": "RREO do 4º bimestre de 2002"
       },
       {
        "titulo": "RREO - 5º Bimestre 2002",
@@ -2137,7 +2137,7 @@
        "tamanho": "653 KB",
        "formato": "pdf",
        "url": "https://sefaz.es.gov.br/media/AcessoInforma%C3%A7%C3%A3o/2002/rreo-5bi.pdf",
-       "exibicao": "RREO — 5º bimestre de 2002"
+       "exibicao": "RREO do 5º bimestre de 2002"
       },
       {
        "titulo": "RREO - 6º Bimestre 2002",
@@ -2146,7 +2146,7 @@
        "tamanho": "792 KB",
        "formato": "pdf",
        "url": "https://sefaz.es.gov.br/media/AcessoInforma%C3%A7%C3%A3o/2002/rreo-6bi.pdf",
-       "exibicao": "RREO — 6º bimestre de 2002"
+       "exibicao": "RREO do 6º bimestre de 2002"
       }
      ]
     },
@@ -2161,7 +2161,7 @@
        "tamanho": "32 KB",
        "formato": "pdf",
        "url": "https://sefaz.es.gov.br/media/AcessoInforma%C3%A7%C3%A3o/2001/rreo-1bi.pdf",
-       "exibicao": "RREO — 1º bimestre de 2001"
+       "exibicao": "RREO do 1º bimestre de 2001"
       },
       {
        "titulo": "RREO - 2º Bimestre 2001",
@@ -2170,7 +2170,7 @@
        "tamanho": "43 KB",
        "formato": "pdf",
        "url": "https://sefaz.es.gov.br/media/AcessoInforma%C3%A7%C3%A3o/2001/rreo-2bi.pdf",
-       "exibicao": "RREO — 2º bimestre de 2001"
+       "exibicao": "RREO do 2º bimestre de 2001"
       },
       {
        "titulo": "RREO - 3º Bimestre 2001",
@@ -2179,7 +2179,7 @@
        "tamanho": "35 KB",
        "formato": "pdf",
        "url": "https://sefaz.es.gov.br/media/AcessoInforma%C3%A7%C3%A3o/2001/rreo-3bi.pdf",
-       "exibicao": "RREO — 3º bimestre de 2001"
+       "exibicao": "RREO do 3º bimestre de 2001"
       },
       {
        "titulo": "RREO - 4º Bimestre 2001",
@@ -2188,7 +2188,7 @@
        "tamanho": "52 KB",
        "formato": "pdf",
        "url": "https://sefaz.es.gov.br/media/AcessoInforma%C3%A7%C3%A3o/2001/rreo-4bi.pdf",
-       "exibicao": "RREO — 4º bimestre de 2001"
+       "exibicao": "RREO do 4º bimestre de 2001"
       },
       {
        "titulo": "RREO - 5º Bimestre 2001",
@@ -2197,7 +2197,7 @@
        "tamanho": "53 KB",
        "formato": "pdf",
        "url": "https://sefaz.es.gov.br/media/AcessoInforma%C3%A7%C3%A3o/2001/rreo-5bi.pdf",
-       "exibicao": "RREO — 5º bimestre de 2001"
+       "exibicao": "RREO do 5º bimestre de 2001"
       },
       {
        "titulo": "RREO - 6º Bimestre 2001",
@@ -2206,7 +2206,7 @@
        "tamanho": "56 KB",
        "formato": "pdf",
        "url": "https://sefaz.es.gov.br/media/AcessoInforma%C3%A7%C3%A3o/2001/rreo-6bi.pdf",
-       "exibicao": "RREO — 6º bimestre de 2001"
+       "exibicao": "RREO do 6º bimestre de 2001"
       }
      ]
     },
@@ -2221,7 +2221,7 @@
        "tamanho": "36 KB",
        "formato": "pdf",
        "url": "https://sefaz.es.gov.br/media/AcessoInforma%C3%A7%C3%A3o/2000/rreo-5bi.pdf",
-       "exibicao": "RREO — 5º bimestre de 2000"
+       "exibicao": "RREO do 5º bimestre de 2000"
       },
       {
        "titulo": "RREO - 6º Bimestre 2000",
@@ -2230,7 +2230,7 @@
        "tamanho": "53 KB",
        "formato": "pdf",
        "url": "https://sefaz.es.gov.br/media/AcessoInforma%C3%A7%C3%A3o/2000/rreo-6bi.pdf",
-       "exibicao": "RREO — 6º bimestre de 2000"
+       "exibicao": "RREO do 6º bimestre de 2000"
       }
      ]
     }
@@ -2239,7 +2239,7 @@
   {
    "slug": "rgf",
    "slugSefaz": "rgf",
-   "titulo": "Relatório de Gestão Fiscal – RGF",
+   "titulo": "Relatório de Gestão Fiscal (RGF)",
    "secao": "Relatórios fiscais",
    "categoria": "rgf",
    "fonte": "https://sefaz.es.gov.br/rgf",
@@ -2255,7 +2255,7 @@
        "tamanho": "522 KB",
        "formato": "pdf",
        "url": "https://sefaz.es.gov.br/media/Tesouro%20Estadual/RGF/RGF%201quad%202026%201.pdf",
-       "exibicao": "RGF — 1º quadrimestre de 2026"
+       "exibicao": "RGF do 1º quadrimestre de 2026"
       },
       {
        "titulo": "RGF - 2º Quadrimestre 2026",
@@ -2264,7 +2264,7 @@
        "tamanho": "293 KB",
        "formato": "pdf",
        "url": "https://sefaz.es.gov.br/media/AcessoInforma%C3%A7%C3%A3o/2026/rgf-2qua.pdf",
-       "exibicao": "RGF — 2º quadrimestre de 2026"
+       "exibicao": "RGF do 2º quadrimestre de 2026"
       }
      ]
     },
@@ -2279,7 +2279,7 @@
        "tamanho": "937 KB",
        "formato": "pdf",
        "url": "https://sefaz.es.gov.br/media/Tesouro%20Estadual/RGF/01-Anexo%20I%20-%20Despesa%20com%20Pessoal%20-%201Q2025-combined.pdf",
-       "exibicao": "RGF — 1º quadrimestre de 2025"
+       "exibicao": "RGF do 1º quadrimestre de 2025"
       },
       {
        "titulo": "RGF - 2° Quadrimestre 2025",
@@ -2288,7 +2288,7 @@
        "tamanho": "940 KB",
        "formato": "pdf",
        "url": "https://sefaz.es.gov.br/media/Tesouro%20Estadual/01-Anexo%20I%20-%20Despesa%20com%20Pessoal%20-%202Q2025-combined.pdf",
-       "exibicao": "RGF — 2º quadrimestre de 2025"
+       "exibicao": "RGF do 2º quadrimestre de 2025"
       },
       {
        "titulo": "RGF - 3° Quadrimestre 2025",
@@ -2297,7 +2297,7 @@
        "tamanho": "879 KB",
        "formato": "pdf",
        "url": "https://sefaz.es.gov.br/media/Tesouro%20Estadual/RGF/rgf-3q-2025.pdf",
-       "exibicao": "RGF — 3º quadrimestre de 2025"
+       "exibicao": "RGF do 3º quadrimestre de 2025"
       }
      ]
     },
@@ -2312,7 +2312,7 @@
        "tamanho": "961 KB",
        "formato": "pdf",
        "url": "https://sefaz.es.gov.br/media/Tesouro%20Estadual/RGF/1%20Quad%202024.pdf",
-       "exibicao": "RGF — 1º quadrimestre de 2024"
+       "exibicao": "RGF do 1º quadrimestre de 2024"
       },
       {
        "titulo": "RGF - 2° Quadrimestre 2024",
@@ -2321,7 +2321,7 @@
        "tamanho": "966 KB",
        "formato": "pdf",
        "url": "https://sefaz.es.gov.br/media/Tesouro%20Estadual/RGF/2%20quad%202024.pdf",
-       "exibicao": "RGF — 2º quadrimestre de 2024"
+       "exibicao": "RGF do 2º quadrimestre de 2024"
       },
       {
        "titulo": "RGF - 3° Quadrimestre 2024",
@@ -2330,7 +2330,7 @@
        "tamanho": "1 MB",
        "formato": "pdf",
        "url": "https://sefaz.es.gov.br/media/Tesouro%20Estadual/RGF/3%20quad%202024-1.pdf",
-       "exibicao": "RGF — 3º quadrimestre de 2024"
+       "exibicao": "RGF do 3º quadrimestre de 2024"
       }
      ]
     },
@@ -2345,7 +2345,7 @@
        "tamanho": "1 MB",
        "formato": "pdf",
        "url": "https://sefaz.es.gov.br/media/Tesouro%20Estadual/RGF/RGF%201QUAD%202023.pdf",
-       "exibicao": "RGF — 1º quadrimestre de 2023"
+       "exibicao": "RGF do 1º quadrimestre de 2023"
       },
       {
        "titulo": "RGF - 2° Quadrimestre 2023",
@@ -2354,7 +2354,7 @@
        "tamanho": "1 MB",
        "formato": "pdf",
        "url": "https://sefaz.es.gov.br/media/Tesouro%20Estadual/RGF/RGF%202QUAD%202023.pdf",
-       "exibicao": "RGF — 2º quadrimestre de 2023"
+       "exibicao": "RGF do 2º quadrimestre de 2023"
       },
       {
        "titulo": "RGF - 3° Quadrimestre 2023",
@@ -2363,7 +2363,7 @@
        "tamanho": "1 MB",
        "formato": "pdf",
        "url": "https://sefaz.es.gov.br/media/Tesouro%20Estadual/RGF/RGF%203%20quad%202023.pdf",
-       "exibicao": "RGF — 3º quadrimestre de 2023"
+       "exibicao": "RGF do 3º quadrimestre de 2023"
       }
      ]
     },
@@ -2378,7 +2378,7 @@
        "tamanho": "1 MB",
        "formato": "pdf",
        "url": "https://sefaz.es.gov.br/media/Tesouro%20Estadual/RGF/RGF%201quad%202022%201.pdf",
-       "exibicao": "RGF — 1º quadrimestre de 2022"
+       "exibicao": "RGF do 1º quadrimestre de 2022"
       },
       {
        "titulo": "RGF - 2° Quadrimestre 2022",
@@ -2387,7 +2387,7 @@
        "tamanho": "1 MB",
        "formato": "pdf",
        "url": "https://sefaz.es.gov.br/media/Tesouro%20Estadual/RGF/RGF%202quad%202022%201.pdf",
-       "exibicao": "RGF — 2º quadrimestre de 2022"
+       "exibicao": "RGF do 2º quadrimestre de 2022"
       },
       {
        "titulo": "RGF - 3° Quadrimestre 2022",
@@ -2396,7 +2396,7 @@
        "tamanho": "501 KB",
        "formato": "pdf",
        "url": "https://sefaz.es.gov.br/media/Tesouro%20Estadual/RGF/ilovepdf_merged.pdf",
-       "exibicao": "RGF — 3º quadrimestre de 2022"
+       "exibicao": "RGF do 3º quadrimestre de 2022"
       }
      ]
     },
@@ -2411,7 +2411,7 @@
        "tamanho": "768 KB",
        "formato": "pdf",
        "url": "https://sefaz.es.gov.br/media/Tesouro%20Estadual/RGF/RGF%201quad%202021.pdf",
-       "exibicao": "RGF — 1º quadrimestre de 2021"
+       "exibicao": "RGF do 1º quadrimestre de 2021"
       },
       {
        "titulo": "RGF - 2º Quadrimestre 2021",
@@ -2420,7 +2420,7 @@
        "tamanho": "259 KB",
        "formato": "pdf",
        "url": "https://sefaz.es.gov.br/media/Tesouro%20Estadual/RGF/RGF%202quad%202021.pdf",
-       "exibicao": "RGF — 2º quadrimestre de 2021"
+       "exibicao": "RGF do 2º quadrimestre de 2021"
       },
       {
        "titulo": "RGF - 3º Quadrimestre 2021",
@@ -2429,7 +2429,7 @@
        "tamanho": "259 KB",
        "formato": "pdf",
        "url": "https://sefaz.es.gov.br/media/Tesouro%20Estadual/RGF/RGF%203quad%202021.pdf",
-       "exibicao": "RGF — 3º quadrimestre de 2021"
+       "exibicao": "RGF do 3º quadrimestre de 2021"
       }
      ]
     },
@@ -2444,7 +2444,7 @@
        "tamanho": "456 KB",
        "formato": "pdf",
        "url": "https://sefaz.es.gov.br/media/Tesouro%20Estadual/RGF/rgf-1-quad.pdf",
-       "exibicao": "RGF — 1º quadrimestre de 2020"
+       "exibicao": "RGF do 1º quadrimestre de 2020"
       },
       {
        "titulo": "RGF - 2º Quadrimestre 2020",
@@ -2453,7 +2453,7 @@
        "tamanho": "326 KB",
        "formato": "pdf",
        "url": "https://sefaz.es.gov.br/media/Tesouro%20Estadual/RGF/rgf-2-quad.pdf",
-       "exibicao": "RGF — 2º quadrimestre de 2020"
+       "exibicao": "RGF do 2º quadrimestre de 2020"
       },
       {
        "titulo": "RGF - 3º Quadrimestre 2020",
@@ -2462,7 +2462,7 @@
        "tamanho": "472 KB",
        "formato": "pdf",
        "url": "https://sefaz.es.gov.br/media/Tesouro%20Estadual/RGF/rgf-3-quad.pdf",
-       "exibicao": "RGF — 3º quadrimestre de 2020"
+       "exibicao": "RGF do 3º quadrimestre de 2020"
       }
      ]
     },
@@ -2477,7 +2477,7 @@
        "tamanho": "1 MB",
        "formato": "pdf",
        "url": "https://sefaz.es.gov.br/media/Tesouro%20Estadual/RGF/rgf-1quad2019.pdf",
-       "exibicao": "RGF — 1º quadrimestre de 2019"
+       "exibicao": "RGF do 1º quadrimestre de 2019"
       },
       {
        "titulo": "RGF - 2º Quadrimestre 2019",
@@ -2486,7 +2486,7 @@
        "tamanho": "315 KB",
        "formato": "pdf",
        "url": "https://sefaz.es.gov.br/media/Tesouro%20Estadual/RGF/rgf-2q-2019.pdf",
-       "exibicao": "RGF — 2º quadrimestre de 2019"
+       "exibicao": "RGF do 2º quadrimestre de 2019"
       },
       {
        "titulo": "RGF - 3º Quadrimestre 2019",
@@ -2495,7 +2495,7 @@
        "tamanho": "367 KB",
        "formato": "pdf",
        "url": "https://sefaz.es.gov.br/media/Tesouro%20Estadual/RGF/rgf-3q-2019.pdf",
-       "exibicao": "RGF — 3º quadrimestre de 2019"
+       "exibicao": "RGF do 3º quadrimestre de 2019"
       }
      ]
     },
@@ -2510,7 +2510,7 @@
        "tamanho": "1 MB",
        "formato": "pdf",
        "url": "https://sefaz.es.gov.br/media/Tesouro%20Estadual/RGF/rgf-1q-2018.pdf",
-       "exibicao": "RGF — 1º quadrimestre de 2018"
+       "exibicao": "RGF do 1º quadrimestre de 2018"
       },
       {
        "titulo": "RGF - 2º Quadrimestre 2018",
@@ -2519,7 +2519,7 @@
        "tamanho": "1 MB",
        "formato": "pdf",
        "url": "https://sefaz.es.gov.br/media/Tesouro%20Estadual/RGF/rgf-2q-2018.pdf",
-       "exibicao": "RGF — 2º quadrimestre de 2018"
+       "exibicao": "RGF do 2º quadrimestre de 2018"
       },
       {
        "titulo": "RGF - 3º Quadrimestre 2018",
@@ -2528,7 +2528,7 @@
        "tamanho": "342 KB",
        "formato": "pdf",
        "url": "https://sefaz.es.gov.br/media/Tesouro%20Estadual/RGF/rgf-3q-2018.pdf",
-       "exibicao": "RGF — 3º quadrimestre de 2018"
+       "exibicao": "RGF do 3º quadrimestre de 2018"
       }
      ]
     },
@@ -2543,7 +2543,7 @@
        "tamanho": "398 KB",
        "formato": "pdf",
        "url": "https://sefaz.es.gov.br/media/Tesouro%20Estadual/RGF/rgf-1q-2017.pdf",
-       "exibicao": "RGF — 1º quadrimestre de 2017"
+       "exibicao": "RGF do 1º quadrimestre de 2017"
       },
       {
        "titulo": "RGF - 2º Quadrimestre 2017",
@@ -2552,7 +2552,7 @@
        "tamanho": "483 KB",
        "formato": "pdf",
        "url": "https://sefaz.es.gov.br/media/Tesouro%20Estadual/RGF/rgf-2q-2017.pdf",
-       "exibicao": "RGF — 2º quadrimestre de 2017"
+       "exibicao": "RGF do 2º quadrimestre de 2017"
       },
       {
        "titulo": "RGF - 3º Quadrimestre 2017",
@@ -2561,7 +2561,7 @@
        "tamanho": "2 MB",
        "formato": "pdf",
        "url": "https://sefaz.es.gov.br/media/Tesouro%20Estadual/RGF/rgf-3q-2017.pdf",
-       "exibicao": "RGF — 3º quadrimestre de 2017"
+       "exibicao": "RGF do 3º quadrimestre de 2017"
       }
      ]
     },
@@ -2576,7 +2576,7 @@
        "tamanho": "390 KB",
        "formato": "pdf",
        "url": "https://sefaz.es.gov.br/media/AcessoInforma%C3%A7%C3%A3o/rgf-1-quadrimestre-2016.pdf",
-       "exibicao": "RGF — 1º quadrimestre de 2016"
+       "exibicao": "RGF do 1º quadrimestre de 2016"
       },
       {
        "titulo": "RGF - 2º Quadrimestre 2016",
@@ -2585,7 +2585,7 @@
        "tamanho": "389 KB",
        "formato": "pdf",
        "url": "https://sefaz.es.gov.br/media/AcessoInforma%C3%A7%C3%A3o/rgf-2-quadrimestre-2016.pdf",
-       "exibicao": "RGF — 2º quadrimestre de 2016"
+       "exibicao": "RGF do 2º quadrimestre de 2016"
       },
       {
        "titulo": "RGF - 3º Quadrimestre 2016",
@@ -2594,7 +2594,7 @@
        "tamanho": "891 KB",
        "formato": "pdf",
        "url": "https://sefaz.es.gov.br/media/AcessoInforma%C3%A7%C3%A3o/rgf-3-quadrimestre-2016.pdf",
-       "exibicao": "RGF — 3º quadrimestre de 2016"
+       "exibicao": "RGF do 3º quadrimestre de 2016"
       }
      ]
     },
@@ -2609,7 +2609,7 @@
        "tamanho": "336 KB",
        "formato": "pdf",
        "url": "https://sefaz.es.gov.br/media/AcessoInforma%C3%A7%C3%A3o/rgf-1-qua.pdf",
-       "exibicao": "RGF — 1º quadrimestre de 2015"
+       "exibicao": "RGF do 1º quadrimestre de 2015"
       },
       {
        "titulo": "RGF - 2º Quadrimestre 2015",
@@ -2618,7 +2618,7 @@
        "tamanho": "393 KB",
        "formato": "pdf",
        "url": "https://sefaz.es.gov.br/media/AcessoInforma%C3%A7%C3%A3o/rgf-2-qua.pdf",
-       "exibicao": "RGF — 2º quadrimestre de 2015"
+       "exibicao": "RGF do 2º quadrimestre de 2015"
       },
       {
        "titulo": "RGF - 3º Quadrimestre 2015",
@@ -2627,7 +2627,7 @@
        "tamanho": "460 KB",
        "formato": "pdf",
        "url": "https://sefaz.es.gov.br/media/AcessoInforma%C3%A7%C3%A3o/rgf-3-qua.pdf",
-       "exibicao": "RGF — 3º quadrimestre de 2015"
+       "exibicao": "RGF do 3º quadrimestre de 2015"
       }
      ]
     },
@@ -2642,7 +2642,7 @@
        "tamanho": "1001 KB",
        "formato": "pdf",
        "url": "https://sefaz.es.gov.br/media/AcessoInforma%C3%A7%C3%A3o/rreo%202014/rgf-1-qua.pdf",
-       "exibicao": "RGF — 1º quadrimestre de 2014"
+       "exibicao": "RGF do 1º quadrimestre de 2014"
       },
       {
        "titulo": "RGF - 2º Quadrimestre 2014",
@@ -2651,7 +2651,7 @@
        "tamanho": "850 KB",
        "formato": "pdf",
        "url": "https://sefaz.es.gov.br/media/AcessoInforma%C3%A7%C3%A3o/rreo%202014/rgf-2-qua.pdf",
-       "exibicao": "RGF — 2º quadrimestre de 2014"
+       "exibicao": "RGF do 2º quadrimestre de 2014"
       },
       {
        "titulo": "RGF - 3º Quadrimestre 2014",
@@ -2660,7 +2660,7 @@
        "tamanho": "1 MB",
        "formato": "pdf",
        "url": "https://sefaz.es.gov.br/media/AcessoInforma%C3%A7%C3%A3o/rreo%202014/rgf-3-qua.pdf",
-       "exibicao": "RGF — 3º quadrimestre de 2014"
+       "exibicao": "RGF do 3º quadrimestre de 2014"
       }
      ]
     },
@@ -2675,7 +2675,7 @@
        "tamanho": "1 MB",
        "formato": "pdf",
        "url": "https://sefaz.es.gov.br/media/AcessoInforma%C3%A7%C3%A3o/2013/rgf-1-qua.pdf",
-       "exibicao": "RGF — 1º quadrimestre de 2013"
+       "exibicao": "RGF do 1º quadrimestre de 2013"
       },
       {
        "titulo": "RGF - 2º Quadrimestre 2013",
@@ -2684,7 +2684,7 @@
        "tamanho": "762 KB",
        "formato": "pdf",
        "url": "https://sefaz.es.gov.br/media/AcessoInforma%C3%A7%C3%A3o/2013/rgf-2-qua.pdf",
-       "exibicao": "RGF — 2º quadrimestre de 2013"
+       "exibicao": "RGF do 2º quadrimestre de 2013"
       },
       {
        "titulo": "RGF - 3º Quadrimestre 2013",
@@ -2693,7 +2693,7 @@
        "tamanho": "2 MB",
        "formato": "pdf",
        "url": "https://sefaz.es.gov.br/media/AcessoInforma%C3%A7%C3%A3o/2013/rgf-3-qua.pdf",
-       "exibicao": "RGF — 3º quadrimestre de 2013"
+       "exibicao": "RGF do 3º quadrimestre de 2013"
       }
      ]
     },
@@ -2708,7 +2708,7 @@
        "tamanho": "347 KB",
        "formato": "pdf",
        "url": "https://sefaz.es.gov.br/media/AcessoInforma%C3%A7%C3%A3o/2012/rgf-1-qua.pdf",
-       "exibicao": "RGF — 1º quadrimestre de 2012"
+       "exibicao": "RGF do 1º quadrimestre de 2012"
       },
       {
        "titulo": "RGF - 2º Quadrimestre 2012",
@@ -2717,7 +2717,7 @@
        "tamanho": "886 KB",
        "formato": "pdf",
        "url": "https://sefaz.es.gov.br/media/AcessoInforma%C3%A7%C3%A3o/2012/rgf-2-qua.pdf",
-       "exibicao": "RGF — 2º quadrimestre de 2012"
+       "exibicao": "RGF do 2º quadrimestre de 2012"
       },
       {
        "titulo": "RGF - 3º Quadrimestre 2012",
@@ -2726,7 +2726,7 @@
        "tamanho": "1 MB",
        "formato": "pdf",
        "url": "https://sefaz.es.gov.br/media/AcessoInforma%C3%A7%C3%A3o/2012/rgf-3-qua.pdf",
-       "exibicao": "RGF — 3º quadrimestre de 2012"
+       "exibicao": "RGF do 3º quadrimestre de 2012"
       }
      ]
     },
@@ -2741,7 +2741,7 @@
        "tamanho": "208 KB",
        "formato": "pdf",
        "url": "https://sefaz.es.gov.br/media/AcessoInforma%C3%A7%C3%A3o/2011/rgf-1-qua.pdf",
-       "exibicao": "RGF — 1º quadrimestre de 2011"
+       "exibicao": "RGF do 1º quadrimestre de 2011"
       },
       {
        "titulo": "RGF - 2º Quadrimestre 2011",
@@ -2750,7 +2750,7 @@
        "tamanho": "219 KB",
        "formato": "pdf",
        "url": "https://sefaz.es.gov.br/media/AcessoInforma%C3%A7%C3%A3o/2011/rgf-2-qua.pdf",
-       "exibicao": "RGF — 2º quadrimestre de 2011"
+       "exibicao": "RGF do 2º quadrimestre de 2011"
       },
       {
        "titulo": "RGF - 3º Quadrimestre 2011",
@@ -2759,7 +2759,7 @@
        "tamanho": "326 KB",
        "formato": "pdf",
        "url": "https://sefaz.es.gov.br/media/AcessoInforma%C3%A7%C3%A3o/2011/rgf-3-qua.pdf",
-       "exibicao": "RGF — 3º quadrimestre de 2011"
+       "exibicao": "RGF do 3º quadrimestre de 2011"
       }
      ]
     },
@@ -2774,7 +2774,7 @@
        "tamanho": "214 KB",
        "formato": "pdf",
        "url": "https://sefaz.es.gov.br/media/AcessoInforma%C3%A7%C3%A3o/2010/rgf-1-qua.pdf",
-       "exibicao": "RGF — 1º quadrimestre de 2010"
+       "exibicao": "RGF do 1º quadrimestre de 2010"
       },
       {
        "titulo": "RGF - 2º Quadrimestre 2010",
@@ -2783,7 +2783,7 @@
        "tamanho": "213 KB",
        "formato": "pdf",
        "url": "https://sefaz.es.gov.br/media/AcessoInforma%C3%A7%C3%A3o/2010/rgf-2-qua.pdf",
-       "exibicao": "RGF — 2º quadrimestre de 2010"
+       "exibicao": "RGF do 2º quadrimestre de 2010"
       },
       {
        "titulo": "RGF - 3º Quadrimestre 2010",
@@ -2792,7 +2792,7 @@
        "tamanho": "425 KB",
        "formato": "pdf",
        "url": "https://sefaz.es.gov.br/media/AcessoInforma%C3%A7%C3%A3o/2010/rgf-3-qua.pdf",
-       "exibicao": "RGF — 3º quadrimestre de 2010"
+       "exibicao": "RGF do 3º quadrimestre de 2010"
       }
      ]
     },
@@ -2807,7 +2807,7 @@
        "tamanho": "189 KB",
        "formato": "pdf",
        "url": "https://sefaz.es.gov.br/media/AcessoInforma%C3%A7%C3%A3o/2009/rgf-1-qua.pdf",
-       "exibicao": "RGF — 1º quadrimestre de 2009"
+       "exibicao": "RGF do 1º quadrimestre de 2009"
       },
       {
        "titulo": "RGF - 2º Quadrimestre 2009",
@@ -2816,7 +2816,7 @@
        "tamanho": "189 KB",
        "formato": "pdf",
        "url": "https://sefaz.es.gov.br/media/AcessoInforma%C3%A7%C3%A3o/2009/rgf-2-qua.pdf",
-       "exibicao": "RGF — 2º quadrimestre de 2009"
+       "exibicao": "RGF do 2º quadrimestre de 2009"
       },
       {
        "titulo": "RGF - 3º Quadrimestre 2009",
@@ -2825,7 +2825,7 @@
        "tamanho": "48 KB",
        "formato": "pdf",
        "url": "https://sefaz.es.gov.br/media/AcessoInforma%C3%A7%C3%A3o/2009/rgf-3-qua.pdf",
-       "exibicao": "RGF — 3º quadrimestre de 2009"
+       "exibicao": "RGF do 3º quadrimestre de 2009"
       }
      ]
     },
@@ -2840,7 +2840,7 @@
        "tamanho": "187 KB",
        "formato": "pdf",
        "url": "https://sefaz.es.gov.br/media/AcessoInforma%C3%A7%C3%A3o/2008/rgf-1qua.pdf",
-       "exibicao": "RGF — 1º quadrimestre de 2008"
+       "exibicao": "RGF do 1º quadrimestre de 2008"
       },
       {
        "titulo": "RGF - 2º Quadrimestre 2008",
@@ -2849,7 +2849,7 @@
        "tamanho": "190 KB",
        "formato": "pdf",
        "url": "https://sefaz.es.gov.br/media/AcessoInforma%C3%A7%C3%A3o/2008/rgf-2qua.pdf",
-       "exibicao": "RGF — 2º quadrimestre de 2008"
+       "exibicao": "RGF do 2º quadrimestre de 2008"
       },
       {
        "titulo": "RGF - 3º Quadrimestre 2008",
@@ -2858,7 +2858,7 @@
        "tamanho": "39 KB",
        "formato": "pdf",
        "url": "https://sefaz.es.gov.br/media/AcessoInforma%C3%A7%C3%A3o/2008/rgf-3qua.pdf",
-       "exibicao": "RGF — 3º quadrimestre de 2008"
+       "exibicao": "RGF do 3º quadrimestre de 2008"
       }
      ]
     },
@@ -2873,7 +2873,7 @@
        "tamanho": "399 KB",
        "formato": "pdf",
        "url": "https://sefaz.es.gov.br/media/AcessoInforma%C3%A7%C3%A3o/2007/rgf-1qua.pdf",
-       "exibicao": "RGF — 1º quadrimestre de 2007"
+       "exibicao": "RGF do 1º quadrimestre de 2007"
       },
       {
        "titulo": "RGF - 2º Quadrimestre 2007",
@@ -2882,7 +2882,7 @@
        "tamanho": "384 KB",
        "formato": "pdf",
        "url": "https://sefaz.es.gov.br/media/AcessoInforma%C3%A7%C3%A3o/2007/rgf-2qua.pdf",
-       "exibicao": "RGF — 2º quadrimestre de 2007"
+       "exibicao": "RGF do 2º quadrimestre de 2007"
       },
       {
        "titulo": "RGF - 3º Quadrimestre 2007",
@@ -2891,7 +2891,7 @@
        "tamanho": "34 KB",
        "formato": "pdf",
        "url": "https://sefaz.es.gov.br/media/AcessoInforma%C3%A7%C3%A3o/2007/rgf-3qua.pdf",
-       "exibicao": "RGF — 3º quadrimestre de 2007"
+       "exibicao": "RGF do 3º quadrimestre de 2007"
       }
      ]
     },
@@ -2906,7 +2906,7 @@
        "tamanho": "19 KB",
        "formato": "pdf",
        "url": "https://sefaz.es.gov.br/media/AcessoInforma%C3%A7%C3%A3o/2006/rgf-1qua.pdf",
-       "exibicao": "RGF — 1º quadrimestre de 2006"
+       "exibicao": "RGF do 1º quadrimestre de 2006"
       },
       {
        "titulo": "RGF - 2º Quadrimestre 2006",
@@ -2915,7 +2915,7 @@
        "tamanho": "19 KB",
        "formato": "pdf",
        "url": "https://sefaz.es.gov.br/media/AcessoInforma%C3%A7%C3%A3o/2006/rgf-2qua.pdf",
-       "exibicao": "RGF — 2º quadrimestre de 2006"
+       "exibicao": "RGF do 2º quadrimestre de 2006"
       },
       {
        "titulo": "RGF - 3º Quadrimestre 2006",
@@ -2924,7 +2924,7 @@
        "tamanho": "576 KB",
        "formato": "pdf",
        "url": "https://sefaz.es.gov.br/media/AcessoInforma%C3%A7%C3%A3o/2006/rgf-3qua.pdf",
-       "exibicao": "RGF — 3º quadrimestre de 2006"
+       "exibicao": "RGF do 3º quadrimestre de 2006"
       }
      ]
     },
@@ -2939,7 +2939,7 @@
        "tamanho": "15 KB",
        "formato": "pdf",
        "url": "https://sefaz.es.gov.br/media/AcessoInforma%C3%A7%C3%A3o/2005/rgf-1qua.pdf",
-       "exibicao": "RGF — 1º quadrimestre de 2005"
+       "exibicao": "RGF do 1º quadrimestre de 2005"
       },
       {
        "titulo": "RGF - 2º Quadrimestre 2005",
@@ -2948,7 +2948,7 @@
        "tamanho": "15 KB",
        "formato": "pdf",
        "url": "https://sefaz.es.gov.br/media/AcessoInforma%C3%A7%C3%A3o/2005/rgf-2qua.pdf",
-       "exibicao": "RGF — 2º quadrimestre de 2005"
+       "exibicao": "RGF do 2º quadrimestre de 2005"
       },
       {
        "titulo": "RGF - 3º Quadrimestre 2005",
@@ -2957,7 +2957,7 @@
        "tamanho": "31 KB",
        "formato": "pdf",
        "url": "https://sefaz.es.gov.br/media/AcessoInforma%C3%A7%C3%A3o/2005/rgf-3qua.pdf",
-       "exibicao": "RGF — 3º quadrimestre de 2005"
+       "exibicao": "RGF do 3º quadrimestre de 2005"
       }
      ]
     },
@@ -2972,7 +2972,7 @@
        "tamanho": "15 KB",
        "formato": "pdf",
        "url": "https://sefaz.es.gov.br/media/AcessoInforma%C3%A7%C3%A3o/2004/rgf-1qua.pdf",
-       "exibicao": "RGF — 1º quadrimestre de 2004"
+       "exibicao": "RGF do 1º quadrimestre de 2004"
       },
       {
        "titulo": "RGF - 2º Quadrimestre 2004",
@@ -2981,7 +2981,7 @@
        "tamanho": "16 KB",
        "formato": "pdf",
        "url": "https://sefaz.es.gov.br/media/AcessoInforma%C3%A7%C3%A3o/2004/rgf-2qua.pdf",
-       "exibicao": "RGF — 2º quadrimestre de 2004"
+       "exibicao": "RGF do 2º quadrimestre de 2004"
       },
       {
        "titulo": "RGF - 3º Quadrimestre 2004",
@@ -2990,7 +2990,7 @@
        "tamanho": "26 KB",
        "formato": "pdf",
        "url": "https://sefaz.es.gov.br/media/AcessoInforma%C3%A7%C3%A3o/2004/rgf-3qua.pdf",
-       "exibicao": "RGF — 3º quadrimestre de 2004"
+       "exibicao": "RGF do 3º quadrimestre de 2004"
       }
      ]
     },
@@ -3005,7 +3005,7 @@
        "tamanho": "18 KB",
        "formato": "pdf",
        "url": "https://sefaz.es.gov.br/media/AcessoInforma%C3%A7%C3%A3o/2003/rgf-1qua.pdf",
-       "exibicao": "RGF — 1º quadrimestre de 2003"
+       "exibicao": "RGF do 1º quadrimestre de 2003"
       },
       {
        "titulo": "RGF - 2º Quadrimestre 2003",
@@ -3014,7 +3014,7 @@
        "tamanho": "18 KB",
        "formato": "pdf",
        "url": "https://sefaz.es.gov.br/media/AcessoInforma%C3%A7%C3%A3o/2003/rgf-2qua.pdf",
-       "exibicao": "RGF — 2º quadrimestre de 2003"
+       "exibicao": "RGF do 2º quadrimestre de 2003"
       },
       {
        "titulo": "RGF - 3º Quadrimestre 2003",
@@ -3023,7 +3023,7 @@
        "tamanho": "29 KB",
        "formato": "pdf",
        "url": "https://sefaz.es.gov.br/media/AcessoInforma%C3%A7%C3%A3o/2003/rgf-3qua.pdf",
-       "exibicao": "RGF — 3º quadrimestre de 2003"
+       "exibicao": "RGF do 3º quadrimestre de 2003"
       }
      ]
     },
@@ -3038,7 +3038,7 @@
        "tamanho": "147 KB",
        "formato": "pdf",
        "url": "https://sefaz.es.gov.br/media/AcessoInforma%C3%A7%C3%A3o/2002/rgf-1qua.pdf",
-       "exibicao": "RGF — 1º quadrimestre de 2002"
+       "exibicao": "RGF do 1º quadrimestre de 2002"
       },
       {
        "titulo": "RGF - 2º Quadrimestre 2002",
@@ -3047,7 +3047,7 @@
        "tamanho": "225 KB",
        "formato": "pdf",
        "url": "https://sefaz.es.gov.br/media/AcessoInforma%C3%A7%C3%A3o/2002/rgf-2qua.pdf",
-       "exibicao": "RGF — 2º quadrimestre de 2002"
+       "exibicao": "RGF do 2º quadrimestre de 2002"
       },
       {
        "titulo": "RGF - 3º Quadrimestre 2002",
@@ -3056,7 +3056,7 @@
        "tamanho": "362 KB",
        "formato": "pdf",
        "url": "https://sefaz.es.gov.br/media/AcessoInforma%C3%A7%C3%A3o/2002/rgf-3qua.pdf",
-       "exibicao": "RGF — 3º quadrimestre de 2002"
+       "exibicao": "RGF do 3º quadrimestre de 2002"
       }
      ]
     },
@@ -3071,7 +3071,7 @@
        "tamanho": "15 KB",
        "formato": "pdf",
        "url": "https://sefaz.es.gov.br/media/AcessoInforma%C3%A7%C3%A3o/2001/rgf-1qua.pdf",
-       "exibicao": "RGF — 1º quadrimestre de 2001"
+       "exibicao": "RGF do 1º quadrimestre de 2001"
       },
       {
        "titulo": "RGF - 2º Quadrimestre 2001",
@@ -3080,7 +3080,7 @@
        "tamanho": "15 KB",
        "formato": "pdf",
        "url": "https://sefaz.es.gov.br/media/AcessoInforma%C3%A7%C3%A3o/2001/rgf-2qua.pdf",
-       "exibicao": "RGF — 2º quadrimestre de 2001"
+       "exibicao": "RGF do 2º quadrimestre de 2001"
       },
       {
        "titulo": "RGF - 3º Quadrimestre 2001",
@@ -3089,7 +3089,7 @@
        "tamanho": "18 KB",
        "formato": "pdf",
        "url": "https://sefaz.es.gov.br/media/AcessoInforma%C3%A7%C3%A3o/2001/rgf-3qua.pdf",
-       "exibicao": "RGF — 3º quadrimestre de 2001"
+       "exibicao": "RGF do 3º quadrimestre de 2001"
       }
      ]
     },
@@ -3104,7 +3104,7 @@
        "tamanho": "12 KB",
        "formato": "pdf",
        "url": "https://sefaz.es.gov.br/media/AcessoInforma%C3%A7%C3%A3o/2000/rgf-2qua.pdf",
-       "exibicao": "RGF — 2º quadrimestre de 2000"
+       "exibicao": "RGF do 2º quadrimestre de 2000"
       },
       {
        "titulo": "RGF - 3º Quadrimestre 2000",
@@ -3113,7 +3113,7 @@
        "tamanho": "23 KB",
        "formato": "pdf",
        "url": "https://sefaz.es.gov.br/media/AcessoInforma%C3%A7%C3%A3o/2000/rgf-3qua.pdf",
-       "exibicao": "RGF — 3º quadrimestre de 2000"
+       "exibicao": "RGF do 3º quadrimestre de 2000"
       }
      ]
     }
@@ -3138,7 +3138,7 @@
        "tamanho": "7 MB",
        "formato": "pdf",
        "url": "https://sefaz.es.gov.br/media/Tesouro%20Estadual/Relat%C3%B3rio%20anual%20da%20d%C3%ADvida%20p%C3%BAblica%20-%202025%20%283%29%20%282%29.pdf",
-       "exibicao": "Relatório Anual da Dívida Pública e do PAF — 2025"
+       "exibicao": "Relatório Anual da Dívida Pública e do PAF de 2025"
       },
       {
        "titulo": "2024",
@@ -3147,7 +3147,7 @@
        "tamanho": "25 MB",
        "formato": "pdf",
        "url": "https://sefaz.es.gov.br/media/Tesouro%20Estadual/Relat%C3%B3rios%20Fiscais/Relatorio%20da%20Divida%20%285%29.pdf",
-       "exibicao": "Relatório Anual da Dívida Pública e do PAF — 2024"
+       "exibicao": "Relatório Anual da Dívida Pública e do PAF de 2024"
       },
       {
        "titulo": "2023",
@@ -3156,7 +3156,7 @@
        "tamanho": "24 MB",
        "formato": "pdf",
        "url": "https://sefaz.es.gov.br/media/Tesouro%20Estadual/D%C3%ADvida%20Publica%20-%2002%20%281%29.pdf",
-       "exibicao": "Relatório Anual da Dívida Pública e do PAF — 2023"
+       "exibicao": "Relatório Anual da Dívida Pública e do PAF de 2023"
       },
       {
        "titulo": "2022",
@@ -3165,7 +3165,7 @@
        "tamanho": "9 MB",
        "formato": "pdf",
        "url": "https://sefaz.es.gov.br/media/Tesouro%20Estadual/Divida%20Publica%20-%20Final%20%281%29.pdf",
-       "exibicao": "Relatório Anual da Dívida Pública e do PAF — 2022"
+       "exibicao": "Relatório Anual da Dívida Pública e do PAF de 2022"
       },
       {
        "titulo": "2021",
@@ -3174,7 +3174,7 @@
        "tamanho": "2 MB",
        "formato": "pdf",
        "url": "https://sefaz.es.gov.br/media/Tesouro%20Estadual/Pol%C3%ADtica%20Fiscal/Relat%C3%B3rio%20Anual%20da%20D%C3%ADvida%20P%C3%BAblica/2021.pdf",
-       "exibicao": "Relatório Anual da Dívida Pública e do PAF — 2021"
+       "exibicao": "Relatório Anual da Dívida Pública e do PAF de 2021"
       },
       {
        "titulo": "2020",
@@ -3183,7 +3183,7 @@
        "tamanho": "6 MB",
        "formato": "pdf",
        "url": "https://sefaz.es.gov.br/media/Tesouro%20Estadual/Pol%C3%ADtica%20Fiscal/Relat%C3%B3rio%20Anual%20da%20D%C3%ADvida%20P%C3%BAblica/2020.pdf",
-       "exibicao": "Relatório Anual da Dívida Pública e do PAF — 2020"
+       "exibicao": "Relatório Anual da Dívida Pública e do PAF de 2020"
       },
       {
        "titulo": "2019",
@@ -3192,7 +3192,7 @@
        "tamanho": "2 MB",
        "formato": "pdf",
        "url": "https://sefaz.es.gov.br/media/Tesouro%20Estadual/Relat%C3%B3rios%20Fiscais/Relat%C3%B3rio%20Anual/2019.pdf",
-       "exibicao": "Relatório Anual da Dívida Pública e do PAF — 2019"
+       "exibicao": "Relatório Anual da Dívida Pública e do PAF de 2019"
       },
       {
        "titulo": "2018",
@@ -3201,7 +3201,7 @@
        "tamanho": "625 KB",
        "formato": "pdf",
        "url": "https://sefaz.es.gov.br/media/Tesouro%20Estadual/Relat%C3%B3rios%20Fiscais/Relat%C3%B3rio%20Anual/2018.pdf",
-       "exibicao": "Relatório Anual da Dívida Pública e do PAF — 2018"
+       "exibicao": "Relatório Anual da Dívida Pública e do PAF de 2018"
       },
       {
        "titulo": "2013",
@@ -3210,7 +3210,7 @@
        "tamanho": "582 KB",
        "formato": "pdf",
        "url": "https://sefaz.es.gov.br/media/Tesouro%20Estadual/Relat%C3%B3rios%20Fiscais/Relat%C3%B3rio%20Anual/2013.pdf",
-       "exibicao": "Relatório Anual da Dívida Pública e do PAF — 2013"
+       "exibicao": "Relatório Anual da Dívida Pública e do PAF de 2013"
       },
       {
        "titulo": "2012",
@@ -3219,7 +3219,7 @@
        "tamanho": "558 KB",
        "formato": "pdf",
        "url": "https://sefaz.es.gov.br/media/Tesouro%20Estadual/Relat%C3%B3rios%20Fiscais/Relat%C3%B3rio%20Anual/2012.pdf",
-       "exibicao": "Relatório Anual da Dívida Pública e do PAF — 2012"
+       "exibicao": "Relatório Anual da Dívida Pública e do PAF de 2012"
       }
      ]
     }
@@ -3253,7 +3253,7 @@
   {
    "slug": "programa-de-reestruturacao-e-de-ajuste-fiscal-paf",
    "slugSefaz": "programa-de-reestruturacao-e-de-ajuste-fiscal-paf",
-   "titulo": "Programa de Reestruturação e de Ajuste Fiscal – PAF",
+   "titulo": "Programa de Reestruturação e de Ajuste Fiscal (PAF)",
    "secao": "Relatórios fiscais",
    "categoria": "divida-paf",
    "fonte": "https://sefaz.es.gov.br/programa-de-reestruturacao-e-de-ajuste-fiscal-paf",
@@ -3690,13 +3690,13 @@
        "exibicao": "Resultado da Avaliação do Programa Referente ao Exercício de 2014"
       },
       {
-       "titulo": "Resultado da Avaliação do Programa Referente ao Exercício de 2014 – Adimplemento",
+       "titulo": "Resultado da Avaliação do Programa Referente ao Exercício de 2014: Adimplemento",
        "descricao": "",
        "atualizadoEm": "17/03/2021",
        "tamanho": "641 KB",
        "formato": "pdf",
        "url": "https://sefaz.es.gov.br/media/Tesouro%20Estadual/Relat%C3%B3rios%20Fiscais/Programa%20de%20Reestrutura%C3%A7%C3%A3o%20e%20de%20Ajuste%20Fiscal%20%E2%80%93%20PAF/2014-2016/Resultado%20da%20Avalia%C3%A7%C3%A3o%20do%20Programa%20Referente%20ao%20Exerc%C3%ADcio%20de%202014%20%E2%80%93%20Adimplemento.pdf",
-       "exibicao": "Resultado da Avaliação do Programa Referente ao Exercício de 2014 – Adimplemento"
+       "exibicao": "Resultado da Avaliação do Programa Referente ao Exercício de 2014: Adimplemento"
       },
       {
        "titulo": "Avaliação definitiva do exercício de 2015",
@@ -3861,7 +3861,7 @@
        "tamanho": "10 MB",
        "formato": "pdf",
        "url": "https://sefaz.es.gov.br/media/Tesouro%20Estadual/RREO/RREO%201bim%20-%202026.pdf",
-       "exibicao": "RREO Cidadão — 1º bimestre de 2026"
+       "exibicao": "RREO Cidadão do 1º bimestre de 2026"
       },
       {
        "titulo": "RREO Cidadão 2º Bimestre",
@@ -3870,7 +3870,7 @@
        "tamanho": "9 MB",
        "formato": "pdf",
        "url": "https://sefaz.es.gov.br/media/Tesouro%20Estadual/RGF/rreo-2bim-2026-final.pdf",
-       "exibicao": "RREO Cidadão — 2º bimestre de 2026"
+       "exibicao": "RREO Cidadão do 2º bimestre de 2026"
       },
       {
        "titulo": "RREO Cidadão 3º Bimestre",
@@ -3879,7 +3879,7 @@
        "tamanho": "7 MB",
        "formato": "pdf",
        "url": "https://sefaz.es.gov.br/media/Tesouro%20Estadual/RREO/rreo-3bim-2026-final.pdf",
-       "exibicao": "RREO Cidadão — 3º bimestre de 2026"
+       "exibicao": "RREO Cidadão do 3º bimestre de 2026"
       },
       {
        "titulo": "RREO Cidadão 4º Bimestre",
@@ -3888,7 +3888,7 @@
        "tamanho": "9 MB",
        "formato": "pdf",
        "url": "https://sefaz.es.gov.br/media/Tesouro%20Estadual/rreo-4bim-2026-final.pdf",
-       "exibicao": "RREO Cidadão — 4º bimestre de 2026"
+       "exibicao": "RREO Cidadão do 4º bimestre de 2026"
       }
      ]
     },
@@ -3903,7 +3903,7 @@
        "tamanho": "10 MB",
        "formato": "pdf",
        "url": "https://sefaz.es.gov.br/media/Tesouro%20Estadual/RREO/RREO%20Cidad%C3%A3o%201%20bim%202025%20%284%29.pdf",
-       "exibicao": "RREO Cidadão — 1º bimestre de 2025"
+       "exibicao": "RREO Cidadão do 1º bimestre de 2025"
       },
       {
        "titulo": "RREO Cidadão 2º Bimestre",
@@ -3912,7 +3912,7 @@
        "tamanho": "10 MB",
        "formato": "pdf",
        "url": "https://sefaz.es.gov.br/media/Tesouro%20Estadual/RREO/RREO%20Cidad%C3%A3o%202%20bim%202025.pdf",
-       "exibicao": "RREO Cidadão — 2º bimestre de 2025"
+       "exibicao": "RREO Cidadão do 2º bimestre de 2025"
       },
       {
        "titulo": "RREO Cidadão 3º Bimestre",
@@ -3921,7 +3921,7 @@
        "tamanho": "8 MB",
        "formato": "pdf",
        "url": "https://sefaz.es.gov.br/media/Tesouro%20Estadual/RREO/RREO%203bim%20%281%29.pdf",
-       "exibicao": "RREO Cidadão — 3º bimestre de 2025"
+       "exibicao": "RREO Cidadão do 3º bimestre de 2025"
       },
       {
        "titulo": "RREO Cidadão 4º Bimestre",
@@ -3930,7 +3930,7 @@
        "tamanho": "9 MB",
        "formato": "pdf",
        "url": "https://sefaz.es.gov.br/media/Tesouro%20Estadual/RREO/RREO%204bim.pdf",
-       "exibicao": "RREO Cidadão — 4º bimestre de 2025"
+       "exibicao": "RREO Cidadão do 4º bimestre de 2025"
       },
       {
        "titulo": "RREO Cidadão 5º Bimestre",
@@ -3939,7 +3939,7 @@
        "tamanho": "9 MB",
        "formato": "pdf",
        "url": "https://sefaz.es.gov.br/media/Tesouro%20Estadual/RREO/RREO%205bim.pdf",
-       "exibicao": "RREO Cidadão — 5º bimestre de 2025"
+       "exibicao": "RREO Cidadão do 5º bimestre de 2025"
       },
       {
        "titulo": "RREO Cidadão 6º Bimestre",
@@ -3948,7 +3948,7 @@
        "tamanho": "9 MB",
        "formato": "pdf",
        "url": "https://sefaz.es.gov.br/media/Tesouro%20Estadual/RREO%206bim.pdf",
-       "exibicao": "RREO Cidadão — 6º bimestre de 2025"
+       "exibicao": "RREO Cidadão do 6º bimestre de 2025"
       }
      ]
     },
@@ -3963,7 +3963,7 @@
        "tamanho": "9 MB",
        "formato": "pdf",
        "url": "https://sefaz.es.gov.br/media/Tesouro%20Estadual/RREO/document.send.php%20%284%29.pdf",
-       "exibicao": "RREO Cidadão — 4º bimestre de 2024"
+       "exibicao": "RREO Cidadão do 4º bimestre de 2024"
       },
       {
        "titulo": "RREO Cidadão 3º Bimestre",
@@ -3972,7 +3972,7 @@
        "tamanho": "8 MB",
        "formato": "pdf",
        "url": "https://sefaz.es.gov.br/media/Tesouro%20Estadual/RREO%20Cidad%C3%A3o3%C2%BA%20Bimestre.pdf",
-       "exibicao": "RREO Cidadão — 3º bimestre de 2024"
+       "exibicao": "RREO Cidadão do 3º bimestre de 2024"
       },
       {
        "titulo": "RREO Cidadão 2º Bimestre",
@@ -3981,7 +3981,7 @@
        "tamanho": "9 MB",
        "formato": "pdf",
        "url": "https://sefaz.es.gov.br/media/Tesouro%20Estadual/RREO/document.send.php%20%283%29.pdf",
-       "exibicao": "RREO Cidadão — 2º bimestre de 2024"
+       "exibicao": "RREO Cidadão do 2º bimestre de 2024"
       }
      ]
     }
@@ -4006,7 +4006,7 @@
        "tamanho": "9 MB",
        "formato": "pdf",
        "url": "https://sefaz.es.gov.br/media/Tesouro%20Estadual/rgf-1-quad-2026-final.pdf",
-       "exibicao": "RGF Cidadão — 1º quadrimestre de 2026"
+       "exibicao": "RGF Cidadão do 1º quadrimestre de 2026"
       },
       {
        "titulo": "RGF 2° Quadrimestre de 2026",
@@ -4015,7 +4015,7 @@
        "tamanho": "9 MB",
        "formato": "pdf",
        "url": "https://sefaz.es.gov.br/media/Tesouro%20Estadual/rgf-2-quad-2026-final.pdf",
-       "exibicao": "RGF Cidadão — 2º quadrimestre de 2026"
+       "exibicao": "RGF Cidadão do 2º quadrimestre de 2026"
       }
      ]
     },
@@ -4030,7 +4030,7 @@
        "tamanho": "9 MB",
        "formato": "pdf",
        "url": "https://sefaz.es.gov.br/media/Tesouro%20Estadual/RGF/RGF%201%20quad%202025%20%281%29.pdf",
-       "exibicao": "RGF Cidadão — 1º quadrimestre de 2025"
+       "exibicao": "RGF Cidadão do 1º quadrimestre de 2025"
       },
       {
        "titulo": "RGF 2° Quadrimestre de 2025",
@@ -4039,7 +4039,7 @@
        "tamanho": "9 MB",
        "formato": "pdf",
        "url": "https://sefaz.es.gov.br/media/Tesouro%20Estadual/RGF/RGF%202%20quad%202025.pdf",
-       "exibicao": "RGF Cidadão — 2º quadrimestre de 2025"
+       "exibicao": "RGF Cidadão do 2º quadrimestre de 2025"
       },
       {
        "titulo": "RGF 3° Quadrimestre de 2025",
@@ -4048,7 +4048,7 @@
        "tamanho": "9 MB",
        "formato": "pdf",
        "url": "https://sefaz.es.gov.br/media/Tesouro%20Estadual/RGF%203%20quad%202025.pdf",
-       "exibicao": "RGF Cidadão — 3º quadrimestre de 2025"
+       "exibicao": "RGF Cidadão do 3º quadrimestre de 2025"
       }
      ]
     },
@@ -4063,7 +4063,7 @@
        "tamanho": "5 MB",
        "formato": "pdf",
        "url": "https://sefaz.es.gov.br/media/Tesouro%20Estadual/RGF/RGF%202%20Quad%20%283%29.pdf",
-       "exibicao": "RGF Cidadão — 2º quadrimestre de 2024"
+       "exibicao": "RGF Cidadão do 2º quadrimestre de 2024"
       },
       {
        "titulo": "RGF 3° Quadrimestre de 2024",
@@ -4072,7 +4072,7 @@
        "tamanho": "5 MB",
        "formato": "pdf",
        "url": "https://sefaz.es.gov.br/media/Tesouro%20Estadual/RGF/RGF%203%20quad%20%283%29.pdf",
-       "exibicao": "RGF Cidadão — 3º quadrimestre de 2024"
+       "exibicao": "RGF Cidadão do 3º quadrimestre de 2024"
       }
      ]
     }
@@ -4097,7 +4097,7 @@
        "tamanho": "104 KB",
        "formato": "pdf",
        "url": "https://sefaz.es.gov.br/media/Tesouro%20Estadual/Contabilidade%20Aplicada%20ao%20Setor/Dem.%20Result%20Caixa%20Tesouro%20-%201%20BIM_2026.pdf",
-       "exibicao": "Resultado de Caixa do Tesouro — 1º bimestre de 2026"
+       "exibicao": "Resultado de Caixa do Tesouro do 1º bimestre de 2026"
       },
       {
        "titulo": "Dem. Result Caixa Tesouro - 2 BIM_2026",
@@ -4106,7 +4106,7 @@
        "tamanho": "102 KB",
        "formato": "pdf",
        "url": "https://sefaz.es.gov.br/media/Tesouro%20Estadual/Contabilidade%20Aplicada%20ao%20Setor/Dem.%20Result%20Caixa%20Tesouro%20-%202%20BIM_2026.xlsx.pdf",
-       "exibicao": "Resultado de Caixa do Tesouro — 2º bimestre de 2026"
+       "exibicao": "Resultado de Caixa do Tesouro do 2º bimestre de 2026"
       }
      ]
     },
@@ -4121,7 +4121,7 @@
        "tamanho": "104 KB",
        "formato": "pdf",
        "url": "https://sefaz.es.gov.br/media/Tesouro%20Estadual/Dem.%20Result%20Caixa%20Tesouro%20-%201%20BIM_2025.pdf",
-       "exibicao": "Resultado de Caixa do Tesouro — 1º bimestre de 2025"
+       "exibicao": "Resultado de Caixa do Tesouro do 1º bimestre de 2025"
       },
       {
        "titulo": "Dem. Result Caixa Tesouro - 2 BIM_2025",
@@ -4130,7 +4130,7 @@
        "tamanho": "104 KB",
        "formato": "pdf",
        "url": "https://sefaz.es.gov.br/media/Tesouro%20Estadual/Dem.%20Result%20Caixa%20Tesouro%20-%202%20BIM_2025.pdf",
-       "exibicao": "Resultado de Caixa do Tesouro — 2º bimestre de 2025"
+       "exibicao": "Resultado de Caixa do Tesouro do 2º bimestre de 2025"
       },
       {
        "titulo": "Dem. Result Caixa Tesouro - 3 BIM_2025-1",
@@ -4139,7 +4139,7 @@
        "tamanho": "105 KB",
        "formato": "pdf",
        "url": "https://sefaz.es.gov.br/media/Tesouro%20Estadual/Dem.%20Result%20Caixa%20Tesouro%20-%203%20BIM_2025-1.pdf",
-       "exibicao": "Resultado de Caixa do Tesouro — 3º bimestre de 2025"
+       "exibicao": "Resultado de Caixa do Tesouro do 3º bimestre de 2025"
       },
       {
        "titulo": "Dem. Result Caixa Tesouro - 4 BIM_2025",
@@ -4148,7 +4148,7 @@
        "tamanho": "104 KB",
        "formato": "pdf",
        "url": "https://sefaz.es.gov.br/media/Tesouro%20Estadual/Dem.%20Result%20Caixa%20Tesouro%20-%204%20BIM_2025.pdf",
-       "exibicao": "Resultado de Caixa do Tesouro — 4º bimestre de 2025"
+       "exibicao": "Resultado de Caixa do Tesouro do 4º bimestre de 2025"
       },
       {
        "titulo": "Dem. Result Caixa Tesouro - 5 BIM_2025-1",
@@ -4157,7 +4157,7 @@
        "tamanho": "104 KB",
        "formato": "pdf",
        "url": "https://sefaz.es.gov.br/media/Tesouro%20Estadual/Dem.%20Result%20Caixa%20Tesouro%20-%205%20BIM_2025-1.pdf",
-       "exibicao": "Resultado de Caixa do Tesouro — 5º bimestre de 2025"
+       "exibicao": "Resultado de Caixa do Tesouro do 5º bimestre de 2025"
       },
       {
        "titulo": "Dem. Result Caixa Tesouro - 6 BIM_2025",
@@ -4166,7 +4166,7 @@
        "tamanho": "104 KB",
        "formato": "pdf",
        "url": "https://sefaz.es.gov.br/media/Tesouro%20Estadual/Contabilidade%20Aplicada%20ao%20Setor/Dem.%20Result%20Caixa%20Tesouro%20-%206%20BIM_2025.pdf",
-       "exibicao": "Resultado de Caixa do Tesouro — 6º bimestre de 2025"
+       "exibicao": "Resultado de Caixa do Tesouro do 6º bimestre de 2025"
       }
      ]
     },
@@ -4185,7 +4185,7 @@
        "tamanho": "333 KB",
        "formato": "pdf",
        "url": "https://sefaz.es.gov.br/media/Tesouro%20Estadual/Dem.%20Result%20Caixa%20Tesouro%20-%201%20BIM_2024%20-.pdf",
-       "exibicao": "Resultado de Caixa do Tesouro — 1º bimestre de 2024"
+       "exibicao": "Resultado de Caixa do Tesouro do 1º bimestre de 2024"
       },
       {
        "titulo": "Dem. Result Caixa Tesouro - 2 BIM_2024",
@@ -4194,7 +4194,7 @@
        "tamanho": "333 KB",
        "formato": "pdf",
        "url": "https://sefaz.es.gov.br/media/Tesouro%20Estadual/Dem.%20Result%20Caixa%20Tesouro%20-%202%20BIM_2024.pdf",
-       "exibicao": "Resultado de Caixa do Tesouro — 2º bimestre de 2024"
+       "exibicao": "Resultado de Caixa do Tesouro do 2º bimestre de 2024"
       },
       {
        "titulo": "Dem. Result Caixa Tesouro - 3 BIM_2024",
@@ -4203,7 +4203,7 @@
        "tamanho": "333 KB",
        "formato": "pdf",
        "url": "https://sefaz.es.gov.br/media/Tesouro%20Estadual/SUFIC/Dem.%20Result%20Caixa%20Tesouro%20-%203%20BIM_2024.pdf",
-       "exibicao": "Resultado de Caixa do Tesouro — 3º bimestre de 2024"
+       "exibicao": "Resultado de Caixa do Tesouro do 3º bimestre de 2024"
       },
       {
        "titulo": "Dem. Result Caixa Tesouro - 4 BIM_2024",
@@ -4212,7 +4212,7 @@
        "tamanho": "338 KB",
        "formato": "pdf",
        "url": "https://sefaz.es.gov.br/media/Tesouro%20Estadual/Dem.%20Result%20Caixa%20Tesouro%20-%204%20BIM_2024.pdf",
-       "exibicao": "Resultado de Caixa do Tesouro — 4º bimestre de 2024"
+       "exibicao": "Resultado de Caixa do Tesouro do 4º bimestre de 2024"
       },
       {
        "titulo": "Dem. Result Caixa Tesouro - 5 BIM_2024",
@@ -4221,7 +4221,7 @@
        "tamanho": "466 KB",
        "formato": "pdf",
        "url": "https://sefaz.es.gov.br/media/Tesouro%20Estadual/Dem.%20Result%20Caixa%20Tesouro%20-%205%20BIM_2024.pdf",
-       "exibicao": "Resultado de Caixa do Tesouro — 5º bimestre de 2024"
+       "exibicao": "Resultado de Caixa do Tesouro do 5º bimestre de 2024"
       },
       {
        "titulo": "Dem. Result Caixa Tesouro - 6 BIM_2024.xlsx-1",
@@ -4230,7 +4230,7 @@
        "tamanho": "333 KB",
        "formato": "pdf",
        "url": "https://sefaz.es.gov.br/media/Tesouro%20Estadual/Dem.%20Result%20Caixa%20Tesouro%20-%206%20BIM_2024.xlsx-1.pdf",
-       "exibicao": "Resultado de Caixa do Tesouro — 6º bimestre de 2024"
+       "exibicao": "Resultado de Caixa do Tesouro do 6º bimestre de 2024"
       }
      ]
     },
@@ -4245,7 +4245,7 @@
        "tamanho": "128 KB",
        "formato": "pdf",
        "url": "https://sefaz.es.gov.br/media/Tesouro%20Estadual/SUFIC/Dem.%20Result%20Caixa%20Tesouro%20-%201%20BIM_2023%20%28Republicado%29.pdf",
-       "exibicao": "Resultado de Caixa do Tesouro — 1º bimestre de 2023"
+       "exibicao": "Resultado de Caixa do Tesouro do 1º bimestre de 2023"
       },
       {
        "titulo": "Dem. Result Caixa Tesouro - 2 BIM_2023",
@@ -4254,7 +4254,7 @@
        "tamanho": "70 KB",
        "formato": "pdf",
        "url": "https://sefaz.es.gov.br/media/Tesouro%20Estadual/SUFIC/Dem.%20Result%20Caixa%20Tesouro%20-%202%20BIM_2023.pdf",
-       "exibicao": "Resultado de Caixa do Tesouro — 2º bimestre de 2023"
+       "exibicao": "Resultado de Caixa do Tesouro do 2º bimestre de 2023"
       },
       {
        "titulo": "Dem. Result Caixa Tesouro - 3 BIM_2023",
@@ -4263,7 +4263,7 @@
        "tamanho": "83 KB",
        "formato": "pdf",
        "url": "https://sefaz.es.gov.br/media/Tesouro%20Estadual/SUFIC/Dem.%20Result%20Caixa%20Tesouro%20-%203%20BIM_2023.pdf",
-       "exibicao": "Resultado de Caixa do Tesouro — 3º bimestre de 2023"
+       "exibicao": "Resultado de Caixa do Tesouro do 3º bimestre de 2023"
       },
       {
        "titulo": "Dem. Result Caixa Tesouro - 4 BIM_2023",
@@ -4272,7 +4272,7 @@
        "tamanho": "83 KB",
        "formato": "pdf",
        "url": "https://sefaz.es.gov.br/media/Tesouro%20Estadual/SUFIC/Dem.%20Result%20Caixa%20Tesouro%20-%204%20BIM_2023.pdf",
-       "exibicao": "Resultado de Caixa do Tesouro — 4º bimestre de 2023"
+       "exibicao": "Resultado de Caixa do Tesouro do 4º bimestre de 2023"
       },
       {
        "titulo": "Dem. Result Caixa Tesouro - 5 BIM_2023",
@@ -4281,7 +4281,7 @@
        "tamanho": "80 KB",
        "formato": "pdf",
        "url": "https://sefaz.es.gov.br/media/Tesouro%20Estadual/SUFIC/Dem.%20Result%20Caixa%20Tesouro%20-%205%20BIM_2023.pdf",
-       "exibicao": "Resultado de Caixa do Tesouro — 5º bimestre de 2023"
+       "exibicao": "Resultado de Caixa do Tesouro do 5º bimestre de 2023"
       },
       {
        "titulo": "Dem. Result Caixa Tesouro - 6 BIM_2023.xlsx",
@@ -4290,7 +4290,7 @@
        "tamanho": "80 KB",
        "formato": "pdf",
        "url": "https://sefaz.es.gov.br/media/Tesouro%20Estadual/Dem.%20Result%20Caixa%20Tesouro%20-%206%20BIM_2023.xlsx.pdf",
-       "exibicao": "Resultado de Caixa do Tesouro — 6º bimestre de 2023"
+       "exibicao": "Resultado de Caixa do Tesouro do 6º bimestre de 2023"
       }
      ]
     },
@@ -4305,7 +4305,7 @@
        "tamanho": "38 KB",
        "formato": "pdf",
        "url": "https://sefaz.es.gov.br/media/Tesouro%20Estadual/SUFIC/Dem.%20Result%20Caixa%20Tesouro%20-%201%20BIM_2022.pdf",
-       "exibicao": "Resultado de Caixa do Tesouro — 1º bimestre de 2022"
+       "exibicao": "Resultado de Caixa do Tesouro do 1º bimestre de 2022"
       },
       {
        "titulo": "Dem. Result Caixa Tesouro - 2 BIM_2022",
@@ -4314,7 +4314,7 @@
        "tamanho": "154 KB",
        "formato": "pdf",
        "url": "https://sefaz.es.gov.br/media/Tesouro%20Estadual/SUFIC/Dem.%20Result%20Caixa%20Tesouro%20-%202%20BIM_2022.pdf",
-       "exibicao": "Resultado de Caixa do Tesouro — 2º bimestre de 2022"
+       "exibicao": "Resultado de Caixa do Tesouro do 2º bimestre de 2022"
       },
       {
        "titulo": "Dem. Result Caixa Tesouro - 3 BIM_2022",
@@ -4323,7 +4323,7 @@
        "tamanho": "41 KB",
        "formato": "pdf",
        "url": "https://sefaz.es.gov.br/media/Tesouro%20Estadual/SUFIC/Dem.%20Result%20Caixa%20Tesouro%20-%203%20BIM_2022.pdf",
-       "exibicao": "Resultado de Caixa do Tesouro — 3º bimestre de 2022"
+       "exibicao": "Resultado de Caixa do Tesouro do 3º bimestre de 2022"
       },
       {
        "titulo": "Dem. Resultado de Caixa do Tesouro - 4 bim-2022-1",
@@ -4332,7 +4332,7 @@
        "tamanho": "105 KB",
        "formato": "pdf",
        "url": "https://sefaz.es.gov.br/media/Tesouro%20Estadual/SUFIC/Dem.%20Resultado%20de%20Caixa%20do%20Tesouro%20-%204%20bim-2022-1.pdf",
-       "exibicao": "Resultado de Caixa do Tesouro — 4º bimestre de 2022"
+       "exibicao": "Resultado de Caixa do Tesouro do 4º bimestre de 2022"
       },
       {
        "titulo": "Dem. Resultado Caixa Tesouro - 5 BIM_2022",
@@ -4341,7 +4341,7 @@
        "tamanho": "141 KB",
        "formato": "pdf",
        "url": "https://sefaz.es.gov.br/media/Tesouro%20Estadual/SUFIC/Dem.%20Resultado%20Caixa%20Tesouro%20-%205%20BIM_2022.pdf",
-       "exibicao": "Resultado de Caixa do Tesouro — 5º bimestre de 2022"
+       "exibicao": "Resultado de Caixa do Tesouro do 5º bimestre de 2022"
       },
       {
        "titulo": "Dem. Result Caixa Tesouro - 6 BIM_2022",
@@ -4350,7 +4350,7 @@
        "tamanho": "71 KB",
        "formato": "pdf",
        "url": "https://sefaz.es.gov.br/media/Tesouro%20Estadual/SUFIC/Dem.%20Result%20Caixa%20Tesouro%20-%206%20BIM_2022.pdf",
-       "exibicao": "Resultado de Caixa do Tesouro — 6º bimestre de 2022"
+       "exibicao": "Resultado de Caixa do Tesouro do 6º bimestre de 2022"
       }
      ]
     },
@@ -4365,7 +4365,7 @@
        "tamanho": "109 KB",
        "formato": "pdf",
        "url": "https://sefaz.es.gov.br/media/Tesouro%20Estadual/SUFIC/Dem.%20Result%20Caixa%20Tesouro%20-%201%20BIM_2021.pdf",
-       "exibicao": "Resultado de Caixa do Tesouro — 1º bimestre de 2021"
+       "exibicao": "Resultado de Caixa do Tesouro do 1º bimestre de 2021"
       },
       {
        "titulo": "Dem. Result Caixa Tesouro - 2 BIM_2021",
@@ -4374,7 +4374,7 @@
        "tamanho": "107 KB",
        "formato": "pdf",
        "url": "https://sefaz.es.gov.br/media/Tesouro%20Estadual/SUFIC/Dem.%20Result%20Caixa%20Tesouro%20-%202%20BIM_2021.pdf",
-       "exibicao": "Resultado de Caixa do Tesouro — 2º bimestre de 2021"
+       "exibicao": "Resultado de Caixa do Tesouro do 2º bimestre de 2021"
       },
       {
        "titulo": "Dem. Result Caixa Tesouro - 3 BIM_2021",
@@ -4383,7 +4383,7 @@
        "tamanho": "108 KB",
        "formato": "pdf",
        "url": "https://sefaz.es.gov.br/media/Tesouro%20Estadual/SUFIC/Dem.%20Result%20Caixa%20Tesouro%20-%203%20BIM_2021.pdf",
-       "exibicao": "Resultado de Caixa do Tesouro — 3º bimestre de 2021"
+       "exibicao": "Resultado de Caixa do Tesouro do 3º bimestre de 2021"
       },
       {
        "titulo": "Dem. Result Caixa Tesouro - 4 BIM_2021",
@@ -4392,7 +4392,7 @@
        "tamanho": "40 KB",
        "formato": "pdf",
        "url": "https://sefaz.es.gov.br/media/Tesouro%20Estadual/SUFIC/Dem.%20Result%20Caixa%20Tesouro%20-%204%20BIM_2021.pdf",
-       "exibicao": "Resultado de Caixa do Tesouro — 4º bimestre de 2021"
+       "exibicao": "Resultado de Caixa do Tesouro do 4º bimestre de 2021"
       },
       {
        "titulo": "Dem. Result Caixa Tesouro - 5 BIM_2021",
@@ -4401,7 +4401,7 @@
        "tamanho": "39 KB",
        "formato": "pdf",
        "url": "https://sefaz.es.gov.br/media/Tesouro%20Estadual/SUFIC/Dem.%20Result%20Caixa%20Tesouro%20-%205%20BIM_2021.pdf",
-       "exibicao": "Resultado de Caixa do Tesouro — 5º bimestre de 2021"
+       "exibicao": "Resultado de Caixa do Tesouro do 5º bimestre de 2021"
       },
       {
        "titulo": "Dem. Result Caixa Tesouro - 6 BIM_2021",
@@ -4410,7 +4410,7 @@
        "tamanho": "42 KB",
        "formato": "pdf",
        "url": "https://sefaz.es.gov.br/media/Tesouro%20Estadual/SUFIC/Dem.%20Result%20Caixa%20Tesouro%20-%206%20BIM_2021.pdf",
-       "exibicao": "Resultado de Caixa do Tesouro — 6º bimestre de 2021"
+       "exibicao": "Resultado de Caixa do Tesouro do 6º bimestre de 2021"
       }
      ]
     },
@@ -4425,7 +4425,7 @@
        "tamanho": "47 KB",
        "formato": "pdf",
        "url": "https://sefaz.es.gov.br/media/Tesouro%20Estadual/SUFIC/Dem.%20Result%20Caixa%20Tesouro%20-%201%20BIM_2020.pdf",
-       "exibicao": "Resultado de Caixa do Tesouro — 1º bimestre de 2020"
+       "exibicao": "Resultado de Caixa do Tesouro do 1º bimestre de 2020"
       },
       {
        "titulo": "Dem. Result Caixa Tesouro - 2 BIM_2020",
@@ -4434,7 +4434,7 @@
        "tamanho": "47 KB",
        "formato": "pdf",
        "url": "https://sefaz.es.gov.br/media/Tesouro%20Estadual/SUFIC/Dem.%20Result%20Caixa%20Tesouro%20-%202%20BIM_2020.pdf",
-       "exibicao": "Resultado de Caixa do Tesouro — 2º bimestre de 2020"
+       "exibicao": "Resultado de Caixa do Tesouro do 2º bimestre de 2020"
       },
       {
        "titulo": "Dem. Result Caixa Tesouro - 3 BIM_2020",
@@ -4443,7 +4443,7 @@
        "tamanho": "47 KB",
        "formato": "pdf",
        "url": "https://sefaz.es.gov.br/media/Tesouro%20Estadual/SUFIC/Dem.%20Result%20Caixa%20Tesouro%20-%203%20BIM_2020.pdf",
-       "exibicao": "Resultado de Caixa do Tesouro — 3º bimestre de 2020"
+       "exibicao": "Resultado de Caixa do Tesouro do 3º bimestre de 2020"
       },
       {
        "titulo": "Dem. Result Caixa Tesouro - 4 BIM_2020",
@@ -4452,7 +4452,7 @@
        "tamanho": "47 KB",
        "formato": "pdf",
        "url": "https://sefaz.es.gov.br/media/Tesouro%20Estadual/SUFIC/Dem.%20Result%20Caixa%20Tesouro%20-%204%20BIM_2020.pdf",
-       "exibicao": "Resultado de Caixa do Tesouro — 4º bimestre de 2020"
+       "exibicao": "Resultado de Caixa do Tesouro do 4º bimestre de 2020"
       },
       {
        "titulo": "Dem. Result Caixa Tesouro - 5 BIM_2020",
@@ -4461,7 +4461,7 @@
        "tamanho": "47 KB",
        "formato": "pdf",
        "url": "https://sefaz.es.gov.br/media/Tesouro%20Estadual/SUFIC/Dem.%20Result%20Caixa%20Tesouro%20-%205%20BIM_2020.pdf",
-       "exibicao": "Resultado de Caixa do Tesouro — 5º bimestre de 2020"
+       "exibicao": "Resultado de Caixa do Tesouro do 5º bimestre de 2020"
       },
       {
        "titulo": "Dem. Result Caixa Tesouro - 6 BIM_2020",
@@ -4470,7 +4470,7 @@
        "tamanho": "108 KB",
        "formato": "pdf",
        "url": "https://sefaz.es.gov.br/media/Tesouro%20Estadual/SUFIC/Dem.%20Result%20Caixa%20Tesouro%20-%206%20BIM_2020.pdf",
-       "exibicao": "Resultado de Caixa do Tesouro — 6º bimestre de 2020"
+       "exibicao": "Resultado de Caixa do Tesouro do 6º bimestre de 2020"
       }
      ]
     },
@@ -4485,7 +4485,7 @@
        "tamanho": "46 KB",
        "formato": "pdf",
        "url": "https://sefaz.es.gov.br/media/Tesouro%20Estadual/SUFIC/Dem.%20Result%20Caixa%20Tesouro%20-%201%20BIM_2019.pdf",
-       "exibicao": "Resultado de Caixa do Tesouro — 1º bimestre de 2019"
+       "exibicao": "Resultado de Caixa do Tesouro do 1º bimestre de 2019"
       },
       {
        "titulo": "Dem. Result Caixa Tesouro - 2 BIM_2019",
@@ -4494,7 +4494,7 @@
        "tamanho": "186 KB",
        "formato": "pdf",
        "url": "https://sefaz.es.gov.br/media/Tesouro%20Estadual/SUFIC/Dem.%20Result%20Caixa%20Tesouro%20-%202%20BIM_2019.pdf",
-       "exibicao": "Resultado de Caixa do Tesouro — 2º bimestre de 2019"
+       "exibicao": "Resultado de Caixa do Tesouro do 2º bimestre de 2019"
       },
       {
        "titulo": "Dem. Result Caixa Tesouro - 3 BIM_2019",
@@ -4503,7 +4503,7 @@
        "tamanho": "47 KB",
        "formato": "pdf",
        "url": "https://sefaz.es.gov.br/media/Tesouro%20Estadual/SUFIC/Dem.%20Result%20Caixa%20Tesouro%20-%203%20BIM_2019.pdf",
-       "exibicao": "Resultado de Caixa do Tesouro — 3º bimestre de 2019"
+       "exibicao": "Resultado de Caixa do Tesouro do 3º bimestre de 2019"
       },
       {
        "titulo": "Dem. Result Caixa Tesouro - 4 BIM_2019",
@@ -4512,7 +4512,7 @@
        "tamanho": "105 KB",
        "formato": "pdf",
        "url": "https://sefaz.es.gov.br/media/Tesouro%20Estadual/SUFIC/Dem.%20Result%20Caixa%20Tesouro%20-%204%20BIM_2019.pdf",
-       "exibicao": "Resultado de Caixa do Tesouro — 4º bimestre de 2019"
+       "exibicao": "Resultado de Caixa do Tesouro do 4º bimestre de 2019"
       },
       {
        "titulo": "Dem. Result Caixa Tesouro - 5 BIM_2019",
@@ -4521,7 +4521,7 @@
        "tamanho": "47 KB",
        "formato": "pdf",
        "url": "https://sefaz.es.gov.br/media/Tesouro%20Estadual/SUFIC/Dem.%20Result%20Caixa%20Tesouro%20-%205%20BIM_2019.pdf",
-       "exibicao": "Resultado de Caixa do Tesouro — 5º bimestre de 2019"
+       "exibicao": "Resultado de Caixa do Tesouro do 5º bimestre de 2019"
       },
       {
        "titulo": "Dem. Result Caixa Tesouro - 6 BIM_2019",
@@ -4530,7 +4530,7 @@
        "tamanho": "48 KB",
        "formato": "pdf",
        "url": "https://sefaz.es.gov.br/media/Tesouro%20Estadual/SUFIC/Dem.%20Result%20Caixa%20Tesouro%20-%206%20BIM_2019.pdf",
-       "exibicao": "Resultado de Caixa do Tesouro — 6º bimestre de 2019"
+       "exibicao": "Resultado de Caixa do Tesouro do 6º bimestre de 2019"
       }
      ]
     },
@@ -4545,7 +4545,7 @@
        "tamanho": "86 KB",
        "formato": "pdf",
        "url": "https://sefaz.es.gov.br/media/Tesouro%20Estadual/SUFIC/Dem.%20Result%20Caixa%20Tesouro%20-%201%20BIM_2017.pdf",
-       "exibicao": "Resultado de Caixa do Tesouro — 1º bimestre de 2017"
+       "exibicao": "Resultado de Caixa do Tesouro do 1º bimestre de 2017"
       },
       {
        "titulo": "Dem. Result Caixa Tesouro - 2 BIM_2017",
@@ -4554,7 +4554,7 @@
        "tamanho": "87 KB",
        "formato": "pdf",
        "url": "https://sefaz.es.gov.br/media/Tesouro%20Estadual/SUFIC/Dem.%20Result%20Caixa%20Tesouro%20-%202%20BIM_2017.pdf",
-       "exibicao": "Resultado de Caixa do Tesouro — 2º bimestre de 2017"
+       "exibicao": "Resultado de Caixa do Tesouro do 2º bimestre de 2017"
       },
       {
        "titulo": "Dem. Result Caixa Tesouro - 3 BIM_2017",
@@ -4563,7 +4563,7 @@
        "tamanho": "86 KB",
        "formato": "pdf",
        "url": "https://sefaz.es.gov.br/media/Tesouro%20Estadual/SUFIC/Dem.%20Result%20Caixa%20Tesouro%20-%203%20BIM_2017.pdf",
-       "exibicao": "Resultado de Caixa do Tesouro — 3º bimestre de 2017"
+       "exibicao": "Resultado de Caixa do Tesouro do 3º bimestre de 2017"
       },
       {
        "titulo": "Dem. Result Caixa Tesouro - 4 BIM_2017",
@@ -4572,7 +4572,7 @@
        "tamanho": "87 KB",
        "formato": "pdf",
        "url": "https://sefaz.es.gov.br/media/Tesouro%20Estadual/SUFIC/Dem.%20Result%20Caixa%20Tesouro%20-%204%20BIM_2017.pdf",
-       "exibicao": "Resultado de Caixa do Tesouro — 4º bimestre de 2017"
+       "exibicao": "Resultado de Caixa do Tesouro do 4º bimestre de 2017"
       },
       {
        "titulo": "Dem. Result Caixa Tesouro - 5 BIM_2017",
@@ -4581,7 +4581,7 @@
        "tamanho": "87 KB",
        "formato": "pdf",
        "url": "https://sefaz.es.gov.br/media/Tesouro%20Estadual/SUFIC/Dem.%20Result%20Caixa%20Tesouro%20-%205%20BIM_2017.pdf",
-       "exibicao": "Resultado de Caixa do Tesouro — 5º bimestre de 2017"
+       "exibicao": "Resultado de Caixa do Tesouro do 5º bimestre de 2017"
       },
       {
        "titulo": "Dem. Result Caixa Tesouro - 6 BIM_2017",
@@ -4590,7 +4590,7 @@
        "tamanho": "177 KB",
        "formato": "pdf",
        "url": "https://sefaz.es.gov.br/media/Tesouro%20Estadual/SUFIC/Dem.%20Result%20Caixa%20Tesouro%20-%206%20BIM_2017.pdf",
-       "exibicao": "Resultado de Caixa do Tesouro — 6º bimestre de 2017"
+       "exibicao": "Resultado de Caixa do Tesouro do 6º bimestre de 2017"
       }
      ]
     },
@@ -4605,7 +4605,7 @@
        "tamanho": "147 KB",
        "formato": "pdf",
        "url": "https://sefaz.es.gov.br/media/Tesouro%20Estadual/SUFIC/Dem.%20Result%20Caixa%20Tesouro%20-%201%20BIM_2018.pdf",
-       "exibicao": "Resultado de Caixa do Tesouro — 1º bimestre de 2018"
+       "exibicao": "Resultado de Caixa do Tesouro do 1º bimestre de 2018"
       },
       {
        "titulo": "Dem. Result Caixa Tesouro - 2 BIM_2018",
@@ -4614,7 +4614,7 @@
        "tamanho": "147 KB",
        "formato": "pdf",
        "url": "https://sefaz.es.gov.br/media/Tesouro%20Estadual/SUFIC/Dem.%20Result%20Caixa%20Tesouro%20-%202%20BIM_2018.pdf",
-       "exibicao": "Resultado de Caixa do Tesouro — 2º bimestre de 2018"
+       "exibicao": "Resultado de Caixa do Tesouro do 2º bimestre de 2018"
       },
       {
        "titulo": "Dem. Result Caixa Tesouro - 3 BIM_2018",
@@ -4623,7 +4623,7 @@
        "tamanho": "47 KB",
        "formato": "pdf",
        "url": "https://sefaz.es.gov.br/media/Tesouro%20Estadual/SUFIC/Dem.%20Result%20Caixa%20Tesouro%20-%203%20BIM_2018.pdf",
-       "exibicao": "Resultado de Caixa do Tesouro — 3º bimestre de 2018"
+       "exibicao": "Resultado de Caixa do Tesouro do 3º bimestre de 2018"
       },
       {
        "titulo": "Dem. Result Caixa Tesouro - 4 BIM_2018",
@@ -4632,7 +4632,7 @@
        "tamanho": "148 KB",
        "formato": "pdf",
        "url": "https://sefaz.es.gov.br/media/Tesouro%20Estadual/SUFIC/Dem.%20Result%20Caixa%20Tesouro%20-%204%20BIM_2018.pdf",
-       "exibicao": "Resultado de Caixa do Tesouro — 4º bimestre de 2018"
+       "exibicao": "Resultado de Caixa do Tesouro do 4º bimestre de 2018"
       },
       {
        "titulo": "Dem. Result Caixa Tesouro - 5 BIM_2018",
@@ -4641,7 +4641,7 @@
        "tamanho": "47 KB",
        "formato": "pdf",
        "url": "https://sefaz.es.gov.br/media/Tesouro%20Estadual/SUFIC/Dem.%20Result%20Caixa%20Tesouro%20-%205%20BIM_2018.pdf",
-       "exibicao": "Resultado de Caixa do Tesouro — 5º bimestre de 2018"
+       "exibicao": "Resultado de Caixa do Tesouro do 5º bimestre de 2018"
       },
       {
        "titulo": "Dem. Result Caixa Tesouro - 6 BIM_2018",
@@ -4650,7 +4650,7 @@
        "tamanho": "106 KB",
        "formato": "pdf",
        "url": "https://sefaz.es.gov.br/media/Tesouro%20Estadual/SUFIC/Dem.%20Result%20Caixa%20Tesouro%20-%206%20BIM_2018.pdf",
-       "exibicao": "Resultado de Caixa do Tesouro — 6º bimestre de 2018"
+       "exibicao": "Resultado de Caixa do Tesouro do 6º bimestre de 2018"
       }
      ]
     },
@@ -4665,7 +4665,7 @@
        "tamanho": "52 KB",
        "formato": "pdf",
        "url": "https://sefaz.es.gov.br/media/Tesouro%20Estadual/SUFIC/Dem.%20Result%20Caixa%20Tesouro%20-%201%20BIM_2016.pdf",
-       "exibicao": "Resultado de Caixa do Tesouro — 1º bimestre de 2016"
+       "exibicao": "Resultado de Caixa do Tesouro do 1º bimestre de 2016"
       },
       {
        "titulo": "Dem. Result Caixa Tesouro - 2 BIM_2016",
@@ -4674,7 +4674,7 @@
        "tamanho": "36 KB",
        "formato": "pdf",
        "url": "https://sefaz.es.gov.br/media/Tesouro%20Estadual/SUFIC/Dem.%20Result%20Caixa%20Tesouro%20-%202%20BIM_2016.pdf",
-       "exibicao": "Resultado de Caixa do Tesouro — 2º bimestre de 2016"
+       "exibicao": "Resultado de Caixa do Tesouro do 2º bimestre de 2016"
       },
       {
        "titulo": "Dem. Result Caixa Tesouro - 3 BIM_2016",
@@ -4683,7 +4683,7 @@
        "tamanho": "69 KB",
        "formato": "pdf",
        "url": "https://sefaz.es.gov.br/media/Tesouro%20Estadual/SUFIC/Dem.%20Result%20Caixa%20Tesouro%20-%203%20BIM_2016.pdf",
-       "exibicao": "Resultado de Caixa do Tesouro — 3º bimestre de 2016"
+       "exibicao": "Resultado de Caixa do Tesouro do 3º bimestre de 2016"
       },
       {
        "titulo": "Dem. Result Caixa Tesouro - 4 BIM_2016",
@@ -4692,7 +4692,7 @@
        "tamanho": "69 KB",
        "formato": "pdf",
        "url": "https://sefaz.es.gov.br/media/Tesouro%20Estadual/SUFIC/Dem.%20Result%20Caixa%20Tesouro%20-%204%20BIM_2016.pdf",
-       "exibicao": "Resultado de Caixa do Tesouro — 4º bimestre de 2016"
+       "exibicao": "Resultado de Caixa do Tesouro do 4º bimestre de 2016"
       },
       {
        "titulo": "Dem. Result Caixa Tesouro - 5 BIM_2016",
@@ -4701,7 +4701,7 @@
        "tamanho": "71 KB",
        "formato": "pdf",
        "url": "https://sefaz.es.gov.br/media/Tesouro%20Estadual/SUFIC/Dem.%20Result%20Caixa%20Tesouro%20-%205%20BIM_2016.pdf",
-       "exibicao": "Resultado de Caixa do Tesouro — 5º bimestre de 2016"
+       "exibicao": "Resultado de Caixa do Tesouro do 5º bimestre de 2016"
       },
       {
        "titulo": "Dem. Result Caixa Tesouro - 6 BIM_2016",
@@ -4710,7 +4710,7 @@
        "tamanho": "100 KB",
        "formato": "pdf",
        "url": "https://sefaz.es.gov.br/media/Tesouro%20Estadual/SUFIC/Dem.%20Result%20Caixa%20Tesouro%20-%206%20BIM_2016.pdf",
-       "exibicao": "Resultado de Caixa do Tesouro — 6º bimestre de 2016"
+       "exibicao": "Resultado de Caixa do Tesouro do 6º bimestre de 2016"
       }
      ]
     },
@@ -4725,7 +4725,7 @@
        "tamanho": "123 KB",
        "formato": "pdf",
        "url": "https://sefaz.es.gov.br/media/Tesouro%20Estadual/SUFIC/Dem.%20Result%20Caixa%20Tesouro%20-%203%20BIM_2015.pdf",
-       "exibicao": "Resultado de Caixa do Tesouro — 3º bimestre de 2015"
+       "exibicao": "Resultado de Caixa do Tesouro do 3º bimestre de 2015"
       },
       {
        "titulo": "Dem. Result Caixa Tesouro - 4 BIM_2015",
@@ -4734,7 +4734,7 @@
        "tamanho": "123 KB",
        "formato": "pdf",
        "url": "https://sefaz.es.gov.br/media/Tesouro%20Estadual/SUFIC/Dem.%20Result%20Caixa%20Tesouro%20-%204%20BIM_2015.pdf",
-       "exibicao": "Resultado de Caixa do Tesouro — 4º bimestre de 2015"
+       "exibicao": "Resultado de Caixa do Tesouro do 4º bimestre de 2015"
       },
       {
        "titulo": "Dem. Result Caixa Tesouro - 5 BIM_2015",
@@ -4743,7 +4743,7 @@
        "tamanho": "51 KB",
        "formato": "pdf",
        "url": "https://sefaz.es.gov.br/media/Tesouro%20Estadual/SUFIC/Dem.%20Result%20Caixa%20Tesouro%20-%205%20BIM_2015.pdf",
-       "exibicao": "Resultado de Caixa do Tesouro — 5º bimestre de 2015"
+       "exibicao": "Resultado de Caixa do Tesouro do 5º bimestre de 2015"
       },
       {
        "titulo": "Dem. Result Caixa Tesouro - 6 BIM_2015",
@@ -4752,7 +4752,7 @@
        "tamanho": "61 KB",
        "formato": "pdf",
        "url": "https://sefaz.es.gov.br/media/Tesouro%20Estadual/SUFIC/Dem.%20Result%20Caixa%20Tesouro%20-%206%20BIM_2015.pdf",
-       "exibicao": "Resultado de Caixa do Tesouro — 6º bimestre de 2015"
+       "exibicao": "Resultado de Caixa do Tesouro do 6º bimestre de 2015"
       }
      ]
     }
@@ -4777,7 +4777,7 @@
        "tamanho": "190 KB",
        "formato": "pdf",
        "url": "https://sefaz.es.gov.br/media/Tesouro%20Estadual/Distribui%C3%A7%C3%A3o%20Mensal%20NOVO%2001_2026.pdf",
-       "exibicao": "Distribuição mensal aos Municípios — Janeiro de 2026"
+       "exibicao": "Distribuição mensal aos Municípios de janeiro de 2026"
       },
       {
        "titulo": "Distribuição Mensal NOVO 02_2026",
@@ -4786,7 +4786,7 @@
        "tamanho": "189 KB",
        "formato": "pdf",
        "url": "https://sefaz.es.gov.br/media/Tesouro%20Estadual/Distribui%C3%A7%C3%A3o%20Mensal%20NOVO%2002_2026.pdf",
-       "exibicao": "Distribuição mensal aos Municípios — Fevereiro de 2026"
+       "exibicao": "Distribuição mensal aos Municípios de fevereiro de 2026"
       },
       {
        "titulo": "Distribuição Mensal NOVO 03_2026",
@@ -4795,7 +4795,7 @@
        "tamanho": "286 KB",
        "formato": "pdf",
        "url": "https://sefaz.es.gov.br/media/Tesouro%20Estadual/Distribui%C3%A7%C3%A3o%20Mensal%20NOVO%2003_2026.pdf",
-       "exibicao": "Distribuição mensal aos Municípios — Março de 2026"
+       "exibicao": "Distribuição mensal aos Municípios de março de 2026"
       },
       {
        "titulo": "Distribuição Mensal NOVO 04_2026",
@@ -4804,7 +4804,7 @@
        "tamanho": "190 KB",
        "formato": "pdf",
        "url": "https://sefaz.es.gov.br/media/Tesouro%20Estadual/document-send-php-10.pdf",
-       "exibicao": "Distribuição mensal aos Municípios — Abril de 2026"
+       "exibicao": "Distribuição mensal aos Municípios de abril de 2026"
       },
       {
        "titulo": "Distribuição Mensal NOVO 05_2026",
@@ -4813,7 +4813,7 @@
        "tamanho": "189 KB",
        "formato": "pdf",
        "url": "https://sefaz.es.gov.br/media/Tesouro%20Estadual/document-send-php-11.pdf",
-       "exibicao": "Distribuição mensal aos Municípios — Maio de 2026"
+       "exibicao": "Distribuição mensal aos Municípios de maio de 2026"
       },
       {
        "titulo": "Distribuição Mensal NOVO 06_2026",
@@ -4822,7 +4822,7 @@
        "tamanho": "190 KB",
        "formato": "pdf",
        "url": "https://sefaz.es.gov.br/media/Tesouro%20Estadual/document-send-php-12.pdf",
-       "exibicao": "Distribuição mensal aos Municípios — Junho de 2026"
+       "exibicao": "Distribuição mensal aos Municípios de junho de 2026"
       },
       {
        "titulo": "Distribuição Mensal NOVO 07_2026",
@@ -4831,7 +4831,7 @@
        "tamanho": "191 KB",
        "formato": "pdf",
        "url": "https://sefaz.es.gov.br/media/Tesouro%20Estadual/document-send-php-13.pdf",
-       "exibicao": "Distribuição mensal aos Municípios — Julho de 2026"
+       "exibicao": "Distribuição mensal aos Municípios de julho de 2026"
       }
      ]
     },
@@ -4846,7 +4846,7 @@
        "tamanho": "324 KB",
        "formato": "pdf",
        "url": "https://sefaz.es.gov.br/media/Tesouro%20Estadual/Distribui%C3%A7%C3%A3o%20Mensal%20NOVO%2001%202025.pdf",
-       "exibicao": "Distribuição mensal aos Municípios — Janeiro de 2025"
+       "exibicao": "Distribuição mensal aos Municípios de janeiro de 2025"
       },
       {
        "titulo": "Distribuição Mensal NOVO 02 2025",
@@ -4855,7 +4855,7 @@
        "tamanho": "324 KB",
        "formato": "pdf",
        "url": "https://sefaz.es.gov.br/media/Tesouro%20Estadual/Distribui%C3%A7%C3%A3o%20Mensal%20NOVO%2002%202025.pdf",
-       "exibicao": "Distribuição mensal aos Municípios — Fevereiro de 2025"
+       "exibicao": "Distribuição mensal aos Municípios de fevereiro de 2025"
       },
       {
        "titulo": "Distribuição Mensal NOVO 03 2025_DIO",
@@ -4864,7 +4864,7 @@
        "tamanho": "324 KB",
        "formato": "pdf",
        "url": "https://sefaz.es.gov.br/media/Tesouro%20Estadual/Distribui%C3%A7%C3%A3o%20Mensal%20NOVO%2003%202025_DIO.pdf",
-       "exibicao": "Distribuição mensal aos Municípios — Março de 2025"
+       "exibicao": "Distribuição mensal aos Municípios de março de 2025"
       },
       {
        "titulo": "Distribuição Mensal NOVO 05_2025",
@@ -4873,7 +4873,7 @@
        "tamanho": "322 KB",
        "formato": "pdf",
        "url": "https://sefaz.es.gov.br/media/Tesouro%20Estadual/Distribui%C3%A7%C3%A3o%20Mensal%20NOVO%2005_2025.pdf",
-       "exibicao": "Distribuição mensal aos Municípios — Maio de 2025"
+       "exibicao": "Distribuição mensal aos Municípios de maio de 2025"
       },
       {
        "titulo": "Distribuição Mensal NOVO 06_2025",
@@ -4882,7 +4882,7 @@
        "tamanho": "325 KB",
        "formato": "pdf",
        "url": "https://sefaz.es.gov.br/media/Tesouro%20Estadual/Distribui%C3%A7%C3%A3o%20Mensal%20NOVO%2006_2025.pdf",
-       "exibicao": "Distribuição mensal aos Municípios — Junho de 2025"
+       "exibicao": "Distribuição mensal aos Municípios de junho de 2025"
       },
       {
        "titulo": "Distribuição Mensal NOVO 04_2025_Republicacao",
@@ -4891,7 +4891,7 @@
        "tamanho": "325 KB",
        "formato": "pdf",
        "url": "https://sefaz.es.gov.br/media/Tesouro%20Estadual/Distribui%C3%A7%C3%A3o%20Mensal%20NOVO%2004_2025_Republicacao.pdf",
-       "exibicao": "Distribuição mensal aos Municípios — Abril de 2025"
+       "exibicao": "Distribuição mensal aos Municípios de abril de 2025"
       },
       {
        "titulo": "Distribuição Mensal NOVO 07_2025",
@@ -4900,7 +4900,7 @@
        "tamanho": "191 KB",
        "formato": "pdf",
        "url": "https://sefaz.es.gov.br/media/Tesouro%20Estadual/Distribui%C3%A7%C3%A3o%20Mensal%20NOVO%2007_2025.pdf",
-       "exibicao": "Distribuição mensal aos Municípios — Julho de 2025"
+       "exibicao": "Distribuição mensal aos Municípios de julho de 2025"
       },
       {
        "titulo": "Distribuição Mensal NOVO 08_2025",
@@ -4909,7 +4909,7 @@
        "tamanho": "191 KB",
        "formato": "pdf",
        "url": "https://sefaz.es.gov.br/media/Tesouro%20Estadual/Distribui%C3%A7%C3%A3o%20Mensal%20NOVO%2008_2025.pdf",
-       "exibicao": "Distribuição mensal aos Municípios — Agosto de 2025"
+       "exibicao": "Distribuição mensal aos Municípios de agosto de 2025"
       },
       {
        "titulo": "Distribuição Mensal NOVO 09_2025",
@@ -4918,7 +4918,7 @@
        "tamanho": "190 KB",
        "formato": "pdf",
        "url": "https://sefaz.es.gov.br/media/Tesouro%20Estadual/Distribui%C3%A7%C3%A3o%20Mensal%20NOVO%2009_2025.pdf",
-       "exibicao": "Distribuição mensal aos Municípios — Setembro de 2025"
+       "exibicao": "Distribuição mensal aos Municípios de setembro de 2025"
       },
       {
        "titulo": "Distribuição Mensal NOVO 10_2025",
@@ -4927,7 +4927,7 @@
        "tamanho": "191 KB",
        "formato": "pdf",
        "url": "https://sefaz.es.gov.br/media/Tesouro%20Estadual/Distribui%C3%A7%C3%A3o%20Mensal%20NOVO%2010_2025.pdf",
-       "exibicao": "Distribuição mensal aos Municípios — Outubro de 2025"
+       "exibicao": "Distribuição mensal aos Municípios de outubro de 2025"
       },
       {
        "titulo": "Distribuição Mensal NOVO 11_2025",
@@ -4936,7 +4936,7 @@
        "tamanho": "190 KB",
        "formato": "pdf",
        "url": "https://sefaz.es.gov.br/media/Tesouro%20Estadual/document.send.php%20%281%29.pdf",
-       "exibicao": "Distribuição mensal aos Municípios — Novembro de 2025"
+       "exibicao": "Distribuição mensal aos Municípios de novembro de 2025"
       },
       {
        "titulo": "Distribuição Mensal NOVO 12_2025",
@@ -4945,7 +4945,7 @@
        "tamanho": "901 KB",
        "formato": "pdf",
        "url": "https://sefaz.es.gov.br/media/Tesouro%20Estadual/Contabilidade%20Aplicada%20ao%20Setor/distribuicao-mensal-novo-12_2025-republicacao.pdf",
-       "exibicao": "Distribuição mensal aos Municípios — Dezembro de 2025"
+       "exibicao": "Distribuição mensal aos Municípios de dezembro de 2025"
       },
       {
        "titulo": "Transferências de impostos aos Municípios_Acumulado 2025",
@@ -4969,7 +4969,7 @@
        "tamanho": "814 KB",
        "formato": "pdf",
        "url": "https://sefaz.es.gov.br/media/Tesouro%20Estadual/Distribui%C3%A7%C3%A3o%20Mensal%20republica%C3%A7%C3%A3o%2001%202024.pdf",
-       "exibicao": "Distribuição mensal aos Municípios — Janeiro de 2024"
+       "exibicao": "Distribuição mensal aos Municípios de janeiro de 2024"
       },
       {
        "titulo": "Distribuição Mensal 02 2024 - republicação",
@@ -4978,7 +4978,7 @@
        "tamanho": "815 KB",
        "formato": "pdf",
        "url": "https://sefaz.es.gov.br/media/Tesouro%20Estadual/Distribui%C3%A7%C3%A3o%20Mensal%20Republica%C3%A7%C3%A3o%2002%202024.pdf",
-       "exibicao": "Distribuição mensal aos Municípios — Fevereiro de 2024"
+       "exibicao": "Distribuição mensal aos Municípios de fevereiro de 2024"
       },
       {
        "titulo": "Distribuição Mensal 03 2024 - republicação",
@@ -4987,7 +4987,7 @@
        "tamanho": "818 KB",
        "formato": "pdf",
        "url": "https://sefaz.es.gov.br/media/Tesouro%20Estadual/Distribui%C3%A7%C3%A3o%20Mensal%20Republica%C3%A7%C3%A3o%2003%202024.pdf",
-       "exibicao": "Distribuição mensal aos Municípios — Março de 2024"
+       "exibicao": "Distribuição mensal aos Municípios de março de 2024"
       },
       {
        "titulo": "Distribuição Mensal 04 2024",
@@ -4996,7 +4996,7 @@
        "tamanho": "787 KB",
        "formato": "pdf",
        "url": "https://sefaz.es.gov.br/media/Tesouro%20Estadual/GECOG/Distribui%C3%A7%C3%A3o%20Mensal%2004%202024.pdf",
-       "exibicao": "Distribuição mensal aos Municípios — Abril de 2024"
+       "exibicao": "Distribuição mensal aos Municípios de abril de 2024"
       },
       {
        "titulo": "Distribuição Mensal 05 2024",
@@ -5005,7 +5005,7 @@
        "tamanho": "748 KB",
        "formato": "pdf",
        "url": "https://sefaz.es.gov.br/media/Tesouro%20Estadual/OS-SUBSET%20N%C2%BA%2045%20a-%20Transfer%C3%AAncia%20aos%20Municipios_Vlr.%20Bruto%20e%20L%C3%ADquido_05-2024.pdf",
-       "exibicao": "Distribuição mensal aos Municípios — Maio de 2024"
+       "exibicao": "Distribuição mensal aos Municípios de maio de 2024"
       },
       {
        "titulo": "Distribuição Mensal 06 2024",
@@ -5014,7 +5014,7 @@
        "tamanho": "750 KB",
        "formato": "pdf",
        "url": "https://sefaz.es.gov.br/media/Tesouro%20Estadual/Distribui%C3%A7%C3%A3o%20Mensal%20NOVO%2006%202024-1.pdf",
-       "exibicao": "Distribuição mensal aos Municípios — Junho de 2024"
+       "exibicao": "Distribuição mensal aos Municípios de junho de 2024"
       },
       {
        "titulo": "Distribuição Mensal 07 2024",
@@ -5023,7 +5023,7 @@
        "tamanho": "809 KB",
        "formato": "pdf",
        "url": "https://sefaz.es.gov.br/media/Tesouro%20Estadual/Distribui%C3%A7%C3%A3o%20Mensal%20NOVO%2007%202024-1.pdf",
-       "exibicao": "Distribuição mensal aos Municípios — Julho de 2024"
+       "exibicao": "Distribuição mensal aos Municípios de julho de 2024"
       },
       {
        "titulo": "Distribuição Mensal 08 2024",
@@ -5032,7 +5032,7 @@
        "tamanho": "807 KB",
        "formato": "pdf",
        "url": "https://sefaz.es.gov.br/media/Tesouro%20Estadual/Distribui%C3%A7%C3%A3o%20Mensal%20NOVO%2008%202024.pdf",
-       "exibicao": "Distribuição mensal aos Municípios — Agosto de 2024"
+       "exibicao": "Distribuição mensal aos Municípios de agosto de 2024"
       },
       {
        "titulo": "Distribuição Mensal 09 2024",
@@ -5041,7 +5041,7 @@
        "tamanho": "354 KB",
        "formato": "pdf",
        "url": "https://sefaz.es.gov.br/media/Tesouro%20Estadual/Distribui%C3%A7%C3%A3o%20Mensal%2009%202024.pdf",
-       "exibicao": "Distribuição mensal aos Municípios — Setembro de 2024"
+       "exibicao": "Distribuição mensal aos Municípios de setembro de 2024"
       },
       {
        "titulo": "Distribuição Mensal 10 2024",
@@ -5050,7 +5050,7 @@
        "tamanho": "827 KB",
        "formato": "pdf",
        "url": "https://sefaz.es.gov.br/media/Tesouro%20Estadual/Distribui%C3%A7%C3%A3o%20Mensal%2010%202024.pdf",
-       "exibicao": "Distribuição mensal aos Municípios — Outubro de 2024"
+       "exibicao": "Distribuição mensal aos Municípios de outubro de 2024"
       },
       {
        "titulo": "Distribuição Mensal 11 2024-1",
@@ -5059,7 +5059,7 @@
        "tamanho": "825 KB",
        "formato": "pdf",
        "url": "https://sefaz.es.gov.br/media/Tesouro%20Estadual/Distribui%C3%A7%C3%A3o%20Mensal%2011%202024-1.pdf",
-       "exibicao": "Distribuição mensal aos Municípios — Novembro de 2024"
+       "exibicao": "Distribuição mensal aos Municípios de novembro de 2024"
       },
       {
        "titulo": "Distribuição Mensal NOVO 12 2024_Republicacao",
@@ -5068,7 +5068,7 @@
        "tamanho": "385 KB",
        "formato": "pdf",
        "url": "https://sefaz.es.gov.br/media/Tesouro%20Estadual/Distribui%C3%A7%C3%A3o%20Mensal%20NOVO%2012%202024_Republicacao.pdf",
-       "exibicao": "Distribuição mensal aos Municípios — Dezembro de 2024"
+       "exibicao": "Distribuição mensal aos Municípios de dezembro de 2024"
       }
      ]
     },
@@ -5083,7 +5083,7 @@
        "tamanho": "81 KB",
        "formato": "pdf",
        "url": "https://sefaz.es.gov.br/media/Tesouro%20Estadual/GECOG/Distribuicao%20Mensal%20Janeiro_2023.pdf",
-       "exibicao": "Distribuição mensal aos Municípios — Janeiro de 2023"
+       "exibicao": "Distribuição mensal aos Municípios de janeiro de 2023"
       },
       {
        "titulo": "Distribuicao Mensal Fevereiro_2023",
@@ -5092,7 +5092,7 @@
        "tamanho": "79 KB",
        "formato": "pdf",
        "url": "https://sefaz.es.gov.br/media/Tesouro%20Estadual/GECOG/Distribuicao%20Mensal%20Fevereiro_2023.pdf",
-       "exibicao": "Distribuição mensal aos Municípios — Fevereiro de 2023"
+       "exibicao": "Distribuição mensal aos Municípios de fevereiro de 2023"
       },
       {
        "titulo": "Distribuicao Mensal Março_2023",
@@ -5101,7 +5101,7 @@
        "tamanho": "82 KB",
        "formato": "pdf",
        "url": "https://sefaz.es.gov.br/media/Tesouro%20Estadual/GECOG/Distribuicao%20Mensal%20Mar%C3%A7o_2023.pdf",
-       "exibicao": "Distribuição mensal aos Municípios — Março de 2023"
+       "exibicao": "Distribuição mensal aos Municípios de março de 2023"
       },
       {
        "titulo": "Distribuição Mensal Abril_2023",
@@ -5110,7 +5110,7 @@
        "tamanho": "393 KB",
        "formato": "pdf",
        "url": "https://sefaz.es.gov.br/media/Tesouro%20Estadual/GECOG/Distribui%C3%A7%C3%A3o%20Mensal%20Abril_2023.pdf",
-       "exibicao": "Distribuição mensal aos Municípios — Abril de 2023"
+       "exibicao": "Distribuição mensal aos Municípios de abril de 2023"
       },
       {
        "titulo": "Distribuicao Mensal Maio_2023",
@@ -5119,7 +5119,7 @@
        "tamanho": "84 KB",
        "formato": "pdf",
        "url": "https://sefaz.es.gov.br/media/Tesouro%20Estadual/GECOG/Distribuicao%20Mensal%20Maio_2023.pdf",
-       "exibicao": "Distribuição mensal aos Municípios — Maio de 2023"
+       "exibicao": "Distribuição mensal aos Municípios de maio de 2023"
       },
       {
        "titulo": "Distribuicao Mensal Junho_2023",
@@ -5128,7 +5128,7 @@
        "tamanho": "44 KB",
        "formato": "pdf",
        "url": "https://sefaz.es.gov.br/media/Tesouro%20Estadual/GECOG/Distribuicao%20Mensal%20Junho_2023.pdf",
-       "exibicao": "Distribuição mensal aos Municípios — Junho de 2023"
+       "exibicao": "Distribuição mensal aos Municípios de junho de 2023"
       },
       {
        "titulo": "Distribuição Mensal Julho_2023",
@@ -5137,7 +5137,7 @@
        "tamanho": "76 KB",
        "formato": "pdf",
        "url": "https://sefaz.es.gov.br/media/Tesouro%20Estadual/GECOG/Distribui%C3%A7%C3%A3o%20Mensal%20Julho_2023.pdf",
-       "exibicao": "Distribuição mensal aos Municípios — Julho de 2023"
+       "exibicao": "Distribuição mensal aos Municípios de julho de 2023"
       },
       {
        "titulo": "Distribuicao Mensal Agosto_2023",
@@ -5146,7 +5146,7 @@
        "tamanho": "76 KB",
        "formato": "pdf",
        "url": "https://sefaz.es.gov.br/media/Tesouro%20Estadual/GECOG/Distribuicao%20Mensal%20Agosto_2023.pdf",
-       "exibicao": "Distribuição mensal aos Municípios — Agosto de 2023"
+       "exibicao": "Distribuição mensal aos Municípios de agosto de 2023"
       },
       {
        "titulo": "Distribuicao Mensal Setembro_2023",
@@ -5155,7 +5155,7 @@
        "tamanho": "77 KB",
        "formato": "pdf",
        "url": "https://sefaz.es.gov.br/media/Tesouro%20Estadual/GECOG/Distribuicao%20Mensal%20Setembro_2023.pdf",
-       "exibicao": "Distribuição mensal aos Municípios — Setembro de 2023"
+       "exibicao": "Distribuição mensal aos Municípios de setembro de 2023"
       },
       {
        "titulo": "Distribuição Mensal Outubro_2023",
@@ -5164,7 +5164,7 @@
        "tamanho": "780 KB",
        "formato": "pdf",
        "url": "https://sefaz.es.gov.br/media/Tesouro%20Estadual/GECOG/Distribui%C3%A7%C3%A3o%20Mensal%20Outubro_2023.pdf",
-       "exibicao": "Distribuição mensal aos Municípios — Outubro de 2023"
+       "exibicao": "Distribuição mensal aos Municípios de outubro de 2023"
       },
       {
        "titulo": "Distribuição Mensal Novembro_2023",
@@ -5173,7 +5173,7 @@
        "tamanho": "780 KB",
        "formato": "pdf",
        "url": "https://sefaz.es.gov.br/media/Tesouro%20Estadual/GECOG/Distribui%C3%A7%C3%A3o%20Mensal%20Novembro_2023.pdf",
-       "exibicao": "Distribuição mensal aos Municípios — Novembro de 2023"
+       "exibicao": "Distribuição mensal aos Municípios de novembro de 2023"
       },
       {
        "titulo": "Distribuição Mensal_Dezembro 2023",
@@ -5182,7 +5182,7 @@
        "tamanho": "820 KB",
        "formato": "pdf",
        "url": "https://sefaz.es.gov.br/media/Tesouro%20Estadual/GECOG/Distribui%C3%A7%C3%A3o%20Mensal_12%202023.pdf",
-       "exibicao": "Distribuição mensal aos Municípios — Dezembro de 2023"
+       "exibicao": "Distribuição mensal aos Municípios de dezembro de 2023"
       }
      ]
     },
@@ -5628,7 +5628,7 @@
   {
    "slug": "manual-de-contabilidade-mcont",
    "slugSefaz": "manual-de-contabilidade-mcont",
-   "titulo": "Manual de Contabilidade – MCONT",
+   "titulo": "Manual de Contabilidade (MCONT)",
    "secao": "Contabilidade aplicada",
    "categoria": "normas-contabeis",
    "fonte": "https://sefaz.es.gov.br/manual-de-contabilidade-mcont",
@@ -5720,7 +5720,7 @@
       },
       {
        "titulo": "Nota Técnica 001-2018 - SUNOP - GECOG",
-       "descricao": "Contabilização dos Créditos de Contribuições Previdenciárias do Regime Próprio de Previdência Social – RPPS.",
+       "descricao": "Contabilização dos Créditos de Contribuições Previdenciárias do Regime Próprio de Previdência Social (RPPS).",
        "atualizadoEm": "30/09/2020",
        "tamanho": "1 MB",
        "formato": "pdf",
@@ -6037,7 +6037,7 @@
       },
       {
        "titulo": "Norma de Procedimento - SCO nº 011",
-       "descricao": "Envio de Declaração de Imposto de Renda Retido na Fonte Pessoa Jurídica – DIRF à Receita Federal do Brasil.",
+       "descricao": "Envio de Declaração de Imposto de Renda Retido na Fonte Pessoa Jurídica: DIRF à Receita Federal do Brasil.",
        "atualizadoEm": "23/12/2022",
        "tamanho": "698 KB",
        "formato": "pdf",
@@ -6108,49 +6108,49 @@
        "exibicao": "Norma de Procedimento - SCO 018"
       },
       {
-       "titulo": "Norma de Procedimento – SCO nº 019",
+       "titulo": "Norma de Procedimento: SCO nº 019",
        "descricao": "Procedimentos Contábeis para Obras Suspensas",
        "atualizadoEm": "25/05/2023",
        "tamanho": "619 KB",
        "formato": "pdf",
        "url": "https://sefaz.es.gov.br/media/Unidade%20de%20Controle%20Interno%20-%20UECI/Sistema%20de%20Contabilidade/SCO%20019%20-%202023-05-25%20-%20Obras%20Suspensas.pdf",
-       "exibicao": "Norma de Procedimento – SCO nº 019"
+       "exibicao": "Norma de Procedimento: SCO nº 019"
       },
       {
-       "titulo": "Norma de Procedimento – SCO nº 020",
+       "titulo": "Norma de Procedimento: SCO nº 020",
        "descricao": "Procedimentos Contábeis para verificação de movimento de saldos nos IMs",
        "atualizadoEm": "25/05/2023",
        "tamanho": "659 KB",
        "formato": "pdf",
        "url": "https://sefaz.es.gov.br/media/Unidade%20de%20Controle%20Interno%20-%20UECI/Sistema%20de%20Contabilidade/SCO%20020%20-%202023-05-15%20-%20Verifica%C3%A7%C3%A3o%20de%20movimento%20de%20saldos%20nos%20IMs.pdf",
-       "exibicao": "Norma de Procedimento – SCO nº 020"
+       "exibicao": "Norma de Procedimento: SCO nº 020"
       },
       {
-       "titulo": "Norma de Procedimento – SCO nº 021",
+       "titulo": "Norma de Procedimento: SCO nº 021",
        "descricao": "Pagamento de Precatórios",
        "atualizadoEm": "09/05/2025",
        "tamanho": "2 MB",
        "formato": "pdf",
        "url": "https://sefaz.es.gov.br/media/Unidade%20de%20Controle%20Interno%20-%20UECI/Sistema%20de%20Contabilidade/-%20SCO%20021%20-%20Precat%C3%B3rios-1.pdf",
-       "exibicao": "Norma de Procedimento – SCO nº 021"
+       "exibicao": "Norma de Procedimento: SCO nº 021"
       },
       {
-       "titulo": "Norma de Procedimento – SCO nº 022",
+       "titulo": "Norma de Procedimento: SCO nº 022",
        "descricao": "Prestação de Contas Mensal - PCM",
        "atualizadoEm": "09/05/2025",
        "tamanho": "755 KB",
        "formato": "pdf",
        "url": "https://sefaz.es.gov.br/media/Unidade%20de%20Controle%20Interno%20-%20UECI/Sistema%20de%20Contabilidade/-%20SCO%20022%20-%20Presta%C3%A7%C3%A3o%20de%20Contas%20Mensal%20-%20PCM.pdf",
-       "exibicao": "Norma de Procedimento – SCO nº 022"
+       "exibicao": "Norma de Procedimento: SCO nº 022"
       },
       {
-       "titulo": "Norma de Procedimento – SCO nº 023",
-       "descricao": "Prestação de Contas Anual – PCA",
+       "titulo": "Norma de Procedimento: SCO nº 023",
+       "descricao": "Prestação de Contas Anual (PCA)",
        "atualizadoEm": "09/05/2025",
        "tamanho": "725 KB",
        "formato": "pdf",
        "url": "https://sefaz.es.gov.br/media/Unidade%20de%20Controle%20Interno%20-%20UECI/Sistema%20de%20Contabilidade/-%20SCO%20023%20-%20Presta%C3%A7%C3%A3o%20de%20Contas%20Anual%20-%20PCA-1.pdf",
-       "exibicao": "Norma de Procedimento – SCO nº 023"
+       "exibicao": "Norma de Procedimento: SCO nº 023"
       },
       {
        "titulo": "Norma de Procedimento - SCO nº 024",
@@ -6745,13 +6745,13 @@
        "exibicao": "PORTARIA SEFAZ Nº 18-R - De 02-03-23 - Altera a Portaria SEFAZ nº 57-R - de 03 de junho de 2022 que institui a Carta de Representação a ser apresentada anualmente pelos responsáveis pela governança das demonstrações contábeis no âmbito de cada Unidade Gestora."
       },
       {
-       "titulo": "PORTARIA SEFAZ nº 052 - de 01-03-23 - Institui Grupo Técnico de Levantamento de Informações para o Projeto de Lei de Diretrizes Orçamentárias – GTPLDO.",
+       "titulo": "PORTARIA SEFAZ nº 052 - de 01-03-23 - Institui Grupo Técnico de Levantamento de Informações para o Projeto de Lei de Diretrizes Orçamentárias (GTPLDO).",
        "descricao": "",
        "atualizadoEm": "05/05/2023",
        "tamanho": "164 KB",
        "formato": "pdf",
        "url": "https://sefaz.es.gov.br/media/Legisla%C3%A7%C3%A3o/Tesouro/PORTARIA%20SEFAZ%20n%C2%BA%20052%2C%20de%2001-03-23.pdf",
-       "exibicao": "PORTARIA SEFAZ nº 052 - de 01-03-23 - Institui Grupo Técnico de Levantamento de Informações para o Projeto de Lei de Diretrizes Orçamentárias – GTPLDO."
+       "exibicao": "PORTARIA SEFAZ nº 052 - de 01-03-23 - Institui Grupo Técnico de Levantamento de Informações para o Projeto de Lei de Diretrizes Orçamentárias (GTPLDO)."
       },
       {
        "titulo": "PORTARIA CONJUNTA SEGER-SEFAZ-SEP-IPAJM Nº 001-S - de 28-02-23 Recompõe o Grupo Permanente de Acompanhamento das Despesas com Pessoal e Encargos - GAPE.",
@@ -6957,7 +6957,7 @@
    "segmentos": [
     {
      "tipo": "texto",
-     "html": "<p><strong>ANÁLISE DE PD NÃO EXECUTADA</strong></p> <p>Caso alguma PD programada para o dia solicitado não tenha sido executada, antes de entrar em contato com a Subgerência de Programação e Execução Financeira – SUPEF, sugerimos que o responsável pelo setor financeiro do órgão verifique os seguintes itens:<br>- Verificar no SIGEFES se o credor está inscrito no CADIN;<br>- Verificar se a PD foi solicitada para a data correta;<br>- Verificar se há saldo na conta pagadora.</p> <p><strong>COMUNICA PARA ANTECIPAÇÃO DE PD</strong></p> <p>Conforme mensagem de COMUNICA do SIGEFES enviada em 17/01/2014, uma vez que as PDs podem ser solicitadas todos os dias úteis, as solicitações de antecipação de PD devem ocorrer somente em casos excepcionais. Além disso, as solicitações de antecipação devem ser embasadas na real necessidade de pagamento antes da data programada, contendo justificativa do pedido e o nome da pessoa responsável. O simples fato de serem solicitadas não significa que serão atendidas. O horário para envio dos comunicas é até as 17:00 hs.</p> <p><strong>PROCEDIMENTOS NÃO PERMITIDOS</strong></p> <p>Nota: As PD’s em desacordo com as determinações deverão ser canceladas e refeitas para que sejam executadas.</p> <p><strong>DEPÓSITO JUDICIAL</strong></p> <p>1. O campo conta corrente do favorecido da PD deverá ser preenchido com a palavra-chave &quot;JUDIC&quot;;<br><br>2. Após a execução da PD, a respectiva RE deverá ser entregue na agência bancária do BANESTES, acompanhada de fotocópia da determinação judicial e de ofício encaminhado pela UG ao banco informando que deverá ser aberta conta judicial no banco determinado pelo juízo (Banco do Brasil ou Caixa Econômica Federal). Caso não haja determinação nesse sentido, ou seja, depositar no Banco do Brasil ou na CEF, o depósito deverá ser efetuado no BANESTES. Neste caso, proceder-se-á da seguinte maneira:<br><br>1º - Acessar o SITE do BANESTES: WWW.BANESTES.COM.BR<br><br>2º - Clicar em &quot;Administração Pública&quot; na parte superior da página;<br><br>3º - Clicar em &quot;Abertura de Contas&quot; na parte superior da página;<br><br>4º - Clicar em &quot;Abertura de Conta Judicial&quot;.<br><br>5º - Selecionar &quot;Pré-abertura Conta Judicial/Geração de ID&quot; quando for efetuar um depósito comum OU selecionar &quot;Depósito em Continuação&quot; quando for efetuar um depósito em uma conta judicial que já existe (para o mesmo processo, sendo necessário o número do ID);<br><br>6º - Preencher os campos conforme informações do processo;<br><br>7º - Imprimir a guia de depósito judicial e enviá-la ao BANESTES juntamente com a &quot;RE&quot; para autenticação.<br><br>Em caso de dúvidas:<br><br>- Em relação a OPV e Sequestro: 3347-5207 (Setor: Sentenças Judiciais);<br><br>- Outros casos: 3347-5196 (Supervisão de Custeio).</p> <p><strong>PROCEDIMENTOS BANCÁRIOS DO SIGEFES (PALAVRAS-CHAVE)</strong></p> <p>Os procedimentos bancários são palavras-chave que podem ser utilizados nos domicílios bancários de destino das PDs em casos específicos, conforme citado abaixo:<br><br>AUTENTIC: Utilizada para pagamentos que exigem autenticação bancária em boletos/guias com código de barras. Ex. nos pagamentos de ISS, DARF, DUA, etc.<br><br>BANESTES: Utilizada para pagamento de consignações quando o credor for o BANESTES.<br><br>CHEQUEADM: Utilizada quando há necessidade de se pagar com cheque administrativo. Ex. pagamentos de GRU realizados no Banco do Brasil. No campo observação informar o motivo pelo qual o pagamento será providenciado através de cheque administrativo.<br><br>FOLHA: Utilizada para pagamento do líquido da folha de pessoal.<br><br>JUDIC: Usado quando há necessidade de se fazer um depósito judicial em uma determinada conta judicial existente ou a ser criada pelo banco.<br><br>PAGAMENTO: Utilizada para pagamento em dólar, pagto de artistas internacionais por meio de saque no caixa, saque em dinheiro p/ devolução de fiança crime e retenção do pagto de uma empresa p/ outra por determinação judicial. Obs: Neste caso a GEFIN/SEFAZ deve ser informada antecipadamente, de preferência por ofício, para que autorize o Banco a efetuar o pagamento.<br><br>PRONATEC: Utilizada na concessão de bolsas a alunos no âmbito do PRONATEC (repasses ocorrem por meio de conta específica no Banco do Brasil, onde a SEDU transfere os recursos da conta do PRONATEC p/ os cartões dos alunos).<br><br>REGULARIZ: Utilizar p/ substituir a palavra-chave FOLHA em pagamentos de REGULARIZAÇÃO ou em PDs/OBs marcadas &quot;OB já encaminhada ao Banco&quot; em que não for conhecida a conta de destino e nem se aplicar outra palavra-chave específica.<br><br>TEDELETRON: Transferência eletrônica para pagamentos de GRU (que contenham restrições quanto ao recebimento por cheques) e transferências para outros Bancos.</p> <p><strong>CRONOGRAMA DE EXECUÇÃO DA FOLHA DE PAGAMENTO</strong></p> <p>MÊS: DEZEMBRO DE 2015<br><br>OBS: As datas sugeridas abaixo se referem ao dia de execução, os órgãos devem disponibilizar com no mínimo 1 dia de antecedência as PD’s para a devida conferência.<br><br>17/12/2015 – PD’s CONTRIBUIÇÃO COMPLEMENTAR (APORTE FUNPES);<br><br>21/12/2015 – PD’S COM PALAVRA-CHAVE “FOLHA”;<br><br>22/12/2015 – PD’s CONTRIBUIÇÃO PREVES;<br><br>PD’s INSS COMPETÊNCIA DE EXERCÍCIOS ANTERIORES E MESES ANTERIORES DO EXERCÍCIO VIGENTE – Contabilizar para execução no dia anterior ao vencimento da GPS para envio ao banco junto com a RE no dia seguinte, impreterivelmente.<br><br>22/12/2015 – PD’s CONTRIBUIÇÃO FF e FP (SERVIDOR E PATRONAL) – (Data antecipada excepcionalmente devido ao encerramento do exercício)<br><br>23/12/2015 – PD’s CONSIGNAÇÕES;<br><br>06/01/2015 – PD’s DO FGTS;<br><br>19/01/2015 – PD’s DO INSS SOBRE A FOLHA DO MÊS – Dia as GPS’s deverão ser levadas ao banco junto com a RE no dia 20/01/2016 – dia correspondente ao vencimento da guia.</p> <p><strong>PROCEDIMENTOS JUNTO AOS FORNECEDORES</strong></p> <p>Esclarecimentos:<br>1) O atendimento aos fornecedores da Administração Pública Estadual, compete única e exclusivamente aos GFS e/ou setores equivalentes da administração direta e indireta, cabendo tão somente a esta GEFIN a execução dos pagamentos solicitados pelas UG’S, de acordo com a programação financeira;<br><br>2) Os GFS e/ou setores equivalente não deverão repassar o telefone de contato da GEFIN diretamente aos fornecedores/credores, devendo atender prontamente aos mesmos, informando acerca dos impedimentos ocorridos durante a execução dos pagamentos, sendo que em caso de desconhecimento acerca da impossibilidade na execução do pagamento, os GFS e/ou setores equivalentes deverão contactar o setor responsável pelo pagamento nesta GEFIN para esclarecimentos, retornando em seguida aos fornecedores/credores.<br><br>3) Considerando que o setor financeiro dos órgãos é uma extensão da SEFAZ, compete a esta última dirimir as regras de atuação dos setores financeiros, bem como orientar na correção dos mesmos, caso os procedimentos não estejam sendo devidamente adotados pelo chefe do setor.</p>"
+     "html": "<p><strong>ANÁLISE DE PD NÃO EXECUTADA</strong></p> <p>Caso alguma PD programada para o dia solicitado não tenha sido executada, antes de entrar em contato com a Subgerência de Programação e Execução Financeira (SUPEF), sugerimos que o responsável pelo setor financeiro do órgão verifique os seguintes itens:<br>- Verificar no SIGEFES se o credor está inscrito no CADIN;<br>- Verificar se a PD foi solicitada para a data correta;<br>- Verificar se há saldo na conta pagadora.</p> <p><strong>COMUNICA PARA ANTECIPAÇÃO DE PD</strong></p> <p>Conforme mensagem de COMUNICA do SIGEFES enviada em 17/01/2014, uma vez que as PDs podem ser solicitadas todos os dias úteis, as solicitações de antecipação de PD devem ocorrer somente em casos excepcionais. Além disso, as solicitações de antecipação devem ser embasadas na real necessidade de pagamento antes da data programada, contendo justificativa do pedido e o nome da pessoa responsável. O simples fato de serem solicitadas não significa que serão atendidas. O horário para envio dos comunicas é até as 17:00 hs.</p> <p><strong>PROCEDIMENTOS NÃO PERMITIDOS</strong></p> <p>Nota: As PD’s em desacordo com as determinações deverão ser canceladas e refeitas para que sejam executadas.</p> <p><strong>DEPÓSITO JUDICIAL</strong></p> <p>1. O campo conta corrente do favorecido da PD deverá ser preenchido com a palavra-chave &quot;JUDIC&quot;;<br><br>2. Após a execução da PD, a respectiva RE deverá ser entregue na agência bancária do BANESTES, acompanhada de fotocópia da determinação judicial e de ofício encaminhado pela UG ao banco informando que deverá ser aberta conta judicial no banco determinado pelo juízo (Banco do Brasil ou Caixa Econômica Federal). Caso não haja determinação nesse sentido, ou seja, depositar no Banco do Brasil ou na CEF, o depósito deverá ser efetuado no BANESTES. Neste caso, proceder-se-á da seguinte maneira:<br><br>1º - Acessar o SITE do BANESTES: WWW.BANESTES.COM.BR<br><br>2º - Clicar em &quot;Administração Pública&quot; na parte superior da página;<br><br>3º - Clicar em &quot;Abertura de Contas&quot; na parte superior da página;<br><br>4º - Clicar em &quot;Abertura de Conta Judicial&quot;.<br><br>5º - Selecionar &quot;Pré-abertura Conta Judicial/Geração de ID&quot; quando for efetuar um depósito comum OU selecionar &quot;Depósito em Continuação&quot; quando for efetuar um depósito em uma conta judicial que já existe (para o mesmo processo, sendo necessário o número do ID);<br><br>6º - Preencher os campos conforme informações do processo;<br><br>7º - Imprimir a guia de depósito judicial e enviá-la ao BANESTES juntamente com a &quot;RE&quot; para autenticação.<br><br>Em caso de dúvidas:<br><br>- Em relação a OPV e Sequestro: 3347-5207 (Setor: Sentenças Judiciais);<br><br>- Outros casos: 3347-5196 (Supervisão de Custeio).</p> <p><strong>PROCEDIMENTOS BANCÁRIOS DO SIGEFES (PALAVRAS-CHAVE)</strong></p> <p>Os procedimentos bancários são palavras-chave que podem ser utilizados nos domicílios bancários de destino das PDs em casos específicos, conforme citado abaixo:<br><br>AUTENTIC: Utilizada para pagamentos que exigem autenticação bancária em boletos/guias com código de barras. Ex. nos pagamentos de ISS, DARF, DUA, etc.<br><br>BANESTES: Utilizada para pagamento de consignações quando o credor for o BANESTES.<br><br>CHEQUEADM: Utilizada quando há necessidade de se pagar com cheque administrativo. Ex. pagamentos de GRU realizados no Banco do Brasil. No campo observação informar o motivo pelo qual o pagamento será providenciado através de cheque administrativo.<br><br>FOLHA: Utilizada para pagamento do líquido da folha de pessoal.<br><br>JUDIC: Usado quando há necessidade de se fazer um depósito judicial em uma determinada conta judicial existente ou a ser criada pelo banco.<br><br>PAGAMENTO: Utilizada para pagamento em dólar, pagto de artistas internacionais por meio de saque no caixa, saque em dinheiro p/ devolução de fiança crime e retenção do pagto de uma empresa p/ outra por determinação judicial. Obs: Neste caso a GEFIN/SEFAZ deve ser informada antecipadamente, de preferência por ofício, para que autorize o Banco a efetuar o pagamento.<br><br>PRONATEC: Utilizada na concessão de bolsas a alunos no âmbito do PRONATEC (repasses ocorrem por meio de conta específica no Banco do Brasil, onde a SEDU transfere os recursos da conta do PRONATEC p/ os cartões dos alunos).<br><br>REGULARIZ: Utilizar p/ substituir a palavra-chave FOLHA em pagamentos de REGULARIZAÇÃO ou em PDs/OBs marcadas &quot;OB já encaminhada ao Banco&quot; em que não for conhecida a conta de destino e nem se aplicar outra palavra-chave específica.<br><br>TEDELETRON: Transferência eletrônica para pagamentos de GRU (que contenham restrições quanto ao recebimento por cheques) e transferências para outros Bancos.</p> <p><strong>CRONOGRAMA DE EXECUÇÃO DA FOLHA DE PAGAMENTO</strong></p> <p>MÊS: DEZEMBRO DE 2015<br><br>OBS: As datas sugeridas abaixo se referem ao dia de execução, os órgãos devem disponibilizar com no mínimo 1 dia de antecedência as PD’s para a devida conferência.<br><br>17/12/2015: PD’s CONTRIBUIÇÃO COMPLEMENTAR (APORTE FUNPES);<br><br>21/12/2015: PD’S COM PALAVRA-CHAVE “FOLHA”;<br><br>22/12/2015: PD’s CONTRIBUIÇÃO PREVES;<br><br>PD’s INSS COMPETÊNCIA DE EXERCÍCIOS ANTERIORES E MESES ANTERIORES DO EXERCÍCIO VIGENTE: Contabilizar para execução no dia anterior ao vencimento da GPS para envio ao banco junto com a RE no dia seguinte, impreterivelmente.<br><br>22/12/2015: PD’s CONTRIBUIÇÃO FF e FP (SERVIDOR E PATRONAL): (Data antecipada excepcionalmente devido ao encerramento do exercício)<br><br>23/12/2015: PD’s CONSIGNAÇÕES;<br><br>06/01/2015: PD’s DO FGTS;<br><br>19/01/2015: PD’s DO INSS SOBRE A FOLHA DO MÊS: Dia as GPS’s deverão ser levadas ao banco junto com a RE no dia 20/01/2016, dia correspondente ao vencimento da guia.</p> <p><strong>PROCEDIMENTOS JUNTO AOS FORNECEDORES</strong></p> <p>Esclarecimentos:<br>1) O atendimento aos fornecedores da Administração Pública Estadual, compete única e exclusivamente aos GFS e/ou setores equivalentes da administração direta e indireta, cabendo tão somente a esta GEFIN a execução dos pagamentos solicitados pelas UG’S, de acordo com a programação financeira;<br><br>2) Os GFS e/ou setores equivalente não deverão repassar o telefone de contato da GEFIN diretamente aos fornecedores/credores, devendo atender prontamente aos mesmos, informando acerca dos impedimentos ocorridos durante a execução dos pagamentos, sendo que em caso de desconhecimento acerca da impossibilidade na execução do pagamento, os GFS e/ou setores equivalentes deverão contactar o setor responsável pelo pagamento nesta GEFIN para esclarecimentos, retornando em seguida aos fornecedores/credores.<br><br>3) Considerando que o setor financeiro dos órgãos é uma extensão da SEFAZ, compete a esta última dirimir as regras de atuação dos setores financeiros, bem como orientar na correção dos mesmos, caso os procedimentos não estejam sendo devidamente adotados pelo chefe do setor.</p>"
     }
    ]
   },

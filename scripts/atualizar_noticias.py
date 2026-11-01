@@ -22,6 +22,7 @@ from pathlib import Path
 
 BASE = "https://sefaz.es.gov.br"
 SAIDA = Path(__file__).resolve().parent.parent / "data" / "noticias.json"
+CURADORIA = SAIDA.parent / "curadoria-noticias.json"
 DESDE = "2024-01-01"      # só considera notícias a partir desta data
 MAX_PAGINAS = 20          # 100 notícias por página
 MAXIMO = 24               # quantas manter
@@ -37,6 +38,20 @@ PALAVRAS = [
 ]
 EXCLUIR = ["nota premiada", "sorteio", "cafe", "cassacao", "apreende", "ipva", "itcmd", "icms", "conformidade tributaria",
            "receita em foco", "plano de contratacoes", "manutencao e adequacao", "jetiba"]
+
+
+def sem_travessao(t):
+    """Troca travessões (— e –) por pontuação comum: sigla vira parênteses, o resto vira vírgula ou dois-pontos."""
+    if not t or ("–" not in t and "—" not in t):
+        return t
+    t = re.sub(r"\s+[–—]\s+([A-ZÀ-Ý][A-ZÀ-Ý0-9\-]{1,9})(?=$|[.,;:)])", r" (\1)", t)
+    t = re.sub(r"\s+[–—]\s+(?=[a-zà-ÿ])", ", ", t)
+    return re.sub(r"\s*[–—]\s*", ": ", t)
+
+
+def sem_travessao_html(h):
+    """Idem, só no texto (fora das marcações HTML)."""
+    return "".join(p if p.startswith("<") else sem_travessao(p) for p in re.split(r"(<[^>]+>)", h))
 
 
 def norm(s: str) -> str:
@@ -63,8 +78,10 @@ class Lista(HTMLParser):
     def handle_starttag(self, tag, attrs):
         a = dict(attrs)
         if tag == "article":
-            self.cur = {"titulo": "", "href": "", "data": "", "resumo": ""}
+            self.cur = {"titulo": "", "href": "", "data": "", "resumo": "", "img": ""}
         elif self.cur is not None:
+            if tag == "img" and not self.cur["img"]:
+                self.cur["img"] = a.get("src", "")
             if tag == "h4":
                 self.campo = "titulo"
             elif tag == "a" and self.campo == "titulo" and not self.cur["href"]:
@@ -93,6 +110,59 @@ class Lista(HTMLParser):
                 self.cur["data"] = m.group(1)
 
 
+def tipo_imagem(im) -> str:
+    """'arte' = cartão gráfico (fundo chapado, texto embutido); 'foto' = fotografia. Heurística simples."""
+    t = im.convert("RGB").resize((48, 27))
+    cont: dict = {}
+    for px in getattr(t, "get_flattened_data", t.getdata)():
+        k = tuple(v // 52 for v in px)
+        cont[k] = cont.get(k, 0) + 1
+    return "arte" if max(cont.values()) / (48 * 27) > 0.30 else "foto"
+
+
+def baixar_imagens(noticias):
+    """Baixa e reduz a imagem de cada notícia para public/img/noticias (requer Pillow; sem ele, segue sem imagens)."""
+    try:
+        from PIL import Image, ImageOps
+        from io import BytesIO
+        from urllib.parse import quote
+    except ImportError:
+        print("AVISO: Pillow não instalado; notícias ficarão sem imagem (pip install pillow)", file=sys.stderr)
+        for n in noticias:
+            n.pop("_img", None)
+        return
+    try:
+        ajustes = json.loads(CURADORIA.read_text(encoding="utf-8")).get("imagemTipo", {})
+    except Exception:  # noqa: BLE001
+        ajustes = {}
+    pasta = SAIDA.parent.parent / "public" / "img" / "noticias"
+    pasta.mkdir(parents=True, exist_ok=True)
+    manter = set()
+    for n in noticias:
+        src = n.pop("_img", "")
+        if not src:
+            continue
+        nome = re.sub(r"[^a-z0-9]+", "-", n["href"].rsplit("/", 1)[-1].lower()).strip("-")[:70] + ".jpg"
+        destino = pasta / nome
+        manter.add(nome)
+        try:
+            if not destino.exists():
+                url = quote(src if src.startswith("http") else BASE + src, safe=":/%?=&")
+                with urllib.request.urlopen(urllib.request.Request(url, headers={"User-Agent": "tesouro-portal-noticias/1.0"}), timeout=90) as r:
+                    im = ImageOps.exif_transpose(Image.open(BytesIO(r.read())))
+                im.thumbnail((1280, 1280))
+                im.convert("RGB").save(destino, "JPEG", quality=80, optimize=True, progressive=True)
+            im = Image.open(destino)
+            n["imagem"] = f"/img/noticias/{nome}"
+            n["imagemLargura"], n["imagemAltura"] = im.size
+            n["imagemTipo"] = ajustes.get(n["href"].rsplit("/", 1)[-1]) or tipo_imagem(im)
+        except Exception as e:  # noqa: BLE001
+            print(f"AVISO: imagem de {n['href']}: {e}", file=sys.stderr)
+    for f in pasta.glob("*.jpg"):
+        if f.name not in manter:
+            f.unlink()
+
+
 def main():
     achadas, vistos = [], set()
     for pg in range(1, MAX_PAGINAS + 1):
@@ -109,6 +179,7 @@ def main():
             titulo = re.sub(r"\s+", " ", html.unescape(it["titulo"])).strip()
             resumo = re.sub(r"\s*Leia mais\s*$", "", re.sub(r"\s+", " ", html.unescape(it["resumo"])).strip()).rstrip(". …")
             resumo = re.sub(r"\s*\.\.\.$", "", resumo).strip()
+            titulo, resumo = sem_travessao(titulo), sem_travessao(resumo)
             texto = norm(f"{titulo} {resumo}")
             if d < DESDE or it["href"] in vistos:
                 continue
@@ -116,7 +187,7 @@ def main():
                 continue
             if any(p in texto for p in PALAVRAS):
                 vistos.add(it["href"])
-                achadas.append({"data": d, "titulo": titulo, "resumo": resumo, "href": BASE + it["href"]})
+                achadas.append({"data": d, "titulo": titulo, "resumo": resumo, "href": BASE + it["href"], "_img": it["img"]})
         print(f"página {pg}: {len(lista.itens)} notícias até {ultima}; {len(achadas)} relevantes")
         if ultima and ultima < DESDE:
             break
@@ -124,6 +195,14 @@ def main():
 
     achadas.sort(key=lambda n: n["data"], reverse=True)
     achadas = achadas[:MAXIMO]
+    baixar_imagens(achadas)
+    try:
+        capas = json.loads(CURADORIA.read_text(encoding="utf-8")).get("destaques", [])
+    except Exception:  # noqa: BLE001
+        capas = []
+    for n in achadas:
+        if n["href"].rsplit("/", 1)[-1] in capas:
+            n["destaque"] = True
     SAIDA.write_text(json.dumps({
         "geradoEm": datetime.now(timezone.utc).isoformat(timespec="seconds"),
         "fonte": f"{BASE}/noticias", "noticias": achadas,

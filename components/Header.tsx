@@ -5,7 +5,7 @@ import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { useEffect, useId, useRef, useState } from 'react'
 import { IconChevron, IconClose, IconExternal, IconMenu, IconSearch } from './Icons'
-import { institucional, menuPrincipal, type Link as L } from '@/lib/links'
+import { menu, type ItemMenu, type Link as L } from '@/lib/links'
 
 function ItemLink({ l, className, onClick }: { l: L; className?: string; onClick?: () => void }) {
   if (l.externo) {
@@ -20,23 +20,28 @@ function ItemLink({ l, className, onClick }: { l: L; className?: string; onClick
   return <Link href={l.href} className={className} onClick={onClick}>{l.rotulo}</Link>
 }
 
+function estaAtivo(item: ItemMenu, pathname: string): boolean {
+  return !!item.prefixos?.some((p) => pathname === p || pathname.startsWith(p.endsWith('/') ? p : `${p}/`))
+}
+
 export function Header() {
   const pathname = usePathname()
   const [menuAberto, setMenuAberto] = useState(false)
   const [buscaMobile, setBuscaMobile] = useState(false)
-  const [instAberto, setInstAberto] = useState(false)
-  const instRef = useRef<HTMLLIElement>(null)
+  const [aberto, setAberto] = useState<string | null>(null) // submenu aberto no desktop
+  const [subMobile, setSubMobile] = useState<string | null>(null) // submenu aberto no celular
+  const navRef = useRef<HTMLUListElement>(null)
   const idMenu = useId()
   const idBusca = useId()
 
   // Fecha menus ao navegar, com Esc e ao clicar fora.
-  useEffect(() => { setMenuAberto(false); setInstAberto(false) }, [pathname])
+  useEffect(() => { setMenuAberto(false); setAberto(null); setSubMobile(null) }, [pathname])
   useEffect(() => {
     function onKey(e: KeyboardEvent) {
-      if (e.key === 'Escape') { setInstAberto(false); setMenuAberto(false) }
+      if (e.key === 'Escape') { setAberto(null); setMenuAberto(false) }
     }
     function onClick(e: MouseEvent) {
-      if (instRef.current && !instRef.current.contains(e.target as Node)) setInstAberto(false)
+      if (navRef.current && !navRef.current.contains(e.target as Node)) setAberto(null)
     }
     document.addEventListener('keydown', onKey)
     document.addEventListener('click', onClick)
@@ -52,7 +57,7 @@ export function Header() {
         type="search"
         autoComplete="off"
         placeholder="Buscar publicações do Tesouro Estadual"
-        className="h-12 w-full rounded-brand border border-ink-soft/50 bg-paper pl-4 pr-12 text-[0.9375rem] text-ink placeholder:text-ink-soft focus-visible:outline-offset-0"
+        className="h-12 w-full rounded-brand border border-ink-soft/50 bg-paper pl-4 pr-12 text-body text-ink placeholder:text-ink-soft focus-visible:outline-offset-0"
       />
       <button type="submit" className="absolute right-1 top-1 inline-flex h-10 w-10 items-center justify-center rounded-md text-ink" aria-label="Buscar">
         <IconSearch className="h-5 w-5" />
@@ -76,10 +81,10 @@ export function Header() {
             {menuAberto ? <IconClose className="h-7 w-7" /> : <IconMenu className="h-7 w-7" />}
           </button>
 
-          <Link href="/" className="shrink-0" aria-label="Tesouro Estadual do Espírito Santo – página inicial">
+          <Link href="/" className="shrink-0" aria-label="Tesouro Estadual do Espírito Santo, página inicial">
             <Image
               src="/img/logo-tesouro-horizontal.png"
-              alt="Tesouro Estadual – Espírito Santo"
+              alt="Tesouro Estadual do Espírito Santo"
               width={1100}
               height={197}
               priority
@@ -105,40 +110,42 @@ export function Header() {
 
         {/* Menu desktop */}
         <nav aria-label="Menu principal" className="hidden lg:block">
-          <ul className="flex items-stretch justify-between">
-            <li ref={instRef} className="relative">
-              <button
-                type="button"
-                className="group relative inline-flex h-12 items-center gap-1.5 text-[0.9375rem] font-medium text-ink"
-                aria-expanded={instAberto}
-                aria-haspopup="true"
-                onClick={() => setInstAberto((v) => !v)}
-              >
-                Institucional <IconChevron className="h-4 w-4" />
-                <span className={`accent-bar absolute -bottom-px left-0 mt-0 w-full transition-opacity group-hover:opacity-100 group-aria-expanded:opacity-100 ${pathname === '/' ? 'opacity-100' : 'opacity-0'}`} style={{ height: 3 }} />
-              </button>
-              {instAberto && (
-                <ul className="absolute left-0 top-full z-30 mt-px w-80 rounded-b-brand border border-line bg-paper py-2 shadow-lg">
-                  {institucional.map((l) => (
-                    <li key={l.href}>
-                      <ItemLink l={l} className="block px-5 py-2.5 text-[0.9375rem] text-ink hover:bg-surface" onClick={() => setInstAberto(false)} />
-                    </li>
-                  ))}
-                </ul>
-              )}
-            </li>
-            {menuPrincipal.map((l) => {
-              const ativo = !l.href.includes('?') && !l.href.startsWith('#') && l.href === pathname
+          <ul ref={navRef} className="flex items-stretch justify-between">
+            {menu.map((item) => {
+              const ativo = estaAtivo(item, pathname)
+              const barra = `accent-bar absolute -bottom-px left-0 mt-0 w-full transition-opacity group-hover:opacity-100 ${ativo ? 'opacity-100' : 'opacity-0'}`
+              if (!item.filhos) {
+                return (
+                  <li key={item.rotulo}>
+                    <Link href={item.href as string} aria-current={ativo ? 'page' : undefined} className="group relative inline-flex h-12 items-center text-body font-medium text-ink">
+                      {item.rotulo}
+                      <span className={barra} style={{ height: 3 }} />
+                    </Link>
+                  </li>
+                )
+              }
+              const aberta = aberto === item.rotulo
               return (
-                <li key={l.rotulo}>
-                  <Link
-                    href={l.href}
-                    aria-current={ativo ? 'page' : undefined}
-                    className="group relative inline-flex h-12 items-center text-[0.9375rem] font-medium text-ink"
+                <li key={item.rotulo} className="relative">
+                  <button
+                    type="button"
+                    className="group relative inline-flex h-12 items-center gap-1.5 text-body font-medium text-ink"
+                    aria-expanded={aberta}
+                    aria-haspopup="true"
+                    onClick={() => setAberto(aberta ? null : item.rotulo)}
                   >
-                    {l.rotulo}
-                    <span className={`accent-bar absolute -bottom-px left-0 mt-0 w-full transition-opacity group-hover:opacity-100 ${ativo ? 'opacity-100' : 'opacity-0'}`} style={{ height: 3 }} />
-                  </Link>
+                    {item.rotulo} <IconChevron className={`h-4 w-4 transition-transform ${aberta ? 'rotate-180' : ''}`} />
+                    <span className={`${barra} ${aberta ? '!opacity-100' : ''}`} style={{ height: 3 }} />
+                  </button>
+                  {aberta && (
+                    <ul className="absolute left-0 top-full z-30 mt-px w-80 rounded-b-brand border border-line bg-paper py-2 shadow-lg">
+                      {item.filhos.map((l, i) => (
+                        <li key={l.href} className={i === (item.filhos?.length ?? 0) - 1 && (item.filhos?.length ?? 0) > 4 ? 'mt-1 border-t border-line pt-1' : ''}>
+                          <ItemLink l={l} className={`block px-5 py-2.5 text-body text-ink hover:bg-surface ${i === (item.filhos?.length ?? 0) - 1 && (item.filhos?.length ?? 0) > 4 ? 'font-semibold' : ''}`} onClick={() => setAberto(null)} />
+                        </li>
+                      ))}
+                    </ul>
+                  )}
                 </li>
               )
             })}
@@ -146,23 +153,40 @@ export function Header() {
         </nav>
       </div>
 
-      {/* Menu mobile */}
+      {/* Menu mobile: seis linhas; Publicações e Institucional abrem sob demanda */}
       {menuAberto && (
         <nav id={idMenu} aria-label="Menu principal" className="border-t border-line bg-paper lg:hidden">
-          <ul className="mx-auto max-w-page px-5 py-2">
-            <li className="border-b border-line py-2">
-              <p className="py-1 text-xs font-semibold uppercase tracking-wider text-ink-soft">Institucional</p>
-              <ul>
-                {institucional.map((l) => (
-                  <li key={l.href}><ItemLink l={l} className="block py-2.5 text-base text-ink" onClick={() => setMenuAberto(false)} /></li>
-                ))}
-              </ul>
-            </li>
-            {menuPrincipal.map((l) => (
-              <li key={l.rotulo} className="border-b border-line last:border-0">
-                <Link href={l.href} className="block py-3 text-base font-medium text-ink" onClick={() => setMenuAberto(false)}>{l.rotulo}</Link>
-              </li>
-            ))}
+          <ul className="mx-auto max-w-page px-5 py-1">
+            {menu.map((item) => {
+              const ativo = estaAtivo(item, pathname)
+              if (!item.filhos) {
+                return (
+                  <li key={item.rotulo} className="border-b border-line last:border-0">
+                    <Link href={item.href as string} aria-current={ativo ? 'page' : undefined} className="block py-3.5 text-body font-medium text-ink" onClick={() => setMenuAberto(false)}>{item.rotulo}</Link>
+                  </li>
+                )
+              }
+              const aberta = subMobile === item.rotulo
+              return (
+                <li key={item.rotulo} className="border-b border-line last:border-0">
+                  <button
+                    type="button"
+                    className="flex min-h-12 w-full items-center justify-between py-3.5 text-left text-body font-medium text-ink"
+                    aria-expanded={aberta}
+                    onClick={() => setSubMobile(aberta ? null : item.rotulo)}
+                  >
+                    {item.rotulo} <IconChevron className={`h-5 w-5 transition-transform ${aberta ? 'rotate-180' : ''}`} />
+                  </button>
+                  {aberta && (
+                    <ul className="mb-2 ml-1 border-l-2 border-line pl-4">
+                      {item.filhos.map((l) => (
+                        <li key={l.href}><ItemLink l={l} className="block py-2.5 text-body text-ink-soft" onClick={() => setMenuAberto(false)} /></li>
+                      ))}
+                    </ul>
+                  )}
+                </li>
+              )
+            })}
           </ul>
         </nav>
       )}
