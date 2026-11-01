@@ -40,6 +40,20 @@ EXCLUIR = ["nota premiada", "sorteio", "cafe", "cassacao", "apreende", "ipva", "
            "receita em foco", "plano de contratacoes", "manutencao e adequacao", "jetiba"]
 
 
+def sem_travessao(t):
+    """Troca travessões (— e –) por pontuação comum: sigla vira parênteses, o resto vira vírgula ou dois-pontos."""
+    if not t or ("–" not in t and "—" not in t):
+        return t
+    t = re.sub(r"\s+[–—]\s+([A-ZÀ-Ý][A-ZÀ-Ý0-9\-]{1,9})(?=$|[.,;:)])", r" (\1)", t)
+    t = re.sub(r"\s+[–—]\s+(?=[a-zà-ÿ])", ", ", t)
+    return re.sub(r"\s*[–—]\s*", ": ", t)
+
+
+def sem_travessao_html(h):
+    """Idem, só no texto (fora das marcações HTML)."""
+    return "".join(p if p.startswith("<") else sem_travessao(p) for p in re.split(r"(<[^>]+>)", h))
+
+
 def norm(s: str) -> str:
     s = unicodedata.normalize("NFD", s.lower())
     return "".join(c for c in s if unicodedata.category(c) != "Mn")
@@ -100,7 +114,7 @@ def tipo_imagem(im) -> str:
     """'arte' = cartão gráfico (fundo chapado, texto embutido); 'foto' = fotografia. Heurística simples."""
     t = im.convert("RGB").resize((48, 27))
     cont: dict = {}
-    for px in t.getdata():
+    for px in getattr(t, "get_flattened_data", t.getdata)():
         k = tuple(v // 52 for v in px)
         cont[k] = cont.get(k, 0) + 1
     return "arte" if max(cont.values()) / (48 * 27) > 0.30 else "foto"
@@ -165,6 +179,7 @@ def main():
             titulo = re.sub(r"\s+", " ", html.unescape(it["titulo"])).strip()
             resumo = re.sub(r"\s*Leia mais\s*$", "", re.sub(r"\s+", " ", html.unescape(it["resumo"])).strip()).rstrip(". …")
             resumo = re.sub(r"\s*\.\.\.$", "", resumo).strip()
+            titulo, resumo = sem_travessao(titulo), sem_travessao(resumo)
             texto = norm(f"{titulo} {resumo}")
             if d < DESDE or it["href"] in vistos:
                 continue
@@ -182,11 +197,11 @@ def main():
     achadas = achadas[:MAXIMO]
     baixar_imagens(achadas)
     try:
-        capa = json.loads(CURADORIA.read_text(encoding="utf-8")).get("destaque", "")
+        capas = json.loads(CURADORIA.read_text(encoding="utf-8")).get("destaques", [])
     except Exception:  # noqa: BLE001
-        capa = ""
+        capas = []
     for n in achadas:
-        if capa and n["href"].rsplit("/", 1)[-1] == capa:
+        if n["href"].rsplit("/", 1)[-1] in capas:
             n["destaque"] = True
     SAIDA.write_text(json.dumps({
         "geradoEm": datetime.now(timezone.utc).isoformat(timespec="seconds"),

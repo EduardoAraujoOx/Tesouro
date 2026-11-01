@@ -4,9 +4,9 @@ import { PublicationRow } from '@/components/PublicationRow'
 import { SectionTitle } from '@/components/SectionTitle'
 import { IconArrow, iconePorNome } from '@/components/Icons'
 import { acessoRapido, orientacoes } from '@/lib/links'
-import { NoticiaImagem } from '@/components/NoticiaImagem'
+import { CarrosselNoticias } from '@/components/CarrosselNoticias'
 import { PainelFiscal } from '@/components/PainelFiscal'
-import { paraHome, type Noticia } from '@/lib/noticias'
+import { paraCarrossel } from '@/lib/noticias'
 import { formatarData, maisRecente } from '@/lib/acervo'
 
 const btnPrimario =
@@ -125,7 +125,7 @@ function Destaques() {
         {(rgf || rreo) && (
           <PublicationRow
             titulo="Relatórios Fiscais (LRF)"
-            descricao={`Exigidos pela Lei de Responsabilidade Fiscal. Mais recentes: ${rgf?.titulo.replace('RGF — ', 'RGF, ')}; ${rreo?.titulo.replace('RREO — ', 'RREO, ')}.`}
+            descricao={`Exigidos pela Lei de Responsabilidade Fiscal. Mais recentes: ${rgf?.titulo}; ${rreo?.titulo}.`}
             atualizadoEm={formatarData(rgf?.atualizadoEm ?? null)}
             href="/publicacoes?tipo=lrf"
             acao="Acessar"
@@ -137,57 +137,9 @@ function Destaques() {
   )
 }
 
-const fmtData = (iso: string) => formatarData(iso)
-
-function Destaque({ n }: { n: Noticia }) {
-  return (
-    <article className="group relative">
-      <NoticiaImagem n={n} sizes="(min-width: 1024px) 56vw, 100vw" prioridade className="aspect-[16/10] rounded-brand" />
-      <div className="mt-5">
-        <p className="flex items-center gap-3 text-small text-ink-soft">
-          <span className="rounded bg-navy px-2 py-0.5 text-label font-semibold uppercase text-on-navy">Em destaque</span>
-          <time dateTime={n.data}>{fmtData(n.data)}</time>
-        </p>
-        <h3 className="mt-3 text-headline">
-          <a
-            href={n.href}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="underline-offset-4 after:absolute after:inset-0 after:content-[''] group-hover:underline"
-          >
-            {n.titulo}<span className="sr-only"> (abre em nova aba)</span>
-          </a>
-        </h3>
-        {n.resumo && <p className="mt-3 line-clamp-3 text-lead text-ink-soft">{n.resumo}</p>}
-      </div>
-    </article>
-  )
-}
-
-function ItemLateral({ n }: { n: Noticia }) {
-  return (
-    <article className="group relative grid grid-cols-[7.5rem_1fr] gap-4 py-4 first:pt-0 sm:grid-cols-[9rem_1fr] lg:py-5">
-      <NoticiaImagem n={n} sizes="144px" className="aspect-[4/3] rounded-brand" />
-      <div className="min-w-0">
-        <p className="text-small text-ink-soft"><time dateTime={n.data}>{fmtData(n.data)}</time></p>
-        <h3 className="mt-1 text-title !text-ink">
-          <a
-            href={n.href}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="line-clamp-4 underline-offset-4 after:absolute after:inset-0 after:content-[''] group-hover:underline"
-          >
-            {n.titulo}<span className="sr-only"> (abre em nova aba)</span>
-          </a>
-        </h3>
-      </div>
-    </article>
-  )
-}
-
 function NoticiasPrincipais() {
-  const { capa: lead, laterais: lateral, grade } = paraHome()
-  if (!lead) return null
+  const itens = paraCarrossel(3).map((n) => ({ ...n, dataFmt: formatarData(n.data) }))
+  if (itens.length === 0) return null
   return (
     <section aria-labelledby="noticias" className="mx-auto max-w-page px-5 pt-8 md:px-8 md:pt-10">
       <SectionTitle
@@ -200,33 +152,8 @@ function NoticiasPrincipais() {
       >
         Notícias
       </SectionTitle>
-      <div className="mt-6 grid gap-8 lg:grid-cols-12 lg:gap-10">
-        <div className="lg:col-span-7"><Destaque n={lead} /></div>
-        <div className="divide-y divide-line border-t border-line pt-5 lg:col-span-5 lg:border-l lg:border-t-0 lg:pl-10 lg:pt-0">
-          <h3 className="pb-4 !font-sans text-label font-semibold uppercase !text-ink-soft lg:pb-5">Mais recentes</h3>
-          {lateral.map((n) => <ItemLateral key={n.href} n={n} />)}
-        </div>
-      </div>
-      {grade.length > 0 && (
-        <ul className="mt-12 grid gap-x-8 gap-y-10 border-t border-line pt-10 sm:grid-cols-3">
-          {grade.map((n) => <li key={n.href}><CartaoNoticia n={n} /></li>)}
-        </ul>
-      )}
+      <div className="mt-6"><CarrosselNoticias itens={itens} /></div>
     </section>
-  )
-}
-
-function CartaoNoticia({ n }: { n: Noticia }) {
-  return (
-    <article className="group relative">
-      <NoticiaImagem n={n} sizes="(min-width: 1024px) 28vw, (min-width: 640px) 30vw, 100vw" className="aspect-[16/10] rounded-brand" />
-      <p className="mt-4 text-small text-ink-soft"><time dateTime={n.data}>{fmtData(n.data)}</time></p>
-      <h3 className="mt-1 text-title !text-ink">
-        <a href={n.href} target="_blank" rel="noopener noreferrer" className="line-clamp-3 underline-offset-4 after:absolute after:inset-0 after:content-[''] group-hover:underline">
-          {n.titulo}<span className="sr-only"> (abre em nova aba)</span>
-        </a>
-      </h3>
-    </article>
   )
 }
 

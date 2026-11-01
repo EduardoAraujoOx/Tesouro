@@ -75,3 +75,9 @@ export const iconePorNome = {
   people: IconPeople,
   calc: IconCalc,
 } as const
+export const IconPause = (p: P) => (
+  <svg {...base} {...p}><rect x="6.5" y="5" width="3.8" height="14" rx="1" fill="currentColor" stroke="none" /><rect x="13.7" y="5" width="3.8" height="14" rx="1" fill="currentColor" stroke="none" /></svg>
+)
+export const IconPlay = (p: P) => (
+  <svg {...base} {...p}><path d="M8 5.5v13l11-6.5z" fill="currentColor" stroke="none" /></svg>
+)

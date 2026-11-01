@@ -41,7 +41,7 @@ export const menu: ItemMenu[] = [
     filhos: [
       { rotulo: 'Conheça o Tesouro Estadual', href: '/sobre' },
       { rotulo: 'Legislação do Tesouro Estadual', href: T('demais-legislacoes-contabeis') },
-      { rotulo: 'Fundo Soberano – FUNSES', href: T('funses') },
+      { rotulo: 'Fundo Soberano (FUNSES)', href: T('funses') },
     ],
   },
   { rotulo: 'Fale conosco', href: '#contato' },
@@ -91,8 +91,8 @@ export const servicos: { grupo: string; itens: Link[] }[] = [
   {
     grupo: 'Obrigações e transferências',
     itens: [
-      { rotulo: 'Obrigações de Pequeno Valor (OPV) – Não Dativos', href: T('obrigacoes-de-pequeno-valor-opv-nao-dativos') },
-      { rotulo: 'Obrigações de Pequeno Valor (OPV) – Dativos', href: T('obrigacoes-de-pequeno-valor-opv-dativos') },
+      { rotulo: 'OPV, credores não dativos', href: T('obrigacoes-de-pequeno-valor-opv-nao-dativos') },
+      { rotulo: 'OPV, credores dativos', href: T('obrigacoes-de-pequeno-valor-opv-dativos') },
       { rotulo: 'Transferências Especiais', href: T('transferencias-especiais') },
       { rotulo: 'Transferências aos Municípios (consulta)', href: 'https://s1-internet.sefaz.es.gov.br/site-ipm-internet/transferencias/liberacao_anteriores', externo: true },
       { rotulo: 'Boletim Informativo de Repasses', href: T('boletim-informativo-2') },
@@ -103,10 +103,10 @@ export const servicos: { grupo: string; itens: Link[] }[] = [
     itens: [
       { rotulo: 'SIGEFES', href: T('sigefes-links') },
       { rotulo: 'SIAFEM', href: T('siafem') },
-      { rotulo: 'Manual de Contabilidade – MCONT', href: T('manual-de-contabilidade-mcont') },
+      { rotulo: 'Manual de Contabilidade (MCONT)', href: T('manual-de-contabilidade-mcont') },
       { rotulo: 'Balancetes contábeis', href: 'https://internet.sefaz.es.gov.br/contas/contabilidade/balancetes.php', externo: true },
-      { rotulo: 'Normas – Sistema de Contabilidade', href: T('sistema-de-contabilidade') },
-      { rotulo: 'Normas – Sistema Financeiro', href: T('sistema-financeiro') },
+      { rotulo: 'Normas do Sistema de Contabilidade', href: T('sistema-de-contabilidade') },
+      { rotulo: 'Normas do Sistema Financeiro', href: T('sistema-financeiro') },
     ],
   },
 ]
@@ -119,7 +119,7 @@ export const rodape = {
     { rotulo: 'Ouvidoria', href: 'https://ouvidoria.es.gov.br/', externo: true },
     { rotulo: 'Aviso de Privacidade', href: `${S}/tratamento-de-dados-pessoais`, externo: true },
   ] satisfies Link[],
-  endereco: 'Av. João Batista Parra, 600 – Enseada do Suá, Vitória – ES · CEP 29050-375',
+  endereco: 'Av. João Batista Parra, 600, Enseada do Suá, Vitória/ES, CEP 29050-375',
   telefone: '(27) 3347-5102',
   faleConosco: `${S}/fale-conosco`,
   atendimento: `${S}/local-e-horario-de-atendimento`,

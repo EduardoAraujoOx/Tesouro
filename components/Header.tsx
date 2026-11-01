@@ -81,10 +81,10 @@ export function Header() {
             {menuAberto ? <IconClose className="h-7 w-7" /> : <IconMenu className="h-7 w-7" />}
           </button>
 
-          <Link href="/" className="shrink-0" aria-label="Tesouro Estadual do Espírito Santo – página inicial">
+          <Link href="/" className="shrink-0" aria-label="Tesouro Estadual do Espírito Santo, página inicial">
             <Image
               src="/img/logo-tesouro-horizontal.png"
-              alt="Tesouro Estadual – Espírito Santo"
+              alt="Tesouro Estadual do Espírito Santo"
               width={1100}
               height={197}
               priority

@@ -51,7 +51,7 @@ export function TopBar() {
           <span>Governo do Estado do Espírito Santo</span>
           <span aria-hidden="true" className="hidden h-4 w-px bg-current opacity-60 sm:block" />
           <a href="https://sefaz.es.gov.br" className="underline-offset-4 hover:underline">
-            <span className="hidden md:inline">Secretaria da Fazenda – </span>SEFAZ
+            <span className="hidden md:inline">Secretaria da Fazenda (</span>SEFAZ<span className="hidden md:inline">)</span>
           </a>
         </p>
 

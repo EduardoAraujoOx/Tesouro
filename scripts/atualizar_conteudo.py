@@ -4,8 +4,8 @@ Atualiza o conteúdo do portal a partir das páginas públicas do Tesouro Estadu
 no site da SEFAZ (https://sefaz.es.gov.br).
 
 Gera:
-  data/paginas.json  – cada página do Tesouro: texto (HTML saneado) e grupos de arquivos
-  data/acervo.json   – lista plana de todos os arquivos (usada na busca de /publicacoes)
+  data/paginas.json: cada página do Tesouro: texto (HTML saneado) e grupos de arquivos
+  data/acervo.json: lista plana de todos os arquivos (usada na busca de /publicacoes)
 
 Uso:
     python3 scripts/atualizar_conteudo.py
@@ -87,6 +87,20 @@ SLUG_POR_URL = {s.lower(): v for s, v in SLUG_INTERNO.items()}
 PERMITIDAS = {"p", "strong", "b", "em", "i", "ul", "ol", "li", "a", "blockquote", "h4", "h5", "h6"}
 IGNORAR = {"script", "style", "svg", "nav", "footer", "noscript", "form", "select", "textarea", "label", "iframe"}
 TITULOS = {"h2", "h3", "h4", "h5", "h6"}
+
+
+def sem_travessao(t):
+    """Troca travessões (— e –) por pontuação comum: sigla vira parênteses, o resto vira vírgula ou dois-pontos."""
+    if not t or ("–" not in t and "—" not in t):
+        return t
+    t = re.sub(r"\s+[–—]\s+([A-ZÀ-Ý][A-ZÀ-Ý0-9\-]{1,9})(?=$|[.,;:)])", r" (\1)", t)
+    t = re.sub(r"\s+[–—]\s+(?=[a-zà-ÿ])", ", ", t)
+    return re.sub(r"\s*[–—]\s*", ": ", t)
+
+
+def sem_travessao_html(h):
+    """Idem, só no texto (fora das marcações HTML)."""
+    return "".join(p if p.startswith("<") else sem_travessao(p) for p in re.split(r"(<[^>]+>)", h))
 
 
 def baixar(url: str, tentativas=3) -> str:
@@ -299,7 +313,7 @@ class Extrator(HTMLParser):
         if not url or not texto0:
             return
         titulo = limpar("".join(links0[0]["txt"])) if links0 else texto0
-        descr = texto0.replace(titulo, "", 1).strip(" -–:") if titulo and titulo != texto0 else ""
+        descr = texto0.replace(titulo, "", 1).strip(" -:") if titulo and titulo != texto0 else ""
         resto = " ".join(limpar("".join(c["txt"])) for c in cels[1:])
         d = re.search(r"\d{2}/\d{2}/\d{4}", resto)
         tam = re.search(r"\d+(?:[.,]\d+)?\s*(?:KB|MB|GB)", resto, re.I)
@@ -321,7 +335,17 @@ def processar(slug_sefaz: str):
     ex = Extrator()
     ex.feed(corpo)
     ex.fechar()
-    titulo = ex.titulo_pagina or slug_sefaz
+    titulo = sem_travessao(ex.titulo_pagina or slug_sefaz)
+    for sg in ex.segmentos:
+        if sg["tipo"] == "texto":
+            sg["html"] = sem_travessao_html(sg["html"])
+        elif sg["tipo"] == "subtitulo":
+            sg["texto"] = sem_travessao(sg["texto"])
+        else:
+            sg["titulo"] = sem_travessao(sg["titulo"])
+            for it in sg["itens"]:
+                it["titulo"] = sem_travessao(it["titulo"])
+                it["descricao"] = sem_travessao(it["descricao"])
 
     # reescreve links internos (…/slug de página já ingerida) para rotas do portal
     def reescrever(h: str) -> str:
@@ -416,9 +440,12 @@ def main():
                 periodo, ordem = periodo_de(titulo)
                 exib = titulo
                 if rotulo and ano and periodo and categoria != "divida-paf":
-                    exib = f"{rotulo} — {periodo} de {ano}"
+                    if re.search(r"º (bimestre|quadrimestre)$", periodo):
+                        exib = f"{rotulo} do {periodo} de {ano}"
+                    else:  # mês
+                        exib = f"{rotulo} de {periodo.lower()} de {ano}"
                 elif categoria == "divida-paf" and rotulo and re.fullmatch(r"\d{4}", titulo.strip()):
-                    exib = f"{rotulo} — {titulo.strip()}"
+                    exib = f"{rotulo} de {titulo.strip()}"
                 it["exibicao"] = exib
                 acervo.append({
                     "id": hashlib.sha1(f"{pag['slug']}|{titulo}|{it['url']}".encode()).hexdigest()[:10],

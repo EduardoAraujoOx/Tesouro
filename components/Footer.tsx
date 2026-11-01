@@ -11,7 +11,7 @@ export function Footer() {
             <span aria-hidden="true" className="w-1 shrink-0 self-stretch" style={{ background: 'linear-gradient(#39B5E8 50%, #F28AB2 50%)' }} />
             <div>
               <p className="font-serif text-title font-semibold !text-on-navy">Tesouro Estadual do Espírito Santo</p>
-              <p className="mt-1 text-body opacity-90">Secretaria da Fazenda – SEFAZ</p>
+              <p className="mt-1 text-body opacity-90">Secretaria da Fazenda (SEFAZ)</p>
               <p className="text-body opacity-90">Governo do Estado do Espírito Santo</p>
             </div>
           </div>

@@ -11,10 +11,10 @@ const site = process.env.VERCEL_PROJECT_PRODUCTION_URL
 
 export const metadata: Metadata = {
   metadataBase: new URL(site),
-  title: { default: 'Tesouro Estadual – Espírito Santo', template: '%s · Tesouro Estadual ES' },
+  title: { default: 'Tesouro Estadual do Espírito Santo', template: '%s · Tesouro Estadual ES' },
   description:
     'Transparência e responsabilidade na gestão das finanças públicas: informações fiscais, contabilidade, dívida pública e publicações do Tesouro Estadual do Espírito Santo.',
-  openGraph: { type: 'website', locale: 'pt_BR', siteName: 'Tesouro Estadual – Espírito Santo' },
+  openGraph: { type: 'website', locale: 'pt_BR', siteName: 'Tesouro Estadual do Espírito Santo' },
 }
 
 export const viewport: Viewport = { themeColor: '#082B57', width: 'device-width', initialScale: 1 }

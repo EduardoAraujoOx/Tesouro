@@ -1,5 +1,5 @@
 {
- "_leia-me": "Ajustes editoriais das notícias. destaque: final do endereço da notícia que abre a página inicial (vazio = a mais recente). imagemTipo: 'foto' (cortada em 16:10) ou 'arte' (cartão gráfico, exibido inteiro). Chave = final do endereço na SEFAZ.",
+ "_leia-me": "Ajustes editoriais das notícias. destaques: finais dos endereços (até 3) que abrem o carrossel da página inicial; vazio = as três mais recentes. imagemTipo: 'foto' (cortada em 16:10) ou 'arte' (cartão gráfico, exibido inteiro). Chave = final do endereço na SEFAZ.",
  "imagemTipo": {
   "profisco-ii-es-e-selecionado-para-iniciativa-piloto-do-bid-voltada-a-gestao-por-resultados": "foto",
   "sefaz-apresenta-experiencia-do-fundo-soberano-em-palestra-para-o-setor-produtivo-em-campos-rj": "foto",
@@ -8,5 +8,5 @@
   "sefaz-regulamenta-procedimentos-para-consultas-tecnicas-ao-tesouro-estadual": "arte",
   "espirito-santo-lidera-o-pais-em-investimentos-e-poupanca-e-tem-menor-nivel-de-endividamento-do-brasil": "arte"
  },
- "destaque": "espirito-santo-tem-a-melhor-gestao-publica-no-pais-e-se-destaca-como-o-estado-que-mais-avanca-na-economia"
+ "destaques": []
 }

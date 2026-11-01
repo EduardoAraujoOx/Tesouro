@@ -89,7 +89,7 @@ def periodo_lrf(ano, per):
     pct_pessoal = r"%\s*sobre a RCL"
     reg = {"ano": ano, "quad": per}
 
-    # Anexo 01 – despesa total com pessoal (limites em % da RCL ajustada)
+    # Anexo 01: despesa total com pessoal (limites em % da RCL ajustada)
     reg["pessoal"] = {
         "valor": achar(a1, r"^DESPESA TOTAL COM PESSOAL - DTP", pct_pessoal),
         "limite": achar(a1, r"^LIMITE M[ÁA]XIMO", pct_pessoal),
@@ -99,7 +99,7 @@ def periodo_lrf(ano, per):
         "rcl_ajustada": achar(a1, r"RECEITA CORRENTE L[ÍI]QUIDA AJUSTADA PARA C[ÁA]LCULO DOS LIMITES DE DESPESA COM PESSOAL", r"^Valor$"),
     }
 
-    # Anexo 02 – dívida (colunas "Até o Nº Quadrimestre"); limite do Senado vem em R$, converte-se em % da RCL
+    # Anexo 02: dívida (colunas "Até o Nº Quadrimestre"); limite do Senado vem em R$, converte-se em % da RCL
     col = rf"At[ée] o {per}[ºo°]? Quadrimestre"
     rcl_end = achar(a2, r"^RECEITA CORRENTE L[ÍI]QUIDA AJUSTADA PARA C[ÁA]LCULO DOS LIMITES DE ENDIVIDAMENTO", col)
     lim_end = achar(a2, r"^LIMITE DEFINIDO POR RESOLU", col)
@@ -116,7 +116,7 @@ def periodo_lrf(ano, per):
         "rcl_ajustada": rcl_end,
     }
 
-    # Anexo 03 – garantias
+    # Anexo 03: garantias
     rcl3 = achar(a3, r"^RECEITA CORRENTE L[ÍI]QUIDA AJUSTADA PARA C[ÁA]LCULO DOS LIMITES DE ENDIVIDAMENTO", col)
     lim3 = achar(a3, r"^LIMITE DEFINIDO POR RESOLU", col)
     ale3 = achar(a3, r"^LIMITE DE ALERTA", col)
@@ -135,7 +135,7 @@ def periodo_lrf(ano, per):
             reg[chave]["alerta"] = round(fixo * 0.9, 1)
             reg[chave]["limiteFixo"] = True
 
-    # Anexo 04 – operações de crédito (colunas por tipo de valor)
+    # Anexo 04: operações de crédito (colunas por tipo de valor)
     reg["credito"] = {
         "valor": achar(a4, r"^TOTAL CONSIDERADO PARA FINS DA APURA", r"% SOBRE A RCL"),
         "limite": achar(a4, r"^LIMITE GERAL DEFINIDO POR RESOLU", r"% SOBRE A RCL"),

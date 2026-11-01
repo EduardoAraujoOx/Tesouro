@@ -108,7 +108,7 @@ export default function Indicadores() {
                     <td className="px-4 py-3 text-right tabular-nums">{pct(e.endividamento)}{e.notaEndividamento && <span className="text-ink-soft"> ({e.notaEndividamento})</span>}</td>
                     <td className="px-4 py-3 text-right tabular-nums">{pct(e.poupanca)}{e.notaPoupanca && <span className="text-ink-soft"> ({e.notaPoupanca})</span>}</td>
                     <td className="px-4 py-3 text-right tabular-nums">{pct(e.liquidez)}{e.notaLiquidez && <span className="text-ink-soft"> ({e.notaLiquidez})</span>}</td>
-                    <td className="px-4 py-3">{e.qualidadeInformacao ?? '—'}</td>
+                    <td className="px-4 py-3">{e.qualidadeInformacao ?? 'sem nota'}</td>
                   </tr>
                 ))}
               </tbody>

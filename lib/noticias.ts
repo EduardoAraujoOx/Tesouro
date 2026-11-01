@@ -22,9 +22,12 @@ export function noticiaPorTrecho(trecho: string): Noticia | undefined {
   return noticias.find((n) => n.href.includes(trecho))
 }
 
-/** Ordem editorial da página inicial: matéria de capa (a marcada em `curadoria` ou a mais recente), 3 laterais e 3 em linha. */
-export function paraHome(): { capa?: Noticia; laterais: Noticia[]; grade: Noticia[] } {
-  const capa = noticias.find((n) => n.destaque) ?? noticias[0]
-  const resto = noticias.filter((n) => n !== capa)
-  return { capa, laterais: resto.slice(0, 3), grade: resto.slice(3, 6) }
+/**
+ * Notícias do carrossel da página inicial: as marcadas em `destaques` (curadoria) vêm primeiro;
+ * o restante é completado pelas mais recentes, até `quantidade`.
+ */
+export function paraCarrossel(quantidade = 3): Noticia[] {
+  const fixadas = noticias.filter((n) => n.destaque)
+  const demais = noticias.filter((n) => !n.destaque)
+  return [...fixadas, ...demais].slice(0, quantidade)
 }

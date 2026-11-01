@@ -80,14 +80,14 @@ export const rotuloPeriodo = (p: { ano: number; quad: number }) => `${p.quad}º 
 export const rotuloCurto = (p: { ano: number; quad: number }) => `${p.quad}º quad./${String(p.ano).slice(2)}`
 
 export function pct(v: number | null | undefined, casas = 1): string {
-  if (v === null || v === undefined || Number.isNaN(v)) return '—'
+  if (v === null || v === undefined || Number.isNaN(v)) return 'sem dado'
   return v.toLocaleString('pt-BR', { minimumFractionDigits: casas, maximumFractionDigits: casas }).replace('-', '−') + '%'
 }
 export function numero(v: number | null | undefined, casas = 1): string {
-  if (v === null || v === undefined) return '—'
+  if (v === null || v === undefined) return 'sem dado'
   return v.toLocaleString('pt-BR', { minimumFractionDigits: casas, maximumFractionDigits: casas }).replace('-', '−')
 }
-export const bilhoes = (v: number | null | undefined) => (v === null || v === undefined ? '—' : `R$ ${numero(v / 1e9, 1)} bi`)
+export const bilhoes = (v: number | null | undefined) => (v === null || v === undefined ? 'sem dado' : `R$ ${numero(v / 1e9, 1)} bi`)
 
 /** Situação do indicador frente aos limites (texto neutro, sem depender de cor). */
 export function situacao(l: Limites): { texto: string; folga: number | null; nivel: 'ok' | 'alerta' | 'prudencial' | 'acima' } {
