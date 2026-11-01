@@ -111,7 +111,7 @@ export function degrauHaveres(): { de: number; para: number; em: PeriodoLrf } | 
  * ---------------------------------------------------------------------------------------------- */
 
 export type Familia = 'lrf' | 'capag'
-export type PontoIndicador = { ano: number; sub: number; rotulo: string; extenso: string; valor: number | null }
+export type PontoIndicador = { ano: number; sub: number; rotulo: string; extenso: string; valor: number | null; nota?: string | null }
 export type ReferenciaIndicador = { rotulo: string; valor: number; estilo: 'limite' | 'alerta' | 'prudencial' }
 export type Indicador = {
   id: string
@@ -133,19 +133,22 @@ export const FAMILIAS: Record<Familia, { id: Familia; nome: string; descricao: s
   capag: { id: 'capag', nome: 'CAPAG', descricao: 'Capacidade de pagamento, uma edição por ano', padrao: ['endividamento'] },
 }
 
-const CAPAG_DEF: { id: 'endividamento' | 'poupanca' | 'liquidez'; nome: string; oQue: string }[] = [
+const CAPAG_DEF: { id: 'endividamento' | 'poupanca' | 'liquidez'; nota: 'notaEndividamento' | 'notaPoupanca' | 'notaLiquidez'; nome: string; oQue: string }[] = [
   {
     id: 'endividamento',
+    nota: 'notaEndividamento',
     nome: 'Endividamento (CAPAG)',
     oQue: 'Peso da dívida consolidada em relação à receita corrente líquida. Mede o quanto do orçamento anual está comprometido com a dívida acumulada.',
   },
   {
     id: 'poupanca',
+    nota: 'notaPoupanca',
     nome: 'Poupança corrente (CAPAG)',
     oQue: 'Parcela da receita corrente que é consumida pela despesa corrente. Quanto menor, mais sobra para investir e amortizar dívida.',
   },
   {
     id: 'liquidez',
+    nota: 'notaLiquidez',
     nome: 'Liquidez (CAPAG)',
     oQue: 'Relação entre as obrigações financeiras e a disponibilidade de caixa. Mede se o caixa cobre o que vence no curto prazo.',
   },
@@ -190,7 +193,7 @@ export function catalogoIndicadores(): Indicador[] {
     base: 'Portaria do Tesouro Nacional sobre a CAPAG',
     fonte: 'Tesouro Transparente, CAPAG dos Estados e do DF',
     periodicidade: 'anual',
-    pontos: serieCapag.map((e) => ({ ano: e.ano, sub: 1, rotulo: String(e.ano), extenso: `Edição ${e.ano}`, valor: e[d.id] })),
+    pontos: serieCapag.map((e) => ({ ano: e.ano, sub: 1, rotulo: String(e.ano), extenso: `Edição ${e.ano}`, valor: e[d.id], nota: e[d.nota] })),
     referencias: [],
   }))
   return [...lrf, ...capag]
@@ -198,3 +201,6 @@ export function catalogoIndicadores(): Indicador[] {
 
 /** Texto curto de situação, usado no resumo do explorador. */
 export const resumoValor = (v: number | null, casas = 2) => `${numero(v, casas)}%`
+
+/** Classificação geral da CAPAG por edição (A, A+, B...), mostrada ao lado das séries do grupo CAPAG. */
+export const classificacoesCapag: Record<number, string | null> = Object.fromEntries(serieCapag.map((e) => [e.ano, e.classificacao]))
