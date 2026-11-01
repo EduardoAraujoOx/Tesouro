@@ -113,14 +113,15 @@ export function ExploradorIndicadores({ indicadores, notas }: { indicadores: Ind
       <div className="order-2 space-y-6 lg:order-1 lg:col-span-4">
         <fieldset className={caixa}>
           <legend className="px-1 text-small font-semibold">1. Grupo de indicadores</legend>
-          <div className="mt-1 space-y-1">
+          <div className="mt-1 grid grid-cols-2 gap-2">
             {(Object.values(FAMILIAS)).map((f) => (
-              <label key={f.id} className="flex min-h-11 cursor-pointer items-start gap-3 rounded-md px-2 py-2 hover:bg-surface">
-                <input type="radio" name={`${uid}-grupo`} checked={familia === f.id} onChange={() => trocarFamilia(f.id)} className="mt-1 h-5 w-5 shrink-0 accent-[rgb(var(--navy))]" />
-                <span><span className="block text-body font-semibold">{f.nome}</span><span className="block text-small text-ink-soft">{f.descricao}</span></span>
-              </label>
+              <div key={f.id}>
+                <input id={`${uid}-g-${f.id}`} type="radio" name={`${uid}-grupo`} checked={familia === f.id} onChange={() => trocarFamilia(f.id)} className="peer sr-only" />
+                <label htmlFor={`${uid}-g-${f.id}`} className="flex min-h-11 cursor-pointer items-center justify-center rounded-brand border border-navy px-3 text-center text-body font-semibold text-navy hover:bg-surface peer-checked:bg-navy peer-checked:text-on-navy peer-focus-visible:outline peer-focus-visible:outline-[3px] peer-focus-visible:outline-offset-2 peer-focus-visible:outline-navy">{f.nome}</label>
+              </div>
             ))}
           </div>
+          <p className="mt-2 px-1 text-small text-ink-soft">{FAMILIAS[familia].descricao}.</p>
         </fieldset>
 
         <fieldset className={caixa}>
@@ -131,12 +132,9 @@ export function ExploradorIndicadores({ indicadores, notas }: { indicadores: Ind
               const bloqueado = !marcado && ids.length >= MAXIMO
               const k = ids.indexOf(i.id)
               return (
-                <label key={i.id} className={`flex min-h-11 items-start gap-3 rounded-md px-2 py-2 ${bloqueado ? 'cursor-not-allowed opacity-60' : 'cursor-pointer hover:bg-surface'}`}>
-                  <input type="checkbox" checked={marcado} disabled={bloqueado} onChange={() => alternar(i.id)} className="mt-1 h-5 w-5 shrink-0 accent-[rgb(var(--navy))]" />
-                  <span className="min-w-0">
-                    <span className="flex items-center gap-2 text-body font-medium">{i.curto}{marcado && k >= 0 && <AmostraSerie estilo={k} />}</span>
-                    <span className="block text-small text-ink-soft">{i.periodicidade === 'anual' ? 'Anual' : 'Quadrimestral'}</span>
-                  </span>
+                <label key={i.id} className={`flex min-h-11 items-center gap-3 rounded-md px-2 py-1.5 ${bloqueado ? 'cursor-not-allowed opacity-60' : 'cursor-pointer hover:bg-surface'}`}>
+                  <input type="checkbox" checked={marcado} disabled={bloqueado} onChange={() => alternar(i.id)} className="h-5 w-5 shrink-0 accent-[rgb(var(--navy))]" />
+                  <span className="flex min-h-6 min-w-0 items-center gap-2 text-body font-medium">{i.curto}{marcado && k >= 0 && <AmostraSerie estilo={k} />}</span>
                 </label>
               )
             })}

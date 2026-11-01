@@ -198,7 +198,7 @@ export default function Home() {
     <>
       <Hero />
       <NoticiasPrincipais />
-      <div className="mt-12 md:mt-16"><AcessoRapido /></div>
+      <div className="mt-10 md:mt-12"><AcessoRapido /></div>
       <PainelFiscal />
       <Destaques />
       <Orientacoes />

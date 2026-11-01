@@ -1,10 +1,11 @@
+import Link from 'next/link'
 import { INDICADORES_LRF, pct, rotuloPeriodo, situacao, type ChaveLrf, type PeriodoLrf } from '@/lib/indicadores'
 
 /**
  * Medidor de um limite da LRF. A barra vai de 0 ao limite legal; as marcas indicam alerta e limite prudencial.
  * Não depende de cor: valor, limite e situação aparecem em texto e na descrição do gráfico.
  */
-export function Medidor({ chave, periodo, nivel = 4 }: { chave: ChaveLrf; periodo: PeriodoLrf; nivel?: 3 | 4 }) {
+export function Medidor({ chave, periodo, nivel = 4, href }: { chave: ChaveLrf; periodo: PeriodoLrf; nivel?: 3 | 4; href?: string }) {
   const Titulo = nivel === 3 ? 'h3' : 'h4'
   const def = INDICADORES_LRF[chave]
   const d = periodo[chave]
@@ -35,6 +36,7 @@ export function Medidor({ chave, periodo, nivel = 4 }: { chave: ChaveLrf; period
         {s.folga !== null && d.valor !== null && d.valor >= 0 && <> · folga de {pct(s.folga).replace('%', '')} p.p. até o limite</>}
         {def.escala && <> · {def.escala}</>}
         <span className="sr-only"> ({rotuloPeriodo(periodo)})</span>
+        {href && <> · <Link href={href} className="font-semibold text-navy underline underline-offset-4">Ver série<span className="sr-only"> de {def.curto}</span></Link></>}
       </p>
     </div>
   )
