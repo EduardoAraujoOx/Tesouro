@@ -52,7 +52,7 @@ export function Header() {
         type="search"
         autoComplete="off"
         placeholder="Buscar publicações do Tesouro Estadual"
-        className="h-12 w-full rounded-brand border border-ink-soft/50 bg-paper pl-4 pr-12 text-[0.9375rem] text-ink placeholder:text-ink-soft focus-visible:outline-offset-0"
+        className="h-12 w-full rounded-brand border border-ink-soft/50 bg-paper pl-4 pr-12 text-body text-ink placeholder:text-ink-soft focus-visible:outline-offset-0"
       />
       <button type="submit" className="absolute right-1 top-1 inline-flex h-10 w-10 items-center justify-center rounded-md text-ink" aria-label="Buscar">
         <IconSearch className="h-5 w-5" />
@@ -109,7 +109,7 @@ export function Header() {
             <li ref={instRef} className="relative">
               <button
                 type="button"
-                className="group relative inline-flex h-12 items-center gap-1.5 text-[0.9375rem] font-medium text-ink"
+                className="group relative inline-flex h-12 items-center gap-1.5 text-body font-medium text-ink"
                 aria-expanded={instAberto}
                 aria-haspopup="true"
                 onClick={() => setInstAberto((v) => !v)}
@@ -121,7 +121,7 @@ export function Header() {
                 <ul className="absolute left-0 top-full z-30 mt-px w-80 rounded-b-brand border border-line bg-paper py-2 shadow-lg">
                   {institucional.map((l) => (
                     <li key={l.href}>
-                      <ItemLink l={l} className="block px-5 py-2.5 text-[0.9375rem] text-ink hover:bg-surface" onClick={() => setInstAberto(false)} />
+                      <ItemLink l={l} className="block px-5 py-2.5 text-body text-ink hover:bg-surface" onClick={() => setInstAberto(false)} />
                     </li>
                   ))}
                 </ul>
@@ -134,7 +134,7 @@ export function Header() {
                   <Link
                     href={l.href}
                     aria-current={ativo ? 'page' : undefined}
-                    className="group relative inline-flex h-12 items-center text-[0.9375rem] font-medium text-ink"
+                    className="group relative inline-flex h-12 items-center text-body font-medium text-ink"
                   >
                     {l.rotulo}
                     <span className={`accent-bar absolute -bottom-px left-0 mt-0 w-full transition-opacity group-hover:opacity-100 ${ativo ? 'opacity-100' : 'opacity-0'}`} style={{ height: 3 }} />
@@ -151,16 +151,16 @@ export function Header() {
         <nav id={idMenu} aria-label="Menu principal" className="border-t border-line bg-paper lg:hidden">
           <ul className="mx-auto max-w-page px-5 py-2">
             <li className="border-b border-line py-2">
-              <p className="py-1 text-xs font-semibold uppercase tracking-wider text-ink-soft">Institucional</p>
+              <p className="py-1 text-label font-semibold uppercase text-ink-soft">Institucional</p>
               <ul>
                 {institucional.map((l) => (
-                  <li key={l.href}><ItemLink l={l} className="block py-2.5 text-base text-ink" onClick={() => setMenuAberto(false)} /></li>
+                  <li key={l.href}><ItemLink l={l} className="block py-2.5 text-body text-ink" onClick={() => setMenuAberto(false)} /></li>
                 ))}
               </ul>
             </li>
             {menuPrincipal.map((l) => (
               <li key={l.rotulo} className="border-b border-line last:border-0">
-                <Link href={l.href} className="block py-3 text-base font-medium text-ink" onClick={() => setMenuAberto(false)}>{l.rotulo}</Link>
+                <Link href={l.href} className="block py-3 text-body font-medium text-ink" onClick={() => setMenuAberto(false)}>{l.rotulo}</Link>
               </li>
             ))}
           </ul>

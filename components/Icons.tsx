@@ -52,8 +52,7 @@ export const IconCalc = (p: P) => (
 )
 export const IconPdf = (p: P) => (
   <svg {...base} viewBox="0 0 24 28" width={28} height={32} {...p}>
-    <path d="M15 2H5a1 1 0 0 0-1 1v22a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1V8z" /><path d="M15 2v6h5" />
-    <text x="12" y="19" textAnchor="middle" fontSize="6.5" fontWeight="700" fill="currentColor" stroke="none" fontFamily="Inter Variable, system-ui, sans-serif">PDF</text>
+    <path d="M15 2H5a1 1 0 0 0-1 1v22a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1V8z" /><path d="M15 2v6h5M8 14h8M8 18h8M8 22h5" />
   </svg>
 )
 export const IconPin = (p: P) => (

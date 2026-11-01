@@ -22,8 +22,8 @@ export default function Noticias() {
             <li key={n.href}>
               <article className="group relative">
                 <NoticiaImagem n={n} sizes="(min-width: 1024px) 30vw, (min-width: 640px) 45vw, 100vw" prioridade={i < 3} className="aspect-[16/10] rounded-brand" />
-                <p className="mt-4 text-sm text-ink-soft"><time dateTime={n.data}>{formatarData(n.data)}</time></p>
-                <h2 className="mt-1 !font-sans text-[1.1875rem] font-semibold leading-snug !text-ink">
+                <p className="mt-4 text-small text-ink-soft"><time dateTime={n.data}>{formatarData(n.data)}</time></p>
+                <h2 className="mt-1 text-title !text-ink">
                   <a href={n.href} target="_blank" rel="noopener noreferrer" className="underline-offset-4 after:absolute after:inset-0 after:content-[''] group-hover:underline">
                     {n.titulo}<span className="sr-only"> (abre em nova aba)</span>
                   </a>
@@ -33,7 +33,7 @@ export default function Noticias() {
             </li>
           ))}
         </ul>
-        <p className="mt-12 border-t border-line pt-4 text-sm text-ink-soft">
+        <p className="mt-12 border-t border-line pt-4 text-small text-ink-soft">
           Seleção das notícias do Tesouro Estadual publicadas no site da SEFAZ.{' '}
           <a href={fonteNoticias} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 font-medium text-navy underline underline-offset-4">
             Todas as notícias da SEFAZ <IconExternal className="h-3.5 w-3.5" /><span className="sr-only">(abre em nova aba)</span>

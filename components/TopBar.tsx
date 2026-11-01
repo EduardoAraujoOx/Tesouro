@@ -42,11 +42,11 @@ export function TopBar() {
   }
 
   const btn =
-    'inline-flex h-9 min-w-9 items-center justify-center rounded px-2 text-sm font-semibold text-on-navy hover:bg-white/15 focus-visible:outline-white'
+    'inline-flex h-9 min-w-9 items-center justify-center rounded px-2 text-small font-semibold text-on-navy hover:bg-white/15 focus-visible:outline-white'
 
   return (
     <div role="region" aria-label="Governo do Estado do Espírito Santo" className="on-dark bg-navy-deep text-on-navy">
-      <div className="mx-auto flex min-h-11 max-w-page items-center justify-center gap-4 px-5 text-[0.8125rem] md:justify-between md:px-8">
+      <div className="mx-auto flex min-h-11 max-w-page items-center justify-center gap-4 px-5 text-small md:justify-between md:px-8">
         <p className="flex flex-wrap items-center justify-center gap-x-3 py-2">
           <span>Governo do Estado do Espírito Santo</span>
           <span aria-hidden="true" className="hidden h-4 w-px bg-current opacity-60 sm:block" />

@@ -42,7 +42,7 @@
 
 html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; }
 body { @apply bg-paper font-sans text-ink antialiased; font-size: 1rem; line-height: 1.6; }
-h1, h2, h3 { @apply font-serif text-navy; font-optical-sizing: auto; }
+h1, h2, h3 { @apply font-serif font-semibold text-navy; font-optical-sizing: auto; }
 
 :focus-visible { outline: 3px solid rgb(var(--navy)); outline-offset: 3px; border-radius: 4px; }
 :root[data-contrast='alto'] :focus-visible { outline-color: #fff; }
@@ -82,9 +82,9 @@ h1, h2, h3 { @apply font-serif text-navy; font-optical-sizing: auto; }
 }
 
 /* Texto corrido vindo das páginas da SEFAZ (HTML saneado pelo rastreador). */
-.prose-tesouro { @apply text-[1.0625rem] leading-relaxed text-ink; overflow-wrap: anywhere; }
+.prose-tesouro { @apply text-lead text-ink; overflow-wrap: anywhere; }
 .prose-tesouro > * + * { @apply mt-4; }
-.prose-tesouro p strong:only-child { @apply font-serif text-xl text-navy; }
+.prose-tesouro p strong:only-child { @apply font-serif text-title font-semibold text-navy; }
 .prose-tesouro ul, .prose-tesouro ol { @apply space-y-1.5 pl-6; }
 .prose-tesouro ul { list-style: disc; }
 .prose-tesouro ol { list-style: decimal; }

@@ -55,6 +55,14 @@ npm run dev           # http://localhost:3000
 npm run build && npm start
 ```
 
+## Tipografia
+
+Duas famílias, com papéis fixos: **Source Serif 4** (voz editorial: hero, títulos de seção, manchetes de notícias,
+números dos reconhecimentos; sempre peso 600) e **Inter** (informação e interface: navegação, documentos, textos,
+rótulos; pesos 400, 500 e 600). Os tamanhos são 8 degraus nomeados em `tailwind.config.ts` (`text-label` 12,
+`text-small` 14, `text-body` 16, `text-lead` 18, `text-title` 20, `text-section` 28, `text-headline` 32 e
+`text-display` 44, os dois últimos fluidos, mais `text-numeral`). Não use tamanhos soltos (`text-[…]`) nem `font-bold` em títulos.
+
 ## Identidade visual e acessibilidade
 
 Tokens em `tailwind.config.ts` / `app/globals.css` (azul-marinho `#082B57`; azul-claro `#39B5E8` e rosa `#F28AB2`

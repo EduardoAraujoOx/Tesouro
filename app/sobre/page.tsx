@@ -33,20 +33,20 @@ export default function Sobre() {
       Reúne hoje {todas.length} documentos de {paginas.length} áreas do site da SEFAZ, onde os arquivos permanecem hospedados.
     </PageHeader>
     <div className="mx-auto max-w-4xl px-5 py-10 md:px-8 md:py-14">
-      <h2 className="mt-2 text-2xl font-bold">Onde encontrar cada informação</h2>
+      <h2 className="mt-2 text-section">Onde encontrar cada informação</h2>
       <span className="accent-bar" aria-hidden="true" />
       <ul className="mt-4 border-t border-line">
         {mapa.map(([titulo, texto, href]) => (
           <li key={titulo} className="border-b border-line">
             <Link href={href} className="block py-4 hover:bg-surface md:px-2">
               <span className="font-semibold text-ink">{titulo}</span>
-              <span className="mt-0.5 block text-[0.9375rem] text-ink-soft">{texto}</span>
+              <span className="mt-0.5 block text-body text-ink-soft">{texto}</span>
             </Link>
           </li>
         ))}
       </ul>
 
-      <p className="mt-10 text-sm text-ink-soft">
+      <p className="mt-10 text-small text-ink-soft">
         Foto do cabeçalho: Vitor Jubini/MTur, domínio público (<Link href="/creditos" className="underline underline-offset-4">créditos</Link>). Índice atualizado em {new Date(geradoEm).toLocaleDateString('pt-BR', { timeZone: 'America/Sao_Paulo' })}.
       </p>
     </div>
