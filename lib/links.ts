@@ -9,22 +9,42 @@ const DIVIDA = 'relatorio-anual-da-divida-publica-e-do-progarma-de-ajuste-fiscal
 
 export type Link = { rotulo: string; href: string; externo?: boolean }
 
-export const institucional: Link[] = [
-  { rotulo: 'Conheça o Tesouro Estadual', href: '/sobre' },
-  { rotulo: 'Notícias', href: '/noticias' },
-  { rotulo: 'Legislação do Tesouro Estadual', href: T('demais-legislacoes-contabeis') },
-  { rotulo: 'Prestação de Contas do Governador', href: T('prestacao-de-contas-do-governador') },
-  { rotulo: 'Fundo Soberano – FUNSES', href: T('funses') },
-  { rotulo: 'Programa de Ajuste Fiscal – PAF', href: T(PAF) },
-]
+export type ItemMenu = { rotulo: string; href?: string; filhos?: Link[]; prefixos?: string[] }
 
-export const menuPrincipal: Link[] = [
-  { rotulo: 'Publicações', href: '/publicacoes' },
-  { rotulo: 'Contabilidade', href: '/publicacoes?tipo=normas-contabeis' },
-  { rotulo: 'Política Fiscal', href: '/indicadores' },
-  { rotulo: 'Dívida Pública', href: T(DIVIDA) },
-  { rotulo: 'Municípios', href: T('transferencias-constitucionais-aos-municipios') },
-  { rotulo: 'Fale Conosco', href: '#contato' },
+/**
+ * Menu principal: seis itens, cada um responde a uma pergunta diferente (sem sobreposição):
+ * o que há de novo (Notícias), como está o Estado (Painel fiscal), onde estão os documentos (Publicações, por assunto),
+ * o que preciso para trabalhar (Serviços), quem somos (Institucional) e como falar com o Tesouro (Fale conosco).
+ */
+export const menu: ItemMenu[] = [
+  { rotulo: 'Notícias', href: '/noticias', prefixos: ['/noticias'] },
+  { rotulo: 'Painel fiscal', href: '/indicadores', prefixos: ['/indicadores'] },
+  {
+    rotulo: 'Publicações',
+    prefixos: ['/publicacoes', '/tesouro/'],
+    filhos: [
+      { rotulo: 'Relatórios fiscais (RREO e RGF)', href: '/publicacoes?tipo=lrf' },
+      { rotulo: 'Resultado do Tesouro Estadual', href: T('resultado-do-tesouro-estadual') },
+      { rotulo: 'Dívida pública', href: T(DIVIDA) },
+      { rotulo: 'Programa de Ajuste Fiscal (PAF)', href: T(PAF) },
+      { rotulo: 'Prestação de Contas do Governador', href: T('prestacao-de-contas-do-governador') },
+      { rotulo: 'Transferências aos municípios', href: T('transferencias-constitucionais-aos-municipios') },
+      { rotulo: 'Contabilidade aplicada', href: '/publicacoes?tipo=normas-contabeis' },
+      { rotulo: 'Tesouro Cidadão', href: '/publicacoes?tipo=cidadao' },
+      { rotulo: 'Todas as publicações', href: '/publicacoes' },
+    ],
+  },
+  { rotulo: 'Serviços', href: '/servicos', prefixos: ['/servicos'] },
+  {
+    rotulo: 'Institucional',
+    prefixos: ['/sobre', '/creditos'],
+    filhos: [
+      { rotulo: 'Conheça o Tesouro Estadual', href: '/sobre' },
+      { rotulo: 'Legislação do Tesouro Estadual', href: T('demais-legislacoes-contabeis') },
+      { rotulo: 'Fundo Soberano – FUNSES', href: T('funses') },
+    ],
+  },
+  { rotulo: 'Fale conosco', href: '#contato' },
 ]
 
 // `curto` é o rótulo usado no celular, como no mockup mobile.

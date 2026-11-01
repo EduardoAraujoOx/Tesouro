@@ -7,7 +7,7 @@ import { acessoRapido, orientacoes } from '@/lib/links'
 import { NoticiaImagem } from '@/components/NoticiaImagem'
 import { PainelFiscal } from '@/components/PainelFiscal'
 import { paraHome, type Noticia } from '@/lib/noticias'
-import { formatarData, maisRecente, ultimasAtualizacoes } from '@/lib/acervo'
+import { formatarData, maisRecente } from '@/lib/acervo'
 
 const btnPrimario =
   'group inline-flex min-h-12 items-center justify-center gap-3 rounded-brand bg-navy px-6 text-body font-semibold text-on-navy transition hover:bg-navy-deep'
@@ -186,7 +186,7 @@ function ItemLateral({ n }: { n: Noticia }) {
 }
 
 function NoticiasPrincipais() {
-  const { capa: lead, laterais: lateral } = paraHome()
+  const { capa: lead, laterais: lateral, grade } = paraHome()
   if (!lead) return null
   return (
     <section aria-labelledby="noticias" className="mx-auto max-w-page px-5 pt-8 md:px-8 md:pt-10">
@@ -207,60 +207,26 @@ function NoticiasPrincipais() {
           {lateral.map((n) => <ItemLateral key={n.href} n={n} />)}
         </div>
       </div>
+      {grade.length > 0 && (
+        <ul className="mt-12 grid gap-x-8 gap-y-10 border-t border-line pt-10 sm:grid-cols-3">
+          {grade.map((n) => <li key={n.href}><CartaoNoticia n={n} /></li>)}
+        </ul>
+      )}
     </section>
   )
 }
 
-function MaisNoticias() {
-  const lista = paraHome().grade
-  if (lista.length === 0) return null
+function CartaoNoticia({ n }: { n: Noticia }) {
   return (
-    <section aria-labelledby="mais-noticias" className="mx-auto mt-14 max-w-page px-5 md:mt-20 md:px-8">
-      <SectionTitle
-        id="mais-noticias"
-        action={
-          <Link href="/noticias" className="inline-flex min-h-11 shrink-0 items-center gap-2 whitespace-nowrap text-small font-semibold text-navy underline-offset-4 hover:underline">
-            <span>Todas as notícias</span> <IconArrow className="h-[18px] w-[18px]" />
-          </Link>
-        }
-      >
-        Mais notícias
-      </SectionTitle>
-      <ul className="mt-6 grid gap-x-8 gap-y-10 sm:grid-cols-2 lg:grid-cols-3">
-        {lista.map((n) => (
-          <li key={n.href}>
-            <article className="group relative">
-              <NoticiaImagem n={n} sizes="(min-width: 1024px) 28vw, (min-width: 640px) 45vw, 100vw" className="aspect-[16/10] rounded-brand" />
-              <p className="mt-4 text-small text-ink-soft"><time dateTime={n.data}>{fmtData(n.data)}</time></p>
-              <h3 className="mt-1 text-title !text-ink">
-                <a href={n.href} target="_blank" rel="noopener noreferrer" className="line-clamp-3 underline-offset-4 after:absolute after:inset-0 after:content-[''] group-hover:underline">
-                  {n.titulo}<span className="sr-only"> (abre em nova aba)</span>
-                </a>
-              </h3>
-            </article>
-          </li>
-        ))}
-      </ul>
-    </section>
-  )
-}
-
-function UltimasAtualizacoes() {
-  const ult = ultimasAtualizacoes(3)
-  return (
-    <section aria-labelledby="atualizacoes" className="mx-auto mt-14 max-w-page px-5 md:px-8">
-      <h3 id="atualizacoes" className="!font-sans text-lead font-semibold !text-ink">Últimas atualizações do acervo</h3>
-      <ul className="mt-3 grid gap-x-10 gap-y-4 border-t border-line pt-4 md:grid-cols-3">
-        {ult.map((p) => (
-          <li key={p.id}>
-            <p className="text-small text-ink-soft">{formatarData(p.atualizadoEm)}{p.tamanho ? ` · ${p.formato.toUpperCase()} · ${p.tamanho}` : ''}</p>
-            <a href={p.url} target="_blank" rel="noopener noreferrer" className="font-medium text-ink underline-offset-4 hover:underline">
-              {p.titulo}<span className="sr-only"> (abre em nova aba)</span>
-            </a>
-          </li>
-        ))}
-      </ul>
-    </section>
+    <article className="group relative">
+      <NoticiaImagem n={n} sizes="(min-width: 1024px) 28vw, (min-width: 640px) 30vw, 100vw" className="aspect-[16/10] rounded-brand" />
+      <p className="mt-4 text-small text-ink-soft"><time dateTime={n.data}>{fmtData(n.data)}</time></p>
+      <h3 className="mt-1 text-title !text-ink">
+        <a href={n.href} target="_blank" rel="noopener noreferrer" className="line-clamp-3 underline-offset-4 after:absolute after:inset-0 after:content-[''] group-hover:underline">
+          {n.titulo}<span className="sr-only"> (abre em nova aba)</span>
+        </a>
+      </h3>
+    </article>
   )
 }
 
@@ -307,9 +273,7 @@ export default function Home() {
       <NoticiasPrincipais />
       <div className="mt-12 md:mt-16"><AcessoRapido /></div>
       <PainelFiscal />
-      <MaisNoticias />
       <Destaques />
-      <UltimasAtualizacoes />
       <Orientacoes />
     </>
   )

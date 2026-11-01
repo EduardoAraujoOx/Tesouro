@@ -58,6 +58,10 @@ npm run dev           # http://localhost:3000
 npm run build && npm start
 ```
 
+## Navegação e página inicial
+
+O menu tem seis itens, cada um para uma pergunta diferente: Notícias (o que há de novo), Painel fiscal (como está o Estado), Publicações (onde estão os documentos, agrupados por assunto), Serviços (o que preciso para trabalhar), Institucional (quem somos) e Fale conosco. A definição está em `lib/links.ts` (`menu`). Assuntos como Dívida, Contabilidade e Municípios ficam dentro de Publicações, e não ao lado dela. A página inicial tem um único bloco de notícias (capa, três recentes e três em linha); a lista completa fica em `/noticias`.
+
 ## Tipografia
 
 Duas famílias, com papéis fixos: **Source Serif 4** (voz editorial: hero, títulos de seção, manchetes de notícias,
