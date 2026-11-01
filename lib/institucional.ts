@@ -6,48 +6,77 @@ export const FONTE_MAPA = 'https://sefaz.es.gov.br/identidade-institucional'
 export const FONTE_HISTORIA = 'https://sefaz.es.gov.br/historia-institucional'
 export const FONTE_ORGANOGRAMA = 'https://organograma.es.gov.br'
 
-/** Definição do Tesouro Estadual, a partir das competências fixadas na Lei nº 12.379/2025 e no Decreto nº 6.005-R/2025. */
-export const definicao =
-  'O Tesouro Estadual é responsável pela administração financeira e pela contabilidade geral do Governo do Espírito Santo. Gerencia a Conta Única e a programação financeira, coordena a prestação de contas anual do Governador, administra a dívida pública e acompanha a política fiscal, gerencia os fundos públicos a ele vinculados e publica os demonstrativos que expõem a situação fiscal do Estado.'
+/** Texto institucional do Tesouro Estadual (Subsecretaria do Tesouro Estadual, SUBSET). */
+export const chamada = 'Gestão responsável das finanças públicas para o presente e o futuro do Espírito Santo.'
+export const resumo =
+  'O Tesouro Estadual atua para preservar o equilíbrio das contas públicas, assegurar uma gestão financeira responsável e produzir informações que apoiem as decisões do Governo do Estado.'
+
+export const quemSomos = [
+  'A Subsecretaria do Tesouro Estadual (SUBSET) integra a Secretaria da Fazenda do Espírito Santo e exerce funções centrais na administração financeira e contábil do Estado.',
+  'Sua atuação envolve o planejamento e o acompanhamento dos recursos financeiros, a gestão das disponibilidades de caixa, o monitoramento da dívida pública, a produção de informações fiscais e contábeis e o apoio técnico aos órgãos estaduais.',
+  'Mais do que acompanhar receitas e despesas, o Tesouro contribui para antecipar riscos, preservar a sustentabilidade das contas públicas e aperfeiçoar a gestão dos recursos públicos.',
+]
 
 export const funcoes = [
   {
-    titulo: 'Administração financeira',
-    sigla: 'GEFIN',
-    texto: 'Gerencia a Conta Única do Tesouro Estadual, programa e libera os recursos às unidades gestoras e acompanha as ordens bancárias e os repasses aos demais Poderes.',
+    titulo: 'Gestão financeira e de caixa',
+    texto: 'Planejamos e acompanhamos os fluxos financeiros do Estado, buscando compatibilizar a disponibilidade de recursos com os compromissos assumidos pelo poder público.',
     href: '/tesouro/execucao-financeira-tesouro',
   },
   {
-    titulo: 'Contabilidade geral e prestação de contas',
-    sigla: 'GECOG',
-    texto: 'Edita as normas contábeis, mantém o plano de contas, orienta o uso do SIGEFES, consolida as demonstrações do Estado e coordena a prestação de contas anual do Governador.',
-    href: '/tesouro/prestacao-de-contas-do-governador',
-  },
-  {
-    titulo: 'Dívida pública e política fiscal',
-    sigla: 'GEPOF',
-    texto: 'Controla a dívida contratual do Poder Executivo, conduz o Programa de Reestruturação e Ajuste Fiscal junto à União, analisa a capacidade de pagamento e acompanha as metas fiscais.',
+    titulo: 'Política fiscal e dívida pública',
+    texto: 'Monitoramos indicadores fiscais, endividamento e riscos para subsidiar decisões que preservem o equilíbrio das contas estaduais.',
     href: '/tesouro/relatorio-anual-da-divida-publica-e-do-progarma-de-ajuste-fiscal',
   },
   {
-    titulo: 'Fundos públicos',
-    sigla: 'GEFAP',
-    texto: 'Gerencia as atividades financeiras, contábeis e orçamentárias dos fundos vinculados ao Tesouro, como o Fundo Soberano, e acompanha a análise de parcerias público-privadas e concessões.',
-    href: '/tesouro/funses',
+    titulo: 'Contabilidade e prestação de contas',
+    texto: 'Produzimos e consolidamos informações contábeis, orientamos os órgãos públicos e contribuímos para a transparência e a confiabilidade das contas do Estado.',
+    href: '/tesouro/prestacao-de-contas-do-governador',
   },
   {
-    titulo: 'Encargos gerais e regularidade fiscal',
-    sigla: 'GEREF',
-    texto: 'Trata de precatórios e sentenças judiciais, restituições de tributos e participações societárias, confere os repasses aos municípios e mantém a regularidade fiscal do Estado perante a União.',
+    titulo: 'Transferências e regularidade fiscal',
+    texto: 'Atuamos na gestão financeira das transferências legais e constitucionais e no acompanhamento das obrigações e da regularidade fiscal do Estado.',
     href: '/tesouro/transferencias-constitucionais-aos-municipios',
   },
   {
-    titulo: 'Transparência fiscal',
-    sigla: 'SUBSET',
-    texto: 'Publica os demonstrativos exigidos pela Lei de Responsabilidade Fiscal, as versões em linguagem cidadã e os indicadores do painel fiscal.',
-    href: '/cidadao',
+    titulo: 'Fundos e recursos financeiros',
+    texto: 'Acompanhamos a gestão de fundos sob nossa responsabilidade e das disponibilidades financeiras do Estado, observando segurança, liquidez e responsabilidade na aplicação dos recursos.',
+    href: '/tesouro/funses',
+  },
+  {
+    titulo: 'Inteligência fiscal e eficiência do gasto',
+    texto: 'Desenvolvemos estudos, projeções e informações gerenciais para apoiar decisões e contribuir para a melhoria da gestão financeira e da qualidade do gasto público.',
+    href: '/indicadores',
   },
 ] as const
+
+export const porQueImporta = [
+  'Uma gestão financeira responsável permite que o Estado cumpra seus compromissos, enfrente períodos de incerteza e preserve sua capacidade de realizar investimentos.',
+  'O Tesouro não executa diretamente as políticas de saúde, educação ou segurança pública. Sua contribuição está em ajudar a criar as condições financeiras para que essas e outras políticas possam ser realizadas de forma sustentável.',
+  'É uma atuação que nem sempre aparece para o cidadão, mas que participa do funcionamento cotidiano dos serviços públicos.',
+]
+
+export const futuro = [
+  'O Espírito Santo enfrenta novos desafios, entre eles as mudanças decorrentes da reforma tributária, as transformações econômicas e a necessidade de preservar a capacidade de investimento do Estado.',
+  'Nesse contexto, o Tesouro contribui com projeções fiscais, acompanhamento dos fluxos financeiros, análise de riscos e adaptação dos procedimentos contábeis, em articulação com as demais áreas da Secretaria da Fazenda.',
+]
+
+export const transparencia = {
+  texto: [
+    'Conhecer a situação das contas públicas é fundamental para acompanhar a gestão do Estado.',
+    'Neste portal, cidadãos, pesquisadores e gestores encontram indicadores fiscais, demonstrativos contábeis, informações sobre a dívida pública, transferências aos municípios e publicações técnicas.',
+  ],
+  links: [
+    { rotulo: 'Painel fiscal', href: '/indicadores' },
+    { rotulo: 'Relatórios e publicações', href: '/publicacoes' },
+    { rotulo: 'Dívida pública', href: '/tesouro/relatorio-anual-da-divida-publica-e-do-progarma-de-ajuste-fiscal' },
+    { rotulo: 'Prestação de contas', href: '/tesouro/prestacao-de-contas-do-governador' },
+    { rotulo: 'Tesouro Cidadão', href: '/cidadao' },
+  ],
+}
+
+export const estrutura =
+  'A Subsecretaria do Tesouro Estadual é formada por equipes técnicas especializadas em administração financeira, política fiscal, dívida pública, contabilidade, encargos gerais, fundos e avaliação econômico-financeira.'
 
 export const missao = 'Prover recursos e realizar a Gestão Fiscal do Estado do Espírito Santo, de forma a viabilizar o Desenvolvimento Econômico e Social.'
 export const visao = 'Ser reconhecida por promover o equilíbrio das contas públicas e a excelência em Administração Tributária, garantindo a estabilidade do modelo tributário vigente e viabilizando as políticas públicas e o controle social.'
