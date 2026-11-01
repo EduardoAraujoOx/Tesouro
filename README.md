@@ -28,9 +28,11 @@ da verdade (evita versões desatualizadas de documentos fiscais e um repositóri
 | `/publicacoes` | Busca em todo o acervo, com filtro por tipo e por ano (`?tipo=` e `?q=` na URL) |
 | `/indicadores` | Painel fiscal: explorador de séries históricas (escolha de até 3 indicadores e do período, gráfico grande, tabela, CSV e link da escolha), situação atual dos limites da LRF, CAPAG e metodologia |
 | `/noticias`, `/noticias/[slug]` | Lista e página de cada notícia do Tesouro, com o texto completo (a fonte original é citada no fim) |
+| `/cidadao` | Tesouro Cidadão: números do Balanço Cidadão, perguntas e respostas ligadas aos dados do painel, documentos cidadãos, glossário e ferramentas do Tesouro Nacional |
+| `/sobre` | Conheça o Tesouro: missão, visão e valores (Mapa Estratégico da SEFAZ), estrutura da Subsecretaria com atalho para escrever a cada área, história e mapa do portal |
 | `/contato` | Fale conosco: formulário para a Subsecretaria, as gerências e as subgerências do Tesouro |
 | `/servicos` | "Finanças": serviços e orientações para órgãos, gestores e servidores |
-| `/sobre`, `/creditos` | Mapa do portal; créditos das imagens |
+| `/creditos` | Créditos das imagens |
 
 ## Atualizar o conteúdo
 
@@ -110,3 +112,7 @@ Para ativar o envio, defina na Vercel (Settings, Environment Variables):
 Sem essas variáveis o formulário mostra o aviso "Envio em implantação" e não entrega mensagens. Em desenvolvimento, `CONTATO_MODO_TESTE=1` valida e devolve o protocolo sem enviar nada.
 
 As áreas ficam em `lib/areas.ts`, montadas a partir do Lei nº 12.379/2025 e Decreto nº 6.005-R/2025 (Anexo III e competências). **A estrutura muda por decreto: a Subsecretaria deve validar a lista, revisar os assuntos de cada área e informar o e-mail de cada uma** (campo `email`; sem ele, vale `CONTATO_EMAIL_PADRAO`). Para uma proteção mais forte contra robôs, considere o Vercel BotID ou o Cloudflare Turnstile.
+
+## Conteúdo do Tesouro Nacional
+
+O conteúdo do portal gov.br/tesouronacional está sob licença Creative Commons Atribuição-SemDerivações: o portal **linka e descreve com palavras próprias**, sem copiar nem adaptar os textos deles. Os dados abertos (Siconfi, CAPAG) são reutilizados com citação da fonte. As respostas de `/cidadao` são texto institucional e devem ser revisadas pela Ascom.
