@@ -16,22 +16,19 @@ export function PainelFiscal() {
   const c = ultimaCapag
   const noticia = noticiaPorTrecho('excelencia-na-gestao-fiscal')
   return (
-    <section aria-labelledby="painel-fiscal" className="on-dark mt-14 bg-navy text-on-navy md:mt-20">
-      <div className="mx-auto max-w-page px-5 py-12 md:px-8 md:py-16">
+    <section aria-labelledby="painel-fiscal" className="on-dark mt-10 bg-navy text-on-navy md:mt-12">
+      <div className="mx-auto max-w-page px-5 py-10 md:px-8 md:py-12">
         <div className="flex flex-wrap items-end justify-between gap-x-8 gap-y-4">
           <div>
             <h2 id="painel-fiscal" className="max-w-2xl text-headline !text-on-navy">Painel fiscal</h2>
             <span className="accent-bar" aria-hidden="true" />
-            <p className="mt-4 max-w-2xl text-lead opacity-95">
-              Indicadores oficiais do Espírito Santo, do Siconfi e do Tesouro Nacional, com a fonte e o relatório de cada número.
-            </p>
           </div>
           <Link href="/indicadores" className="inline-flex min-h-11 items-center gap-2 text-body font-semibold underline underline-offset-4">
-            Ver séries históricas e metodologia <IconArrow className="h-5 w-5" />
+            Explorar séries históricas <IconArrow className="h-5 w-5" />
           </Link>
         </div>
 
-        <div className="mt-9 grid gap-6 lg:grid-cols-12">
+        <div className="mt-7 grid gap-6 lg:grid-cols-12">
           {/* Vitrine: CAPAG */}
           <article aria-labelledby="capag-titulo" className="rounded-brand bg-paper p-6 text-ink md:p-8 lg:col-span-5">
             <h3 id="capag-titulo" className="!font-sans text-label font-semibold uppercase !text-ink-soft">Capacidade de pagamento (CAPAG)</h3>
@@ -60,7 +57,10 @@ export function PainelFiscal() {
                   <Link href={hrefNoticia(noticia)} className="font-semibold text-navy underline underline-offset-4">Leia a notícia</Link>.</>
               )}
             </p>
-            <p className="mt-4 text-label font-semibold uppercase text-ink-soft">Histórico</p>
+            <p className="mt-4 flex flex-wrap items-baseline justify-between gap-x-4 text-label font-semibold uppercase text-ink-soft">
+              Histórico
+              <Link href="/indicadores?g=capag&i=endividamento,poupanca,liquidez" className="text-small font-semibold normal-case text-navy underline underline-offset-4">Ver a série dos indicadores</Link>
+            </p>
             <ol className="mt-2 flex flex-wrap gap-2" aria-label="Classificação da CAPAG por edição">
               {serieCapag.map((e) => (
                 <li key={e.ano} className="rounded-brand border border-line px-2.5 py-1 text-center">
@@ -80,7 +80,7 @@ export function PainelFiscal() {
               {ultimoLrf.entregaEm && <> · RGF entregue ao Siconfi em {formatarData(ultimoLrf.entregaEm)}</>}
             </p>
             <div className="mt-6 space-y-7">
-              {ORDEM_LRF.map((k) => <Medidor key={k} chave={k} periodo={ultimoLrf} />)}
+              {ORDEM_LRF.map((k) => <Medidor key={k} chave={k} periodo={ultimoLrf} href={`/indicadores?g=lrf&i=${k}`} />)}
             </div>
             <p className="mt-6 border-t border-line pt-4 text-small text-ink-soft">
               A barra vai de zero ao limite legal; as marcas indicam o limite de alerta (90%) e o prudencial (95%, na despesa com pessoal).
