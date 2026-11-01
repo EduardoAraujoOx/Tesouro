@@ -4,7 +4,8 @@ import { PublicationRow } from '@/components/PublicationRow'
 import { SectionTitle } from '@/components/SectionTitle'
 import { IconArrow, iconePorNome } from '@/components/Icons'
 import { acessoRapido, orientacoes } from '@/lib/links'
-import { noticias } from '@/lib/noticias'
+import { NoticiaImagem } from '@/components/NoticiaImagem'
+import { noticiaPorTrecho, paraHome, type Noticia } from '@/lib/noticias'
 import { formatarData, maisRecente, ultimasAtualizacoes } from '@/lib/acervo'
 
 const btnPrimario =
@@ -15,19 +16,19 @@ const btnSecundario =
 function Hero() {
   return (
     <section aria-labelledby="titulo-hero" className="relative isolate overflow-hidden bg-paper">
-      <div className="mx-auto max-w-page lg:grid lg:min-h-[34rem] lg:grid-cols-12 lg:items-center">
-        <div className="relative z-10 px-5 pb-8 pt-10 md:px-8 md:pt-16 lg:col-span-6 lg:py-24 lg:pb-32 xl:col-span-6">
-          <span className="accent-bar !mt-0 mb-6 !w-20" aria-hidden="true" />
+      <div className="mx-auto max-w-page lg:grid lg:min-h-[17.5rem] lg:grid-cols-12 lg:items-center">
+        <div className="relative z-10 px-5 pb-6 pt-8 md:px-8 md:pt-10 lg:col-span-6 lg:py-9">
+          <span className="accent-bar !mt-0 mb-4 !w-20" aria-hidden="true" />
           <h1
             id="titulo-hero"
-            className="text-[2.5rem] font-bold leading-[1.05] tracking-tight !text-ink sm:text-5xl lg:text-[3.25rem] xl:text-[3.75rem]"
+            className="text-[2.125rem] font-bold leading-[1.08] tracking-tight !text-ink sm:text-[2.5rem] lg:text-[2.5rem] xl:text-[2.875rem]"
           >
             Transparência e responsabilidade na gestão das finanças públicas
           </h1>
-          <p className="mt-6 max-w-md text-lg leading-relaxed text-ink-soft">
+          <p className="mt-3 max-w-md text-[1.0625rem] leading-relaxed text-ink-soft">
             Informações fiscais, contabilidade, dívida pública e publicações do Tesouro Estadual.
           </p>
-          <div className="mt-9 flex flex-col gap-3 sm:flex-row">
+          <div className="mt-5 flex flex-col gap-3 sm:flex-row">
             <Link href="/publicacoes" className={btnPrimario}>
               Acessar publicações <IconArrow className="h-5 w-5" />
             </Link>
@@ -37,14 +38,14 @@ function Hero() {
           </div>
         </div>
 
-        <div className="relative h-72 sm:h-96 lg:absolute lg:inset-y-0 lg:right-0 lg:h-auto lg:w-[62%]">
+        <div className="relative h-44 sm:h-60 lg:absolute lg:inset-y-0 lg:right-0 lg:h-auto lg:w-[62%]">
           <Image
             src="/img/hero-vitoria-dia.jpg"
             alt="Vista de Vitória com a Terceira Ponte cruzando a baía e o Convento da Penha ao fundo"
             fill
             priority
             sizes="(min-width: 1024px) 62vw, 100vw"
-            className="object-cover object-[68%_50%] [mask-image:linear-gradient(to_bottom,transparent,#000_30%)] lg:[mask-image:linear-gradient(to_right,transparent,#000_34%)]"
+            className="object-cover object-[68%_45%] [mask-image:linear-gradient(to_bottom,transparent,#000_30%)] lg:[mask-image:linear-gradient(to_right,transparent,#000_34%)]"
           />
         </div>
       </div>
@@ -135,35 +136,59 @@ function Destaques() {
   )
 }
 
-function FaixaNoticia() {
-  const n = noticias[0]
-  if (!n) return null
+const fmtData = (iso: string) => formatarData(iso)
+
+function Destaque({ n }: { n: Noticia }) {
   return (
-    <aside aria-label="Última notícia" className="border-b border-line bg-surface">
-      <div className="mx-auto flex max-w-page items-center gap-3 px-5 py-3 md:px-8">
-        <span className="shrink-0 rounded bg-navy px-2 py-0.5 text-xs font-bold uppercase tracking-wider text-on-navy">Notícia</span>
-        <time dateTime={n.data} className="hidden shrink-0 text-sm text-ink-soft sm:inline">{formatarData(n.data)}</time>
-        <a
-          href={n.href}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="relative min-w-0 flex-1 truncate text-[0.9375rem] font-semibold text-ink underline-offset-4 hover:underline"
-        >
-          {n.titulo}<span className="sr-only"> (abre em nova aba)</span>
-        </a>
-        <Link href="/noticias" className="hidden shrink-0 items-center gap-1.5 text-sm font-semibold text-navy underline-offset-4 hover:underline md:inline-flex">
-          Mais notícias <IconArrow className="h-4 w-4" />
-        </Link>
+    <article className="group relative">
+      <NoticiaImagem n={n} sizes="(min-width: 1024px) 56vw, 100vw" prioridade className="aspect-[16/10] rounded-brand" />
+      <div className="mt-5">
+        <p className="flex items-center gap-3 text-sm text-ink-soft">
+          <span className="rounded bg-navy px-2 py-0.5 text-xs font-bold uppercase tracking-wider text-on-navy">Em destaque</span>
+          <time dateTime={n.data}>{fmtData(n.data)}</time>
+        </p>
+        <h3 className="mt-3 text-[1.75rem] font-bold leading-[1.15] tracking-tight md:text-[2.125rem]">
+          <a
+            href={n.href}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="underline-offset-4 after:absolute after:inset-0 after:content-[''] group-hover:underline"
+          >
+            {n.titulo}<span className="sr-only"> (abre em nova aba)</span>
+          </a>
+        </h3>
+        {n.resumo && <p className="mt-3 line-clamp-3 text-[1.0625rem] leading-relaxed text-ink-soft">{n.resumo}</p>}
       </div>
-    </aside>
+    </article>
   )
 }
 
-function Noticias() {
-  const ult = ultimasAtualizacoes(3)
-  const duas = noticias.slice(1, 3)
+function ItemLateral({ n }: { n: Noticia }) {
   return (
-    <section aria-labelledby="noticias" className="mx-auto mt-14 max-w-page px-5 md:px-8">
+    <article className="group relative grid grid-cols-[7.5rem_1fr] gap-4 py-4 first:pt-0 sm:grid-cols-[9rem_1fr] lg:py-5">
+      <NoticiaImagem n={n} sizes="144px" className="aspect-[4/3] rounded-brand" />
+      <div className="min-w-0">
+        <p className="text-sm text-ink-soft"><time dateTime={n.data}>{fmtData(n.data)}</time></p>
+        <h3 className="mt-1 !font-sans text-[1.0625rem] font-semibold leading-snug !text-ink">
+          <a
+            href={n.href}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="line-clamp-4 underline-offset-4 after:absolute after:inset-0 after:content-[''] group-hover:underline"
+          >
+            {n.titulo}<span className="sr-only"> (abre em nova aba)</span>
+          </a>
+        </h3>
+      </div>
+    </article>
+  )
+}
+
+function NoticiasPrincipais() {
+  const { capa: lead, laterais: lateral } = paraHome()
+  if (!lead) return null
+  return (
+    <section aria-labelledby="noticias" className="mx-auto max-w-page px-5 pt-8 md:px-8 md:pt-10">
       <SectionTitle
         id="noticias"
         action={
@@ -172,24 +197,93 @@ function Noticias() {
           </Link>
         }
       >
-        Notícias e atualizações
+        Notícias
       </SectionTitle>
-
-      <div className="mt-5 grid gap-8 border-t border-line pt-5 md:grid-cols-2 md:gap-0">
-        {duas.map((n, i) => (
-          <article key={n.href} className={i === 0 ? 'md:pr-10' : 'md:border-l md:border-line md:pl-10'}>
-            <p className="text-sm text-ink-soft"><time dateTime={n.data}>{formatarData(n.data)}</time></p>
-            <h3 className="mt-1 !font-sans text-xl font-semibold leading-snug !text-ink">
-              <a href={n.href} target="_blank" rel="noopener noreferrer" className="underline-offset-4 hover:underline">
-                {n.titulo}<span className="sr-only"> (abre em nova aba)</span>
-              </a>
-            </h3>
-            {n.resumo && <p className="mt-2 line-clamp-3 text-ink-soft">{n.resumo}</p>}
-          </article>
-        ))}
+      <div className="mt-6 grid gap-8 lg:grid-cols-12 lg:gap-10">
+        <div className="lg:col-span-7"><Destaque n={lead} /></div>
+        <div className="divide-y divide-line border-t border-line pt-5 lg:col-span-5 lg:border-l lg:border-t-0 lg:pl-10 lg:pt-0">
+          <h3 className="pb-4 !font-sans text-sm font-semibold uppercase tracking-wider !text-ink-soft lg:pb-5">Mais recentes</h3>
+          {lateral.map((n) => <ItemLateral key={n.href} n={n} />)}
+        </div>
       </div>
+    </section>
+  )
+}
 
-      <h3 className="mt-10 !font-sans text-lg font-semibold !text-ink">Últimas atualizações do acervo</h3>
+/** Reconhecimentos citados nas notícias da SEFAZ; cada número leva à matéria de origem. */
+function Reconhecimentos() {
+  const stn = noticiaPorTrecho('excelencia-na-gestao-fiscal')
+  const qualidade = noticiaPorTrecho('nota-a-em-ranking-nacional-de-qualidade')
+  const itens = [
+    { valor: 'A+', rotulo: 'Nota máxima da STN', texto: 'Pelo terceiro ano consecutivo, a melhor classificação do Tesouro Nacional.', n: stn },
+    { valor: '1º', rotulo: 'Solidez Fiscal', texto: 'Primeiro lugar no Ranking de Competitividade dos Estados, do Centro de Liderança Pública.', n: stn },
+    { valor: 'A', rotulo: 'Informação contábil e fiscal', texto: 'Nota A no ranking nacional de qualidade da informação contábil e fiscal, pelo 4º ano consecutivo.', n: qualidade },
+  ]
+  return (
+    <section aria-labelledby="reconhecimentos" className="on-dark mt-14 bg-navy text-on-navy md:mt-20">
+      <div className="mx-auto max-w-page px-5 py-12 md:px-8 md:py-16">
+        <h2 id="reconhecimentos" className="max-w-2xl text-[1.75rem] font-bold leading-tight md:text-[2.125rem] !text-on-navy">
+          Uma gestão fiscal reconhecida nacionalmente
+        </h2>
+        <span className="accent-bar" aria-hidden="true" />
+        <ul className="mt-9 grid gap-8 md:grid-cols-3 md:gap-0">
+          {itens.map((it, i) => (
+            <li key={it.valor + it.rotulo} className={`md:px-8 ${i === 0 ? 'md:pl-0' : 'md:border-l md:border-white/25'}`}>
+              <p className="font-serif text-[4.5rem] font-bold leading-none md:text-[5.5rem]" aria-label={it.valor === 'A+' ? 'Nota A mais' : it.valor === '1º' ? 'Primeiro lugar' : 'Nota A'}>{it.valor}</p>
+              <p className="mt-3 text-lg font-semibold">{it.rotulo}</p>
+              <p className="mt-1 text-[0.9375rem] leading-snug opacity-90">{it.texto}</p>
+              {it.n && (
+                <a href={it.n.href} target="_blank" rel="noopener noreferrer" className="mt-3 inline-flex min-h-11 items-center gap-2 text-sm font-semibold underline underline-offset-4">
+                  Leia a notícia <IconArrow className="h-4 w-4" /><span className="sr-only">(abre em nova aba)</span>
+                </a>
+              )}
+            </li>
+          ))}
+        </ul>
+      </div>
+    </section>
+  )
+}
+
+function MaisNoticias() {
+  const lista = paraHome().grade
+  if (lista.length === 0) return null
+  return (
+    <section aria-labelledby="mais-noticias" className="mx-auto mt-14 max-w-page px-5 md:mt-20 md:px-8">
+      <SectionTitle
+        id="mais-noticias"
+        action={
+          <Link href="/noticias" className="inline-flex min-h-11 shrink-0 items-center gap-2 whitespace-nowrap text-sm font-semibold text-navy underline-offset-4 hover:underline">
+            <span>Todas as notícias</span> <IconArrow className="h-[18px] w-[18px]" />
+          </Link>
+        }
+      >
+        Mais notícias
+      </SectionTitle>
+      <ul className="mt-6 grid gap-x-8 gap-y-10 sm:grid-cols-2 lg:grid-cols-3">
+        {lista.map((n) => (
+          <li key={n.href}>
+            <article className="group relative">
+              <NoticiaImagem n={n} sizes="(min-width: 1024px) 28vw, (min-width: 640px) 45vw, 100vw" className="aspect-[16/10] rounded-brand" />
+              <p className="mt-4 text-sm text-ink-soft"><time dateTime={n.data}>{fmtData(n.data)}</time></p>
+              <h3 className="mt-1 !font-sans text-[1.125rem] font-semibold leading-snug !text-ink">
+                <a href={n.href} target="_blank" rel="noopener noreferrer" className="line-clamp-3 underline-offset-4 after:absolute after:inset-0 after:content-[''] group-hover:underline">
+                  {n.titulo}<span className="sr-only"> (abre em nova aba)</span>
+                </a>
+              </h3>
+            </article>
+          </li>
+        ))}
+      </ul>
+    </section>
+  )
+}
+
+function UltimasAtualizacoes() {
+  const ult = ultimasAtualizacoes(3)
+  return (
+    <section aria-labelledby="atualizacoes" className="mx-auto mt-14 max-w-page px-5 md:px-8">
+      <h3 id="atualizacoes" className="!font-sans text-lg font-semibold !text-ink">Últimas atualizações do acervo</h3>
       <ul className="mt-3 grid gap-x-10 gap-y-4 border-t border-line pt-4 md:grid-cols-3">
         {ult.map((p) => (
           <li key={p.id}>
@@ -244,10 +338,12 @@ export default function Home() {
   return (
     <>
       <Hero />
-      <AcessoRapido />
-      <FaixaNoticia />
+      <NoticiasPrincipais />
+      <div className="mt-12 md:mt-16"><AcessoRapido /></div>
+      <Reconhecimentos />
+      <MaisNoticias />
       <Destaques />
-      <Noticias />
+      <UltimasAtualizacoes />
       <Orientacoes />
     </>
   )

@@ -1,150 +1,247 @@
 {
- "geradoEm": "2026-10-31T23:42:30+00:00",
+ "geradoEm": "2026-11-01T00:47:43+00:00",
  "fonte": "https://sefaz.es.gov.br/noticias",
  "noticias": [
   {
    "data": "2026-10-26",
    "titulo": "Espírito Santo se consolida como referência nacional em excelência na gestão fiscal",
    "resumo": "O Espírito Santo segue se destacando nacionalmente pela qualidade da gestão fiscal. Dois importantes levantamentos divulgados em agosto confirmaram a posição do Estado entre os que apresentam os melhores resultados do País na administração das contas públicas",
-   "href": "https://sefaz.es.gov.br/espirito-santo-se-consolida-como-referencia-nacional-em-excelencia-na-gestao-fiscal"
+   "href": "https://sefaz.es.gov.br/espirito-santo-se-consolida-como-referencia-nacional-em-excelencia-na-gestao-fiscal",
+   "imagem": "/img/noticias/espirito-santo-se-consolida-como-referencia-nacional-em-excelencia-na-.jpg",
+   "imagemLargura": 1280,
+   "imagemAltura": 720,
+   "imagemTipo": "arte"
   },
   {
    "data": "2026-06-24",
    "titulo": "Comitê Diretivo do Profisco II realiza primeira reunião de 2026 para acompanhar execução do programa",
    "resumo": "O Comitê Diretivo do Programa de Modernização da Gestão Fiscal do Estado (Profisco II) realizou, nesta quarta-feira (24), sua primeira reunião de 2026. O encontro teve como objetivo acompanhar a execução das ações previstas, monitorar o andamento dos projetos",
-   "href": "https://sefaz.es.gov.br/comite-diretivo-do-profisco-ii-realiza-primeira-reuniao-de-2026-para-acompanhar-execucao-do-programa"
+   "href": "https://sefaz.es.gov.br/comite-diretivo-do-profisco-ii-realiza-primeira-reuniao-de-2026-para-acompanhar-execucao-do-programa",
+   "imagem": "/img/noticias/comite-diretivo-do-profisco-ii-realiza-primeira-reuniao-de-2026-para-a.jpg",
+   "imagemLargura": 1280,
+   "imagemAltura": 960,
+   "imagemTipo": "foto"
   },
   {
    "data": "2026-06-23",
    "titulo": "Espírito Santo conquista nota A em ranking nacional de qualidade da informação contábil e fiscal pelo 4º ano consecutivo",
    "resumo": "O Espírito Santo conquistou, pelo quarto ano consecutivo, nota A no Ranking da Qualidade da Informação Contábil e Fiscal, elaborado pela Secretaria do Tesouro Nacional (STN). O resultado, referente ao exercício de 2025, reconhece a qualidade, a consistência e",
-   "href": "https://sefaz.es.gov.br/espirito-santo-conquista-nota-a-em-ranking-nacional-de-qualidade-da-informacao-contabil-e-fiscal-pelo-4o-ano-consecutivo"
+   "href": "https://sefaz.es.gov.br/espirito-santo-conquista-nota-a-em-ranking-nacional-de-qualidade-da-informacao-contabil-e-fiscal-pelo-4o-ano-consecutivo",
+   "imagem": "/img/noticias/espirito-santo-conquista-nota-a-em-ranking-nacional-de-qualidade-da-in.jpg",
+   "imagemLargura": 1280,
+   "imagemAltura": 720,
+   "imagemTipo": "arte"
   },
   {
    "data": "2026-06-22",
    "titulo": "Monitoramento aponta avanços na qualidade das informações contábeis do Estado",
    "resumo": "O Relatório Anual de Monitoramento Contábil de 2025, elaborado pela Secretaria da Fazenda (Sefaz), por meio do Tesouro Estadual, demonstrou avanços significativos na qualidade das informações contábeis do Estado. Ao longo do exercício, foram realizadas análi",
-   "href": "https://sefaz.es.gov.br/monitoramento-aponta-avancos-na-qualidade-das-informacoes-contabeis-do-estado"
+   "href": "https://sefaz.es.gov.br/monitoramento-aponta-avancos-na-qualidade-das-informacoes-contabeis-do-estado",
+   "imagem": "/img/noticias/monitoramento-aponta-avancos-na-qualidade-das-informacoes-contabeis-do.jpg",
+   "imagemLargura": 1280,
+   "imagemAltura": 960,
+   "imagemTipo": "foto"
   },
   {
    "data": "2026-06-15",
    "titulo": "Sefaz apresenta avanços do Profisco II em Revisão de Carteira do BID",
    "resumo": "A Secretaria da Fazenda (Sefaz), por meio da equipe da Unidade de Coordenação do Programa de Modernização da Gestão Fiscal do Estado (Profisco II), participou, nesta segunda-feira (15), em Brasília (DF), da Revisão de Carteira realizada pelo Banco Interameric",
-   "href": "https://sefaz.es.gov.br/sefaz-apresenta-avancos-do-profisco-ii-em-revisao-de-carteira-do-bid"
+   "href": "https://sefaz.es.gov.br/sefaz-apresenta-avancos-do-profisco-ii-em-revisao-de-carteira-do-bid",
+   "imagem": "/img/noticias/sefaz-apresenta-avancos-do-profisco-ii-em-revisao-de-carteira-do-bid.jpg",
+   "imagemLargura": 1280,
+   "imagemAltura": 805,
+   "imagemTipo": "foto"
   },
   {
    "data": "2026-06-08",
    "titulo": "Balanço Cidadão 2025 já está disponível para consulta",
    "resumo": "A Secretaria da Fazenda (Sefaz) disponibilizou, em seu site oficial, o Balanço Cidadão 2025, publicação elaborada pela Gerência de Contabilidade Geral do Estado, vinculada à Subsecretaria do Tesouro Estadual. O documento reúne informações sobre a execução orça",
-   "href": "https://sefaz.es.gov.br/Noticia/balanco-cidadao-2025-ja-esta-disponivel-para-consulta"
+   "href": "https://sefaz.es.gov.br/Noticia/balanco-cidadao-2025-ja-esta-disponivel-para-consulta",
+   "imagem": "/img/noticias/balanco-cidadao-2025-ja-esta-disponivel-para-consulta.jpg",
+   "imagemLargura": 1111,
+   "imagemAltura": 744,
+   "imagemTipo": "arte"
   },
   {
    "data": "2026-06-03",
    "titulo": "Profisco II ES é selecionado para iniciativa-piloto do BID voltada à gestão por resultados",
    "resumo": "A Secretaria da Fazenda (Sefaz), por meio da Unidade de Coordenação do Programa de Apoio à Gestão dos Fiscos do Brasil (Profisco II ES), participou, nessa terça-feira (02) e quarta-feira (03), em Brasília (DF), do Dia das Operações 2026 – Gestão para Resultado",
-   "href": "https://sefaz.es.gov.br/Noticia/profisco-ii-es-e-selecionado-para-iniciativa-piloto-do-bid-voltada-a-gestao-por-resultados"
+   "href": "https://sefaz.es.gov.br/Noticia/profisco-ii-es-e-selecionado-para-iniciativa-piloto-do-bid-voltada-a-gestao-por-resultados",
+   "imagem": "/img/noticias/profisco-ii-es-e-selecionado-para-iniciativa-piloto-do-bid-voltada-a-g.jpg",
+   "imagemLargura": 960,
+   "imagemAltura": 720,
+   "imagemTipo": "foto"
   },
   {
    "data": "2026-05-12",
    "titulo": "Sefaz realiza segundo encontro do ciclo de palestras do Tesouro Estadual sobre reforma tributária",
    "resumo": "A Secretaria da Fazenda (Sefaz), por meio da Subsecretaria do Tesouro Estadual, realizou, nessa segunda-feira (11), o segundo encontro do Ciclo de Palestras sobre a Reforma Tributária. A iniciativa reúne auditores de finanças da Secretaria para discutir os imp",
-   "href": "https://sefaz.es.gov.br/Noticia/sefaz-realiza-segundo-encontro-do-ciclo-de-palestras-do-tesouro-estadual-sobre-reforma-tributaria"
+   "href": "https://sefaz.es.gov.br/Noticia/sefaz-realiza-segundo-encontro-do-ciclo-de-palestras-do-tesouro-estadual-sobre-reforma-tributaria",
+   "imagem": "/img/noticias/sefaz-realiza-segundo-encontro-do-ciclo-de-palestras-do-tesouro-estadu.jpg",
+   "imagemLargura": 1280,
+   "imagemAltura": 720,
+   "imagemTipo": "arte"
   },
   {
    "data": "2026-05-06",
    "titulo": "Espírito Santo tem a melhor gestão pública no País e se destaca como o Estado que mais avança na economia",
    "resumo": "O Espírito Santo ocupa a primeira posição em gestão pública no País e é o estado que mais avançou na área econômica nos últimos três anos. Os dados constam no Ranking de Competitividade dos Estados – Eleições 2026, divulgado nesta quarta-feira (06) pelo Centro",
-   "href": "https://sefaz.es.gov.br/Noticia/espirito-santo-tem-a-melhor-gestao-publica-no-pais-e-se-destaca-como-o-estado-que-mais-avanca-na-economia"
+   "href": "https://sefaz.es.gov.br/Noticia/espirito-santo-tem-a-melhor-gestao-publica-no-pais-e-se-destaca-como-o-estado-que-mais-avanca-na-economia",
+   "imagem": "/img/noticias/espirito-santo-tem-a-melhor-gestao-publica-no-pais-e-se-destaca-como-o.jpg",
+   "imagemLargura": 960,
+   "imagemAltura": 561,
+   "imagemTipo": "foto",
+   "destaque": true
   },
   {
    "data": "2026-04-15",
    "titulo": "Sefaz realiza oficina técnica para apoiar formalização de transferências especiais",
    "resumo": "A Secretaria da Fazenda (Sefaz), por meio do Tesouro Estadual, promoveu, nesta segunda-feira (14), uma oficina técnica com representantes de órgãos estaduais e participação de município capixaba para alinhar procedimentos, esclarecer dúvidas sobre a legislação",
-   "href": "https://sefaz.es.gov.br/Noticia/sefaz-realiza-oficina-tecnica-para-apoiar-formalizacao-de-transferencias-especiais"
+   "href": "https://sefaz.es.gov.br/Noticia/sefaz-realiza-oficina-tecnica-para-apoiar-formalizacao-de-transferencias-especiais",
+   "imagem": "/img/noticias/sefaz-realiza-oficina-tecnica-para-apoiar-formalizacao-de-transferenci.jpg",
+   "imagemLargura": 1280,
+   "imagemAltura": 853,
+   "imagemTipo": "foto"
   },
   {
    "data": "2026-03-25",
    "titulo": "Sefaz apresenta experiência do Fundo Soberano em palestra para o setor produtivo em Campos (RJ)",
    "resumo": "A Secretaria da Fazenda (Sefaz), por meio do Tesouro Estadual, participou, nessa segunda-feira (23), de evento promovido pela Câmara de Dirigentes Lojistas de Campos (CDL), no Estado do Rio de Janeiro. Na ocasião, o auditor de finanças Alexandre Viana Gebara,",
-   "href": "https://sefaz.es.gov.br/Noticia/sefaz-apresenta-experiencia-do-fundo-soberano-em-palestra-para-o-setor-produtivo-em-campos-rj"
+   "href": "https://sefaz.es.gov.br/Noticia/sefaz-apresenta-experiencia-do-fundo-soberano-em-palestra-para-o-setor-produtivo-em-campos-rj",
+   "imagem": "/img/noticias/sefaz-apresenta-experiencia-do-fundo-soberano-em-palestra-para-o-setor.jpg",
+   "imagemLargura": 1025,
+   "imagemAltura": 741,
+   "imagemTipo": "foto"
   },
   {
    "data": "2026-03-23",
    "titulo": "Espírito Santo tem recorde de investimentos em 2025 e consolida equilíbrio fiscal",
    "resumo": "O Espírito Santo alcançou, em 2025, o maior volume de investimentos com recursos próprios de sua história, ao mesmo tempo em que manteve as contas públicas equilibradas. Foram R$ 5,1 bilhões destinados a obras e serviços públicos, em áreas estratégicas como sa",
-   "href": "https://sefaz.es.gov.br/Noticia/espirito-santo-tem-recorde-de-investimentos-em-2025-e-consolida-equilibrio-fiscal"
+   "href": "https://sefaz.es.gov.br/Noticia/espirito-santo-tem-recorde-de-investimentos-em-2025-e-consolida-equilibrio-fiscal",
+   "imagem": "/img/noticias/espirito-santo-tem-recorde-de-investimentos-em-2025-e-consolida-equili.jpg",
+   "imagemLargura": 1280,
+   "imagemAltura": 853,
+   "imagemTipo": "foto"
   },
   {
    "data": "2026-03-19",
    "titulo": "Espírito Santo é destaque nacional em rendimentos de aplicações financeiras",
    "resumo": "A Secretaria da Fazenda (Sefaz), por meio do Tesouro Estadual, registrou aumento nos rendimentos financeiros das aplicações das disponibilidades de caixa do Estado entre 2019 e 2025. No período, os valores passaram de R$ 749 milhões ao ano para R$ 1,74 bilhão,",
-   "href": "https://sefaz.es.gov.br/Noticia/espirito-santo-e-destaque-nacional-em-rendimentos-de-aplicacoes-financeiras"
+   "href": "https://sefaz.es.gov.br/Noticia/espirito-santo-e-destaque-nacional-em-rendimentos-de-aplicacoes-financeiras",
+   "imagem": "/img/noticias/espirito-santo-e-destaque-nacional-em-rendimentos-de-aplicacoes-financ.jpg",
+   "imagemLargura": 1080,
+   "imagemAltura": 764,
+   "imagemTipo": "arte"
   },
   {
    "data": "2026-03-18",
    "titulo": "Sefaz regulamenta procedimentos para consultas técnicas ao Tesouro Estadual",
    "resumo": "A Secretaria da Fazenda (Sefaz) publicou nessa terça-feira (17), a Portaria nº 026-R, que regulamenta o procedimento de consulta sobre a interpretação de matérias de natureza contábil e financeira no âmbito da Administração Pública Estadual. CLIQUE AQUI e ace",
-   "href": "https://sefaz.es.gov.br/Noticia/sefaz-regulamenta-procedimentos-para-consultas-tecnicas-ao-tesouro-estadual"
+   "href": "https://sefaz.es.gov.br/Noticia/sefaz-regulamenta-procedimentos-para-consultas-tecnicas-ao-tesouro-estadual",
+   "imagem": "/img/noticias/sefaz-regulamenta-procedimentos-para-consultas-tecnicas-ao-tesouro-est.jpg",
+   "imagemLargura": 1280,
+   "imagemAltura": 854,
+   "imagemTipo": "arte"
   },
   {
    "data": "2026-02-27",
    "titulo": "Sefaz lança revista fiscal com dados, análises e indicadores sobre a evolução das contas públicas",
    "resumo": "A Secretaria da Fazenda (Sefaz) lançou sua revista fiscal, publicação institucional que consolida dados, análises e indicadores sobre a evolução das contas públicas e do desempenho socioeconômico capixaba ao longo dos últimos sete anos. CLIQUE AQUI e acesse a",
-   "href": "https://sefaz.es.gov.br/Noticia/sefaz-lanca-revista-fiscal-com-dados-analises-e-indicadores-sobre-a-evolucao-das-contas-publicas"
+   "href": "https://sefaz.es.gov.br/Noticia/sefaz-lanca-revista-fiscal-com-dados-analises-e-indicadores-sobre-a-evolucao-das-contas-publicas",
+   "imagem": "/img/noticias/sefaz-lanca-revista-fiscal-com-dados-analises-e-indicadores-sobre-a-ev.jpg",
+   "imagemLargura": 1080,
+   "imagemAltura": 1080,
+   "imagemTipo": "arte"
   },
   {
    "data": "2026-02-26",
    "titulo": "Sefaz recebe missão do Banco Interamericano de Desenvolvimento para acompanhamento do Profisco II",
    "resumo": "A Secretaria da Fazenda (Sefaz) recebeu, nesta segunda, terça e quarta-feira (23, 24 e 25), a primeira Missão de Supervisão de 2026 do Programa de Modernização da Gestão Fiscal (Profisco II), conduzida pelo Banco Interamericano de Desenvolvimento (BID). A agen",
-   "href": "https://sefaz.es.gov.br/Noticia/sefaz-recebe-missao-do-banco-interamericano-de-desenvolvimento-para-acompanhamento-do-profisco-ii"
+   "href": "https://sefaz.es.gov.br/Noticia/sefaz-recebe-missao-do-banco-interamericano-de-desenvolvimento-para-acompanhamento-do-profisco-ii",
+   "imagem": "/img/noticias/sefaz-recebe-missao-do-banco-interamericano-de-desenvolvimento-para-ac.jpg",
+   "imagemLargura": 1280,
+   "imagemAltura": 960,
+   "imagemTipo": "foto"
   },
   {
    "data": "2026-02-24",
    "titulo": "Espírito Santo lidera o País em investimentos e poupança, e tem menor nível de endividamento do Brasil",
    "resumo": "O Espírito Santo é, mais uma vez, o Estado que mais investe no Brasil e o que apresenta o melhor índice de poupança, além de contar com o menor nível de endividamento entre as unidades da Federação. Os dados constam no Relatório Resumido de Execução Orçamentár",
-   "href": "https://sefaz.es.gov.br/Noticia/espirito-santo-lidera-o-pais-em-investimentos-e-poupanca-e-tem-menor-nivel-de-endividamento-do-brasil"
+   "href": "https://sefaz.es.gov.br/Noticia/espirito-santo-lidera-o-pais-em-investimentos-e-poupanca-e-tem-menor-nivel-de-endividamento-do-brasil",
+   "imagem": "/img/noticias/espirito-santo-lidera-o-pais-em-investimentos-e-poupanca-e-tem-menor-n.jpg",
+   "imagemLargura": 964,
+   "imagemAltura": 594,
+   "imagemTipo": "arte"
   },
   {
    "data": "2026-01-27",
    "titulo": "Governo estabelece programação orçamentária e financeira para 2026",
    "resumo": "O Governo do Estado do Espírito Santo estabeleceu a programação orçamentária e financeira para o exercício de 2026 (Decreto Nº 6296-R). O documento visa a compatibilizar a execução das despesas do orçamento com as metas mensais de arrecadação das receitas do T",
-   "href": "https://sefaz.es.gov.br/Noticia/governo-estabelece-programacao-orcamentaria-e-financeira-para-2026"
+   "href": "https://sefaz.es.gov.br/Noticia/governo-estabelece-programacao-orcamentaria-e-financeira-para-2026",
+   "imagem": "/img/noticias/governo-estabelece-programacao-orcamentaria-e-financeira-para-2026.jpg",
+   "imagemLargura": 626,
+   "imagemAltura": 417,
+   "imagemTipo": "foto"
   },
   {
    "data": "2026-01-22",
    "titulo": "Sefaz participa de evento sobre transformação digital e o futuro da contabilidade",
    "resumo": "A Secretaria da Fazenda (Sefaz), representada pelo auditor fiscal Bruno Aguilar, participou, nessa quarta-feira (21), do evento “Contabilidade 5.0 – Rumo à Nova Era da Inteligência Contábil”, realizado no auditório do Sebrae, em Vitória. Promovido pelo Serviço",
-   "href": "https://sefaz.es.gov.br/Noticia/sefaz-participa-de-evento-sobre-transformacao-digital-e-o-futuro-da-contabilidade"
+   "href": "https://sefaz.es.gov.br/Noticia/sefaz-participa-de-evento-sobre-transformacao-digital-e-o-futuro-da-contabilidade",
+   "imagem": "/img/noticias/sefaz-participa-de-evento-sobre-transformacao-digital-e-o-futuro-da-co.jpg",
+   "imagemLargura": 883,
+   "imagemAltura": 1071,
+   "imagemTipo": "foto"
   },
   {
    "data": "2025-12-16",
    "titulo": "Profisco II avança em ritmo acelerado e consolida resultados expressivos em 2025",
    "resumo": "A Secretaria da Fazenda (Sefaz) registrou avanços significativos na execução do Programa de Modernização da Gestão Fiscal do Estado (Profisco II) ao longo de 2025, consolidando o programa como um dos principais instrumentos de transformação da gestão pública e",
-   "href": "https://sefaz.es.gov.br/Noticia/profisco-ii-avanca-em-ritmo-acelerado-e-consolida-resultados-expressivos-em-2025"
+   "href": "https://sefaz.es.gov.br/Noticia/profisco-ii-avanca-em-ritmo-acelerado-e-consolida-resultados-expressivos-em-2025",
+   "imagem": "/img/noticias/profisco-ii-avanca-em-ritmo-acelerado-e-consolida-resultados-expressiv.jpg",
+   "imagemLargura": 1280,
+   "imagemAltura": 960,
+   "imagemTipo": "foto"
   },
   {
    "data": "2025-12-16",
    "titulo": "Sefaz promove treinamento para assegurar a correta execução dos lançamentos contábeis no Poder Executivo Estadual",
    "resumo": "A Secretaria da Fazenda (Sefaz), por meio do Tesouro Estadual, realizou, entre a última segunda-feira (08) e a sexta-feira (12), treinamento técnico direcionado aos gestores financeiros setoriais (GFS), responsáveis pelos registros contábeis dos órgãos e entid",
-   "href": "https://sefaz.es.gov.br/Noticia/sefaz-promove-treinamento-para-assegurar-a-correta-execucao-dos-lancamentos-contabeis-no-poder-executivo-estadual"
+   "href": "https://sefaz.es.gov.br/Noticia/sefaz-promove-treinamento-para-assegurar-a-correta-execucao-dos-lancamentos-contabeis-no-poder-executivo-estadual",
+   "imagem": "/img/noticias/sefaz-promove-treinamento-para-assegurar-a-correta-execucao-dos-lancam.jpg",
+   "imagemLargura": 1280,
+   "imagemAltura": 853,
+   "imagemTipo": "foto"
   },
   {
    "data": "2025-12-15",
    "titulo": "Equilíbrio fiscal garante economia bilionária ao Estado com adesão ao Propag",
    "resumo": "O Espírito Santo assegurou uma situação diferenciada e financeiramente vantajosa na adesão ao Programa de Pleno Pagamento de Dívidas dos Estados (Propag), resultado direto da solidez de suas contas públicas e do histórico de gestão fiscal responsável. Criado p",
-   "href": "https://sefaz.es.gov.br/Noticia/equilibrio-fiscal-garante-economia-bilionaria-ao-estado-com-adesao-ao-propag"
+   "href": "https://sefaz.es.gov.br/Noticia/equilibrio-fiscal-garante-economia-bilionaria-ao-estado-com-adesao-ao-propag",
+   "imagem": "/img/noticias/equilibrio-fiscal-garante-economia-bilionaria-ao-estado-com-adesao-ao-.jpg",
+   "imagemLargura": 1170,
+   "imagemAltura": 700,
+   "imagemTipo": "foto"
   },
   {
    "data": "2025-12-15",
    "titulo": "Governo do Estado informa novo valor para a VRTE em 2026",
    "resumo": "A Secretaria da Fazenda (Sefaz) informa que o Valor de Referência do Tesouro Estadual (VRTE) será de R$ 4,9383 para o exercício de 2026. O novo valor foi estabelecido pelo Decreto nº 6.265-R, publicado na edição desta segunda-feira (15) do Diário Oficial do Es",
-   "href": "https://sefaz.es.gov.br/Noticia/governo-do-estado-informa-novo-valor-para-a-vrte-em-2026"
+   "href": "https://sefaz.es.gov.br/Noticia/governo-do-estado-informa-novo-valor-para-a-vrte-em-2026",
+   "imagem": "/img/noticias/governo-do-estado-informa-novo-valor-para-a-vrte-em-2026.jpg",
+   "imagemLargura": 1280,
+   "imagemAltura": 849,
+   "imagemTipo": "foto"
   },
   {
    "data": "2025-11-26",
    "titulo": "Visita técnica aprofunda conhecimentos sobre o Fundo Soberano e fortalece práticas sustentáveis na gestão dos royalties",
    "resumo": "O Núcleo de Educação Ambiental da Região da Bacia de Campos (NEA-BC), projeto voltado para a mitigação de impactos socioambientais da indústria de petróleo e gás, realizou uma nova visita técnica à Secretaria da Fazenda (Sefaz). O encontro teve como objetivo a",
-   "href": "https://sefaz.es.gov.br/Noticia/visita-tecnica-aprofunda-conhecimentos-sobre-o-fundo-soberano-e-fortalece-praticas-sustentaveis-na-gestao-dos-royalties"
+   "href": "https://sefaz.es.gov.br/Noticia/visita-tecnica-aprofunda-conhecimentos-sobre-o-fundo-soberano-e-fortalece-praticas-sustentaveis-na-gestao-dos-royalties",
+   "imagem": "/img/noticias/visita-tecnica-aprofunda-conhecimentos-sobre-o-fundo-soberano-e-fortal.jpg",
+   "imagemLargura": 1247,
+   "imagemAltura": 701,
+   "imagemTipo": "foto"
   }
  ]
 }

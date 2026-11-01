@@ -58,6 +58,16 @@ export default function Creditos() {
             </li>
           ))}
         </ul>
+        <h2 className="mt-10 text-2xl font-bold">Imagens das notícias</h2>
+        <span className="accent-bar" aria-hidden="true" />
+        <p className="mt-4 text-ink-soft">
+          As fotografias e os cartões que ilustram as notícias são do material de comunicação do Governo do Estado do
+          Espírito Santo (SEFAZ-ES e Secom-ES), reproduzidos, em tamanho reduzido, das matérias publicadas em{' '}
+          <a href="https://sefaz.es.gov.br/noticias" target="_blank" rel="noopener noreferrer" className="font-medium text-navy underline underline-offset-4">
+            sefaz.es.gov.br/noticias<span className="sr-only"> (abre em nova aba)</span>
+          </a>
+          . Cada notícia leva ao texto original.
+        </p>
         <h2 className="mt-10 text-2xl font-bold">Tipografia</h2>
         <span className="accent-bar" aria-hidden="true" />
         <p className="mt-4 text-ink-soft">

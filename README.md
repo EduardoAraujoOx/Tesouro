@@ -14,7 +14,8 @@ fontes públicas, lidas por scripts e guardadas em `data/`:
 |---|---|---|
 | `data/paginas.json` | 35 páginas do Tesouro em `sefaz.es.gov.br` | texto (HTML saneado) e grupos de arquivos de cada área |
 | `data/acervo.json` | as mesmas páginas | lista plana dos ≈ 730 arquivos, usada na busca de `/publicacoes` |
-| `data/noticias.json` | `sefaz.es.gov.br/noticias` | notícias da SEFAZ filtradas por temas do Tesouro |
+| `data/noticias.json` | `sefaz.es.gov.br/noticias` | notícias da SEFAZ filtradas por temas do Tesouro, com imagem reduzida em `public/img/noticias/` (requer `pip install pillow`) |
+| `data/curadoria-noticias.json` | edição manual | notícia de capa (`destaque`) e correções do tipo de imagem (`foto` ou `arte`) |
 
 Os **PDFs não são copiados**: o portal aponta para o arquivo oficial na SEFAZ, que continua sendo a fonte única
 da verdade (evita versões desatualizadas de documentos fiscais e um repositório com gigabytes de arquivos).
@@ -40,6 +41,8 @@ Detalhes importantes:
 - A data que a SEFAZ mostra em cada linha é a de **atualização do arquivo**, não a do período de referência. O portal
   ordena e destaca pelo período (`ano` + `periodo`, extraídos do título) e rotula a data como "Atualizado em".
 - Para incluir uma página nova do Tesouro, acrescente o endereço em `PAGINAS` (`scripts/atualizar_conteudo.py`).
+- A página inicial é conduzida pelas notícias: a de capa vem de `destaque` (ou a mais recente), seguida de 3 laterais e 6 em grade. Fotos são cortadas em 16:10; cartões gráficos (`arte`) aparecem inteiros.
+- Os reconhecimentos (A+, 1º lugar, nota A) são os citados nas notícias da SEFAZ; se mudarem, edite `Reconhecimentos` em `app/page.tsx`.
 - O filtro de notícias está em `PALAVRAS` / `EXCLUIR` (`scripts/atualizar_noticias.py`); ajuste conforme a Ascom preferir.
 - O texto das páginas passa por um sanitizador (somente `p`, `ul`, `ol`, `li`, `a`, ênfases); formulários, imagens e
   scripts da SEFAZ não são reproduzidos. Cada página traz o link para a original.
