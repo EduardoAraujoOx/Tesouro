@@ -64,7 +64,7 @@ export function Header() {
     <header className="border-b border-line bg-paper">
       <div className="mx-auto max-w-page px-5 md:px-8">
         {/* Linha 1: logo + busca */}
-        <div className="flex items-center justify-between gap-6 py-4 md:py-5">
+        <div className="flex items-center justify-between gap-2 py-4 sm:gap-6 md:py-5">
           <button
             type="button"
             className="inline-flex h-11 w-11 items-center justify-center rounded-md text-ink lg:hidden"
@@ -78,12 +78,12 @@ export function Header() {
 
           <Link href="/" className="shrink-0" aria-label="Tesouro Estadual do Espírito Santo – página inicial">
             <Image
-              src="/img/logo-tesouro-estadual.png"
+              src="/img/logo-tesouro-horizontal.png"
               alt="Tesouro Estadual – Espírito Santo"
-              width={900}
-              height={290}
+              width={1100}
+              height={197}
               priority
-              className="invert-hc h-12 w-auto sm:h-14 lg:h-[4.25rem]"
+              className="invert-hc h-9 w-auto min-[400px]:h-10 sm:h-12 lg:h-16"
             />
           </Link>
 

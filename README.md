@@ -63,7 +63,7 @@ nos modos normal e alto contraste.
 ## Pendências de conteúdo (validar com a Subsecretaria / ASCOM)
 
 - **Fotos**: a imagem do hero é uma ilustração gerada por IA, fornecida pela equipe do projeto; as demais vêm do Wikimedia Commons (domínio público). Créditos em `/creditos`. Para trocar qualquer foto, substitua o arquivo em `public/img/`.
-- **Brasão e logomarca**: uso institucional a aprovar; arquivo em `public/img/logo-tesouro-estadual.png`.
+- **Brasão e logomarca**: uso institucional a aprovar; arquivo em `public/img/logo-tesouro-horizontal.png` (versão horizontal, recortada sem margens e com fundo transparente).
 - **Texto institucional** ("Conheça o Tesouro") é só um mapa do portal; faltam texto e competências oficiais.
 - **Notícias**: a seleção usa palavras-chave; a Ascom pode querer um critério editorial próprio. A faixa "Notícia" abaixo do acesso rápido mostra a mais recente.
 - **Orientações**: "Orçamentária" leva às Notas Técnicas (SUBSET, ex.: renúncia na estimativa de receita da LOA); "Contábil" ao MCONT; "Financeira" a Execução Financeira. Confirmar se é o destino desejado.
