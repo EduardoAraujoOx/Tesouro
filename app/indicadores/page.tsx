@@ -1,13 +1,13 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
 import { IconExternal } from '@/components/Icons'
-import { GraficoSerie } from '@/components/GraficoSerie'
+import { ExploradorIndicadores } from '@/components/ExploradorIndicadores'
 import { Medidor } from '@/components/Medidor'
 import { PageHeader } from '@/components/PageHeader'
 import { formatarData, maisRecente } from '@/lib/acervo'
 import {
-  bilhoes, capagAtualizadaEm, degrauHaveres, fontes, INDICADORES_LRF, ORDEM_LRF, pct, rotuloCurto, rotuloPeriodo,
-  serieCapag, serieLrf, ultimoLrf,
+  bilhoes, capagAtualizadaEm, catalogoIndicadores, degrauHaveres, fontes, INDICADORES_LRF, ORDEM_LRF, pct, rotuloPeriodo,
+  serieCapag, ultimoLrf,
 } from '@/lib/indicadores'
 
 export const metadata: Metadata = {
@@ -24,59 +24,43 @@ const ext = (href: string, texto: string) => (
 export default function Indicadores() {
   const rgf = maisRecente({ tipos: ['rgf'] })
   const degrau = degrauHaveres()
+  const notas = degrau
+    ? [{
+        id: 'divida', ano: degrau.em.ano, sub: degrau.em.quad,
+        texto: `No ${rotuloPeriodo(degrau.em)}, o item “demais haveres financeiros”, que reduz a dívida líquida, passou de ${bilhoes(degrau.de)} para ${bilhoes(degrau.para)}, enquanto a dívida bruta permaneceu estável. Por isso a série apresenta um degrau nesse ponto.`,
+      }]
+    : []
 
   return (
     <>
       <PageHeader titulo="Painel fiscal" trilha="Painel fiscal">
-        Indicadores oficiais do Estado do Espírito Santo, extraídos do Siconfi e do Tesouro Nacional, com séries históricas, a explicação de cada número e os dados em formato aberto.
+        Indicadores oficiais do Espírito Santo, do Siconfi e do Tesouro Nacional.
       </PageHeader>
 
-      <div className="mx-auto max-w-page px-5 py-10 md:px-8 md:py-14">
-        {/* ---------- Limites da LRF ---------- */}
-        <section aria-labelledby="lrf">
-          <h2 id="lrf" className="text-section">Limites da Lei de Responsabilidade Fiscal</h2>
+      <div className="mx-auto max-w-page px-5 py-6 md:px-8 md:py-8">
+        {/* ---------- Explorador ---------- */}
+        <section aria-labelledby="explorador">
+          <h2 id="explorador" className="sr-only">Séries históricas: escolha indicadores e período</h2>
+          <div>
+            <ExploradorIndicadores indicadores={catalogoIndicadores()} notas={notas} />
+          </div>
+        </section>
+
+        {/* ---------- Situação atual ---------- */}
+        <section aria-labelledby="lrf" className="mt-20 border-t border-line pt-14">
+          <h2 id="lrf" className="text-section">Limites da Lei de Responsabilidade Fiscal hoje</h2>
           <span className="accent-bar" aria-hidden="true" />
           <p className="mt-4 max-w-3xl text-lead text-ink-soft">
             Quatro limites legais que o Estado precisa respeitar. Os valores são os do Relatório de Gestão Fiscal (RGF) do Poder Executivo, entregue ao Siconfi a cada quadrimestre. Último período: <strong className="text-ink">{rotuloPeriodo(ultimoLrf)}</strong>.
           </p>
-
-          <div className="mt-10 space-y-14">
-            {ORDEM_LRF.map((k) => {
-              const def = INDICADORES_LRF[k]
-              const ref = ultimoLrf[k]
-              const pontos = serieLrf.map((p) => ({ rotulo: rotuloCurto(p), ano: p.ano, quad: p.quad, valor: p[k].valor }))
-              const linhas = [
-                { valor: ref.limite, rotulo: 'Limite', estilo: 'limite' as const },
-                { valor: ref.prudencial ?? null, rotulo: 'Prudencial', estilo: 'prudencial' as const },
-                { valor: ref.alerta, rotulo: 'Alerta', estilo: 'alerta' as const },
-              ].filter((l) => l.valor !== null)
-              return (
-                <article key={k} aria-labelledby={`ind-${k}`} className="grid gap-8 lg:grid-cols-12 lg:gap-12">
-                  <div className="lg:col-span-5">
-                    <h3 id={`ind-${k}`} className="text-title">{def.nome}</h3>
-                    <p className="mt-3 text-body text-ink-soft">{def.oQue}</p>
-                    <div className="mt-6 rounded-brand border border-line p-5"><Medidor chave={k} periodo={ultimoLrf} /></div>
-                    <p className="mt-3 text-small text-ink-soft">Fonte: {def.anexo}, Siconfi. Base legal: {def.base}.</p>
-                  </div>
-                  <div className="lg:col-span-7">
-                    <GraficoSerie
-                      id={`graf-${k}`}
-                      titulo={`${def.nome}, em % da receita corrente líquida, por quadrimestre`}
-                      subtitulo={k === 'credito' ? 'Em % da RCL ajustada, acumulado no exercício (volta a zero a cada janeiro).' : 'Em % da RCL ajustada, ao fim de cada quadrimestre.'}
-                      reiniciaPorAno={k === 'credito'}
-                      pontos={pontos}
-                      linhas={linhas}
-                      anotacao={k === 'divida' && degrau ? { ano: degrau.em.ano, quad: degrau.em.quad, texto: 'Nota abaixo' } : undefined}
-                    />
-                    {k === 'divida' && degrau && (
-                      <p className="mt-3 rounded-brand bg-surface p-4 text-small text-ink-soft">
-                        <strong className="text-ink">Nota sobre a série.</strong> No {rotuloPeriodo(degrau.em)}, o item “demais haveres financeiros”, que reduz a dívida líquida, passou de {bilhoes(degrau.de)} para {bilhoes(degrau.para)}, enquanto a dívida bruta permaneceu estável. Por isso a série apresenta um degrau nesse ponto.
-                      </p>
-                    )}
-                  </div>
-                </article>
-              )
-            })}
+          <div className="mt-8 grid gap-x-12 gap-y-8 md:grid-cols-2">
+            {ORDEM_LRF.map((k) => (
+              <div key={k} className="rounded-brand border border-line p-5">
+                <Medidor chave={k} periodo={ultimoLrf} nivel={3} />
+                <p className="mt-3 text-small text-ink-soft">{INDICADORES_LRF[k].oQue}</p>
+                <p className="mt-2 text-small text-ink-soft">Fonte: {INDICADORES_LRF[k].anexo}, Siconfi. Base legal: {INDICADORES_LRF[k].base}.</p>
+              </div>
+            ))}
           </div>
         </section>
 

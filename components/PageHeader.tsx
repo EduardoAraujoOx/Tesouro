@@ -38,11 +38,10 @@ export function PageHeader({ titulo, children, trilha, imagem }: Props) {
 
   return (
     <section aria-labelledby="titulo-pagina" className="border-b border-line bg-surface">
-      <div className="mx-auto max-w-page px-5 py-10 md:px-8 md:py-14">
+      <div className="mx-auto max-w-page px-5 py-5 md:px-8 md:py-7">
         {crumbs('text-ink-soft')}
-        <h1 id="titulo-pagina" className="mt-3 text-headline">{titulo}</h1>
-        <span className="accent-bar" aria-hidden="true" />
-        {children && <div className="mt-5 max-w-3xl text-lead text-ink-soft">{children}</div>}
+        <h1 id="titulo-pagina" className="mt-2 text-headline">{titulo}</h1>
+        {children && <div className="mt-2 max-w-3xl text-body text-ink-soft md:text-lead">{children}</div>}
       </div>
     </section>
   )

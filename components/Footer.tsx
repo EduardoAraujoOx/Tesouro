@@ -36,7 +36,7 @@ export function Footer() {
             <li className="flex gap-2.5"><IconPin className="mt-0.5 h-5 w-5 shrink-0" /><span>{rodape.endereco}</span></li>
             <li className="flex gap-2.5"><IconPhone className="mt-0.5 h-5 w-5 shrink-0" /><a href="tel:+552733475102" className="hover:underline">{rodape.telefone}</a></li>
             <li className="pt-1">
-              <a href={rodape.faleConosco} target="_blank" rel="noopener noreferrer" className="underline underline-offset-4">Fale conosco</a>
+              <Link href="/contato" className="underline underline-offset-4">Fale conosco</Link>
               <span aria-hidden="true"> · </span>
               <a href={rodape.atendimento} target="_blank" rel="noopener noreferrer" className="underline underline-offset-4">Local e horário de atendimento</a>
             </li>

@@ -15,6 +15,8 @@ const config: Config = {
         navy: { DEFAULT: v('navy'), deep: v('navy-deep') },
         'on-navy': v('on-navy'),
         'hero-overlay': v('hero-overlay'),
+        serie2: v('serie2'),
+        serie3: v('serie3'),
         herobtn: { DEFAULT: v('btn-bg'), fg: v('btn-fg') },
         skybrand: '#39B5E8',
         rosebrand: '#F28AB2',
