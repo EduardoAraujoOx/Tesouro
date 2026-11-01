@@ -36,7 +36,7 @@ export default async function PaginaTesouro({ params }: { params: Promise<Params
         <span className="text-ink-soft">{pagina.secao}{total > 0 ? ` · ${total} ${total === 1 ? 'documento' : 'documentos'}` : ''}</span>
       </PageHeader>
 
-      <div className="mx-auto max-w-page px-5 py-10 md:px-8 md:py-12">
+      <div className="mx-auto max-w-page px-5 py-6 md:px-8 md:py-8">
         {usaExplorador ? (
           <>
             {pagina.segmentos.filter((s) => s.tipo === 'texto').map((s, i) => s.tipo === 'texto' && (

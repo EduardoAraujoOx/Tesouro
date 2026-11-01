@@ -16,16 +16,15 @@ export default function Publicacoes() {
   return (
     <>
     <PageHeader titulo="Publicações">
-      Acervo de documentos do Tesouro Estadual. Os arquivos são hospedados no site oficial da SEFAZ-ES.
-      A data exibida é a de <strong className="text-ink">atualização do arquivo</strong>, que pode ser posterior ao período a que o documento se refere.
+      Acervo de documentos do Tesouro Estadual, hospedados no site oficial da SEFAZ.
     </PageHeader>
-    <div className="mx-auto max-w-page px-5 py-10 md:px-8 md:py-12">
+    <div className="mx-auto max-w-page px-5 py-6 md:px-8 md:py-8">
       <div>
         <Suspense fallback={<p className="text-ink-soft">Carregando publicações…</p>}>
           <AcervoExplorer itens={itens} tipos={TIPOS} />
         </Suspense>
       </div>
-      <p className="mt-10 text-small text-ink-soft">Índice do acervo atualizado em {new Date(geradoEm).toLocaleDateString('pt-BR', { timeZone: 'America/Sao_Paulo' })}.</p>
+      <p className="mt-10 text-small text-ink-soft">Índice do acervo atualizado em {new Date(geradoEm).toLocaleDateString('pt-BR', { timeZone: 'America/Sao_Paulo' })}. A data de cada documento é a de <strong className="text-ink">atualização do arquivo</strong>, que pode ser posterior ao período a que ele se refere.</p>
     </div>
     </>
   )

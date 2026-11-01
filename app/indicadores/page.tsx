@@ -34,18 +34,14 @@ export default function Indicadores() {
   return (
     <>
       <PageHeader titulo="Painel fiscal" trilha="Painel fiscal">
-        Indicadores oficiais do Estado do Espírito Santo, extraídos do Siconfi e do Tesouro Nacional, com séries históricas, a explicação de cada número e os dados em formato aberto.
+        Indicadores oficiais do Espírito Santo, do Siconfi e do Tesouro Nacional.
       </PageHeader>
 
-      <div className="mx-auto max-w-page px-5 py-10 md:px-8 md:py-14">
+      <div className="mx-auto max-w-page px-5 py-6 md:px-8 md:py-8">
         {/* ---------- Explorador ---------- */}
         <section aria-labelledby="explorador">
-          <h2 id="explorador" className="text-section">Explore as séries históricas</h2>
-          <span className="accent-bar" aria-hidden="true" />
-          <p className="mt-4 max-w-3xl text-lead text-ink-soft">
-            Escolha o grupo, até três indicadores e o período. Passe o ponteiro pelo gráfico, ou use o controle deslizante com o teclado, para ver o valor de cada período. Os dados podem ser baixados em CSV.
-          </p>
-          <div className="mt-8">
+          <h2 id="explorador" className="sr-only">Séries históricas: escolha indicadores e período</h2>
+          <div>
             <ExploradorIndicadores indicadores={catalogoIndicadores()} notas={notas} />
           </div>
         </section>

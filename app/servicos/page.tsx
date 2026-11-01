@@ -15,7 +15,7 @@ export default function Servicos() {
     <PageHeader titulo="Finanças: serviços e orientações">
       Rotinas, sistemas e orientações do Tesouro Estadual voltadas a órgãos, gestores e servidores públicos.
     </PageHeader>
-    <div className="mx-auto max-w-page px-5 py-10 md:px-8 md:py-14">
+    <div className="mx-auto max-w-page px-5 py-6 md:px-8 md:py-8">
       <div className="grid gap-10 md:grid-cols-3">
         {servicos.map((g) => (
           <section key={g.grupo} aria-labelledby={g.grupo.replace(/\W/g, '')}>

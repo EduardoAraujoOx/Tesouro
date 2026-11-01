@@ -17,7 +17,7 @@ export default function Noticias() {
       <PageHeader titulo="Notícias">
         Notícias da Secretaria da Fazenda sobre gestão fiscal, contabilidade pública, dívida, transferências e o Fundo Soberano.
       </PageHeader>
-      <div className="mx-auto max-w-page px-5 py-10 md:px-8 md:py-12">
+      <div className="mx-auto max-w-page px-5 py-6 md:px-8 md:py-8">
         <ul className="grid gap-x-8 gap-y-12 sm:grid-cols-2 lg:grid-cols-3">
           {noticias.map((n, i) => (
             <li key={n.slug}>

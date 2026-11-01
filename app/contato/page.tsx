@@ -19,7 +19,7 @@ export default function Contato() {
       <PageHeader titulo="Fale conosco" trilha="Fale conosco">
         Escolha a área do Tesouro Estadual que deve receber sua mensagem. Se você não souber qual é, envie para a Subsecretaria, que encaminha ao lugar certo.
       </PageHeader>
-      <div className="mx-auto grid max-w-page gap-10 px-5 py-10 md:px-8 md:py-14 lg:grid-cols-12 lg:gap-14">
+      <div className="mx-auto grid max-w-page gap-10 px-5 py-6 md:px-8 md:py-8 lg:grid-cols-12 lg:gap-14">
         <div className="relative lg:col-span-8">
           <FormularioContato habilitado={habilitado} />
         </div>
