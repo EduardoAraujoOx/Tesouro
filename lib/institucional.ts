@@ -6,6 +6,49 @@ export const FONTE_MAPA = 'https://sefaz.es.gov.br/identidade-institucional'
 export const FONTE_HISTORIA = 'https://sefaz.es.gov.br/historia-institucional'
 export const FONTE_ORGANOGRAMA = 'https://organograma.es.gov.br'
 
+/** Definição do Tesouro Estadual, a partir das competências fixadas na Lei nº 12.379/2025 e no Decreto nº 6.005-R/2025. */
+export const definicao =
+  'O Tesouro Estadual é responsável pela administração financeira e pela contabilidade geral do Governo do Espírito Santo. Gerencia a Conta Única e a programação financeira, coordena a prestação de contas anual do Governador, administra a dívida pública e acompanha a política fiscal, gerencia os fundos públicos a ele vinculados e publica os demonstrativos que expõem a situação fiscal do Estado.'
+
+export const funcoes = [
+  {
+    titulo: 'Administração financeira',
+    sigla: 'GEFIN',
+    texto: 'Gerencia a Conta Única do Tesouro Estadual, programa e libera os recursos às unidades gestoras e acompanha as ordens bancárias e os repasses aos demais Poderes.',
+    href: '/tesouro/execucao-financeira-tesouro',
+  },
+  {
+    titulo: 'Contabilidade geral e prestação de contas',
+    sigla: 'GECOG',
+    texto: 'Edita as normas contábeis, mantém o plano de contas, orienta o uso do SIGEFES, consolida as demonstrações do Estado e coordena a prestação de contas anual do Governador.',
+    href: '/tesouro/prestacao-de-contas-do-governador',
+  },
+  {
+    titulo: 'Dívida pública e política fiscal',
+    sigla: 'GEPOF',
+    texto: 'Controla a dívida contratual do Poder Executivo, conduz o Programa de Reestruturação e Ajuste Fiscal junto à União, analisa a capacidade de pagamento e acompanha as metas fiscais.',
+    href: '/tesouro/relatorio-anual-da-divida-publica-e-do-progarma-de-ajuste-fiscal',
+  },
+  {
+    titulo: 'Fundos públicos',
+    sigla: 'GEFAP',
+    texto: 'Gerencia as atividades financeiras, contábeis e orçamentárias dos fundos vinculados ao Tesouro, como o Fundo Soberano, e acompanha a análise de parcerias público-privadas e concessões.',
+    href: '/tesouro/funses',
+  },
+  {
+    titulo: 'Encargos gerais e regularidade fiscal',
+    sigla: 'GEREF',
+    texto: 'Trata de precatórios e sentenças judiciais, restituições de tributos e participações societárias, confere os repasses aos municípios e mantém a regularidade fiscal do Estado perante a União.',
+    href: '/tesouro/transferencias-constitucionais-aos-municipios',
+  },
+  {
+    titulo: 'Transparência fiscal',
+    sigla: 'SUBSET',
+    texto: 'Publica os demonstrativos exigidos pela Lei de Responsabilidade Fiscal, as versões em linguagem cidadã e os indicadores do painel fiscal.',
+    href: '/cidadao',
+  },
+] as const
+
 export const missao = 'Prover recursos e realizar a Gestão Fiscal do Estado do Espírito Santo, de forma a viabilizar o Desenvolvimento Econômico e Social.'
 export const visao = 'Ser reconhecida por promover o equilíbrio das contas públicas e a excelência em Administração Tributária, garantindo a estabilidade do modelo tributário vigente e viabilizando as políticas públicas e o controle social.'
 export const valores = ['Integridade', 'Colaboração', 'Inovação', 'Efetividade', 'Transparência', 'Justiça Fiscal', 'Valorização das Pessoas']

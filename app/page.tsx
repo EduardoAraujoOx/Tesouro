@@ -165,12 +165,12 @@ function TesouroCidadao() {
           <h2 id="cidadao" className="text-section">Tesouro Cidadão</h2>
           <span className="accent-bar" aria-hidden="true" />
           <p className="mt-4 max-w-2xl text-lead text-ink-soft">
-            As contas públicas do Espírito Santo explicadas em linguagem simples: perguntas e respostas, balanço cidadão e glossário.
+            Os demonstrativos fiscais publicados pelo Tesouro Estadual, como ler cada um e como acompanhar a situação das contas do Estado, com materiais de educação fiscal para toda a família.
           </p>
         </div>
         <div className="md:col-span-4 md:justify-self-end">
           <Link href="/cidadao" className={`${btnPrimario} w-full md:w-auto`}>
-            Entender as contas públicas <IconArrow className="h-5 w-5" />
+            Acompanhar as contas do Estado <IconArrow className="h-5 w-5" />
           </Link>
         </div>
       </div>

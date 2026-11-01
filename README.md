@@ -29,6 +29,7 @@ da verdade (evita versões desatualizadas de documentos fiscais e um repositóri
 | `/indicadores` | Painel fiscal: explorador de séries históricas (escolha de até 3 indicadores e do período, gráfico grande, tabela, CSV e link da escolha), situação atual dos limites da LRF, CAPAG e metodologia |
 | `/noticias`, `/noticias/[slug]` | Lista e página de cada notícia do Tesouro, com o texto completo (a fonte original é citada no fim) |
 | `/cidadao` | Tesouro Cidadão: números do Balanço Cidadão, perguntas e respostas ligadas aos dados do painel, documentos cidadãos, glossário e ferramentas do Tesouro Nacional |
+| `/cidadao/em-busca-do-tesouro` | Leitor das revistinhas e do manual do programa Em Busca do Tesouro (Tesouro Nacional), exibido dentro do portal |
 | `/sobre` | Conheça o Tesouro: missão, visão e valores (Mapa Estratégico da SEFAZ), estrutura da Subsecretaria com atalho para escrever a cada área, história e mapa do portal |
 | `/contato` | Fale conosco: formulário para a Subsecretaria, as gerências e as subgerências do Tesouro |
 | `/servicos` | "Finanças": serviços e orientações para órgãos, gestores e servidores |
@@ -115,4 +116,4 @@ As áreas ficam em `lib/areas.ts`, montadas a partir do Lei nº 12.379/2025 e De
 
 ## Conteúdo do Tesouro Nacional
 
-O conteúdo do portal gov.br/tesouronacional está sob licença Creative Commons Atribuição-SemDerivações: o portal **linka e descreve com palavras próprias**, sem copiar nem adaptar os textos deles. Os dados abertos (Siconfi, CAPAG) são reutilizados com citação da fonte. As respostas de `/cidadao` são texto institucional e devem ser revisadas pela Ascom.
+O conteúdo do portal gov.br/tesouronacional está sob licença Creative Commons Atribuição-SemDerivações: o portal **linka e descreve com palavras próprias**, sem copiar nem adaptar os textos deles. Os dados abertos (Siconfi, CAPAG) são reutilizados com citação da fonte. O texto de `/cidadao` e de `/sobre` é institucional e deve ser revisado pela Ascom. As revistinhas do Em Busca do Tesouro são exibidas no leitor do próprio Tesouro Nacional (`cdn.tesouro.gov.br`), sem cópia: os personagens são © IMS-Brasil. Por isso a política de segurança (CSP) libera esse endereço **só** na rota `/cidadao/em-busca-do-tesouro` (`next.config.mjs`). Convém pedir à STN a confirmação de que a exibição em portais de terceiros é bem-vinda.
