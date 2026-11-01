@@ -10,8 +10,8 @@ import { formatarData, maisRecente, ultimasAtualizacoes } from '@/lib/acervo'
 
 const btnPrimario =
   'group inline-flex min-h-12 items-center justify-center gap-3 rounded-brand bg-navy px-6 text-body font-semibold text-on-navy transition hover:bg-navy-deep'
-const btnSecundario =
-  'group inline-flex min-h-12 items-center justify-center gap-3 rounded-brand border border-navy bg-paper px-6 text-body font-semibold text-navy transition hover:bg-surface'
+const linkTerciario =
+  'group inline-flex min-h-12 items-center gap-2 text-body font-semibold text-navy underline underline-offset-4 hover:decoration-2'
 
 function Hero() {
   return (
@@ -28,17 +28,17 @@ function Hero() {
           <p className="mt-3 max-w-md text-lead text-ink-soft">
             Informações fiscais, contabilidade, dívida pública e publicações do Tesouro Estadual.
           </p>
-          <div className="mt-5 flex flex-col gap-3 sm:flex-row">
-            <Link href="/publicacoes" className={btnPrimario}>
+          <div className="mt-5 flex flex-col gap-1 sm:flex-row sm:items-center sm:gap-6">
+            <Link href="/publicacoes" className={`${btnPrimario} w-full sm:w-auto`}>
               Acessar publicações <IconArrow className="h-5 w-5" />
             </Link>
-            <Link href="/sobre" className={btnSecundario}>
-              Conheça o Tesouro <IconArrow className="h-5 w-5" />
+            <Link href="/sobre" className={linkTerciario}>
+              Conheça o Tesouro <IconArrow className="h-[18px] w-[18px]" />
             </Link>
           </div>
         </div>
 
-        <div className="relative h-44 sm:h-60 lg:absolute lg:inset-y-0 lg:right-0 lg:h-auto lg:w-[62%]">
+        <div className="relative h-28 sm:h-56 lg:absolute lg:inset-y-0 lg:right-0 lg:h-auto lg:w-[62%]">
           <Image
             src="/img/hero-vitoria-dia.jpg"
             alt="Vista de Vitória com a Terceira Ponte cruzando a baía e o Convento da Penha ao fundo"
