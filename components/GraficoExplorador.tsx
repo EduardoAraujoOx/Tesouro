@@ -58,7 +58,7 @@ export function GraficoExplorador({ series, referencias, foco, onFoco, titulo, u
 
   const n = series[0]?.pontos.length ?? 0
   const W = largura
-  const H = Math.round(Math.max(280, Math.min(460, W * 0.5)))
+  const H = Math.round(Math.max(300, Math.min(620, W * 0.46)))
   const ml = 50, mr = 16, mt = 18, mb = 38
   const todos = series.flatMap((s) => s.pontos.map((p) => p.valor)).filter((v): v is number => v !== null)
   if (n === 0 || todos.length === 0) return <p className="rounded-brand bg-surface p-4 text-body text-ink-soft">Sem dados no período escolhido.</p>

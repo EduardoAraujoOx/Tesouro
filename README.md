@@ -26,7 +26,7 @@ da verdade (evita versões desatualizadas de documentos fiscais e um repositóri
 | `/` | Página inicial (hero, carrossel de notícias, acesso rápido, painel fiscal, publicações em destaque, orientações) |
 | `/tesouro/[área]` | Uma página para cada área do Tesouro (35), com o texto original e os documentos |
 | `/publicacoes` | Busca em todo o acervo, com filtro por tipo e por ano (`?tipo=` e `?q=` na URL) |
-| `/indicadores` | Painel fiscal: explorador de séries históricas (escolha de até 3 indicadores e do período, gráfico grande, tabela, CSV e link da escolha), situação atual dos limites da LRF, CAPAG e metodologia |
+| `/indicadores` | Painel fiscal quantitativo: gráfico grande no centro, barra para trocar de indicador (limites da LRF e CAPAG), números do período em foco, comparação de até 3 indicadores, CSV e link da escolha; texto de apoio e metodologia recolhidos abaixo |
 | `/noticias`, `/noticias/[slug]` | Lista e página de cada notícia do Tesouro, com o texto completo (a fonte original é citada no fim) |
 | `/contato` | Fale conosco: formulário para a Subsecretaria, as gerências e as subgerências do Tesouro |
 | `/servicos` | "Finanças": serviços e orientações para órgãos, gestores e servidores |
