@@ -44,7 +44,7 @@ export const menu: ItemMenu[] = [
       { rotulo: 'Fundo Soberano (FUNSES)', href: T('funses') },
     ],
   },
-  { rotulo: 'Fale conosco', href: '#contato' },
+  { rotulo: 'Fale conosco', href: '/contato', prefixos: ['/contato'] },
 ]
 
 // `curto` é o rótulo usado no celular, como no mockup mobile.

@@ -26,8 +26,9 @@ da verdade (evita versões desatualizadas de documentos fiscais e um repositóri
 | `/` | Página inicial (hero, carrossel de notícias, acesso rápido, painel fiscal, publicações em destaque, orientações) |
 | `/tesouro/[área]` | Uma página para cada área do Tesouro (35), com o texto original e os documentos |
 | `/publicacoes` | Busca em todo o acervo, com filtro por tipo e por ano (`?tipo=` e `?q=` na URL) |
-| `/indicadores` | Painel fiscal: CAPAG, limites da LRF, séries históricas, metodologia e CSVs (ligada ao item "Política Fiscal" do menu) |
-| `/noticias` | Notícias do Tesouro publicadas pela SEFAZ |
+| `/indicadores` | Painel fiscal: explorador de séries históricas (escolha de até 3 indicadores e do período, gráfico grande, tabela, CSV e link da escolha), situação atual dos limites da LRF, CAPAG e metodologia |
+| `/noticias`, `/noticias/[slug]` | Lista e página de cada notícia do Tesouro, com o texto completo (a fonte original é citada no fim) |
+| `/contato` | Fale conosco: formulário para a Subsecretaria, as gerências e as subgerências do Tesouro |
 | `/servicos` | "Finanças": serviços e orientações para órgãos, gestores e servidores |
 | `/sobre`, `/creditos` | Mapa do portal; créditos das imagens |
 
@@ -93,3 +94,19 @@ nos modos normal e alto contraste.
 ## Estilo de redação
 
 Os textos do portal evitam travessões (o traço longo e o médio): os coletores em `scripts/` trocam o travessão por vírgula, dois-pontos ou parênteses (sigla), e os textos escritos à mão seguem a mesma regra.
+
+## Fale conosco (formulário por área)
+
+O formulário em `/contato` deixa o leitor escolher a Subsecretaria, uma gerência e, se quiser, uma subgerência, e escrever a mensagem. A mensagem segue por e-mail para a área escolhida; **o portal não guarda nada** (apenas encaminha). A rota que recebe o envio é `app/api/contato/route.ts`, com validação, armadilha para robôs (campo escondido e tempo mínimo), limite de envios por endereço e aceitação de origem só do próprio site.
+
+Para ativar o envio, defina na Vercel (Settings, Environment Variables):
+
+| Variável | Para que serve |
+|---|---|
+| `RESEND_API_KEY` | chave da conta no serviço de e-mail [Resend](https://resend.com) |
+| `CONTATO_REMETENTE` | remetente verificado no serviço, por exemplo `Tesouro Estadual <contato@seudominio.gov.br>` |
+| `CONTATO_EMAIL_PADRAO` | caixa que recebe as mensagens das áreas sem e-mail próprio (por exemplo, a da Subsecretaria) |
+
+Sem essas variáveis o formulário mostra o aviso "Envio em implantação" e não entrega mensagens. Em desenvolvimento, `CONTATO_MODO_TESTE=1` valida e devolve o protocolo sem enviar nada.
+
+As áreas ficam em `lib/areas.ts`, montadas a partir do Decreto nº 5.892-R/2024 (Anexo III e competências). **A estrutura muda por decreto: a Subsecretaria deve validar a lista, revisar os assuntos de cada área e informar o e-mail de cada uma** (campo `email`; sem ele, vale `CONTATO_EMAIL_PADRAO`). Para uma proteção mais forte contra robôs, considere o Vercel BotID ou o Cloudflare Turnstile.
