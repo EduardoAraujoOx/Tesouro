@@ -149,7 +149,7 @@ export function ExploradorIndicadores({ indicadores, notas, classificacoes, gera
     const nota = principal.pontos.find((p) => p.ano === pontoFoco.ano && p.sub === pontoFoco.sub)?.nota
     if (!comparando && nota) partes.push(`nota ${nota}`)
     if (!comparando && familia === 'capag' && classificacoes[pontoFoco.ano]) partes.push(`classificação geral da CAPAG: ${classificacoes[pontoFoco.ano]}`)
-    const limite = !comparando ? principal.referencias.find((r) => r.estilo === 'limite') : undefined
+    const limite = !comparando && familia === 'lrf' ? principal.referencias.find((r) => r.estilo === 'limite') : undefined
     if (limite && v !== null) partes.push(`folga de ${numero(limite.valor - v, 1)} p.p. até o limite legal de ${numero(limite.valor, 0)}%`)
     const ant = focoAtual > 0 && !(series[0].acumulaNoAno && series[0].pontos[focoAtual - 1].ano !== pontoFoco.ano) ? series[0].pontos[focoAtual - 1].valor : null
     if (!comparando && v !== null && ant !== null) { const d = Math.round((v - ant) * 100) / 100; partes.push(`${d > 0 ? '+' : d < 0 ? '−' : ''}${numero(Math.abs(d), 1)} p.p. sobre o período anterior`) }

@@ -5,7 +5,7 @@ import { numero } from '@/lib/formato'
 
 export type PontoGrafico = { ano: number; sub: number; rotulo: string; extenso: string; valor: number | null }
 export type SerieGrafico = { id: string; curto: string; pontos: PontoGrafico[]; acumulaNoAno?: boolean; anterior?: boolean }
-export type ReferenciaGrafico = { rotulo: string; valor: number; estilo: 'limite' | 'alerta' | 'prudencial' }
+export type ReferenciaGrafico = { rotulo: string; valor: number; estilo: 'limite' | 'alerta' | 'prudencial'; texto?: string }
 export type ModoGrafico = 'linha' | 'barras'
 
 /** Estilos que se distinguem sem depender de cor: traço, marcador e cor. O quarto é a série do ano anterior. */
@@ -99,6 +99,7 @@ export function GraficoExplorador({ series, referencias, foco, onFoco, titulo, m
   if (n === 0 || todos.length === 0) return <p className="rounded-brand bg-surface p-4 text-body text-ink-soft">Sem dados no período escolhido.</p>
 
   const vmin = Math.min(...todos), vmax = Math.max(...todos)
+  const textoRef = (r: ReferenciaGrafico) => r.texto ?? `${{ limite: 'Legal', prudencial: 'Prudencial', alerta: 'Alerta' }[r.estilo]} ${numero(r.valor, r.valor % 1 ? 1 : 0)}${unidade}`
   const visiveis = referencias.filter((r) => r.valor <= vmax * 2 + 5)
   const topo = Math.max(vmax, ...visiveis.map((r) => r.valor))
   const base = zero ? Math.min(vmin, 0) : Math.min(vmin, ...visiveis.map((r) => r.valor))
@@ -138,7 +139,7 @@ export function GraficoExplorador({ series, referencias, foco, onFoco, titulo, m
   const rotulosRef = largo
     ? (() => {
         const ys = espalha(visiveis.map((r) => Y(r.valor)), 24, mt + 10, H - mb - 10)
-        return visiveis.map((r, k) => ({ r, y: ys[k], texto: `${{ limite: 'Legal', prudencial: 'Prudencial', alerta: 'Alerta' }[r.estilo]} ${numero(r.valor, r.valor % 1 ? 1 : 0)}${unidade}` }))
+        return visiveis.map((r, k) => ({ r, y: ys[k], texto: textoRef(r) }))
       })()
     : []
 
@@ -152,7 +153,7 @@ export function GraficoExplorador({ series, referencias, foco, onFoco, titulo, m
     onFoco(Math.max(0, Math.min(n - 1, Math.floor((x - ml) / passoX))))
   }
 
-  const resumo = `${titulo}. ${referencias.length ? `Limites: ${referencias.map((r) => `${r.rotulo.toLowerCase()} ${numero(r.valor, r.valor % 1 ? 1 : 0)}${unidade}`).join(', ')}. ` : ''}` + series.filter((s) => !s.anterior).map((s) => {
+  const resumo = `${titulo}. ${referencias.length ? `Limites: ${referencias.map((r) => textoRef(r)).join(', ')}. ` : ''}` + series.filter((s) => !s.anterior).map((s) => {
     const v = s.pontos.filter((p) => p.valor !== null)
     if (!v.length) return `${s.curto}: sem dados.`
     const a = v[0], b = v[v.length - 1]
@@ -174,7 +175,7 @@ export function GraficoExplorador({ series, referencias, foco, onFoco, titulo, m
           ? referencias.filter((r) => !visiveis.includes(r)).map((r) => (
               <li key={r.rotulo} className="inline-flex items-center gap-2 text-ink-soft">
                 <svg width="34" height="14" aria-hidden="true"><line x1="0" x2="34" y1="7" y2="7" className={CLASSE_REF[r.estilo].traco} strokeWidth="2" strokeDasharray={TRACO_REF[r.estilo]} /></svg>
-                {r.rotulo} {numero(r.valor, r.valor % 1 ? 1 : 0)}{unidade}{visiveis.includes(r) ? '' : ' (fora da escala)'}
+                {textoRef(r)} (fora da escala)
               </li>
             ))
           : referencias.length > 0 && (
@@ -182,7 +183,7 @@ export function GraficoExplorador({ series, referencias, foco, onFoco, titulo, m
                 {referencias.map((r) => (
                   <span key={r.rotulo} className="inline-flex items-center gap-1.5">
                     <svg width="20" height="10" aria-hidden="true"><line x1="0" x2="20" y1="5" y2="5" className={CLASSE_REF[r.estilo].traco} strokeWidth="2" strokeDasharray={TRACO_REF[r.estilo]} /></svg>
-                    {{ limite: 'Legal', prudencial: 'Prudencial', alerta: 'Alerta' }[r.estilo]} {numero(r.valor, r.valor % 1 ? 1 : 0)}{unidade}
+                    {textoRef(r)}
                   </span>
                 ))}
               </li>

@@ -113,7 +113,7 @@ export function degrauHaveres(): { de: number; para: number; em: PeriodoLrf } | 
 
 export type Familia = 'lrf' | 'capag'
 export type PontoIndicador = { ano: number; sub: number; rotulo: string; extenso: string; valor: number | null; nota?: string | null }
-export type ReferenciaIndicador = { rotulo: string; valor: number; estilo: 'limite' | 'alerta' | 'prudencial' }
+export type ReferenciaIndicador = { rotulo: string; valor: number; estilo: 'limite' | 'alerta' | 'prudencial'; texto?: string }
 export type Indicador = {
   id: string
   familia: Familia
@@ -143,6 +143,20 @@ type Definicao = Pick<Indicador, 'nome' | 'curto' | 'subtitulo' | 'definicao' | 
 const definicoes = definicoesRaw as unknown as Record<string, Definicao>
 
 const CAPAG_NOTAS = { endividamento: 'notaEndividamento', poupanca: 'notaPoupanca', liquidez: 'notaLiquidez' } as const
+
+/** Faixas das notas parciais da CAPAG (Portaria Normativa MF nº 1.583/2023, art. 3º). A linha de alerta marca a passagem de A para B; a de limite, de B para C. */
+const CAPAG_FAIXAS: Record<keyof typeof CAPAG_NOTAS, ReferenciaIndicador[]> = {
+  endividamento: [
+    { rotulo: 'Nota A abaixo de 60%', valor: 60, estilo: 'alerta', texto: 'Nota A < 60%' },
+    { rotulo: 'Nota B abaixo de 100%', valor: 100, estilo: 'limite', texto: 'Nota B < 100%' },
+  ],
+  poupanca: [
+    { rotulo: 'Nota A abaixo de 85%', valor: 85, estilo: 'alerta', texto: 'Nota A < 85%' },
+    { rotulo: 'Nota B abaixo de 95%', valor: 95, estilo: 'limite', texto: 'Nota B < 95%' },
+  ],
+  liquidez: [{ rotulo: 'Nota A a partir de 5%', valor: 5, estilo: 'alerta', texto: 'Nota A ≥ 5%' }],
+}
+
 
 /** Monta as séries do painel a partir dos dados coletados (valores) e de `data/definicoes-indicadores.json` (textos). */
 export function catalogoIndicadores(): Indicador[] {
@@ -174,7 +188,7 @@ export function catalogoIndicadores(): Indicador[] {
     ...definicoes[k],
     periodicidade: 'anual',
     pontos: serieCapag.map((e) => ({ ano: e.ano, sub: 1, rotulo: String(e.ano), extenso: `Edição ${e.ano}`, valor: e[k], nota: e[CAPAG_NOTAS[k]] })),
-    referencias: [],
+    referencias: CAPAG_FAIXAS[k],
   }))
   return [...lrf, ...capag]
 }

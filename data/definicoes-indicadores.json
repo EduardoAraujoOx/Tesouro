@@ -93,10 +93,10 @@
     "curto": "Endividamento",
     "subtitulo": "CAPAG: percentual da Receita Corrente Líquida (RCL), por edição anual",
     "definicao": "Peso da dívida consolidada em relação à receita corrente líquida. Mede o quanto do orçamento anual está comprometido com a dívida acumulada.",
-    "formula": "Dívida consolidada dividida pela RCL",
-    "leitura": "Quanto menor o valor, melhor a nota do indicador. O Tesouro Nacional atribui uma nota a cada edição.",
-    "limite": "Sem limite legal; o Tesouro Nacional atribui nota",
-    "base": "Portaria do Tesouro Nacional sobre a CAPAG",
+    "formula": "Dívida consolidada bruta dividida pela receita corrente líquida (RCL)",
+    "leitura": "Quanto menor, melhor. As linhas do gráfico marcam as faixas das notas: abaixo de 60% a nota do indicador é A; de 60% a menos de 100%, B; a partir de 100%, C.",
+    "limite": "Sem limite legal. Faixas das notas: A abaixo de 60%, B de 60% a menos de 100%, C a partir de 100%",
+    "base": "Portaria Normativa MF nº 1.583/2023, alterada pela Portaria MF nº 1.764/2024",
     "fonte": "Tesouro Transparente, CAPAG dos Estados e do DF",
     "termos": [
       {
@@ -115,10 +115,10 @@
     "curto": "Poupança corrente",
     "subtitulo": "CAPAG: percentual das receitas correntes ajustadas, por edição anual",
     "definicao": "Parcela da receita corrente que é consumida pela despesa corrente. Quanto menor, mais sobra para investir e amortizar dívida.",
-    "formula": "Despesas correntes divididas pelas receitas correntes ajustadas",
-    "leitura": "Quanto menor o valor, melhor a nota do indicador. O Tesouro Nacional atribui uma nota a cada edição.",
-    "limite": "Sem limite legal; o Tesouro Nacional atribui nota",
-    "base": "Portaria do Tesouro Nacional sobre a CAPAG",
+    "formula": "Despesa corrente dividida pela receita corrente ajustada, em média ponderada dos três últimos exercícios (pesos de 50%, 30% e 20%, do mais recente ao mais antigo)",
+    "leitura": "Quanto menor, melhor. As linhas do gráfico marcam as faixas das notas: abaixo de 85% a nota do indicador é A; de 85% a menos de 95%, B; a partir de 95%, C.",
+    "limite": "Sem limite legal. Faixas das notas: A abaixo de 85%, B de 85% a menos de 95%, C a partir de 95%",
+    "base": "Portaria Normativa MF nº 1.583/2023, alterada pela Portaria MF nº 1.764/2024",
     "fonte": "Tesouro Transparente, CAPAG dos Estados e do DF",
     "termos": [
       {
@@ -133,14 +133,14 @@
     "porQueImporta": "Mostra quanto sobra da receita depois de pagar as despesas de funcionamento. Quanto maior a sobra, maior a capacidade de investir com recursos próprios."
   },
   "liquidez": {
-    "nome": "Liquidez (CAPAG)",
-    "curto": "Liquidez",
-    "subtitulo": "CAPAG: percentual da disponibilidade de caixa, por edição anual",
-    "definicao": "Relação entre as obrigações financeiras e a disponibilidade de caixa. Mede se o caixa cobre o que vence no curto prazo.",
-    "formula": "Obrigações financeiras divididas pela disponibilidade de caixa",
-    "leitura": "Quanto menor o valor, melhor a nota do indicador. O Tesouro Nacional atribui uma nota a cada edição.",
-    "limite": "Sem limite legal; o Tesouro Nacional atribui nota",
-    "base": "Portaria do Tesouro Nacional sobre a CAPAG",
+    "nome": "Liquidez relativa (CAPAG)",
+    "curto": "Liquidez relativa",
+    "subtitulo": "CAPAG: percentual da receita corrente líquida, por edição anual",
+    "definicao": "Quanto sobra de caixa depois de pagar as obrigações financeiras, em relação à receita corrente líquida. Mede se o caixa cobre o que o Estado deve no curto prazo.",
+    "formula": "Disponibilidade de caixa bruta menos obrigações financeiras, dividida pela receita corrente líquida (RCL)",
+    "leitura": "Quanto maior, melhor, ao contrário dos outros dois indicadores. A linha do gráfico marca a faixa da nota A: a partir de 5% a nota do indicador é A; acima de zero e abaixo de 5%, B; zero ou menos, C.",
+    "limite": "Sem limite legal. Faixas das notas: A a partir de 5%, B acima de zero e abaixo de 5%, C zero ou negativo",
+    "base": "Portaria Normativa MF nº 1.583/2023, alterada pela Portaria MF nº 1.764/2024",
     "fonte": "Tesouro Transparente, CAPAG dos Estados e do DF",
     "termos": [
       {
