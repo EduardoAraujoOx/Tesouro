@@ -47,7 +47,7 @@
   "endividamento": {
     "nome": "Endividamento (CAPAG)",
     "curto": "Endividamento",
-    "subtitulo": "Percentual da Receita Corrente Líquida (RCL), por edição anual",
+    "subtitulo": "CAPAG: percentual da Receita Corrente Líquida (RCL), por edição anual",
     "definicao": "Peso da dívida consolidada em relação à receita corrente líquida. Mede o quanto do orçamento anual está comprometido com a dívida acumulada.",
     "formula": "Dívida consolidada dividida pela RCL",
     "leitura": "Quanto menor o valor, melhor a nota do indicador. O Tesouro Nacional atribui uma nota a cada edição.",
@@ -58,7 +58,7 @@
   "poupanca": {
     "nome": "Poupança corrente (CAPAG)",
     "curto": "Poupança corrente",
-    "subtitulo": "Percentual das receitas correntes ajustadas, por edição anual",
+    "subtitulo": "CAPAG: percentual das receitas correntes ajustadas, por edição anual",
     "definicao": "Parcela da receita corrente que é consumida pela despesa corrente. Quanto menor, mais sobra para investir e amortizar dívida.",
     "formula": "Despesas correntes divididas pelas receitas correntes ajustadas",
     "leitura": "Quanto menor o valor, melhor a nota do indicador. O Tesouro Nacional atribui uma nota a cada edição.",
@@ -69,7 +69,7 @@
   "liquidez": {
     "nome": "Liquidez (CAPAG)",
     "curto": "Liquidez",
-    "subtitulo": "Percentual da disponibilidade de caixa, por edição anual",
+    "subtitulo": "CAPAG: percentual da disponibilidade de caixa, por edição anual",
     "definicao": "Relação entre as obrigações financeiras e a disponibilidade de caixa. Mede se o caixa cobre o que vence no curto prazo.",
     "formula": "Obrigações financeiras divididas pela disponibilidade de caixa",
     "leitura": "Quanto menor o valor, melhor a nota do indicador. O Tesouro Nacional atribui uma nota a cada edição.",

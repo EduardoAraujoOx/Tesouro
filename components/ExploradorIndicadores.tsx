@@ -27,7 +27,7 @@ export function ExploradorIndicadores({ indicadores, notas, classificacoes, gera
   const [de, setDe] = useState<number | null>(null)
   const [ate, setAte] = useState<number | null>(null)
   const [foco, setFoco] = useState<number | null>(null)
-  const [modo, setModo] = useState<ModoGrafico>('linha')
+  const [modo, setModo] = useState<ModoGrafico>('barras')
   const [mostrarLimites, setMostrarLimites] = useState(true)
   const [anoAnterior, setAnoAnterior] = useState(false)
   const [tocando, setTocando] = useState(false)
@@ -60,7 +60,7 @@ export function ExploradorIndicadores({ indicadores, notas, classificacoes, gera
     setIds(pedidos.length ? pedidos : [f === 'capag' ? 'endividamento' : 'pessoal'])
     setDe(dentro(q.get('de')))
     setAte(dentro(q.get('ate')))
-    if (q.get('v') === 'barras') setModo('barras')
+    if (q.get('v') === 'linha') setModo('linha')
     setPronto(true)
   }, [indicadores])
 
@@ -72,7 +72,7 @@ export function ExploradorIndicadores({ indicadores, notas, classificacoes, gera
     q.set('i', ids.join(','))
     if (de !== null) q.set('de', String(de))
     if (ate !== null) q.set('ate', String(ate))
-    if (modo === 'barras') q.set('v', 'barras')
+    if (modo === 'linha') q.set('v', 'linha')
     window.history.replaceState(null, '', `${window.location.pathname}?${q.toString()}${window.location.hash}`)
   }, [pronto, familia, ids, de, ate, modo])
 
@@ -167,9 +167,9 @@ export function ExploradorIndicadores({ indicadores, notas, classificacoes, gera
     >
       <div className="flex flex-col">
       {/* ---------- Título e período ---------- */}
-      <div className="order-1 grid grid-cols-[1fr_auto] items-start gap-x-4 md:gap-y-1">
-        <p className="col-start-1 row-start-1 self-center text-label font-semibold uppercase text-navy">Painel fiscal</p>
-        <details className="relative col-start-2 row-start-1 md:row-span-3">
+      <div className="order-1 grid grid-cols-[1fr_auto] items-start gap-x-4">
+        <h1 key={principal.id} className="anim-aparece col-start-1 row-start-1 text-section md:text-headline"><span className="md:hidden">{principal.curto}</span><span className="hidden md:inline">{principal.nome}</span></h1>
+        <details className="relative col-start-2 row-start-1 md:row-span-2">
           <summary className="flex min-h-11 cursor-pointer list-none items-center gap-3 rounded-brand border border-line bg-paper px-3 py-1 hover:bg-surface md:min-h-14 md:px-4 md:py-2">
             <span className="text-left">
               <span className="hidden text-small text-ink-soft md:block">Período</span>
@@ -191,14 +191,11 @@ export function ExploradorIndicadores({ indicadores, notas, classificacoes, gera
             </div>
           </div>
         </details>
-        <h1 key={principal.id} className="anim-aparece col-span-2 row-start-2 mt-1 text-section md:col-span-1 md:text-display">{principal.nome}</h1>
-        <p className="col-span-2 row-start-3 mt-1 text-body text-ink-soft md:col-span-1 md:text-lead">{principal.subtitulo}</p>
+        <p className="col-span-2 row-start-2 mt-1 text-body text-ink-soft md:col-span-1">{principal.subtitulo}</p>
       </div>
 
-      <p className="order-3 mt-4 min-h-6 text-body font-medium text-ink md:order-2" aria-live="polite">{resumo}</p>
-
       {/* ---------- Gráfico ---------- */}
-      <div className="order-2 mt-4 rounded-brand border border-line bg-paper p-3 md:order-3 md:p-6">
+      <div className="order-2 mt-4 rounded-brand border border-line bg-paper p-3 md:p-6">
         <GraficoExplorador series={series} referencias={refs} foco={focoAtual} onFoco={setFoco} titulo={titulo} modo={modo} animKey={ids.join('+')} />
         {n > 1 && pontoFoco && (
           <div className="mt-2">
@@ -212,6 +209,7 @@ export function ExploradorIndicadores({ indicadores, notas, classificacoes, gera
             <p className="flex justify-between text-small text-ink-soft"><span>{series[0].pontos[0].rotulo}</span><span className="hidden sm:inline">Arraste ou use as setas para percorrer os períodos</span><span>{series[0].pontos[n - 1].rotulo}</span></p>
           </div>
         )}
+        <p className="mt-3 min-h-6 text-body font-medium text-ink" aria-live="polite">{resumo}</p>
         {notas.filter((x) => ids.includes(x.id) && x.ano >= deAtual && x.ano <= ateAtual).map((x) => (
           <p key={x.id + x.ano + x.sub} className="mt-4 rounded-brand bg-surface p-4 text-small text-ink-soft"><strong className="text-ink">Nota sobre a série.</strong> {x.texto}</p>
         ))}

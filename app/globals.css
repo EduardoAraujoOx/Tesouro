@@ -17,8 +17,8 @@
   --hero-overlay: 5 32 63;      /* azul-marinho profundo sobre a foto */
   --btn-bg: 255 255 255;        /* botão primário sobre a foto */
   --btn-fg: 8 43 87;
-  --serie2: 163 23 79;          /* #A3174F, segunda série dos gráficos */
-  --serie3: 10 108 126;         /* #0A6C7E, terceira série */
+  --serie2: 194 56 111;         /* #C2386F, rosa da logomarca em tom mais escuro (contraste 4,7:1 sobre branco) */
+  --serie3: 15 125 176;         /* #0F7DB0, azul-celeste da logomarca em tom mais escuro (contraste 4,9:1) */
   --limite: 179 38 30;          /* #B3261E, limite legal */
   --prudencial: 180 83 9;       /* #B45309, limite prudencial */
   --alerta: 133 77 14;          /* #854D0E, limite de alerta */
@@ -108,3 +108,8 @@ h1, h2, h3 { @apply font-serif font-semibold text-navy; font-optical-sizing: aut
 .anim-revela { animation: revela 0.9s cubic-bezier(0.22, 0.61, 0.36, 1) both; }
 .anim-aparece { animation: aparece 0.5s ease-out both; }
 @media (prefers-reduced-motion: reduce) { .anim-revela, .anim-aparece { animation: none; } }
+
+/* Barras e área do gráfico de série única: do azul-celeste ao azul-marinho, como o traço da logomarca. */
+.grad-topo { stop-color: rgb(var(--serie3)); }
+.grad-base { stop-color: rgb(var(--navy)); }
+:root[data-contrast='alto'] .grad-topo { stop-color: rgb(var(--navy)); }

@@ -163,7 +163,7 @@ export function GraficoExplorador({ series, referencias, foco, onFoco, titulo, m
           <li key={s.id} className="inline-flex items-center gap-2 font-semibold"><AmostraSerie estilo={s.anterior ? ANTERIOR : k} />{s.curto}</li>
         ))}
         {largo
-          ? referencias.map((r) => (
+          ? referencias.filter((r) => !visiveis.includes(r)).map((r) => (
               <li key={r.rotulo} className="inline-flex items-center gap-2 text-ink-soft">
                 <svg width="34" height="14" aria-hidden="true"><line x1="0" x2="34" y1="7" y2="7" className={CLASSE_REF[r.estilo].traco} strokeWidth="2" strokeDasharray={TRACO_REF[r.estilo]} /></svg>
                 {r.rotulo} {numero(r.valor, r.valor % 1 ? 1 : 0)}{unidade}{visiveis.includes(r) ? '' : ' (fora da escala)'}
@@ -192,8 +192,12 @@ export function GraficoExplorador({ series, referencias, foco, onFoco, titulo, m
           <title id={`${id}-t`}>{resumo}</title>
           <defs>
             <linearGradient id={`${id}-g`} x1="0" x2="0" y1="0" y2="1">
-              <stop offset="0%" style={{ stopColor: 'rgb(var(--navy))', stopOpacity: 0.13 }} />
-              <stop offset="100%" style={{ stopColor: 'rgb(var(--navy))', stopOpacity: 0.01 }} />
+              <stop offset="0%" className="grad-topo" style={{ stopOpacity: 0.28 }} />
+              <stop offset="100%" className="grad-topo" style={{ stopOpacity: 0.02 }} />
+            </linearGradient>
+            <linearGradient id={`${id}-b`} x1="0" x2="0" y1="0" y2="1">
+              <stop offset="0%" className="grad-topo" />
+              <stop offset="100%" className="grad-base" />
             </linearGradient>
           </defs>
 
@@ -230,9 +234,11 @@ export function GraficoExplorador({ series, referencias, foco, onFoco, titulo, m
               ? series.map((s, k) => s.pontos.map((p, i) => {
                   if (p.valor === null) return null
                   const yv = Y(p.valor)
+                  const degrade = unica && k === 0
                   return (
                     <rect key={`${s.id}-${i}`} x={xBarra(i, k)} y={Math.min(yv, Y0)} width={larguraBarra - 1.5} height={Math.max(1, Math.abs(Y0 - yv))} rx={2}
-                      className={`${ESTILOS[s.anterior ? ANTERIOR : k].preenchimento} ${i === foco ? '' : 'opacity-80'}`} />
+                      fill={degrade && i !== foco ? `url(#${id}-b)` : undefined}
+                      className={degrade ? (i === foco ? 'fill-navy' : '') : `${ESTILOS[s.anterior ? ANTERIOR : k].preenchimento} ${i === foco ? '' : 'opacity-80'}`} />
                   )
                 }))
               : (
