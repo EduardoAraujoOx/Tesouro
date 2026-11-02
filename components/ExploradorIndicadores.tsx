@@ -12,15 +12,16 @@ const SEGUNDOS_POR_GRAFICO = 9
 
 /** Categorias do painel. Cada uma é uma fonte oficial; novas categorias entram aqui quando houver coletor. */
 const CATEGORIAS: { id: Familia; nome: string; curto: string; Icone: ComponentType<SVGProps<SVGSVGElement>> }[] = [
-  { id: 'orcamento', nome: 'Orçamento e execução', curto: 'Orçamento', Icone: IconBars },
-  { id: 'resultados', nome: 'Resultados e metas', curto: 'Metas', Icone: IconTarget },
-  { id: 'lrf', nome: 'Limites fiscais (LRF)', curto: 'Limites (LRF)', Icone: IconShield },
-  { id: 'capag', nome: 'Capacidade de pagamento', curto: 'CAPAG', Icone: IconCoins },
+  { id: 'orcamento', nome: 'Orçamento', curto: 'Orçamento', Icone: IconBars },
+  { id: 'arrecadacao', nome: 'Arrecadação', curto: 'Arrecadação', Icone: IconCalendar },
+  { id: 'lrf', nome: 'Limites da LRF', curto: 'Limites (LRF)', Icone: IconShield },
+  { id: 'caixa', nome: 'Caixa e obrigações', curto: 'Caixa', Icone: IconCoins },
+  { id: 'capag', nome: 'Capacidade (CAPAG)', curto: 'CAPAG', Icone: IconTarget },
   { id: 'previdencia', nome: 'Previdência', curto: 'Previdência', Icone: IconBank },
   { id: 'funcoes', nome: 'Despesas por função', curto: 'Funções', Icone: IconPie },
 ]
-const PADRAO: Record<Familia, string> = { orcamento: 'receita', resultados: 'primario', lrf: 'pessoal', capag: 'endividamento', previdencia: 'aportes', funcoes: 'educacao' }
-const FAMILIAS_VALIDAS: Familia[] = ['orcamento', 'resultados', 'lrf', 'capag', 'previdencia', 'funcoes']
+const PADRAO: Record<Familia, string> = { orcamento: 'receita', arrecadacao: 'icms', lrf: 'pessoal', caixa: 'caixa-apos', capag: 'endividamento', previdencia: 'aportes', funcoes: 'educacao' }
+const FAMILIAS_VALIDAS: Familia[] = ['orcamento', 'arrecadacao', 'lrf', 'caixa', 'capag', 'previdencia', 'funcoes']
 
 type Nota = { id: string; ano: number; sub: number; texto: string }
 
@@ -38,7 +39,7 @@ const rotulo = 'text-label font-semibold uppercase text-ink-soft'
  * do indicador (o que é, por que importa, como ler e fonte). Trocar de indicador anima a transição.
  * A escolha vai para o endereço da página, então pode ser compartilhada.
  */
-export function ExploradorIndicadores({ indicadores, notas, classificacoes, geradoEm }: { indicadores: Indicador[]; notas: Nota[]; classificacoes: Record<number, string | null>; geradoEm: string }) {
+export function ExploradorIndicadores({ indicadores, notas, classificacoes, geradoEm, precosEm }: { indicadores: Indicador[]; notas: Nota[]; classificacoes: Record<number, string | null>; geradoEm: string; precosEm: string }) {
   const uid = useId()
   const [familia, setFamilia] = useState<Familia>('orcamento')
   const [ids, setIds] = useState<string[]>([PADRAO.orcamento])
@@ -48,6 +49,7 @@ export function ExploradorIndicadores({ indicadores, notas, classificacoes, gera
   const [mostrarLimites, setMostrarLimites] = useState(true)
   const [anoAnterior, setAnoAnterior] = useState(false)
   const [comReferencia, setComReferencia] = useState(true)
+  const [corrigir, setCorrigir] = useState(false)
   const [tocando, setTocando] = useState(false)
   const [pausado, setPausado] = useState(false)
   const [movimentoReduzido, setMovimentoReduzido] = useState(false)
@@ -72,6 +74,7 @@ export function ExploradorIndicadores({ indicadores, notas, classificacoes, gera
     const pedidos = (q.get('i') ?? '').split(',').filter((x) => lista.some((i) => i.id === x)).slice(0, MAXIMO)
     setFamilia(f)
     setIds(pedidos.length ? pedidos : [PADRAO[f]])
+    setCorrigir(q.has('c') ? q.get('c') === '1' : f === 'caixa')
     if (q.get('v') === 'linha') { setModo('linha'); setZero(false) }
     if (q.get('z') === '1') setZero(true)
     if (q.get('z') === '0') setZero(false)
@@ -86,17 +89,21 @@ export function ExploradorIndicadores({ indicadores, notas, classificacoes, gera
     q.set('i', ids.join(','))
     if (modo === 'linha') q.set('v', 'linha')
     if (zero !== (modo === 'barras')) q.set('z', zero ? '1' : '0')
+    if (corrigir !== (familia === 'caixa')) q.set('c', corrigir ? '1' : '0')
     window.history.replaceState(null, '', `${window.location.pathname}?${q.toString()}${window.location.hash}`)
-  }, [pronto, familia, ids, modo, zero])
+  }, [pronto, familia, ids, modo, zero, corrigir])
 
   const escolhidos = ids.map((id) => daFamilia.find((i) => i.id === id)).filter((i): i is Indicador => !!i)
   const principal = escolhidos[0]
   const comparando = escolhidos.length > 1
   const posicao = indicadores.findIndex((i) => i.id === principal.id)
 
-  const series: SerieGrafico[] = escolhidos.map((i) => ({ id: i.id, curto: i.curto, acumulaNoAno: i.acumulaNoAno, pontos: i.pontos }))
+  const podeCorrigir = escolhidos.every((i) => i.pontos.some((p) => p.deflator !== undefined))
+  const corrige = corrigir && podeCorrigir
+  const aplica = (pts: Indicador['pontos']) => (corrige ? pts.map((p) => (p.valor === null || p.deflator === undefined ? p : { ...p, valor: p.valor * p.deflator })) : pts)
+  const series: SerieGrafico[] = escolhidos.map((i) => ({ id: i.id, curto: i.curto, acumulaNoAno: i.acumulaNoAno, pontos: aplica(i.pontos) }))
   if (comReferencia && !comparando && principal.comparacao) {
-    series.push({ id: 'referencia', curto: principal.comparacao.curto, anterior: true, acumulaNoAno: false, pontos: principal.comparacao.pontos })
+    series.push({ id: 'referencia', curto: principal.comparacao.curto, anterior: true, acumulaNoAno: false, pontos: aplica(principal.comparacao.pontos) })
   }
   if (anoAnterior && !comparando && (familia === 'lrf' || familia === 'capag')) {
     series.push({
@@ -114,11 +121,12 @@ export function ExploradorIndicadores({ indicadores, notas, classificacoes, gera
   const escolher = useCallback((id: string) => {
     const novo = indicadores.find((i) => i.id === id)
     if (!novo) return
+    if (novo.familia !== familia) setCorrigir(novo.familia === 'caixa')
     setFamilia(novo.familia)
     setIds([id]); setFoco(null)
-  }, [indicadores])
+  }, [indicadores, familia])
   const andar = (passo: number) => escolher(indicadores[(posicao + passo + indicadores.length) % indicadores.length].id)
-  const escolherCategoria = (f: Familia) => { if (f !== familia) { setFamilia(f); setIds([PADRAO[f]]); setFoco(null); setZero(modo === 'barras') } }
+  const escolherCategoria = (f: Familia) => { if (f !== familia) { setFamilia(f); setIds([PADRAO[f]]); setFoco(null); setZero(modo === 'barras'); setCorrigir(f === 'caixa') } }
 
   // apresentação automática: passa pelos gráficos em sequência (para ao pairar, ao focar ou com movimento reduzido)
   const girando = tocando && !pausado && !movimentoReduzido
@@ -134,7 +142,7 @@ export function ExploradorIndicadores({ indicadores, notas, classificacoes, gera
 
   const baixarCsv = useCallback(() => {
     const base = series.filter((s) => !s.anterior)
-    const cab = ['periodo', 'ano', ...escolhidos.map((i) => i.id + (reais ? '_bilhoes_reais' : '_pct'))]
+    const cab = ['periodo', 'ano', ...escolhidos.map((i) => i.id + (reais ? (corrige ? '_bilhoes_reais_precos_correntes_ipca' : '_bilhoes_reais') : '_pct'))]
     const linhas = base[0].pontos.map((p, k) => [p.extenso, p.ano, ...base.map((s) => s.pontos[k].valor ?? '')].join(','))
     const blob = new Blob(['﻿' + [cab.join(','), ...linhas].join('\n') + '\n'], { type: 'text/csv;charset=utf-8' })
     const url = URL.createObjectURL(blob)
@@ -162,8 +170,9 @@ export function ExploradorIndicadores({ indicadores, notas, classificacoes, gera
     const partes = [`${moeda(v)} em ${pontoFoco.extenso}`]
     const ref = !comparando ? series.find((x) => x.id === 'referencia')?.pontos[focoAtual]?.valor ?? null : null
     if (ref !== null && v !== null && principal.comparacao) {
-      if (principal.comparacao.curto === 'Meta da LDO') partes.push(`meta da LDO de ${moeda(ref)}: ${v >= ref ? 'resultado igual ou acima da meta' : 'resultado abaixo da meta'}`)
-      else if (ref !== 0) partes.push(`${numero((v / ref) * 100, 1)}% da ${principal.comparacao.curto.toLowerCase()} (${moeda(ref)})`)
+      if (principal.comparacao.tipo === 'ano-anterior') {
+        if (ref !== 0) { const d = (v / ref - 1) * 100; partes.push(`${d > 0 ? '+' : d < 0 ? '−' : ''}${numero(Math.abs(d), 1)}% em termos reais sobre o mesmo período do ano anterior (${moeda(ref)} a preços corrigidos)`) }
+      } else if (ref !== 0) partes.push(`${principal.comparacao.curto.toLowerCase()}: ${moeda(ref)} (${numero((v / ref) * 100, 1)}%)`)
     }
     if (pontoFoco.parcial) partes.push('valor parcial do ano')
     const nota = principal.pontos.find((p) => p.ano === pontoFoco.ano && p.sub === pontoFoco.sub)?.nota
@@ -194,7 +203,7 @@ export function ExploradorIndicadores({ indicadores, notas, classificacoes, gera
           return (
             <button
               key={id} type="button" aria-pressed={ativo} onClick={() => escolherCategoria(id)}
-              className={`relative -mb-px inline-flex min-h-10 shrink-0 items-center gap-2 border-b-2 px-3 text-small font-semibold md:text-body ${ativo ? 'border-navy text-navy' : 'border-transparent text-ink-soft hover:text-ink'}`}
+              className={`relative -mb-px inline-flex min-h-10 shrink-0 items-center gap-2 border-b-2 px-2.5 text-small font-semibold md:text-body ${ativo ? 'border-navy text-navy' : 'border-transparent text-ink-soft hover:text-ink'}`}
             >
               <Icone className="h-5 w-5" aria-hidden="true" /><span className="md:hidden">{curto}</span><span className="hidden md:inline">{nome}</span>
             </button>
@@ -253,6 +262,12 @@ export function ExploradorIndicadores({ indicadores, notas, classificacoes, gera
               {principal.comparacao.curto}
             </label>
           )}
+          {podeCorrigir && (
+            <label className="flex min-h-11 cursor-pointer items-center gap-3 text-small">
+              <input type="checkbox" checked={corrigir} onChange={(e) => setCorrigir(e.target.checked)} className="h-5 w-5 accent-[rgb(var(--navy))]" />
+              Valores a preços de {precosEm} (IPCA)
+            </label>
+          )}
           {(familia === 'lrf' || familia === 'capag') && (
             <label className={`flex min-h-11 items-center gap-3 text-small ${!comparando ? 'cursor-pointer' : 'opacity-60'}`}>
               <input type="checkbox" checked={anoAnterior && !comparando} disabled={comparando} onChange={(e) => setAnoAnterior(e.target.checked)} className="h-5 w-5 accent-[rgb(var(--navy))]" />
@@ -290,6 +305,7 @@ export function ExploradorIndicadores({ indicadores, notas, classificacoes, gera
     </details>
   </div>
             </div>
+            {corrige && <p className="mb-1 text-small font-semibold text-ink">Valores a preços de {precosEm} (IPCA)</p>}
             <GraficoExplorador series={series} referencias={refs} foco={focoAtual} onFoco={setFoco} titulo={titulo} modo={modo} zero={zero} animKey={ids.join('+')} unidade={sufixo} />
             {n > 1 && pontoFoco && (
               <div className="mt-1">

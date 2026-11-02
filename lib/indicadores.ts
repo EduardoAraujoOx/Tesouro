@@ -112,8 +112,8 @@ export function degrauHaveres(): { de: number; para: number; em: PeriodoLrf } | 
  * Os objetos são simples (serializáveis) para seguirem do servidor para o navegador.
  * ---------------------------------------------------------------------------------------------- */
 
-export type Familia = 'orcamento' | 'resultados' | 'lrf' | 'capag' | 'previdencia' | 'funcoes'
-export type PontoIndicador = { ano: number; sub: number; rotulo: string; extenso: string; valor: number | null; nota?: string | null; parcial?: boolean }
+export type Familia = 'orcamento' | 'arrecadacao' | 'lrf' | 'caixa' | 'capag' | 'previdencia' | 'funcoes'
+export type PontoIndicador = { ano: number; sub: number; rotulo: string; extenso: string; valor: number | null; nota?: string | null; parcial?: boolean; deflator?: number }
 export type ReferenciaIndicador = { rotulo: string; valor: number; estilo: 'limite' | 'alerta' | 'prudencial'; texto?: string }
 export type Indicador = {
   id: string
@@ -129,23 +129,24 @@ export type Indicador = {
   base: string
   fonte: string
   termos?: { termo: string; texto: string }[]
-  periodicidade: 'quadrimestral' | 'anual'
+  periodicidade: 'quadrimestral' | 'anual' | 'mensal'
   /** Unidade dos valores: percentual ou R$ bilhões. */
   unidade: '%' | 'R$ bi'
   pontos: PontoIndicador[]
   /** Série de referência exibida ao lado (previsão, dotação ou meta da LDO), quando existe. */
-  comparacao?: { curto: string; pontos: PontoIndicador[] }
+  comparacao?: { curto: string; pontos: PontoIndicador[]; tipo?: 'referencia' | 'ano-anterior' }
   referencias: ReferenciaIndicador[]
   acumulaNoAno?: boolean
 }
 
 export const FAMILIAS: Record<Familia, { id: Familia; nome: string; descricao: string; padrao: string[] }> = {
   orcamento: { id: 'orcamento', nome: 'Orçamento e execução', descricao: 'RREO, a cada bimestre', padrao: ['receita'] },
+  arrecadacao: { id: 'arrecadacao', nome: 'Arrecadação', descricao: 'ICMS, FPE e royalties, mês a mês', padrao: ['icms'] },
+  lrf: { id: 'lrf', nome: 'Limites da LRF', descricao: 'Relatório de Gestão Fiscal, a cada quadrimestre', padrao: ['pessoal'] },
+  caixa: { id: 'caixa', nome: 'Caixa e obrigações', descricao: 'RGF, em dezembro de cada ano', padrao: ['caixa-apos'] },
+  capag: { id: 'capag', nome: 'CAPAG', descricao: 'Capacidade de pagamento, uma edição por ano', padrao: ['endividamento'] },
   previdencia: { id: 'previdencia', nome: 'Previdência', descricao: 'RREO, a cada bimestre', padrao: ['aportes'] },
   funcoes: { id: 'funcoes', nome: 'Despesas por função', descricao: 'RREO, a cada bimestre', padrao: ['educacao'] },
-  resultados: { id: 'resultados', nome: 'Resultados e metas', descricao: 'RREO e LDO, a cada bimestre', padrao: ['primario'] },
-  lrf: { id: 'lrf', nome: 'Limites da LRF', descricao: 'Relatório de Gestão Fiscal, a cada quadrimestre', padrao: ['pessoal'] },
-  capag: { id: 'capag', nome: 'CAPAG', descricao: 'Capacidade de pagamento, uma edição por ano', padrao: ['endividamento'] },
 }
 
 type Definicao = Pick<Indicador, 'nome' | 'curto' | 'subtitulo' | 'definicao' | 'formula' | 'leitura' | 'porQueImporta' | 'limite' | 'base' | 'fonte' | 'termos'>
@@ -178,15 +179,39 @@ type PeriodoRreo = {
   despesaAutorizada: number | null; despesaLiquidada: number | null
   investimentoAutorizado: number | null; investimentoLiquidado: number | null
   rcl12m: number | null
-  primario: number | null; metaPrimario: number | null
-  nominal: number | null; metaNominal: number | null
-  semRpps: boolean
   previdenciaReparticao: number | null; previdenciaCapitalizacao: number | null; previdenciaAportes: number | null; previdenciaMilitares: number | null
   [campo: string]: number | boolean | null
 }
-const rreo = rreoRaw as unknown as { geradoEm: string; serie: PeriodoRreo[] }
+type MensalRreo = Record<string, number>
+const rreo = rreoRaw as unknown as {
+  geradoEm: string
+  serie: PeriodoRreo[]
+  caixa: { ano: number; bruta: number | null; liquidaAntes: number | null; liquidaApos: number | null }[]
+  mensal: { icms: MensalRreo; fpe: MensalRreo; royalties: MensalRreo }
+  ipca: { mes: string; var: number }[]
+}
 export const serieRreo = rreo.serie
 export const rreoColetadoEm = rreo.geradoEm
+
+/* IPCA: número-índice acumulado a partir da variação mensal (Banco Central, SGS 433) */
+const indiceIpca: Record<string, number> = {}
+{
+  let acc = 1
+  for (const m of rreo.ipca) { acc *= 1 + m.var / 100; indiceIpca[m.mes] = acc }
+}
+const ultimoMesIpca = rreo.ipca[rreo.ipca.length - 1].mes
+const chaveMes = (ano: number, mes: number) => `${ano}-${String(mes).padStart(2, '0')}`
+const NOMES_MES = ['janeiro', 'fevereiro', 'março', 'abril', 'maio', 'junho', 'julho', 'agosto', 'setembro', 'outubro', 'novembro', 'dezembro']
+/** Mês e ano dos preços em que o painel corrige os valores (o último IPCA publicado). */
+export const precosEm = `${NOMES_MES[Number(ultimoMesIpca.slice(5)) - 1]} de ${ultimoMesIpca.slice(0, 4)}`
+/** Fator que leva um valor do período (média do índice nos meses informados) aos preços do último mês. */
+function fatorPrecos(meses: [number, number][]): number | undefined {
+  const idx = meses.map(([a, m]) => indiceIpca[chaveMes(a, m)])
+  if (idx.some((v) => v === undefined)) return undefined
+  return indiceIpca[ultimoMesIpca] / (idx.reduce((x, y) => x + y, 0) / idx.length)
+}
+const mesesAte = (ano: number, ate: number, n: number): [number, number][] =>
+  Array.from({ length: n }, (_, i) => { const k = ate - n + 1 + i; return (k > 0 ? [ano, k] : [ano - 1, k + 12]) as [number, number] })
 
 const MESES = ['', 'janeiro e fevereiro', 'janeiro a abril', 'janeiro a junho', 'janeiro a agosto', 'janeiro a outubro', 'janeiro a dezembro']
 export const ultimoRreo = serieRreo[serieRreo.length - 1]
@@ -205,8 +230,45 @@ function pontosRreo(campo: string, acumulado = true): PontoIndicador[] {
         : `Exercício de ${p.ano}`,
       valor: bi(p[campo] as number | null),
       parcial,
+      deflator: fatorPrecos(acumulado ? mesesAte(p.ano, p.bimestre * 2, p.bimestre * 2) : mesesAte(p.ano, p.bimestre * 2, 12)),
     }
   })
+}
+
+function pontosCaixa(campo: 'bruta' | 'liquidaAntes' | 'liquidaApos'): PontoIndicador[] {
+  return rreo.caixa.map((c) => ({
+    ano: c.ano, sub: 3, rotulo: String(c.ano), extenso: `Dezembro de ${c.ano}`, valor: bi(c[campo]),
+    deflator: fatorPrecos([[c.ano, 12]]),
+  }))
+}
+
+/** Arrecadação acumulada no ano, mês a mês, contra o mesmo período do ano anterior corrigido pelo IPCA. */
+function indicadorArrecadacao(id: string, serie: MensalRreo): Indicador {
+  const chaves = Object.keys(serie).sort()
+  const [anoStr, mesStr] = chaves[chaves.length - 1].split('-')
+  const ano = Number(anoStr), ate = Number(mesStr)
+  const soma = (a: number, m: number, corrigir: boolean): number | null => {
+    let t = 0
+    for (let k = 1; k <= m; k++) {
+      const v = serie[chaveMes(a, k)]
+      if (v === undefined) return null
+      const f = corrigir ? indiceIpca[chaveMes(ano, k)] / indiceIpca[chaveMes(a, k)] : 1
+      if (!Number.isFinite(f)) return null
+      t += v * f
+    }
+    return t / 1e9
+  }
+  const ponto = (m: number, valor: number | null): PontoIndicador => ({
+    ano, sub: m, rotulo: NOMES_MES[m - 1].slice(0, 3), valor,
+    extenso: m === 1 ? `Janeiro de ${ano}` : `Janeiro a ${NOMES_MES[m - 1]} de ${ano}`,
+  })
+  const meses = Array.from({ length: ate }, (_, i) => i + 1)
+  return {
+    id, familia: 'arrecadacao', ...definicoes[id], periodicidade: 'mensal', unidade: 'R$ bi', referencias: [],
+    subtitulo: `R$ bilhões acumulados em ${ano}, contra o mesmo período de ${ano - 1} corrigido pelo IPCA`,
+    pontos: meses.map((m) => ponto(m, soma(ano, m, false))),
+    comparacao: { curto: `${ano - 1}, corrigido pelo IPCA`, tipo: 'ano-anterior', pontos: meses.map((m) => ponto(m, soma(ano - 1, m, true))) },
+  }
 }
 
 function indicadoresRreo(): Indicador[] {
@@ -221,8 +283,21 @@ function indicadoresRreo(): Indicador[] {
     com('despesa', 'orcamento', 'despesaLiquidada', { curto: 'Dotação atualizada', campo: 'despesaAutorizada' }),
     com('investimentos', 'orcamento', 'investimentoLiquidado', { curto: 'Dotação atualizada', campo: 'investimentoAutorizado' }),
     com('rcl', 'orcamento', 'rcl12m', undefined, false),
-    com('primario', 'resultados', 'primario', { curto: 'Meta da LDO', campo: 'metaPrimario' }),
-    com('nominal', 'resultados', 'nominal', { curto: 'Meta da LDO', campo: 'metaNominal' }),
+    ...((): Indicador[] => {
+      const caixa = (id: string, campo: 'bruta' | 'liquidaAntes' | 'liquidaApos', comp?: { curto: string; campo: 'bruta' | 'liquidaAntes' }): Indicador => ({
+        id, familia: 'caixa', ...definicoes[id], periodicidade: 'anual', unidade: 'R$ bi', referencias: [],
+        pontos: pontosCaixa(campo),
+        ...(comp ? { comparacao: { curto: comp.curto, pontos: pontosCaixa(comp.campo) } } : {}),
+      })
+      return [
+        caixa('caixa-apos', 'liquidaApos', { curto: 'Caixa líquido antes dos restos a pagar', campo: 'liquidaAntes' }),
+        caixa('caixa-antes', 'liquidaAntes', { curto: 'Caixa bruto', campo: 'bruta' }),
+        caixa('caixa-bruto', 'bruta'),
+      ]
+    })(),
+    indicadorArrecadacao('icms', rreo.mensal.icms),
+    indicadorArrecadacao('fpe', rreo.mensal.fpe),
+    indicadorArrecadacao('royalties', rreo.mensal.royalties),
     com('aportes', 'previdencia', 'previdenciaAportes'),
     com('capitalizacao', 'previdencia', 'previdenciaCapitalizacao'),
     com('militares', 'previdencia', 'previdenciaMilitares'),

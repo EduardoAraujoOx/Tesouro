@@ -5,12 +5,12 @@ import { ExploradorIndicadores } from '@/components/ExploradorIndicadores'
 import { IconExternal } from '@/components/Icons'
 import { formatarData, maisRecente } from '@/lib/acervo'
 import {
-  bilhoes, capagAtualizadaEm, catalogoIndicadores, classificacoesCapag, coletadoEm, degrauHaveres, fontes, periodoUltimoRreo, rotuloPeriodo, ultimoLrf, ultimoRreo,
+  bilhoes, capagAtualizadaEm, catalogoIndicadores, classificacoesCapag, coletadoEm, degrauHaveres, fontes, periodoUltimoRreo, precosEm, rotuloPeriodo, ultimoLrf, ultimoRreo,
 } from '@/lib/indicadores'
 
 export const metadata: Metadata = {
   title: 'Painel fiscal',
-  description: 'Painel quantitativo com os indicadores fiscais oficiais do Espírito Santo: execução do orçamento, metas fiscais, limites da Lei de Responsabilidade Fiscal e nota da CAPAG, em séries históricas atualizadas automaticamente.',
+  description: 'Painel quantitativo com os indicadores fiscais oficiais do Espírito Santo: execução do orçamento, arrecadação, caixa, limites da Lei de Responsabilidade Fiscal e nota da CAPAG, em séries históricas atualizadas automaticamente.',
 }
 
 const ext = (href: string, texto: string) => (
@@ -31,14 +31,19 @@ export default function Indicadores() {
     : []
   const notaFaixas = 'As linhas marcam as faixas das notas da Portaria Normativa MF nº 1.583/2023, que o Tesouro Nacional aplica às edições mais recentes. Edições anteriores seguiram regras anteriores, com outras faixas e outros cálculos; por isso uma barra antiga pode passar de uma linha e ainda assim ter recebido nota A (a poupança corrente de 2019, de 88,3%, por exemplo). A nota de cada edição é sempre a divulgada pelo Tesouro Nacional.'
   const parcial = ultimoRreo.bimestre < 6
-  for (const id of ['receita', 'despesa', 'investimentos', 'primario', 'nominal', 'educacao', 'saude', 'seguranca', 'transporte', 'funcao-previdencia', 'encargos', 'aportes', 'capitalizacao', 'militares']) {
-    notas.push({ id, ano: 0, sub: 0, texto: `Valores correntes, sem correção pela inflação. ${parcial ? `O ponto marcado com asterisco (${ultimoRreo.ano}) reúne o ${periodoUltimoRreo} e por isso é parcial; a previsão, a dotação e a meta com que ele se compara, quando há, são as do ano inteiro.` : ''}`.trim() })
+  for (const id of ['receita', 'despesa', 'investimentos', 'educacao', 'saude', 'seguranca', 'transporte', 'funcao-previdencia', 'encargos', 'aportes', 'capitalizacao', 'militares']) {
+    notas.push({ id, ano: 0, sub: 0, texto: `Valores correntes; para comparar anos em poder de compra, ative a correção pelo IPCA em Opções. ${parcial ? `O ponto marcado com asterisco (${ultimoRreo.ano}) reúne o ${periodoUltimoRreo} e por isso é parcial; a previsão e a dotação com que ele se compara, quando há, são as do ano inteiro.` : ''}`.trim() })
   }
-  if (parcial) notas.push({ id: 'rcl', ano: 0, sub: 0, texto: `O ponto marcado com asterisco (${ultimoRreo.ano}) soma os doze meses encerrados no ${periodoUltimoRreo.split(' (')[0]}. Valores correntes, sem correção pela inflação.` })
+  if (parcial) notas.push({ id: 'rcl', ano: 0, sub: 0, texto: `O ponto marcado com asterisco (${ultimoRreo.ano}) soma os doze meses encerrados no ${periodoUltimoRreo.split(' (')[0]}. Valores correntes; para comparar anos em poder de compra, ative a correção pelo IPCA em Opções.` })
   notas.push({ id: 'educacao', ano: 0, sub: 0, texto: 'A série da função Educação tem um salto entre 2020 e 2021. O demonstrativo não explica a causa, que pode envolver mudança de classificação contábil; consulte o RREO do ano antes de interpretar a variação.' })
   notas.push({ id: 'militares', ano: 0, sub: 0, texto: 'O demonstrativo passou a trazer esta linha em 2021; por isso a série começa nesse ano.' })
-  for (const id of ['primario', 'nominal']) {
-    notas.push({ id, ano: 0, sub: 0, texto: 'Até 2022 o demonstrativo trazia um único resultado. A partir de 2023 ele separa o regime próprio de previdência (RPPS), e o painel mostra o resultado sem o RPPS, que é o comparado com a meta da LDO. Ao comparar anos dos dois períodos, considere essa mudança.' })
+  for (const id of ['caixa-apos', 'caixa-antes', 'caixa-bruto']) {
+    notas.push({ id, ano: 0, sub: 0, texto: 'O RGF informa o caixa dos recursos livres em 31 de dezembro de cada ano; entre dezembros, o painel não tem posição oficial. Por padrão os valores aparecem corrigidos pelo IPCA; desative a correção em Opções para ver os valores publicados.' })
+  }
+  for (const id of ['icms', 'fpe', 'royalties']) {
+    const ind = indicadores.find((i) => i.id === id)
+    const ult = ind ? [...ind.pontos].reverse().find((p) => p.valor !== null) : undefined
+    notas.push({ id, ano: 0, sub: 0, texto: `Série até ${ult?.extenso ?? 'o último mês disponível'}. Cada mês do ano anterior é corrigido pelo IPCA para os preços do mesmo mês do ano atual antes de ser somado.${id === 'royalties' ? ' Os dados da ANP são publicados com defasagem e não incluem a participação especial.' : ' Os valores são os de antes das transferências aos municípios e ao Fundeb.'}` })
   }
   for (const id of ['endividamento', 'poupanca', 'liquidez']) notas.push({ id, ano: 0, sub: 0, texto: notaFaixas })
 
@@ -58,11 +63,11 @@ export default function Indicadores() {
           </ol>
         </nav>
         <h1 id="titulo-pagina" className="text-headline !text-on-navy md:mt-2">Painel fiscal</h1>
-        <p className="mt-1 hidden max-w-2xl text-body text-on-navy md:block">Acompanhe a execução do orçamento, as metas fiscais, os limites da Lei de Responsabilidade Fiscal (LRF) e a capacidade de pagamento do Estado, com dados oficiais atualizados automaticamente.</p>
+        <p className="mt-1 hidden max-w-2xl text-body text-on-navy md:block">Acompanhe a execução do orçamento, a arrecadação, o caixa, os limites da Lei de Responsabilidade Fiscal (LRF) e a capacidade de pagamento do Estado, com dados oficiais atualizados automaticamente.</p>
       </div>
     </section>
     <div className="mx-auto max-w-page px-5 py-5 md:px-8 md:py-6">
-      <ExploradorIndicadores indicadores={indicadores} notas={notas} classificacoes={classificacoesCapag} geradoEm={coletadoEm} />
+      <ExploradorIndicadores indicadores={indicadores} notas={notas} classificacoes={classificacoesCapag} geradoEm={coletadoEm} precosEm={precosEm} />
 
       <details id="metodo" className="group mt-10 border-t border-line pt-2">
         <summary className="flex min-h-12 cursor-pointer items-center justify-between gap-4 text-body font-semibold text-ink">Metodologia, definições e dados abertos<span aria-hidden="true" className="text-ink-soft transition-transform group-open:rotate-180">⌄</span></summary>
@@ -83,7 +88,7 @@ export default function Indicadores() {
           <h2 className="mt-10 text-title">Como os números chegam aqui</h2>
           <div className="mt-3 grid max-w-4xl gap-4 text-body text-ink-soft">
             <p><strong className="text-ink">Origem.</strong> Os limites da LRF vêm do Relatório de Gestão Fiscal do Poder Executivo, lido na {ext(fontes.siconfi, 'API de dados abertos do Siconfi')}. A CAPAG vem do conjunto de dados abertos do {ext(fontes.capag, 'Tesouro Transparente')}, atualizado em {formatarData(capagAtualizadaEm)}. O portal não altera os valores: apenas converte, quando o relatório informa o limite em reais, em percentual da receita corrente líquida ajustada.</p>
-            <p><strong className="text-ink">Orçamento e metas.</strong> A execução do orçamento, a receita corrente líquida e os resultados primário e nominal vêm do Relatório Resumido da Execução Orçamentária (RREO) do Poder Executivo, nos Anexos 01, 03 e 06, também lidos na API do Siconfi. As despesas por função (Anexo 02) e as receitas e despesas previdenciárias do regime próprio (Anexo 04) vêm da mesma fonte. Os valores do RREO acumulam no ano: cada barra mostra o último bimestre disponível do exercício, e o ano em curso aparece marcado com asterisco por ser parcial. As metas vêm do Anexo de Metas Fiscais da LDO, reproduzidas no próprio RREO. Os mínimos constitucionais de aplicação em educação e em saúde não são reproduzidos: seus demonstrativos (Anexos 08 e 12 do RREO) não constam dos dados abertos do Siconfi para o Estado. Último período: {periodoUltimoRreo}.</p>
+            <p><strong className="text-ink">Orçamento, arrecadação e caixa.</strong> A execução do orçamento, as despesas por função, a receita corrente líquida e as receitas e despesas previdenciárias vêm do Relatório Resumido da Execução Orçamentária (RREO) do Poder Executivo, nos Anexos 01, 02, 03 e 04, lidos na API do Siconfi. O ICMS e a cota-parte do FPE, mês a mês, vêm do Anexo 03; os royalties, dos dados abertos da ANP; e o caixa dos recursos livres, do Anexo 5 do RGF de dezembro. Os valores do RREO acumulam no ano: cada barra anual mostra o último bimestre disponível do exercício, e o ano em curso aparece marcado com asterisco por ser parcial. A correção pela inflação usa o IPCA do Banco Central. Os mínimos constitucionais de aplicação em educação e em saúde não são reproduzidos: seus demonstrativos (Anexos 08 e 12 do RREO) não constam dos dados abertos do Siconfi para o Estado. Último período do RREO: {periodoUltimoRreo}; preços de {precosEm}.</p>
             <p><strong className="text-ink">Atualização automática.</strong> Uma rotina semanal consulta as fontes oficiais e, havendo dado novo, abre uma proposta de atualização que, depois de verificada, publica os números sem digitação. O RGF é entregue a cada quadrimestre e a CAPAG, uma vez por ano. Último período do RGF: {rotuloPeriodo(ultimoLrf)}{ultimoLrf.entregaEm && <>, entregue em {formatarData(ultimoLrf.entregaEm)}</>}.</p>
             <p><strong className="text-ink">Limites antes de 2024.</strong> Nos relatórios anteriores a 2024, o limite da dívida (200%) e o das garantias (22%) não constam em reais; o painel usa o valor fixado pelo Senado Federal, o mesmo dos relatórios recentes.</p>
             <p><strong className="text-ink">Como a CAPAG classifica.</strong> Cada um dos três indicadores recebe uma nota parcial. Endividamento: A abaixo de 60%, B de 60% a menos de 100%, C a partir de 100%. Poupança corrente: A abaixo de 85%, B de 85% a menos de 95%, C a partir de 95%. Liquidez relativa: A a partir de 5%, B acima de zero e abaixo de 5%, C zero ou negativa. A nota final combina as três: A quando o endividamento está em A e, entre poupança e liquidez, no máximo uma está em B e nenhuma em C; B quando poupança e liquidez não estão em C e a combinação não chega a A; D quando os três estão em C; e C nas demais combinações. Base: Portaria Normativa MF nº 1.583/2023, alterada pela Portaria MF nº 1.764/2024. Os conceitos das variáveis são definidos pela STN (Portaria STN/MF nº 857/2026).</p>
@@ -91,7 +96,9 @@ export default function Indicadores() {
             <p className="flex flex-wrap gap-x-8 gap-y-2">
               <a href="/dados/limites-lrf-es.csv" download className="font-semibold text-navy underline underline-offset-4">Limites da LRF por quadrimestre (CSV)</a>
               <a href="/dados/capag-es.csv" download className="font-semibold text-navy underline underline-offset-4">CAPAG por edição (CSV)</a>
-              <a href="/dados/rreo-es.csv" download className="font-semibold text-navy underline underline-offset-4">Orçamento, resultados, funções e previdência por exercício (CSV)</a>
+              <a href="/dados/rreo-es.csv" download className="font-semibold text-navy underline underline-offset-4">Orçamento, funções e previdência por exercício (CSV)</a>
+              <a href="/dados/caixa-es.csv" download className="font-semibold text-navy underline underline-offset-4">Caixa dos recursos livres em dezembro (CSV)</a>
+              <a href="/dados/arrecadacao-es.csv" download className="font-semibold text-navy underline underline-offset-4">ICMS, FPE e royalties por mês (CSV)</a>
             </p>
           </div>
         </div>

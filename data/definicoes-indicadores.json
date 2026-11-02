@@ -242,54 +242,6 @@
       }
     ]
   },
-  "primario": {
-    "nome": "Resultado primário",
-    "curto": "Resultado primário",
-    "subtitulo": "R$ bilhões, acumulado no exercício, comparado com a meta da LDO",
-    "definicao": "Diferença entre as receitas e as despesas primárias, isto é, sem contar juros, amortizações e outras operações financeiras. Resultado positivo (superávit) indica que o Estado arrecadou mais do que gastou antes de pagar a dívida; negativo, o contrário.",
-    "formula": "Receita primária menos despesa primária, apurada acima da linha (a partir de 2023, sem o RPPS)",
-    "leitura": "A barra azul é o resultado realizado e a barra cinza, a meta fixada na LDO para o ano. A meta é cumprida quando o resultado fica igual ou acima dela, ainda que seja negativo. No ano em curso o resultado é parcial e a meta é a do ano inteiro.",
-    "porQueImporta": "Indica se o Estado financia suas despesas de funcionamento e seus investimentos com a própria arrecadação, sem recorrer a nova dívida. É uma das metas fiscais da LDO.",
-    "limite": "Meta anual fixada na LDO, diferente a cada ano",
-    "base": "Lei Complementar nº 101/2000 (LRF), arts. 4º, §1º, e 52, II, e LDO de cada ano",
-    "fonte": "Siconfi, RREO do Poder Executivo, Anexo 06 (Resultado Primário e Nominal)",
-    "termos": [
-      {
-        "termo": "Receitas e despesas primárias",
-        "texto": "Receitas e despesas do dia a dia do Estado, sem as operações financeiras, como juros, amortizações e empréstimos."
-      },
-      {
-        "termo": "RPPS",
-        "texto": "Regime Próprio de Previdência Social dos servidores. A partir de 2023 o demonstrativo separa o resultado sem o RPPS, que é o que o painel mostra; nos anos anteriores o resultado era único."
-      },
-      {
-        "termo": "Acima da linha",
-        "texto": "Apuração que parte das receitas e despesas do período, em oposição à que parte da variação da dívida."
-      }
-    ]
-  },
-  "nominal": {
-    "nome": "Resultado nominal",
-    "curto": "Resultado nominal",
-    "subtitulo": "R$ bilhões, acumulado no exercício, comparado com a meta da LDO",
-    "definicao": "Resultado primário acrescido dos juros e encargos recebidos e descontados os juros e encargos pagos. Mostra o resultado fiscal completo do período, já com o custo da dívida e o rendimento dos ativos financeiros.",
-    "formula": "Resultado primário + (juros e encargos ativos − juros e encargos passivos), apurado acima da linha (a partir de 2023, sem o RPPS)",
-    "leitura": "A barra azul é o resultado realizado e a barra cinza, a meta fixada na LDO para o ano. A meta é cumprida quando o resultado fica igual ou acima dela. No ano em curso o resultado é parcial e a meta é a do ano inteiro.",
-    "porQueImporta": "Mostra se, considerando também o custo da dívida e o rendimento dos ativos financeiros, a situação fiscal do Estado melhora ou piora no ano.",
-    "limite": "Meta anual fixada na LDO, diferente a cada ano",
-    "base": "Lei Complementar nº 101/2000 (LRF), arts. 4º, §1º, e 52, II, e LDO de cada ano",
-    "fonte": "Siconfi, RREO do Poder Executivo, Anexo 06 (Resultado Primário e Nominal)",
-    "termos": [
-      {
-        "termo": "Juros e encargos ativos",
-        "texto": "Rendimentos que o Estado recebe, por exemplo, de aplicações financeiras."
-      },
-      {
-        "termo": "Juros e encargos passivos",
-        "texto": "Juros e encargos que o Estado paga pela dívida."
-      }
-    ]
-  },
   "educacao": {
     "nome": "Despesa na função Educação",
     "curto": "Educação",
@@ -481,6 +433,142 @@
       {
         "termo": "Inativos e pensionistas",
         "texto": "Servidores aposentados e dependentes que recebem pensão."
+      }
+    ]
+  },
+  "caixa-apos": {
+    "nome": "Caixa líquido após os restos a pagar",
+    "curto": "Caixa líquido (após RP)",
+    "subtitulo": "R$ bilhões em 31 de dezembro, recursos livres do Poder Executivo",
+    "definicao": "O que sobra do caixa livre depois de pagar as obrigações já assumidas e de reservar o dinheiro das despesas empenhadas no ano cujo serviço ou obra ainda não foi entregue (restos a pagar não processados). É a medida mais conservadora do que resta de recursos livres para um novo governo.",
+    "formula": "Caixa bruto dos recursos não vinculados, menos as obrigações financeiras (restos a pagar de anos anteriores e do exercício e demais obrigações) e menos os restos a pagar empenhados e ainda não liquidados do exercício (item i do Anexo 5 do RGF)",
+    "leitura": "A barra azul é o caixa livre após os restos a pagar e a barra clara, o caixa antes deles: a diferença são as despesas do ano ainda por entregar e pagar. O valor só é apurado em dezembro. Ligue a correção pelo IPCA em Opções para comparar os anos em poder de compra.",
+    "porQueImporta": "Mostra quanto de recursos livres o Estado tem, de fato, depois de honrar o que já assumiu. A LRF veda, nos dois últimos quadrimestres do mandato, assumir obrigação que não possa ser paga com a disponibilidade de caixa.",
+    "limite": "Sem limite numérico. A LRF exige disponibilidade de caixa para as obrigações assumidas nos dois últimos quadrimestres do mandato",
+    "base": "Lei Complementar nº 101/2000 (LRF), arts. 42 e 55, III, e Manual de Demonstrativos Fiscais da STN (Anexo 5 do RGF)",
+    "fonte": "Siconfi, RGF do Poder Executivo, Anexo 5 (3º quadrimestre)",
+    "termos": [
+      {
+        "termo": "Recursos não vinculados",
+        "texto": "Também chamados de recursos livres: o dinheiro que não tem destinação legal específica e pode ser usado em qualquer despesa."
+      },
+      {
+        "termo": "Restos a pagar",
+        "texto": "Despesas empenhadas em um ano que ainda não foram pagas até 31 de dezembro e ficam para pagamento no ano seguinte."
+      },
+      {
+        "termo": "Empenho",
+        "texto": "Reserva de dinheiro do orçamento para uma despesa contratada."
+      }
+    ]
+  },
+  "caixa-antes": {
+    "nome": "Caixa líquido antes dos restos a pagar",
+    "curto": "Caixa líquido (antes dos RP)",
+    "subtitulo": "R$ bilhões em 31 de dezembro, recursos livres do Poder Executivo",
+    "definicao": "O que sobra do caixa bruto livre depois de pagar as obrigações financeiras já assumidas, isto é, as despesas cujo serviço ou bem já foi entregue e ainda não foram pagas, os restos a pagar de anos anteriores e outras obrigações financeiras.",
+    "formula": "Caixa bruto dos recursos não vinculados menos as obrigações financeiras (item g do Anexo 5 do RGF)",
+    "leitura": "A barra azul é o caixa livre líquido das obrigações e a barra clara, o caixa bruto: a diferença são as obrigações financeiras já assumidas. Ligue a correção pelo IPCA em Opções para comparar os anos em poder de compra.",
+    "porQueImporta": "Mostra o caixa livre que sobra das obrigações já vencidas ou em andamento, antes de considerar as despesas do ano ainda por entregar.",
+    "limite": "Sem limite numérico",
+    "base": "Lei Complementar nº 101/2000 (LRF), arts. 42 e 55, III, e Manual de Demonstrativos Fiscais da STN (Anexo 5 do RGF)",
+    "fonte": "Siconfi, RGF do Poder Executivo, Anexo 5 (3º quadrimestre)",
+    "termos": [
+      {
+        "termo": "Recursos não vinculados",
+        "texto": "Também chamados de recursos livres: o dinheiro que não tem destinação legal específica e pode ser usado em qualquer despesa."
+      },
+      {
+        "termo": "Restos a pagar",
+        "texto": "Despesas empenhadas em um ano que ainda não foram pagas até 31 de dezembro e ficam para pagamento no ano seguinte."
+      },
+      {
+        "termo": "Empenho",
+        "texto": "Reserva de dinheiro do orçamento para uma despesa contratada."
+      }
+    ]
+  },
+  "caixa-bruto": {
+    "nome": "Caixa bruto dos recursos livres",
+    "curto": "Caixa bruto",
+    "subtitulo": "R$ bilhões em 31 de dezembro, recursos livres do Poder Executivo",
+    "definicao": "Dinheiro disponível nos recursos livres, antes de descontar qualquer compromisso. O nome oficial é disponibilidade de caixa bruta do total dos recursos não vinculados.",
+    "formula": "Disponibilidade de caixa bruta do total dos recursos não vinculados (item a do Anexo 5 do RGF)",
+    "leitura": "Cada barra é o saldo em 31 de dezembro. Não desconta obrigação alguma, por isso deve ser lido junto com o caixa líquido. Ligue a correção pelo IPCA em Opções para comparar os anos em poder de compra.",
+    "porQueImporta": "É o ponto de partida do caixa livre. Sozinho não diz quanto o Estado pode gastar, porque ainda não desconta o que já deve.",
+    "limite": "Sem limite numérico",
+    "base": "Lei Complementar nº 101/2000 (LRF), arts. 42 e 55, III, e Manual de Demonstrativos Fiscais da STN (Anexo 5 do RGF)",
+    "fonte": "Siconfi, RGF do Poder Executivo, Anexo 5 (3º quadrimestre)",
+    "termos": [
+      {
+        "termo": "Recursos não vinculados",
+        "texto": "Também chamados de recursos livres: o dinheiro que não tem destinação legal específica e pode ser usado em qualquer despesa."
+      }
+    ]
+  },
+  "icms": {
+    "nome": "ICMS",
+    "curto": "ICMS",
+    "subtitulo": "R$ bilhões acumulados no ano, contra o mesmo período do ano anterior corrigido pelo IPCA",
+    "definicao": "Arrecadação do Imposto sobre Circulação de Mercadorias e Serviços pelo Estado, antes das transferências aos municípios e ao Fundeb.",
+    "formula": "Soma dos valores mensais da receita de ICMS informados no demonstrativo da receita corrente líquida (Anexo 3 do RREO), de janeiro até o mês indicado",
+    "leitura": "A barra azul é o acumulado do ano até cada mês e a barra clara, o acumulado do mesmo período do ano anterior, com cada mês corrigido pelo IPCA para os preços do mês correspondente do ano atual. Barra azul acima da clara indica crescimento acima da inflação.",
+    "porQueImporta": "O ICMS é a principal fonte de recursos do Estado. Comparar com o ano anterior já descontada a inflação mostra se a arrecadação cresce de fato ou apenas acompanha os preços.",
+    "limite": "Sem limite legal",
+    "base": "Constituição Federal, art. 155, II, e Lei Complementar nº 101/2000 (LRF), art. 53, §1º, I",
+    "fonte": "Siconfi, RREO do Poder Executivo, Anexo 3 (Receita Corrente Líquida); IPCA do Banco Central",
+    "termos": [
+      {
+        "termo": "Fundeb",
+        "texto": "Fundo de manutenção da educação básica, formado por parte da arrecadação de estados e municípios."
+      },
+      {
+        "termo": "IPCA",
+        "texto": "Índice oficial de inflação, usado aqui para trazer valores de meses diferentes ao mesmo poder de compra."
+      }
+    ]
+  },
+  "fpe": {
+    "nome": "Cota-parte do FPE",
+    "curto": "FPE",
+    "subtitulo": "R$ bilhões acumulados no ano, contra o mesmo período do ano anterior corrigido pelo IPCA",
+    "definicao": "Parcela do Fundo de Participação dos Estados que cabe ao Espírito Santo: transferência da União, formada por parte da arrecadação de impostos federais e distribuída entre os estados por critérios definidos em lei. Os valores são os de antes da dedução para o Fundeb.",
+    "formula": "Soma dos valores mensais da cota-parte do FPE informados no demonstrativo da receita corrente líquida (Anexo 3 do RREO), de janeiro até o mês indicado",
+    "leitura": "A barra azul é o acumulado do ano até cada mês e a barra clara, o acumulado do mesmo período do ano anterior, com cada mês corrigido pelo IPCA para os preços do mês correspondente do ano atual. Barra azul acima da clara indica crescimento acima da inflação.",
+    "porQueImporta": "O FPE é uma das maiores transferências que o Estado recebe da União. Como depende da arrecadação federal, mostra o quanto da receita vem de fora do Estado.",
+    "limite": "Sem limite legal",
+    "base": "Constituição Federal, art. 159, I, a, e Lei Complementar nº 62/1989",
+    "fonte": "Siconfi, RREO do Poder Executivo, Anexo 3 (Receita Corrente Líquida); IPCA do Banco Central",
+    "termos": [
+      {
+        "termo": "Fundeb",
+        "texto": "Fundo de manutenção da educação básica, formado por parte da arrecadação de estados e municípios."
+      },
+      {
+        "termo": "IPCA",
+        "texto": "Índice oficial de inflação, usado aqui para trazer valores de meses diferentes ao mesmo poder de compra."
+      }
+    ]
+  },
+  "royalties": {
+    "nome": "Royalties de petróleo e gás",
+    "curto": "Royalties",
+    "subtitulo": "R$ bilhões acumulados no ano, contra o mesmo período do ano anterior corrigido pelo IPCA",
+    "definicao": "Compensação financeira paga pelas empresas que produzem petróleo e gás natural, repassada pela ANP aos estados produtores, como o Espírito Santo. Não inclui a participação especial.",
+    "formula": "Soma dos valores mensais de royalties distribuídos pela ANP ao Espírito Santo, por mês de caixa, de janeiro até o mês indicado",
+    "leitura": "A barra azul é o acumulado do ano até cada mês e a barra clara, o acumulado do mesmo período do ano anterior, com cada mês corrigido pelo IPCA para os preços do mês correspondente do ano atual. Barra azul acima da clara indica crescimento acima da inflação. Os dados abertos da ANP são publicados com defasagem; por isso a série pode terminar antes das demais.",
+    "porQueImporta": "Os royalties dependem do preço do petróleo, do câmbio e da produção, e variam bastante de um ano para outro. Acompanhá-los ajuda a separar o que é receita estável do que é receita volátil.",
+    "limite": "Sem limite legal",
+    "base": "Lei nº 9.478/1997 e Lei nº 7.990/1989",
+    "fonte": "ANP, dados abertos de royalties por estado; IPCA do Banco Central",
+    "termos": [
+      {
+        "termo": "Mês de caixa",
+        "texto": "Mês em que o valor foi efetivamente repassado ao Estado, e não o mês da produção que o originou."
+      },
+      {
+        "termo": "IPCA",
+        "texto": "Índice oficial de inflação, usado aqui para trazer valores de meses diferentes ao mesmo poder de compra."
       }
     ]
   }

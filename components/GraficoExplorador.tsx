@@ -115,12 +115,22 @@ export function GraficoExplorador({ series, referencias, foco, onFoco, titulo, m
   const ticks: number[] = []
   for (let t = Math.ceil(y0 / passo) * passo; t <= y1 + 1e-9; t += passo) ticks.push(Math.round(t * 1000) / 1000)
 
+  // rótulos do eixo horizontal: um por ponto quando cada ponto é um ano (ou um mês do mesmo ano) e cabem;
+  // nas séries por quadrimestre, o ano no primeiro quadrimestre de cada ano
   const refPontos = series[0].pontos
-  let ultimoX = -999
+  const nAnos = new Set(refPontos.map((p) => p.ano)).size
+  const umPorPonto = nAnos === refPontos.length || nAnos === 1
+  const textoX = (p: PontoGrafico) => (umPorPonto ? p.rotulo : String(p.ano))
+  const larguraX = (p: PontoGrafico) => textoX(p).length * 6.4 + 4
+  let ultimoX = -999, ultimaL = 0
   const rotulosX = refPontos
     .map((p, i) => ({ p, i }))
-    .filter(({ p }) => p.sub === 1)
-    .filter(({ i }) => { const x = X(i); if (x - ultimoX >= 46) { ultimoX = x; return true } return false })
+    .filter(({ p }) => umPorPonto || p.sub === 1)
+    .filter(({ p, i }) => {
+      const x = X(i), l = larguraX(p)
+      if (x - ultimoX >= (ultimaL + l) / 2 + 3) { ultimoX = x; ultimaL = l; return true }
+      return false
+    })
 
   const caminho = (s: SerieGrafico) => s.pontos.map((p, i) => {
     if (p.valor === null) return ''
@@ -231,7 +241,7 @@ export function GraficoExplorador({ series, referencias, foco, onFoco, titulo, m
               )
             })}
             {rotulosX.map(({ p, i }) => (
-              <text key={p.rotulo} x={X(i)} y={H - 14} textAnchor="middle" className="fill-ink-soft" style={{ fontSize: 12 }}>{p.ano}</text>
+              <text key={`${p.ano}-${p.sub}`} x={X(i)} y={H - 14} textAnchor="middle" className="fill-ink-soft" style={{ fontSize: 12 }}>{textoX(p)}</text>
             ))}
           </g>
 
