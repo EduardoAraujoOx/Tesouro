@@ -7,6 +7,9 @@ Atualiza os indicadores de execução orçamentária e de resultados fiscais do 
     investimentos autorizados e liquidados.
   * Anexo 03 (Receita Corrente Líquida): RCL dos últimos doze meses.
   * Anexo 06 (Resultado Primário e Nominal): resultado primário e nominal, acima da linha, e as metas fixadas na LDO.
+  * Anexo 02 (Despesas por Função): despesa autorizada e liquidada nas funções de maior interesse.
+  * Anexo 04 (Receitas e Despesas Previdenciárias do RPPS): resultado dos fundos em repartição e em capitalização,
+    aportes do Tesouro e resultado dos inativos e pensionistas militares.
 
 Os valores do RREO são acumulados no exercício. Para cada ano o script guarda o último bimestre disponível: nos anos
 encerrados é o 6º bimestre (ano inteiro); no ano corrente é o bimestre mais recente (por isso o valor é parcial).
@@ -67,6 +70,37 @@ def valor(linhas, cod, coluna):
     return None
 
 
+# funções de governo (Portaria MOG nº 42/1999) expostas no painel
+FUNCOES = {
+    "educacao": "Educação",
+    "saude": "Saúde",
+    "seguranca": "Segurança Pública",
+    "transporte": "Transporte",
+    "previdencia": "Previdência Social",
+    "encargos": "Encargos Especiais",
+}
+
+
+def valor_ano(linhas, cod, coluna, ano):
+    """Como `valor`, mas, quando o demonstrativo traz a coluna do exercício e a do anterior ('... / 2019', '... / 2018'),
+    escolhe a do exercício."""
+    rcol = re.compile(coluna, re.I)
+    achados = [l for l in linhas if (l.get("cod_conta") or "").startswith(cod) and rcol.search(l.get("coluna") or "") and l.get("valor") is not None]
+    if not achados:
+        return None
+    atual = [l for l in achados if (l.get("coluna") or "").strip().endswith(f"/ {ano}")]
+    return float((atual or achados)[0]["valor"])
+
+
+def funcao(linhas, nome, coluna):
+    """Valor da função de governo `nome` na linha das despesas exceto intraorçamentárias."""
+    rcol = re.compile(coluna, re.I)
+    for l in linhas:
+        if l.get("cod_conta") == "RREO2TotalDespesas" and l.get("conta") == nome and rcol.search(l.get("coluna") or "") and l.get("valor") is not None:
+            return float(l["valor"])
+    return None
+
+
 def ano_periodo(ano):
     """Último bimestre com Anexo 06 publicado para o ano."""
     for bim in range(6, 0, -1):
@@ -82,6 +116,8 @@ def colher(ano):
     a1 = rreo(ano, bim, "RREO-Anexo 01")
     a3 = rreo(ano, bim, "RREO-Anexo 03")
     a6 = rreo(ano, bim, "RREO-Anexo 06")
+    a2 = rreo(ano, bim, "RREO-Anexo 02")
+    a4 = rreo(ano, bim, "RREO-Anexo 04")
     prim_sem = valor(a6, "ResultadoPrimarioSemRPPSAcimaDaLinha", r"^VALOR")
     nom_sem = valor(a6, "ResultadoNominalAcimaDaLinhaSemRPPS", r"^VALOR")
     return {
@@ -100,6 +136,14 @@ def colher(ano):
         "nominal": nom_sem if nom_sem is not None else valor(a6, "ResultadoNominalAcimaDaLinha", r"^VALOR"),
         "metaNominal": valor(a6, r"~^MetaDeResultadoNominal", r"^VALOR"),
         "semRpps": prim_sem is not None,
+        **{f"funcao_{k}_liquidada": funcao(a2, nome, r"^DESPESAS LIQUIDADAS ATÉ") for k, nome in FUNCOES.items()},
+        **{f"funcao_{k}_autorizada": funcao(a2, nome, r"^DOTAÇÃO ATUALIZADA") for k, nome in FUNCOES.items()},
+        # previdência: resultado liquidado do fundo em repartição (plano financeiro) e em capitalização (plano previdenciário),
+        # aportes do Tesouro para cobrir a insuficiência do plano financeiro e resultado dos inativos e pensionistas militares
+        "previdenciaReparticao": valor_ano(a4, "RREO4ResultadoRPPSFinanceiro", r"^DESPESAS LIQUIDADAS ATÉ", ano),
+        "previdenciaCapitalizacao": valor_ano(a4, "RREO4ResultadoRPPSPrevidenciario", r"^DESPESAS LIQUIDADAS ATÉ", ano),
+        "previdenciaAportes": valor_ano(a4, "AportesParaAPrevidenciaPlanoFinanceiro", r"^APORTES REALIZADOS", ano),
+        "previdenciaMilitares": valor_ano(a4, "ResultadoAssociadoAInativosEPensionistasMilirares", r"^DESPESAS LIQUIDADAS ATÉ", ano),
     }
 
 

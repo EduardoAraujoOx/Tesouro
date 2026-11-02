@@ -14,6 +14,12 @@ const base = {
   focusable: false,
 }
 
+export const IconBank = (p: P) => (
+  <svg {...base} {...p}><path d="m3 9 9-5 9 5M5 9v9M9.5 9v9M14.5 9v9M19 9v9M3 20h18" /></svg>
+)
+export const IconPie = (p: P) => (
+  <svg {...base} {...p}><circle cx="12" cy="12" r="9" /><path d="M12 3v9h9" /></svg>
+)
 export const IconSearch = (p: P) => (
   <svg {...base} {...p}><circle cx="11" cy="11" r="7" /><path d="m20 20-3.5-3.5" /></svg>
 )

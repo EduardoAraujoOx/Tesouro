@@ -112,7 +112,7 @@ export function degrauHaveres(): { de: number; para: number; em: PeriodoLrf } | 
  * Os objetos são simples (serializáveis) para seguirem do servidor para o navegador.
  * ---------------------------------------------------------------------------------------------- */
 
-export type Familia = 'orcamento' | 'resultados' | 'lrf' | 'capag'
+export type Familia = 'orcamento' | 'resultados' | 'lrf' | 'capag' | 'previdencia' | 'funcoes'
 export type PontoIndicador = { ano: number; sub: number; rotulo: string; extenso: string; valor: number | null; nota?: string | null; parcial?: boolean }
 export type ReferenciaIndicador = { rotulo: string; valor: number; estilo: 'limite' | 'alerta' | 'prudencial'; texto?: string }
 export type Indicador = {
@@ -141,6 +141,8 @@ export type Indicador = {
 
 export const FAMILIAS: Record<Familia, { id: Familia; nome: string; descricao: string; padrao: string[] }> = {
   orcamento: { id: 'orcamento', nome: 'Orçamento e execução', descricao: 'RREO, a cada bimestre', padrao: ['receita'] },
+  previdencia: { id: 'previdencia', nome: 'Previdência', descricao: 'RREO, a cada bimestre', padrao: ['aportes'] },
+  funcoes: { id: 'funcoes', nome: 'Despesas por função', descricao: 'RREO, a cada bimestre', padrao: ['educacao'] },
   resultados: { id: 'resultados', nome: 'Resultados e metas', descricao: 'RREO e LDO, a cada bimestre', padrao: ['primario'] },
   lrf: { id: 'lrf', nome: 'Limites da LRF', descricao: 'Relatório de Gestão Fiscal, a cada quadrimestre', padrao: ['pessoal'] },
   capag: { id: 'capag', nome: 'CAPAG', descricao: 'Capacidade de pagamento, uma edição por ano', padrao: ['endividamento'] },
@@ -179,6 +181,8 @@ type PeriodoRreo = {
   primario: number | null; metaPrimario: number | null
   nominal: number | null; metaNominal: number | null
   semRpps: boolean
+  previdenciaReparticao: number | null; previdenciaCapitalizacao: number | null; previdenciaAportes: number | null; previdenciaMilitares: number | null
+  [campo: string]: number | boolean | null
 }
 const rreo = rreoRaw as unknown as { geradoEm: string; serie: PeriodoRreo[] }
 export const serieRreo = rreo.serie
@@ -189,7 +193,7 @@ export const ultimoRreo = serieRreo[serieRreo.length - 1]
 export const periodoUltimoRreo = `${ultimoRreo.bimestre}º bimestre de ${ultimoRreo.ano} (${MESES[ultimoRreo.bimestre]})`
 const bi = (v: number | null) => (v === null ? null : v / 1e9)
 
-function pontosRreo(campo: keyof PeriodoRreo, acumulado = true): PontoIndicador[] {
+function pontosRreo(campo: string, acumulado = true): PontoIndicador[] {
   return serieRreo.map((p) => {
     const parcial = p.bimestre < 6
     return {
@@ -207,7 +211,7 @@ function pontosRreo(campo: keyof PeriodoRreo, acumulado = true): PontoIndicador[
 
 function indicadoresRreo(): Indicador[] {
   const base = { periodicidade: 'anual' as const, unidade: 'R$ bi' as const, referencias: [] as ReferenciaIndicador[] }
-  const com = (id: string, familia: Familia, campo: keyof PeriodoRreo, comp?: { curto: string; campo: keyof PeriodoRreo }, acumulado = true): Indicador => ({
+  const com = (id: string, familia: Familia, campo: string, comp?: { curto: string; campo: string }, acumulado = true): Indicador => ({
     id, familia, ...definicoes[id], ...base,
     pontos: pontosRreo(campo, acumulado),
     ...(comp ? { comparacao: { curto: comp.curto, pontos: pontosRreo(comp.campo) } } : {}),
@@ -219,6 +223,13 @@ function indicadoresRreo(): Indicador[] {
     com('rcl', 'orcamento', 'rcl12m', undefined, false),
     com('primario', 'resultados', 'primario', { curto: 'Meta da LDO', campo: 'metaPrimario' }),
     com('nominal', 'resultados', 'nominal', { curto: 'Meta da LDO', campo: 'metaNominal' }),
+    com('aportes', 'previdencia', 'previdenciaAportes'),
+    com('capitalizacao', 'previdencia', 'previdenciaCapitalizacao'),
+    com('militares', 'previdencia', 'previdenciaMilitares'),
+    ...(['educacao', 'saude', 'seguranca', 'transporte', 'funcao-previdencia', 'encargos'] as const).map((id) => {
+      const k = id === 'funcao-previdencia' ? 'previdencia' : id
+      return com(id, 'funcoes', `funcao_${k}_liquidada`, { curto: 'Dotação atualizada', campo: `funcao_${k}_autorizada` })
+    }),
   ]
 }
 

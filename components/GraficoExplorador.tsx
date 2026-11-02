@@ -102,7 +102,7 @@ export function GraficoExplorador({ series, referencias, foco, onFoco, titulo, m
   const nf = (v: number, casas = 1) => (unidade === '%' ? numero(v, casas) : numero(v, Math.abs(v) < 10 ? 2 : 1))
   const textoRef = (r: ReferenciaGrafico) => r.texto ?? `${{ limite: 'Legal', prudencial: 'Prudencial', alerta: 'Alerta' }[r.estilo]} ${numero(r.valor, r.valor % 1 ? 1 : 0)}${unidade}`
   const visiveis = referencias.filter((r) => r.valor <= vmax * 2 + 5)
-  const topo = Math.max(vmax, ...visiveis.map((r) => r.valor))
+  const topo = Math.max(zero ? Math.max(vmax, 0) : vmax, ...visiveis.map((r) => r.valor))
   const base = zero ? Math.min(vmin, 0) : Math.min(vmin, ...visiveis.map((r) => r.valor))
   const folga = (topo - base || 1) * 0.1
   const y0 = zero ? base - (vmin < 0 ? folga : 0) : base - folga, y1 = topo + folga
@@ -215,7 +215,7 @@ export function GraficoExplorador({ series, referencias, foco, onFoco, titulo, m
             {ticks.map((t) => (
               <g key={t}>
                 <line x1={ml} x2={W - mr} y1={Y(t)} y2={Y(t)} className="stroke-line" strokeWidth={1} strokeOpacity={0.55} />
-                <text x={ml - 8} y={Y(t) + 4} textAnchor="end" className="fill-ink-soft" style={{ fontSize: 12 }}>{numero(t, passo < 1 ? 1 : 0)}{unidade === '%' ? '%' : ''}</text>
+                <text x={ml - 8} y={Y(t) + 4} textAnchor="end" className="fill-ink-soft" style={{ fontSize: 12 }}>{numero(Math.abs(t) < 1e-9 ? 0 : t, passo < 1 ? 1 : 0)}{unidade === '%' ? '%' : ''}</text>
               </g>
             ))}
             {visiveis.map((r) => (

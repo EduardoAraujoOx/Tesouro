@@ -289,5 +289,199 @@
         "texto": "Juros e encargos que o Estado paga pela dívida."
       }
     ]
+  },
+  "educacao": {
+    "nome": "Despesa na função Educação",
+    "curto": "Educação",
+    "subtitulo": "R$ bilhões, acumulado no exercício, comparado com a dotação atualizada",
+    "definicao": "Gasto do Estado classificado na função Educação, que reúne o ensino infantil, fundamental, médio, profissional e superior e as ações de apoio e administração da área.",
+    "formula": "Despesas (exceto intraorçamentárias) liquidadas na função, até o bimestre, conforme o Anexo 02 do RREO",
+    "leitura": "A barra azul é a despesa liquidada no ano e a barra clara, a dotação atualizada da função, isto é, o que a lei autoriza gastar. No ano em curso o valor é parcial e a dotação é a do ano inteiro.",
+    "porQueImporta": "Mostra quanto o Estado aplica em educação e quanto do valor autorizado já foi executado no ano.",
+    "limite": "Sem limite legal neste demonstrativo. O mínimo constitucional de aplicação em educação é apurado em outro demonstrativo do RREO, que o painel não reproduz",
+    "base": "Constituição Federal, art. 212, e Portaria MOG nº 42/1999 (funções de governo)",
+    "fonte": "Siconfi, RREO do Poder Executivo, Anexo 02 (Despesas por Função e Subfunção)",
+    "termos": [
+      {
+        "termo": "Função de governo",
+        "texto": "Classificação das despesas por área de atuação do Estado, como saúde, educação e segurança, igual para União, estados e municípios."
+      },
+      {
+        "termo": "Dotação atualizada",
+        "texto": "Valor que a lei orçamentária, com suas alterações, autoriza gastar no ano."
+      }
+    ]
+  },
+  "saude": {
+    "nome": "Despesa na função Saúde",
+    "curto": "Saúde",
+    "subtitulo": "R$ bilhões, acumulado no exercício, comparado com a dotação atualizada",
+    "definicao": "Gasto do Estado classificado na função Saúde, como atenção básica, assistência hospitalar e ambulatorial, vigilância sanitária e epidemiológica e demais ações da área.",
+    "formula": "Despesas (exceto intraorçamentárias) liquidadas na função, até o bimestre, conforme o Anexo 02 do RREO",
+    "leitura": "A barra azul é a despesa liquidada no ano e a barra clara, a dotação atualizada da função, isto é, o que a lei autoriza gastar. No ano em curso o valor é parcial e a dotação é a do ano inteiro.",
+    "porQueImporta": "Mostra quanto o Estado aplica em saúde e quanto do valor autorizado já foi executado no ano.",
+    "limite": "Sem limite legal neste demonstrativo. O mínimo constitucional de aplicação em saúde é apurado em outro demonstrativo do RREO, que o painel não reproduz",
+    "base": "Constituição Federal, art. 198, Lei Complementar nº 141/2012 e Portaria MOG nº 42/1999 (funções de governo)",
+    "fonte": "Siconfi, RREO do Poder Executivo, Anexo 02 (Despesas por Função e Subfunção)",
+    "termos": [
+      {
+        "termo": "Função de governo",
+        "texto": "Classificação das despesas por área de atuação do Estado, como saúde, educação e segurança, igual para União, estados e municípios."
+      },
+      {
+        "termo": "Dotação atualizada",
+        "texto": "Valor que a lei orçamentária, com suas alterações, autoriza gastar no ano."
+      }
+    ]
+  },
+  "seguranca": {
+    "nome": "Despesa na função Segurança Pública",
+    "curto": "Segurança pública",
+    "subtitulo": "R$ bilhões, acumulado no exercício, comparado com a dotação atualizada",
+    "definicao": "Gasto do Estado classificado na função Segurança Pública, como policiamento, defesa civil e demais ações de segurança.",
+    "formula": "Despesas (exceto intraorçamentárias) liquidadas na função, até o bimestre, conforme o Anexo 02 do RREO",
+    "leitura": "A barra azul é a despesa liquidada no ano e a barra clara, a dotação atualizada da função, isto é, o que a lei autoriza gastar. No ano em curso o valor é parcial e a dotação é a do ano inteiro.",
+    "porQueImporta": "Mostra quanto o Estado aplica em segurança pública e quanto do valor autorizado já foi executado no ano.",
+    "limite": "Sem limite legal",
+    "base": "Constituição Federal, art. 144, e Portaria MOG nº 42/1999 (funções de governo)",
+    "fonte": "Siconfi, RREO do Poder Executivo, Anexo 02 (Despesas por Função e Subfunção)",
+    "termos": [
+      {
+        "termo": "Função de governo",
+        "texto": "Classificação das despesas por área de atuação do Estado, como saúde, educação e segurança, igual para União, estados e municípios."
+      },
+      {
+        "termo": "Dotação atualizada",
+        "texto": "Valor que a lei orçamentária, com suas alterações, autoriza gastar no ano."
+      }
+    ]
+  },
+  "transporte": {
+    "nome": "Despesa na função Transporte",
+    "curto": "Transporte",
+    "subtitulo": "R$ bilhões, acumulado no exercício, comparado com a dotação atualizada",
+    "definicao": "Gasto do Estado classificado na função Transporte, como construção e conservação de rodovias e demais ações de infraestrutura de transporte.",
+    "formula": "Despesas (exceto intraorçamentárias) liquidadas na função, até o bimestre, conforme o Anexo 02 do RREO",
+    "leitura": "A barra azul é a despesa liquidada no ano e a barra clara, a dotação atualizada da função, isto é, o que a lei autoriza gastar. No ano em curso o valor é parcial e a dotação é a do ano inteiro.",
+    "porQueImporta": "Mostra quanto o Estado aplica em infraestrutura de transporte, uma das áreas com mais investimento, e quanto do valor autorizado já foi executado.",
+    "limite": "Sem limite legal",
+    "base": "Portaria MOG nº 42/1999 (funções de governo)",
+    "fonte": "Siconfi, RREO do Poder Executivo, Anexo 02 (Despesas por Função e Subfunção)",
+    "termos": [
+      {
+        "termo": "Função de governo",
+        "texto": "Classificação das despesas por área de atuação do Estado, como saúde, educação e segurança, igual para União, estados e municípios."
+      },
+      {
+        "termo": "Dotação atualizada",
+        "texto": "Valor que a lei orçamentária, com suas alterações, autoriza gastar no ano."
+      }
+    ]
+  },
+  "funcao-previdencia": {
+    "nome": "Despesa na função Previdência Social",
+    "curto": "Previdência (função)",
+    "subtitulo": "R$ bilhões, acumulado no exercício, comparado com a dotação atualizada",
+    "definicao": "Gasto do Estado classificado na função Previdência Social, como o pagamento de aposentadorias e pensões de servidores.",
+    "formula": "Despesas (exceto intraorçamentárias) liquidadas na função, até o bimestre, conforme o Anexo 02 do RREO",
+    "leitura": "A barra azul é a despesa liquidada no ano e a barra clara, a dotação atualizada da função, isto é, o que a lei autoriza gastar. No ano em curso o valor é parcial e a dotação é a do ano inteiro.",
+    "porQueImporta": "Aposentadorias e pensões formam uma despesa obrigatória e crescente. Acompanhá-la mostra o peso da previdência dos servidores no orçamento.",
+    "limite": "Sem limite legal",
+    "base": "Constituição Federal, art. 40, e Portaria MOG nº 42/1999 (funções de governo)",
+    "fonte": "Siconfi, RREO do Poder Executivo, Anexo 02 (Despesas por Função e Subfunção)",
+    "termos": [
+      {
+        "termo": "Função de governo",
+        "texto": "Classificação das despesas por área de atuação do Estado, como saúde, educação e segurança, igual para União, estados e municípios."
+      },
+      {
+        "termo": "Dotação atualizada",
+        "texto": "Valor que a lei orçamentária, com suas alterações, autoriza gastar no ano."
+      }
+    ]
+  },
+  "encargos": {
+    "nome": "Despesa na função Encargos Especiais",
+    "curto": "Encargos especiais",
+    "subtitulo": "R$ bilhões, acumulado no exercício, comparado com a dotação atualizada",
+    "definicao": "Despesas que não geram um bem ou serviço no processo produtivo corrente, como o pagamento de dívidas, ressarcimentos e indenizações.",
+    "formula": "Despesas (exceto intraorçamentárias) liquidadas na função, até o bimestre, conforme o Anexo 02 do RREO",
+    "leitura": "A barra azul é a despesa liquidada no ano e a barra clara, a dotação atualizada da função, isto é, o que a lei autoriza gastar. No ano em curso o valor é parcial e a dotação é a do ano inteiro.",
+    "porQueImporta": "Mostra quanto do orçamento é destinado a compromissos que não entregam diretamente serviço à população, como o serviço da dívida.",
+    "limite": "Sem limite legal",
+    "base": "Portaria MOG nº 42/1999 (funções de governo)",
+    "fonte": "Siconfi, RREO do Poder Executivo, Anexo 02 (Despesas por Função e Subfunção)",
+    "termos": [
+      {
+        "termo": "Função de governo",
+        "texto": "Classificação das despesas por área de atuação do Estado, como saúde, educação e segurança, igual para União, estados e municípios."
+      },
+      {
+        "termo": "Dotação atualizada",
+        "texto": "Valor que a lei orçamentária, com suas alterações, autoriza gastar no ano."
+      }
+    ]
+  },
+  "aportes": {
+    "nome": "Aportes do Tesouro à previdência",
+    "curto": "Aportes do Tesouro",
+    "subtitulo": "R$ bilhões, acumulado no exercício",
+    "definicao": "Recursos que o Tesouro do Estado repassa ao fundo em repartição (plano financeiro) do regime próprio de previdência, para cobrir a diferença entre as contribuições recebidas e os benefícios pagos.",
+    "formula": "Aportes realizados para cobertura de insuficiências financeiras do plano financeiro, conforme o Anexo 04 do RREO",
+    "leitura": "Quanto maior o aporte, maior o peso da previdência dos servidores sobre o orçamento do Tesouro. No ano em curso o valor é parcial.",
+    "porQueImporta": "É a parte da previdência dos servidores paga com a receita de impostos do Estado. Mostra quanto do orçamento é comprometido com aposentadorias e pensões que as contribuições não cobrem.",
+    "limite": "Sem limite legal",
+    "base": "Lei Complementar nº 101/2000 (LRF), arts. 52 e 53, e Lei nº 9.717/1998",
+    "fonte": "Siconfi, RREO do Poder Executivo, Anexo 04 (Receitas e Despesas Previdenciárias do RPPS)",
+    "termos": [
+      {
+        "termo": "RPPS",
+        "texto": "Regime Próprio de Previdência Social: o regime de aposentadorias e pensões dos servidores efetivos do Estado."
+      },
+      {
+        "termo": "Fundo em repartição",
+        "texto": "Plano em que as contribuições de hoje pagam os benefícios de hoje. Quando não bastam, o Tesouro cobre a diferença."
+      }
+    ]
+  },
+  "capitalizacao": {
+    "nome": "Resultado do fundo em capitalização",
+    "curto": "Fundo em capitalização",
+    "subtitulo": "R$ bilhões, acumulado no exercício",
+    "definicao": "Diferença entre as receitas e as despesas previdenciárias do fundo em capitalização (plano previdenciário), em que as contribuições são acumuladas e aplicadas para pagar benefícios futuros.",
+    "formula": "Total das receitas do fundo em capitalização menos o total de suas despesas liquidadas, conforme o Anexo 04 do RREO",
+    "leitura": "Valor positivo indica que o fundo recebeu mais do que pagou no ano e acumula recursos. É o resultado do exercício, não o patrimônio acumulado. No ano em curso o valor é parcial.",
+    "porQueImporta": "Mostra a poupança que o regime forma, ano a ano, para pagar os benefícios dos servidores no futuro.",
+    "limite": "Sem limite legal",
+    "base": "Lei Complementar nº 101/2000 (LRF), arts. 52 e 53, e Lei nº 9.717/1998",
+    "fonte": "Siconfi, RREO do Poder Executivo, Anexo 04 (Receitas e Despesas Previdenciárias do RPPS)",
+    "termos": [
+      {
+        "termo": "RPPS",
+        "texto": "Regime Próprio de Previdência Social: o regime de aposentadorias e pensões dos servidores efetivos do Estado."
+      },
+      {
+        "termo": "Fundo em capitalização",
+        "texto": "Plano em que as contribuições são acumuladas e investidas, formando reservas para pagar benefícios futuros."
+      }
+    ]
+  },
+  "militares": {
+    "nome": "Resultado dos inativos e pensionistas militares",
+    "curto": "Militares inativos",
+    "subtitulo": "R$ bilhões, acumulado no exercício",
+    "definicao": "Diferença entre as contribuições dos militares e as despesas com inativos e pensionistas militares, que o Tesouro paga diretamente. Resultado negativo significa que o Tesouro cobre a diferença.",
+    "formula": "Contribuições dos militares menos as despesas liquidadas com inativos e pensionistas militares, conforme o Anexo 04 do RREO",
+    "leitura": "O valor é negativo quando as despesas superam as contribuições. O demonstrativo traz esta linha a partir de 2021. No ano em curso o valor é parcial.",
+    "porQueImporta": "Os militares não fazem parte do regime próprio dos servidores civis; a diferença entre o que contribuem e o que recebem fica a cargo do Tesouro. Mostra quanto isso pesa no orçamento.",
+    "limite": "Sem limite legal",
+    "base": "Lei Complementar nº 101/2000 (LRF), arts. 52 e 53, e Lei nº 9.717/1998",
+    "fonte": "Siconfi, RREO do Poder Executivo, Anexo 04 (Receitas e Despesas Previdenciárias do RPPS)",
+    "termos": [
+      {
+        "termo": "Inativos e pensionistas",
+        "texto": "Servidores aposentados e dependentes que recebem pensão."
+      }
+    ]
   }
 }

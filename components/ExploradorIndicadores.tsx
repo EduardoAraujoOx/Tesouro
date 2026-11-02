@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useId, useMemo, useState } from 'react'
 import type { ComponentType, SVGProps } from 'react'
 import { GraficoExplorador, type ModoGrafico, type SerieGrafico } from './GraficoExplorador'
-import { IconBars, IconCalendar, IconChevron, IconCoins, IconDoc, IconInfo, IconShield, IconTarget } from './Icons'
+import { IconBank, IconBars, IconCalendar, IconChevron, IconCoins, IconDoc, IconInfo, IconPie, IconShield, IconTarget } from './Icons'
 import type { Familia, Indicador } from '@/lib/indicadores'
 import { numero } from '@/lib/formato'
 
@@ -15,10 +15,12 @@ const CATEGORIAS: { id: Familia; nome: string; curto: string; Icone: ComponentTy
   { id: 'orcamento', nome: 'Orçamento e execução', curto: 'Orçamento', Icone: IconBars },
   { id: 'resultados', nome: 'Resultados e metas', curto: 'Metas', Icone: IconTarget },
   { id: 'lrf', nome: 'Limites fiscais (LRF)', curto: 'Limites (LRF)', Icone: IconShield },
-  { id: 'capag', nome: 'Capacidade de pagamento (CAPAG)', curto: 'CAPAG', Icone: IconCoins },
+  { id: 'capag', nome: 'Capacidade de pagamento', curto: 'CAPAG', Icone: IconCoins },
+  { id: 'previdencia', nome: 'Previdência', curto: 'Previdência', Icone: IconBank },
+  { id: 'funcoes', nome: 'Despesas por função', curto: 'Funções', Icone: IconPie },
 ]
-const PADRAO: Record<Familia, string> = { orcamento: 'receita', resultados: 'primario', lrf: 'pessoal', capag: 'endividamento' }
-const FAMILIAS_VALIDAS: Familia[] = ['orcamento', 'resultados', 'lrf', 'capag']
+const PADRAO: Record<Familia, string> = { orcamento: 'receita', resultados: 'primario', lrf: 'pessoal', capag: 'endividamento', previdencia: 'aportes', funcoes: 'educacao' }
+const FAMILIAS_VALIDAS: Familia[] = ['orcamento', 'resultados', 'lrf', 'capag', 'previdencia', 'funcoes']
 
 type Nota = { id: string; ano: number; sub: number; texto: string }
 
