@@ -126,6 +126,7 @@ export type Indicador = {
   limite: string
   base: string
   fonte: string
+  termos?: { termo: string; texto: string }[]
   periodicidade: 'quadrimestral' | 'anual'
   pontos: PontoIndicador[]
   referencias: ReferenciaIndicador[]
@@ -137,7 +138,7 @@ export const FAMILIAS: Record<Familia, { id: Familia; nome: string; descricao: s
   capag: { id: 'capag', nome: 'CAPAG', descricao: 'Capacidade de pagamento, uma edição por ano', padrao: ['endividamento'] },
 }
 
-type Definicao = Pick<Indicador, 'nome' | 'curto' | 'subtitulo' | 'definicao' | 'formula' | 'leitura' | 'limite' | 'base' | 'fonte'>
+type Definicao = Pick<Indicador, 'nome' | 'curto' | 'subtitulo' | 'definicao' | 'formula' | 'leitura' | 'limite' | 'base' | 'fonte' | 'termos'>
 const definicoes = definicoesRaw as unknown as Record<string, Definicao>
 
 const CAPAG_NOTAS = { endividamento: 'notaEndividamento', poupanca: 'notaPoupanca', liquidez: 'notaLiquidez' } as const

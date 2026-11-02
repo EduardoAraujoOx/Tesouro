@@ -1,7 +1,7 @@
 'use client'
 
-import { useCallback, useEffect, useId, useMemo, useState } from 'react'
-import { GraficoExplorador, type ModoGrafico, type SerieGrafico } from './GraficoExplorador'
+import { useCallback, useEffect, useId, useMemo, useRef, useState, type KeyboardEvent } from 'react'
+import { GraficoExplorador, type ModoGrafico, type PontoGrafico, type SerieGrafico } from './GraficoExplorador'
 import { IconChevron } from './Icons'
 import type { Familia, Indicador } from '@/lib/indicadores'
 import { numero } from '@/lib/formato'
@@ -15,17 +15,41 @@ const SEGUNDOS_POR_GRAFICO = 9
 
 type Nota = { id: string; ano: number; sub: number; texto: string }
 
+/*
+ * Hierarquia tipográfica do painel (a mesma do restante do portal):
+ *  - título da página: serif, text-headline;
+ *  - título de bloco: serif, text-title;
+ *  - rótulo de grupo ou de controle: sans, text-label em caixa alta;
+ *  - texto corrido: sans, text-body (a definição do indicador usa text-lead).
+ */
+const rotulo = 'text-label font-semibold uppercase text-ink-soft'
+
+/** Miniatura da série, só decorativa: o valor e o nome já estão em texto. */
+function Miniatura({ pontos }: { pontos: PontoGrafico[] }) {
+  const v = pontos.map((p) => p.valor).filter((x): x is number => x !== null)
+  if (v.length < 2) return null
+  const min = Math.min(...v), max = Math.max(...v)
+  const faixa = max - min || 1
+  const W = 56, H = 20
+  const d = pontos
+    .map((p, i) => (p.valor === null ? '' : `${i === 0 ? 'M' : 'L'}${((i / (pontos.length - 1)) * W).toFixed(1)},${(H - 2 - ((p.valor - min) / faixa) * (H - 4)).toFixed(1)}`))
+    .join(' ')
+  return (
+    <svg width={W} height={H} viewBox={`0 0 ${W} ${H}`} aria-hidden="true" className="shrink-0">
+      <path d={d} fill="none" className="stroke-current" strokeWidth={1.75} strokeLinejoin="round" strokeLinecap="round" />
+    </svg>
+  )
+}
+
 /**
- * Painel quantitativo: título e gráfico grande no centro, seletor de variável, comparação, tipo de gráfico e a definição de
- * cada indicador logo abaixo. Trocar de variável anima a transição; a apresentação automática passa pelos gráficos em sequência.
+ * Painel quantitativo: título, definição em destaque e gráfico grande, com a lista de indicadores ao lado.
+ * Trocar de indicador anima a transição; a apresentação automática passa pelos gráficos em sequência.
  * A escolha vai para o endereço da página, então pode ser compartilhada.
  */
 export function ExploradorIndicadores({ indicadores, notas, classificacoes, geradoEm }: { indicadores: Indicador[]; notas: Nota[]; classificacoes: Record<number, string | null>; geradoEm: string }) {
   const uid = useId()
   const [familia, setFamilia] = useState<Familia>('lrf')
   const [ids, setIds] = useState<string[]>(['pessoal'])
-  const [de, setDe] = useState<number | null>(null)
-  const [ate, setAte] = useState<number | null>(null)
   const [foco, setFoco] = useState<number | null>(null)
   const [modo, setModo] = useState<ModoGrafico>('barras')
   const [zero, setZero] = useState(true)
@@ -36,11 +60,9 @@ export function ExploradorIndicadores({ indicadores, notas, classificacoes, gera
   const [movimentoReduzido, setMovimentoReduzido] = useState(false)
   const [aviso, setAviso] = useState('')
   const [pronto, setPronto] = useState(false)
+  const botoesLista = useRef<Record<string, HTMLButtonElement | null>>({})
 
   const daFamilia = useMemo(() => indicadores.filter((i) => i.familia === familia), [indicadores, familia])
-  const anos = useMemo(() => Array.from(new Set(daFamilia[0].pontos.map((p) => p.ano))), [daFamilia])
-  const deAtual = de ?? anos[0]
-  const ateAtual = ate ?? anos[anos.length - 1]
 
   useEffect(() => {
     const mq = window.matchMedia('(prefers-reduced-motion: reduce)')
@@ -55,12 +77,8 @@ export function ExploradorIndicadores({ indicadores, notas, classificacoes, gera
     const f: Familia = q.get('g') === 'capag' ? 'capag' : 'lrf'
     const lista = indicadores.filter((i) => i.familia === f)
     const pedidos = (q.get('i') ?? '').split(',').filter((x) => lista.some((i) => i.id === x)).slice(0, MAXIMO)
-    const a = lista[0].pontos.map((p) => p.ano)
-    const dentro = (v: string | null) => { const n = Number(v); return Number.isInteger(n) && n >= a[0] && n <= a[a.length - 1] ? n : null }
     setFamilia(f)
     setIds(pedidos.length ? pedidos : [f === 'capag' ? 'endividamento' : 'pessoal'])
-    setDe(dentro(q.get('de')))
-    setAte(dentro(q.get('ate')))
     if (q.get('v') === 'linha') { setModo('linha'); setZero(false) }
     if (q.get('z') === '1') setZero(true)
     if (q.get('z') === '0') setZero(false)
@@ -73,26 +91,21 @@ export function ExploradorIndicadores({ indicadores, notas, classificacoes, gera
     const q = new URLSearchParams()
     q.set('g', familia)
     q.set('i', ids.join(','))
-    if (de !== null) q.set('de', String(de))
-    if (ate !== null) q.set('ate', String(ate))
     if (modo === 'linha') q.set('v', 'linha')
     if (zero !== (modo === 'barras')) q.set('z', zero ? '1' : '0')
     window.history.replaceState(null, '', `${window.location.pathname}?${q.toString()}${window.location.hash}`)
-  }, [pronto, familia, ids, de, ate, modo, zero])
+  }, [pronto, familia, ids, modo, zero])
 
   const escolhidos = ids.map((id) => daFamilia.find((i) => i.id === id)).filter((i): i is Indicador => !!i)
   const principal = escolhidos[0]
   const comparando = escolhidos.length > 1
   const posicao = indicadores.findIndex((i) => i.id === principal.id)
 
-  const series: SerieGrafico[] = escolhidos.map((i) => ({
-    id: i.id, curto: i.curto, acumulaNoAno: i.acumulaNoAno,
-    pontos: i.pontos.filter((p) => p.ano >= deAtual && p.ano <= ateAtual),
-  }))
+  const series: SerieGrafico[] = escolhidos.map((i) => ({ id: i.id, curto: i.curto, acumulaNoAno: i.acumulaNoAno, pontos: i.pontos }))
   if (anoAnterior && !comparando) {
     series.push({
       id: 'anterior', curto: 'Mesmo período do ano anterior', anterior: true, acumulaNoAno: principal.acumulaNoAno,
-      pontos: series[0].pontos.map((p) => ({ ...p, valor: principal.pontos.find((q) => q.ano === p.ano - 1 && q.sub === p.sub)?.valor ?? null })),
+      pontos: principal.pontos.map((p) => ({ ...p, valor: principal.pontos.find((q) => q.ano === p.ano - 1 && q.sub === p.sub)?.valor ?? null })),
     })
   }
   const n = series[0]?.pontos.length ?? 0
@@ -104,10 +117,20 @@ export function ExploradorIndicadores({ indicadores, notas, classificacoes, gera
   const escolher = useCallback((id: string) => {
     const novo = indicadores.find((i) => i.id === id)
     if (!novo) return
-    setFamilia((atual) => { if (atual !== novo.familia) { setDe(null); setAte(null) } return novo.familia })
+    setFamilia(novo.familia)
     setIds([id]); setFoco(null)
   }, [indicadores])
   const andar = (passo: number) => escolher(indicadores[(posicao + passo + indicadores.length) % indicadores.length].id)
+
+  // setas para cima e para baixo percorrem a lista de indicadores
+  const teclarLista = (e: KeyboardEvent<HTMLDivElement>) => {
+    const passo = e.key === 'ArrowDown' ? 1 : e.key === 'ArrowUp' ? -1 : 0
+    if (!passo) return
+    e.preventDefault()
+    const alvo = indicadores[(posicao + passo + indicadores.length) % indicadores.length]
+    escolher(alvo.id)
+    setTimeout(() => botoesLista.current[alvo.id]?.focus(), 0)
+  }
 
   // apresentação automática: passa pelos gráficos em sequência (para ao pairar, ao focar ou com movimento reduzido)
   const girando = tocando && !pausado && !movimentoReduzido
@@ -120,8 +143,6 @@ export function ExploradorIndicadores({ indicadores, notas, classificacoes, gera
 
   const adicionar = (id: string) => { if (id) { setIds((a) => (a.includes(id) || a.length >= MAXIMO ? a : [...a, id])); setFoco(null) } }
   const remover = (id: string) => { setIds((a) => (a.length > 1 ? a.filter((x) => x !== id) : a)); setFoco(null) }
-  const mudarDe = (v: number) => { setDe(v); if (v > ateAtual) setAte(v); setFoco(null) }
-  const mudarAte = (v: number) => { setAte(v); if (v < deAtual) setDe(v); setFoco(null) }
 
   const baixarCsv = useCallback(() => {
     const base = series.filter((s) => !s.anterior)
@@ -130,10 +151,10 @@ export function ExploradorIndicadores({ indicadores, notas, classificacoes, gera
     const blob = new Blob(['﻿' + [cab.join(','), ...linhas].join('\n') + '\n'], { type: 'text/csv;charset=utf-8' })
     const url = URL.createObjectURL(blob)
     const a = document.createElement('a')
-    a.href = url; a.download = `indicadores-es-${ids.join('-')}-${deAtual}-${ateAtual}.csv`
+    a.href = url; a.download = `indicadores-es-${ids.join('-')}.csv`
     document.body.appendChild(a); a.click(); a.remove(); URL.revokeObjectURL(url)
     setAviso('Arquivo CSV gerado.')
-  }, [escolhidos, series, ids, deAtual, ateAtual])
+  }, [escolhidos, series, ids])
 
   const copiarLink = async () => {
     try { await navigator.clipboard.writeText(window.location.href); setAviso('Link copiado. Ele reproduz esta escolha.') }
@@ -159,8 +180,8 @@ export function ExploradorIndicadores({ indicadores, notas, classificacoes, gera
 
   const botao = 'inline-flex min-h-11 items-center justify-center rounded-brand px-4 text-small font-semibold'
   const seletor = 'h-11 w-full rounded-brand border border-ink-soft/50 bg-paper px-3 text-body text-ink'
-  const rotuloCaixa = 'text-small font-semibold text-ink'
   const trocarModo = (m: ModoGrafico) => { setModo(m); setZero(m === 'barras') }
+  const ultimoValor = (i: Indicador) => [...i.pontos].reverse().find((p) => p.valor !== null)?.valor ?? null
 
   return (
     <div
@@ -169,35 +190,12 @@ export function ExploradorIndicadores({ indicadores, notas, classificacoes, gera
       onFocus={(e) => { if (e.target.matches(':focus-visible')) setPausado(true) }}
       onBlur={(e) => { if (!e.currentTarget.contains(e.relatedTarget as Node | null)) setPausado(false) }}
     >
-      {/* ---------- Título e período ---------- */}
-      <div className="grid grid-cols-[1fr_auto] items-start gap-x-4">
-        <h1 key={principal.id} className="anim-aparece col-start-1 row-start-1 text-section md:text-headline"><span className="md:hidden">{principal.curto}</span><span className="hidden md:inline">{principal.nome}</span></h1>
-        <details className="relative col-start-2 row-start-1 md:row-span-2">
-          <summary className="flex min-h-11 cursor-pointer list-none items-center gap-3 rounded-brand border border-line bg-paper px-3 py-1 hover:bg-surface md:px-4">
-            <span className="text-left">
-              <span className="hidden text-small text-ink-soft md:block">Período</span>
-              <span className="block text-small font-semibold text-ink md:text-body">{deAtual} a {ateAtual}</span>
-            </span>
-            <IconChevron className="h-5 w-5 text-ink-soft" />
-          </summary>
-          <div className="absolute right-0 z-20 mt-2 w-72 rounded-brand border border-line bg-paper p-4 shadow-lg">
-            <p className="mb-2 text-small font-semibold text-ink">Período</p>
-            <div className="grid grid-cols-2 gap-3">
-              <div>
-                <label htmlFor={`${uid}-de`} className="block text-small text-ink-soft">De</label>
-                <select id={`${uid}-de`} value={deAtual} onChange={(e) => mudarDe(Number(e.target.value))} className={seletor}>{anos.map((a) => <option key={a} value={a}>{a}</option>)}</select>
-              </div>
-              <div>
-                <label htmlFor={`${uid}-ate`} className="block text-small text-ink-soft">Até</label>
-                <select id={`${uid}-ate`} value={ateAtual} onChange={(e) => mudarAte(Number(e.target.value))} className={seletor}>{anos.map((a) => <option key={a} value={a}>{a}</option>)}</select>
-              </div>
-            </div>
-          </div>
-        </details>
-        <p className="col-span-2 row-start-2 mt-1 text-body text-ink-soft md:col-span-1">{principal.subtitulo}</p>
-      </div>
+      {/* ---------- Título e definição ---------- */}
+      <h1 key={principal.id} className="anim-aparece text-headline"><span className="md:hidden">{principal.curto}</span><span className="hidden md:inline">{principal.nome}</span></h1>
+      <p className="mt-2 max-w-4xl text-body text-ink md:text-lead">{principal.definicao}</p>
+      <p className="mt-1 text-small text-ink-soft">{principal.subtitulo}. <strong className="font-semibold text-ink">Limite:</strong> {principal.limite}.</p>
 
-      <div className="mt-4 grid grid-cols-1 gap-5 lg:grid-cols-12 lg:gap-6">
+      <div className="mt-5 grid grid-cols-1 gap-5 lg:grid-cols-12 lg:gap-6">
         {/* ---------- Gráfico ---------- */}
         <div className="min-w-0 lg:col-span-9">
           <div className="rounded-brand border border-line bg-paper p-3 md:p-5">
@@ -215,46 +213,80 @@ export function ExploradorIndicadores({ indicadores, notas, classificacoes, gera
               </div>
             )}
             <p className="mt-3 min-h-6 text-body font-medium text-ink" aria-live="polite">{resumo}</p>
-            {notas.filter((x) => ids.includes(x.id) && x.ano >= deAtual && x.ano <= ateAtual).map((x) => (
+            {notas.filter((x) => ids.includes(x.id)).map((x) => (
               <p key={x.id + x.ano + x.sub} className="mt-4 rounded-brand bg-surface p-4 text-small text-ink-soft"><strong className="text-ink">Nota sobre a série.</strong> {x.texto}</p>
             ))}
           </div>
 
-          <div className="mt-4 rounded-brand bg-surface p-4 md:p-5">
-            <p className="text-body font-semibold text-ink">O que é?</p>
-            <p className="mt-1 text-body text-ink-soft">{principal.definicao}</p>
-            <p className="mt-2 text-small text-ink-soft"><strong className="text-ink">Como ler:</strong> {principal.leitura}</p>
-            <a href="#metodo" onClick={abrirMetodologia} className="mt-2 inline-block text-small font-semibold text-navy underline underline-offset-4">Ver detalhes da metodologia</a>
-          </div>
+          {/* ---------- Como ler, para quem não conhece o assunto ---------- */}
+          <section aria-labelledby={`${uid}-entenda`} className="mt-4 rounded-brand border-l-4 border-navy bg-surface p-4 md:p-6">
+            <h2 id={`${uid}-entenda`} className="text-title">Entenda este indicador</h2>
+            <div className="mt-3 grid gap-x-8 gap-y-4 md:grid-cols-2">
+              <div>
+                <p className={rotulo}>Como ler</p>
+                <p className="mt-1 text-body text-ink">{principal.leitura}</p>
+                <p className={`${rotulo} mt-4`}>Como é calculado</p>
+                <p className="mt-1 text-body text-ink">{principal.formula}.</p>
+                <p className={`${rotulo} mt-4`}>Limite e base legal</p>
+                <p className="mt-1 text-body text-ink">{principal.limite}. {principal.base}.</p>
+              </div>
+              {principal.termos && principal.termos.length > 0 && (
+                <div>
+                  <p className={rotulo}>Termos usados</p>
+                  <dl className="mt-1 space-y-3">
+                    {principal.termos.map((t) => (
+                      <div key={t.termo}>
+                        <dt className="text-body font-semibold text-ink">{t.termo}</dt>
+                        <dd className="text-body text-ink-soft">{t.texto}</dd>
+                      </div>
+                    ))}
+                  </dl>
+                </div>
+              )}
+            </div>
+            <a href="#metodo" onClick={abrirMetodologia} className="mt-4 inline-block text-small font-semibold text-navy underline underline-offset-4">Ver a metodologia e a definição de todos os indicadores</a>
+          </section>
         </div>
 
-        {/* ---------- Escolha de indicadores e opções, ao lado do gráfico ---------- */}
+        {/* ---------- Indicadores e opções, ao lado do gráfico ---------- */}
         <aside aria-label="Indicadores e opções do gráfico" className="space-y-5 lg:col-span-3">
+          {/* celular: seletor com anterior e próximo */}
           <div className="lg:hidden">
-            <label htmlFor={`${uid}-var`} className={rotuloCaixa}>Selecionar variável</label>
-            <select id={`${uid}-var`} value={principal.id} onChange={(e) => escolher(e.target.value)} className={`${seletor} mt-1`}>
-              {GRUPOS.map((g) => (
-                <optgroup key={g.id} label={g.nome}>
-                  {indicadores.filter((i) => i.familia === g.id).map((i) => <option key={i.id} value={i.id}>{i.curto}</option>)}
-                </optgroup>
-              ))}
-            </select>
+            <label htmlFor={`${uid}-var`} className={rotulo}>Indicador</label>
+            <div className="mt-1 flex items-center gap-2">
+              <select id={`${uid}-var`} value={principal.id} onChange={(e) => escolher(e.target.value)} className={seletor}>
+                {GRUPOS.map((g) => (
+                  <optgroup key={g.id} label={g.nome}>
+                    {indicadores.filter((i) => i.familia === g.id).map((i) => <option key={i.id} value={i.id}>{i.curto}</option>)}
+                  </optgroup>
+                ))}
+              </select>
+              <button type="button" onClick={() => andar(-1)} className={`${botao} shrink-0 border border-line text-ink hover:bg-surface`}><IconChevron className="h-4 w-4 rotate-90" /><span className="sr-only">Indicador anterior</span></button>
+              <button type="button" onClick={() => andar(1)} className={`${botao} shrink-0 border border-line text-ink hover:bg-surface`}><IconChevron className="h-4 w-4 -rotate-90" /><span className="sr-only">Próximo indicador</span></button>
+            </div>
           </div>
 
-          <div className="hidden space-y-4 lg:block">
+          {/* computador: lista com valor atual e miniatura de cada indicador */}
+          <div className="hidden space-y-4 lg:block" onKeyDown={teclarLista}>
             {GRUPOS.map((g) => (
               <div key={g.id} role="group" aria-label={g.nome}>
-                <p className="mb-1 text-label font-semibold uppercase text-ink-soft" aria-hidden="true">{g.nome}</p>
-                <ul>
+                <p className={`${rotulo} mb-1`} aria-hidden="true">{g.nome}</p>
+                <ul className="divide-y divide-line border-y border-line">
                   {indicadores.filter((i) => i.familia === g.id).map((i) => {
                     const ativo = principal.id === i.id
                     return (
                       <li key={i.id}>
                         <button
+                          ref={(el) => { botoesLista.current[i.id] = el }}
                           type="button" aria-pressed={ativo} onClick={() => escolher(i.id)}
-                          className={`flex min-h-11 w-full items-center border-l-4 px-3 py-2 text-left text-body ${ativo ? 'border-navy bg-surface font-semibold text-ink' : 'border-transparent text-ink-soft hover:bg-surface hover:text-ink'}`}
+                          className={`flex min-h-14 w-full items-center gap-3 border-l-4 px-3 py-2 text-left ${ativo ? 'border-navy bg-surface text-navy' : 'border-transparent text-ink-soft hover:bg-surface hover:text-ink'}`}
                         >
-                          <span className="sr-only">{g.nome}: </span>{i.curto}
+                          <span className="min-w-0 flex-1">
+                            <span className="sr-only">{g.nome}: </span>
+                            <span className={`block text-body leading-tight ${ativo ? 'font-semibold text-ink' : ''}`}>{i.curto}</span>
+                            <span className="block text-small tabular-nums">{numero(ultimoValor(i), 1)}% <span className="sr-only">no período mais recente</span></span>
+                          </span>
+                          <Miniatura pontos={i.pontos} />
                         </button>
                       </li>
                     )
@@ -262,10 +294,11 @@ export function ExploradorIndicadores({ indicadores, notas, classificacoes, gera
                 </ul>
               </div>
             ))}
+            <p className="text-small text-ink-soft">Use as setas para cima e para baixo para percorrer os indicadores.</p>
           </div>
 
           <fieldset className="border-t border-line pt-4">
-            <legend className={`${rotuloCaixa} mb-2`}>Visualização</legend>
+            <legend className={`${rotulo} mb-2`}>Visualização</legend>
             <div className="grid grid-cols-2 overflow-hidden rounded-brand border border-navy">
               {(['barras', 'linha'] as const).map((m) => (
                 <button key={m} type="button" aria-pressed={modo === m} onClick={() => trocarModo(m)} className={`min-h-11 px-3 text-small font-semibold ${modo === m ? 'bg-navy text-on-navy' : 'bg-paper text-navy hover:bg-surface'}`}>{m === 'linha' ? 'Linha' : 'Barras'}</button>
@@ -278,7 +311,7 @@ export function ExploradorIndicadores({ indicadores, notas, classificacoes, gera
           </fieldset>
 
           <fieldset className="border-t border-line pt-4">
-            <legend className={`${rotuloCaixa} mb-1`}>Comparar com</legend>
+            <legend className={`${rotulo} mb-1`}>Comparar com</legend>
             <label className={`flex min-h-11 items-center gap-3 text-small ${!comparando && principal.referencias.length ? 'cursor-pointer' : 'opacity-60'}`}>
               <input type="checkbox" checked={mostrarLimites && !comparando && principal.referencias.length > 0} disabled={comparando || principal.referencias.length === 0} onChange={(e) => setMostrarLimites(e.target.checked)} className="h-5 w-5 accent-[rgb(var(--navy))]" />
               Limites legais
@@ -306,8 +339,8 @@ export function ExploradorIndicadores({ indicadores, notas, classificacoes, gera
           </fieldset>
 
           <div className="flex items-center gap-2 border-t border-line pt-4">
-            <button type="button" onClick={() => andar(-1)} className={`${botao} border border-line text-ink hover:bg-surface`}><IconChevron className="h-4 w-4 rotate-90" /><span className="sr-only">Indicador anterior</span></button>
-            <button type="button" onClick={() => andar(1)} className={`${botao} border border-line text-ink hover:bg-surface`}><IconChevron className="h-4 w-4 -rotate-90" /><span className="sr-only">Próximo indicador</span></button>
+            <button type="button" onClick={() => andar(-1)} className={`${botao} hidden border border-line text-ink hover:bg-surface lg:inline-flex`}><IconChevron className="h-4 w-4 rotate-90" /><span className="sr-only">Indicador anterior</span></button>
+            <button type="button" onClick={() => andar(1)} className={`${botao} hidden border border-line text-ink hover:bg-surface lg:inline-flex`}><IconChevron className="h-4 w-4 -rotate-90" /><span className="sr-only">Próximo indicador</span></button>
             {!movimentoReduzido && (
               <button type="button" aria-pressed={tocando} onClick={() => setTocando((v) => !v)} className={`${botao} flex-1 border border-navy text-navy hover:bg-surface`}>
                 {tocando ? 'Pausar apresentação' : 'Apresentação automática'}
@@ -329,7 +362,7 @@ export function ExploradorIndicadores({ indicadores, notas, classificacoes, gera
         <summary className="flex min-h-12 cursor-pointer items-center justify-between gap-4 py-3 text-body font-semibold text-ink">Ver os dados em tabela<span aria-hidden="true" className="text-ink-soft transition-transform group-open:rotate-180">⌄</span></summary>
         <div className="mb-5 max-h-96 overflow-auto rounded-brand border border-line" role="region" aria-label={`Dados de ${titulo}`} tabIndex={0}>
           <table className="w-full min-w-[22rem] text-left text-small">
-            <caption className="sr-only">{titulo}, de {deAtual} a {ateAtual}</caption>
+            <caption className="sr-only">{titulo}, série completa</caption>
             <thead className="sticky top-0 bg-surface">
               <tr><th scope="col" className="px-3 py-2">Período</th>{series.map((s) => <th key={s.id} scope="col" className="px-3 py-2 text-right">{s.curto} (%)</th>)}</tr>
             </thead>

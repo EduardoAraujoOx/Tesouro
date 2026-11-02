@@ -9,7 +9,17 @@
     "leitura": "Quanto menor, maior a folga em relação ao limite. Ao passar de 90% do limite há alerta; a 95%, o limite prudencial impõe vedações, como a criação de cargos.",
     "limite": "49% da RCL para o Poder Executivo",
     "base": "Lei de Responsabilidade Fiscal, arts. 20, 22 e 59",
-    "fonte": "Relatório de Gestão Fiscal, Anexo 1, via Siconfi"
+    "fonte": "Relatório de Gestão Fiscal, Anexo 1, via Siconfi",
+    "termos": [
+      {
+        "termo": "Receita corrente líquida (RCL)",
+        "texto": "O quanto o Estado arrecada de forma regular, descontadas as partes que, por lei, pertencem a outros entes, como os municípios. É a régua usada para medir gastos e dívida."
+      },
+      {
+        "termo": "Despesa com pessoal",
+        "texto": "Salários, aposentadorias, pensões e encargos de servidores do Poder Executivo, somados nos últimos doze meses."
+      }
+    ]
   },
   "divida": {
     "nome": "Dívida consolidada líquida",
@@ -20,7 +30,17 @@
     "leitura": "Quando o valor é negativo, o Estado tem mais ativos financeiros do que dívida. O limite não pode ser ultrapassado.",
     "limite": "200% da RCL",
     "base": "Resolução do Senado Federal nº 40/2001",
-    "fonte": "Relatório de Gestão Fiscal, Anexo 2, via Siconfi"
+    "fonte": "Relatório de Gestão Fiscal, Anexo 2, via Siconfi",
+    "termos": [
+      {
+        "termo": "Receita corrente líquida (RCL)",
+        "texto": "O quanto o Estado arrecada de forma regular, descontadas as partes que, por lei, pertencem a outros entes, como os municípios. É a régua usada para medir gastos e dívida."
+      },
+      {
+        "termo": "Haveres financeiros",
+        "texto": "Dinheiro em caixa, aplicações financeiras e outros valores que o Estado tem a receber e que podem ser usados para quitar dívidas."
+      }
+    ]
   },
   "garantias": {
     "nome": "Garantias concedidas",
@@ -31,7 +51,17 @@
     "leitura": "Quanto menor, menor o risco que o Estado assume por dívidas de terceiros.",
     "limite": "22% da RCL",
     "base": "Resolução do Senado Federal nº 43/2001",
-    "fonte": "Relatório de Gestão Fiscal, Anexo 3, via Siconfi"
+    "fonte": "Relatório de Gestão Fiscal, Anexo 3, via Siconfi",
+    "termos": [
+      {
+        "termo": "Receita corrente líquida (RCL)",
+        "texto": "O quanto o Estado arrecada de forma regular, descontadas as partes que, por lei, pertencem a outros entes, como os municípios. É a régua usada para medir gastos e dívida."
+      },
+      {
+        "termo": "Garantia",
+        "texto": "Compromisso do Estado de pagar a dívida de outra entidade caso ela não consiga pagar."
+      }
+    ]
   },
   "credito": {
     "nome": "Operações de crédito",
@@ -42,7 +72,17 @@
     "leitura": "O valor é acumulado no ano e volta a zero em janeiro, por isso a linha recomeça a cada ano.",
     "limite": "16% da RCL",
     "base": "Resolução do Senado Federal nº 43/2001",
-    "fonte": "Relatório de Gestão Fiscal, Anexo 4, via Siconfi"
+    "fonte": "Relatório de Gestão Fiscal, Anexo 4, via Siconfi",
+    "termos": [
+      {
+        "termo": "Receita corrente líquida (RCL)",
+        "texto": "O quanto o Estado arrecada de forma regular, descontadas as partes que, por lei, pertencem a outros entes, como os municípios. É a régua usada para medir gastos e dívida."
+      },
+      {
+        "termo": "Operação de crédito",
+        "texto": "Empréstimo ou financiamento contratado pelo Estado."
+      }
+    ]
   },
   "endividamento": {
     "nome": "Endividamento (CAPAG)",
@@ -53,7 +93,17 @@
     "leitura": "Quanto menor o valor, melhor a nota do indicador. O Tesouro Nacional atribui uma nota a cada edição.",
     "limite": "Sem limite legal; o Tesouro Nacional atribui nota",
     "base": "Portaria do Tesouro Nacional sobre a CAPAG",
-    "fonte": "Tesouro Transparente, CAPAG dos Estados e do DF"
+    "fonte": "Tesouro Transparente, CAPAG dos Estados e do DF",
+    "termos": [
+      {
+        "termo": "Receita corrente líquida (RCL)",
+        "texto": "O quanto o Estado arrecada de forma regular, descontadas as partes que, por lei, pertencem a outros entes, como os municípios. É a régua usada para medir gastos e dívida."
+      },
+      {
+        "termo": "Dívida consolidada",
+        "texto": "Compromissos financeiros de longo prazo assumidos pelo Estado."
+      }
+    ]
   },
   "poupanca": {
     "nome": "Poupança corrente (CAPAG)",
@@ -64,7 +114,17 @@
     "leitura": "Quanto menor o valor, melhor a nota do indicador. O Tesouro Nacional atribui uma nota a cada edição.",
     "limite": "Sem limite legal; o Tesouro Nacional atribui nota",
     "base": "Portaria do Tesouro Nacional sobre a CAPAG",
-    "fonte": "Tesouro Transparente, CAPAG dos Estados e do DF"
+    "fonte": "Tesouro Transparente, CAPAG dos Estados e do DF",
+    "termos": [
+      {
+        "termo": "Receitas correntes",
+        "texto": "O que o Estado arrecada de forma regular, como impostos e transferências."
+      },
+      {
+        "termo": "Despesas correntes",
+        "texto": "O que o Estado gasta para manter os serviços funcionando, como folha de pagamento e custeio."
+      }
+    ]
   },
   "liquidez": {
     "nome": "Liquidez (CAPAG)",
@@ -75,6 +135,16 @@
     "leitura": "Quanto menor o valor, melhor a nota do indicador. O Tesouro Nacional atribui uma nota a cada edição.",
     "limite": "Sem limite legal; o Tesouro Nacional atribui nota",
     "base": "Portaria do Tesouro Nacional sobre a CAPAG",
-    "fonte": "Tesouro Transparente, CAPAG dos Estados e do DF"
+    "fonte": "Tesouro Transparente, CAPAG dos Estados e do DF",
+    "termos": [
+      {
+        "termo": "Obrigações financeiras",
+        "texto": "Compromissos de pagamento que o Estado precisa honrar."
+      },
+      {
+        "termo": "Disponibilidade de caixa",
+        "texto": "Dinheiro que o Estado tem disponível para pagar essas obrigações."
+      }
+    ]
   }
 }
