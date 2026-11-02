@@ -28,6 +28,7 @@ export function ExploradorIndicadores({ indicadores, notas, classificacoes, gera
   const [ate, setAte] = useState<number | null>(null)
   const [foco, setFoco] = useState<number | null>(null)
   const [modo, setModo] = useState<ModoGrafico>('barras')
+  const [zero, setZero] = useState(true)
   const [mostrarLimites, setMostrarLimites] = useState(true)
   const [anoAnterior, setAnoAnterior] = useState(false)
   const [tocando, setTocando] = useState(false)
@@ -60,7 +61,9 @@ export function ExploradorIndicadores({ indicadores, notas, classificacoes, gera
     setIds(pedidos.length ? pedidos : [f === 'capag' ? 'endividamento' : 'pessoal'])
     setDe(dentro(q.get('de')))
     setAte(dentro(q.get('ate')))
-    if (q.get('v') === 'linha') setModo('linha')
+    if (q.get('v') === 'linha') { setModo('linha'); setZero(false) }
+    if (q.get('z') === '1') setZero(true)
+    if (q.get('z') === '0') setZero(false)
     setPronto(true)
   }, [indicadores])
 
@@ -73,8 +76,9 @@ export function ExploradorIndicadores({ indicadores, notas, classificacoes, gera
     if (de !== null) q.set('de', String(de))
     if (ate !== null) q.set('ate', String(ate))
     if (modo === 'linha') q.set('v', 'linha')
+    if (zero !== (modo === 'barras')) q.set('z', zero ? '1' : '0')
     window.history.replaceState(null, '', `${window.location.pathname}?${q.toString()}${window.location.hash}`)
-  }, [pronto, familia, ids, de, ate, modo])
+  }, [pronto, familia, ids, de, ate, modo, zero])
 
   const escolhidos = ids.map((id) => daFamilia.find((i) => i.id === id)).filter((i): i is Indicador => !!i)
   const principal = escolhidos[0]
@@ -155,8 +159,8 @@ export function ExploradorIndicadores({ indicadores, notas, classificacoes, gera
 
   const botao = 'inline-flex min-h-11 items-center justify-center rounded-brand px-4 text-small font-semibold'
   const seletor = 'h-11 w-full rounded-brand border border-ink-soft/50 bg-paper px-3 text-body text-ink'
-  const caixa = 'flex flex-col gap-2 border-line md:border-l md:pl-6 first:md:border-l-0 first:md:pl-0'
-  const rotuloCaixa = 'text-body font-semibold text-ink'
+  const rotuloCaixa = 'text-small font-semibold text-ink'
+  const trocarModo = (m: ModoGrafico) => { setModo(m); setZero(m === 'barras') }
 
   return (
     <div
@@ -165,12 +169,11 @@ export function ExploradorIndicadores({ indicadores, notas, classificacoes, gera
       onFocus={(e) => { if (e.target.matches(':focus-visible')) setPausado(true) }}
       onBlur={(e) => { if (!e.currentTarget.contains(e.relatedTarget as Node | null)) setPausado(false) }}
     >
-      <div className="flex flex-col">
       {/* ---------- Título e período ---------- */}
-      <div className="order-1 grid grid-cols-[1fr_auto] items-start gap-x-4">
+      <div className="grid grid-cols-[1fr_auto] items-start gap-x-4">
         <h1 key={principal.id} className="anim-aparece col-start-1 row-start-1 text-section md:text-headline"><span className="md:hidden">{principal.curto}</span><span className="hidden md:inline">{principal.nome}</span></h1>
         <details className="relative col-start-2 row-start-1 md:row-span-2">
-          <summary className="flex min-h-11 cursor-pointer list-none items-center gap-3 rounded-brand border border-line bg-paper px-3 py-1 hover:bg-surface md:min-h-14 md:px-4 md:py-2">
+          <summary className="flex min-h-11 cursor-pointer list-none items-center gap-3 rounded-brand border border-line bg-paper px-3 py-1 hover:bg-surface md:px-4">
             <span className="text-left">
               <span className="hidden text-small text-ink-soft md:block">Período</span>
               <span className="block text-small font-semibold text-ink md:text-body">{deAtual} a {ateAtual}</span>
@@ -194,40 +197,115 @@ export function ExploradorIndicadores({ indicadores, notas, classificacoes, gera
         <p className="col-span-2 row-start-2 mt-1 text-body text-ink-soft md:col-span-1">{principal.subtitulo}</p>
       </div>
 
-      {/* ---------- Gráfico ---------- */}
-      <div className="order-2 mt-4 rounded-brand border border-line bg-paper p-3 md:p-6">
-        <GraficoExplorador series={series} referencias={refs} foco={focoAtual} onFoco={setFoco} titulo={titulo} modo={modo} animKey={ids.join('+')} />
-        {n > 1 && pontoFoco && (
-          <div className="mt-2">
-            <label htmlFor={`${uid}-foco`} className="sr-only">Período em foco</label>
-            <input
-              id={`${uid}-foco`} type="range" min={0} max={n - 1} step={1} value={focoAtual}
-              onChange={(e) => setFoco(Number(e.target.value))}
-              aria-valuetext={`${pontoFoco.extenso}: ${series.filter((s) => !s.anterior).map((s) => `${s.curto} ${numero(s.pontos[focoAtual].valor, 2)}%`).join('; ')}`}
-              className="h-11 w-full" style={{ accentColor: 'rgb(var(--navy))' }}
-            />
-            <p className="flex justify-between text-small text-ink-soft"><span>{series[0].pontos[0].rotulo}</span><span className="hidden sm:inline">Arraste ou use as setas para percorrer os períodos</span><span>{series[0].pontos[n - 1].rotulo}</span></p>
-          </div>
-        )}
-        <p className="mt-3 min-h-6 text-body font-medium text-ink" aria-live="polite">{resumo}</p>
-        {notas.filter((x) => ids.includes(x.id) && x.ano >= deAtual && x.ano <= ateAtual).map((x) => (
-          <p key={x.id + x.ano + x.sub} className="mt-4 rounded-brand bg-surface p-4 text-small text-ink-soft"><strong className="text-ink">Nota sobre a série.</strong> {x.texto}</p>
-        ))}
-      </div>
-      </div>
-
-      {/* ---------- Controles e definição ---------- */}
-      <div className="mt-6 grid gap-6 md:grid-cols-12 md:gap-0">
-        <div className={`${caixa} md:col-span-3`}>
-          <label htmlFor={`${uid}-var`} className={rotuloCaixa}>Selecionar variável</label>
-          <select id={`${uid}-var`} value={principal.id} onChange={(e) => escolher(e.target.value)} className={seletor}>
-            {GRUPOS.map((g) => (
-              <optgroup key={g.id} label={g.nome}>
-                {indicadores.filter((i) => i.familia === g.id).map((i) => <option key={i.id} value={i.id}>{i.curto}</option>)}
-              </optgroup>
+      <div className="mt-4 grid grid-cols-1 gap-5 lg:grid-cols-12 lg:gap-6">
+        {/* ---------- Gráfico ---------- */}
+        <div className="min-w-0 lg:col-span-9">
+          <div className="rounded-brand border border-line bg-paper p-3 md:p-5">
+            <GraficoExplorador series={series} referencias={refs} foco={focoAtual} onFoco={setFoco} titulo={titulo} modo={modo} zero={zero} animKey={ids.join('+')} />
+            {n > 1 && pontoFoco && (
+              <div className="mt-1">
+                <label htmlFor={`${uid}-foco`} className="sr-only">Período em foco</label>
+                <input
+                  id={`${uid}-foco`} type="range" min={0} max={n - 1} step={1} value={focoAtual}
+                  onChange={(e) => setFoco(Number(e.target.value))}
+                  aria-valuetext={`${pontoFoco.extenso}: ${series.filter((s) => !s.anterior).map((s) => `${s.curto} ${numero(s.pontos[focoAtual].valor, 2)}%`).join('; ')}`}
+                  className="h-11 w-full" style={{ accentColor: 'rgb(var(--navy))' }}
+                />
+                <p className="flex justify-between text-small text-ink-soft"><span>{series[0].pontos[0].rotulo}</span><span className="hidden sm:inline">Arraste ou use as setas para percorrer os períodos</span><span>{series[0].pontos[n - 1].rotulo}</span></p>
+              </div>
+            )}
+            <p className="mt-3 min-h-6 text-body font-medium text-ink" aria-live="polite">{resumo}</p>
+            {notas.filter((x) => ids.includes(x.id) && x.ano >= deAtual && x.ano <= ateAtual).map((x) => (
+              <p key={x.id + x.ano + x.sub} className="mt-4 rounded-brand bg-surface p-4 text-small text-ink-soft"><strong className="text-ink">Nota sobre a série.</strong> {x.texto}</p>
             ))}
-          </select>
-          <div className="flex items-center gap-2">
+          </div>
+
+          <div className="mt-4 rounded-brand bg-surface p-4 md:p-5">
+            <p className="text-body font-semibold text-ink">O que é?</p>
+            <p className="mt-1 text-body text-ink-soft">{principal.definicao}</p>
+            <p className="mt-2 text-small text-ink-soft"><strong className="text-ink">Como ler:</strong> {principal.leitura}</p>
+            <a href="#metodo" onClick={abrirMetodologia} className="mt-2 inline-block text-small font-semibold text-navy underline underline-offset-4">Ver detalhes da metodologia</a>
+          </div>
+        </div>
+
+        {/* ---------- Escolha de indicadores e opções, ao lado do gráfico ---------- */}
+        <aside aria-label="Indicadores e opções do gráfico" className="space-y-5 lg:col-span-3">
+          <div className="lg:hidden">
+            <label htmlFor={`${uid}-var`} className={rotuloCaixa}>Selecionar variável</label>
+            <select id={`${uid}-var`} value={principal.id} onChange={(e) => escolher(e.target.value)} className={`${seletor} mt-1`}>
+              {GRUPOS.map((g) => (
+                <optgroup key={g.id} label={g.nome}>
+                  {indicadores.filter((i) => i.familia === g.id).map((i) => <option key={i.id} value={i.id}>{i.curto}</option>)}
+                </optgroup>
+              ))}
+            </select>
+          </div>
+
+          <div className="hidden space-y-4 lg:block">
+            {GRUPOS.map((g) => (
+              <div key={g.id} role="group" aria-label={g.nome}>
+                <p className="mb-1 text-label font-semibold uppercase text-ink-soft" aria-hidden="true">{g.nome}</p>
+                <ul>
+                  {indicadores.filter((i) => i.familia === g.id).map((i) => {
+                    const ativo = principal.id === i.id
+                    return (
+                      <li key={i.id}>
+                        <button
+                          type="button" aria-pressed={ativo} onClick={() => escolher(i.id)}
+                          className={`flex min-h-11 w-full items-center border-l-4 px-3 py-2 text-left text-body ${ativo ? 'border-navy bg-surface font-semibold text-ink' : 'border-transparent text-ink-soft hover:bg-surface hover:text-ink'}`}
+                        >
+                          <span className="sr-only">{g.nome}: </span>{i.curto}
+                        </button>
+                      </li>
+                    )
+                  })}
+                </ul>
+              </div>
+            ))}
+          </div>
+
+          <fieldset className="border-t border-line pt-4">
+            <legend className={`${rotuloCaixa} mb-2`}>Visualização</legend>
+            <div className="grid grid-cols-2 overflow-hidden rounded-brand border border-navy">
+              {(['barras', 'linha'] as const).map((m) => (
+                <button key={m} type="button" aria-pressed={modo === m} onClick={() => trocarModo(m)} className={`min-h-11 px-3 text-small font-semibold ${modo === m ? 'bg-navy text-on-navy' : 'bg-paper text-navy hover:bg-surface'}`}>{m === 'linha' ? 'Linha' : 'Barras'}</button>
+              ))}
+            </div>
+            <label className="mt-2 flex min-h-11 cursor-pointer items-center gap-3 text-small">
+              <input type="checkbox" checked={zero} onChange={(e) => setZero(e.target.checked)} className="h-5 w-5 accent-[rgb(var(--navy))]" />
+              Eixo vertical começa em zero
+            </label>
+          </fieldset>
+
+          <fieldset className="border-t border-line pt-4">
+            <legend className={`${rotuloCaixa} mb-1`}>Comparar com</legend>
+            <label className={`flex min-h-11 items-center gap-3 text-small ${!comparando && principal.referencias.length ? 'cursor-pointer' : 'opacity-60'}`}>
+              <input type="checkbox" checked={mostrarLimites && !comparando && principal.referencias.length > 0} disabled={comparando || principal.referencias.length === 0} onChange={(e) => setMostrarLimites(e.target.checked)} className="h-5 w-5 accent-[rgb(var(--navy))]" />
+              Limites legais
+            </label>
+            <label className={`flex min-h-11 items-center gap-3 text-small ${!comparando ? 'cursor-pointer' : 'opacity-60'}`}>
+              <input type="checkbox" checked={anoAnterior && !comparando} disabled={comparando} onChange={(e) => setAnoAnterior(e.target.checked)} className="h-5 w-5 accent-[rgb(var(--navy))]" />
+              Mesmo período do ano anterior
+            </label>
+            {ids.length < MAXIMO && (
+              <div className="mt-1">
+                <label htmlFor={`${uid}-outro`} className="sr-only">Adicionar outro indicador do mesmo grupo</label>
+                <select id={`${uid}-outro`} value="" onChange={(e) => adicionar(e.target.value)} className={seletor}>
+                  <option value="">Outro indicador…</option>
+                  {daFamilia.filter((i) => !ids.includes(i.id)).map((i) => <option key={i.id} value={i.id}>{i.curto}</option>)}
+                </select>
+              </div>
+            )}
+            {comparando && (
+              <ul className="mt-2 flex flex-wrap gap-2" aria-label="Indicadores adicionados à comparação">
+                {escolhidos.slice(1).map((i) => (
+                  <li key={i.id}><button type="button" onClick={() => remover(i.id)} className="inline-flex min-h-11 items-center gap-2 rounded-full border border-navy px-4 text-small font-semibold text-navy hover:bg-surface">{i.curto}<span aria-hidden="true">×</span><span className="sr-only">Remover da comparação</span></button></li>
+                ))}
+              </ul>
+            )}
+          </fieldset>
+
+          <div className="flex items-center gap-2 border-t border-line pt-4">
             <button type="button" onClick={() => andar(-1)} className={`${botao} border border-line text-ink hover:bg-surface`}><IconChevron className="h-4 w-4 rotate-90" /><span className="sr-only">Indicador anterior</span></button>
             <button type="button" onClick={() => andar(1)} className={`${botao} border border-line text-ink hover:bg-surface`}><IconChevron className="h-4 w-4 -rotate-90" /><span className="sr-only">Próximo indicador</span></button>
             {!movimentoReduzido && (
@@ -236,51 +314,7 @@ export function ExploradorIndicadores({ indicadores, notas, classificacoes, gera
               </button>
             )}
           </div>
-        </div>
-
-        <fieldset className={`${caixa} md:col-span-3`}>
-          <legend className={`${rotuloCaixa} mb-2`}>Comparar com</legend>
-          <label className={`flex min-h-11 items-center gap-3 ${!comparando && principal.referencias.length ? 'cursor-pointer' : 'opacity-60'}`}>
-            <input type="checkbox" checked={mostrarLimites && !comparando && principal.referencias.length > 0} disabled={comparando || principal.referencias.length === 0} onChange={(e) => setMostrarLimites(e.target.checked)} className="h-5 w-5 accent-[rgb(var(--navy))]" />
-            Limites legais
-          </label>
-          <label className={`flex min-h-11 items-center gap-3 ${!comparando ? 'cursor-pointer' : 'opacity-60'}`}>
-            <input type="checkbox" checked={anoAnterior && !comparando} disabled={comparando} onChange={(e) => setAnoAnterior(e.target.checked)} className="h-5 w-5 accent-[rgb(var(--navy))]" />
-            Mesmo período do ano anterior
-          </label>
-          {ids.length < MAXIMO && (
-            <div>
-              <label htmlFor={`${uid}-outro`} className="sr-only">Adicionar outro indicador do mesmo grupo</label>
-              <select id={`${uid}-outro`} value="" onChange={(e) => adicionar(e.target.value)} className={seletor}>
-                <option value="">Outro indicador…</option>
-                {daFamilia.filter((i) => !ids.includes(i.id)).map((i) => <option key={i.id} value={i.id}>{i.curto}</option>)}
-              </select>
-            </div>
-          )}
-          {comparando && (
-            <ul className="flex flex-wrap gap-2" aria-label="Indicadores adicionados à comparação">
-              {escolhidos.slice(1).map((i) => (
-                <li key={i.id}><button type="button" onClick={() => remover(i.id)} className="inline-flex min-h-11 items-center gap-2 rounded-full border border-navy px-4 text-small font-semibold text-navy hover:bg-surface">{i.curto}<span aria-hidden="true">×</span><span className="sr-only">Remover da comparação</span></button></li>
-              ))}
-            </ul>
-          )}
-        </fieldset>
-
-        <fieldset className={`${caixa} md:col-span-2`}>
-          <legend className={`${rotuloCaixa} mb-2`}>Visualização</legend>
-          <div className="grid grid-cols-2 overflow-hidden rounded-brand border border-navy">
-            {(['linha', 'barras'] as const).map((m) => (
-              <button key={m} type="button" aria-pressed={modo === m} onClick={() => setModo(m)} className={`min-h-11 px-3 text-small font-semibold ${modo === m ? 'bg-navy text-on-navy' : 'bg-paper text-navy hover:bg-surface'}`}>{m === 'linha' ? 'Linha' : 'Barras'}</button>
-            ))}
-          </div>
-        </fieldset>
-
-        <div className={`${caixa} md:col-span-4`}>
-          <p className={rotuloCaixa}>O que é?</p>
-          <p className="text-body text-ink-soft">{principal.definicao}</p>
-          <p className="text-small text-ink-soft"><strong className="text-ink">Como ler:</strong> {principal.leitura}</p>
-          <a href="#metodo" onClick={abrirMetodologia} className="text-small font-semibold text-navy underline underline-offset-4">Ver detalhes da metodologia</a>
-        </div>
+        </aside>
       </div>
 
       {/* ---------- Ferramentas ---------- */}

@@ -60,47 +60,54 @@ function espalha(ys: number[], minimo: number, topo: number, base: number): numb
  * rótulo do valor no ponto em foco e transição animada ao trocar de variável (`animKey`).
  * O ponto em foco muda com o ponteiro ou, no teclado e em leitores de tela, com o controle deslizante do pai.
  */
-export function GraficoExplorador({ series, referencias, foco, onFoco, titulo, modo = 'linha', animKey = '', unidade = '%' }: {
+export function GraficoExplorador({ series, referencias, foco, onFoco, titulo, modo = 'linha', zero = true, animKey = '', unidade = '%' }: {
   series: SerieGrafico[]
   referencias: ReferenciaGrafico[]
   foco: number
   onFoco: (i: number) => void
   titulo: string
   modo?: ModoGrafico
+  zero?: boolean
   animKey?: string
   unidade?: string
 }) {
   const id = useId().replace(/:/g, '')
   const caixa = useRef<HTMLDivElement>(null)
   const [largura, setLargura] = useState(720)
+  const [alturaTela, setAlturaTela] = useState(0)
 
   useEffect(() => {
     const el = caixa.current
     if (!el) return
     const ro = new ResizeObserver(([e]) => setLargura(Math.max(260, Math.round(e.contentRect.width))))
     ro.observe(el)
-    return () => ro.disconnect()
+    // espaço vertical que sobra da posição do gráfico até o fim da tela, para o eixo não ficar cortado
+    const mede = () => setAlturaTela(window.innerHeight - (el.getBoundingClientRect().top + window.scrollY))
+    mede()
+    window.addEventListener('resize', mede)
+    return () => { ro.disconnect(); window.removeEventListener('resize', mede) }
   }, [])
 
   const n = series[0]?.pontos.length ?? 0
   const W = largura
   const largo = W >= 760
-  const H = Math.round(Math.max(largo ? 340 : 300, Math.min(580, W * 0.4)))
-  const ml = 52, mt = 22, mb = 40
-  const mr = referencias.length && largo ? 178 : 18
+  const cabe = alturaTela > 0 ? alturaTela - 96 : 460
+  const H = Math.round(Math.max(300, Math.min(580, W * 0.46, cabe)))
+  const ml = 52, mt = 14, mb = 36
+  const mr = referencias.length && largo ? 160 : 18
   const todos = series.flatMap((s) => s.pontos.map((p) => p.valor)).filter((v): v is number => v !== null)
   if (n === 0 || todos.length === 0) return <p className="rounded-brand bg-surface p-4 text-body text-ink-soft">Sem dados no período escolhido.</p>
 
   const vmin = Math.min(...todos), vmax = Math.max(...todos)
   const visiveis = referencias.filter((r) => r.valor <= vmax * 2 + 5)
   const topo = Math.max(vmax, ...visiveis.map((r) => r.valor))
-  const base = Math.min(vmin, 0)
+  const base = zero ? Math.min(vmin, 0) : Math.min(vmin, ...visiveis.map((r) => r.valor))
   const folga = (topo - base || 1) * 0.1
-  const y0 = base - (vmin < 0 ? folga : 0), y1 = topo + folga
+  const y0 = zero ? base - (vmin < 0 ? folga : 0) : base - folga, y1 = topo + folga
   const passoX = (W - ml - mr) / n
   const X = (i: number) => ml + (i + 0.5) * passoX
   const Y = (v: number) => mt + (1 - (v - y0) / (y1 - y0)) * (H - mt - mb)
-  const Y0 = Y(Math.max(y0, Math.min(0, y1)))
+  const Y0 = Y(zero ? Math.max(y0, Math.min(0, y1)) : y0)
 
   const passo = (() => { const bruto = (y1 - y0) / 6; const pot = Math.pow(10, Math.floor(Math.log10(bruto))); const f = bruto / pot; return (f < 1.5 ? 1 : f < 3.5 ? 2 : f < 7.5 ? 5 : 10) * pot })()
   const ticks: number[] = []
@@ -131,7 +138,7 @@ export function GraficoExplorador({ series, referencias, foco, onFoco, titulo, m
   const rotulosRef = largo
     ? (() => {
         const ys = espalha(visiveis.map((r) => Y(r.valor)), 24, mt + 10, H - mb - 10)
-        return visiveis.map((r, k) => ({ r, y: ys[k], texto: `${r.rotulo} (${numero(r.valor, r.valor % 1 ? 1 : 0)}${unidade})` }))
+        return visiveis.map((r, k) => ({ r, y: ys[k], texto: `${{ limite: 'Legal', prudencial: 'Prudencial', alerta: 'Alerta' }[r.estilo]} ${numero(r.valor, r.valor % 1 ? 1 : 0)}${unidade}` }))
       })()
     : []
 
@@ -158,10 +165,11 @@ export function GraficoExplorador({ series, referencias, foco, onFoco, titulo, m
 
   return (
     <figure>
-      <ul className="mb-3 flex flex-wrap gap-x-6 gap-y-2 text-small text-ink" aria-label="Legenda do gráfico">
-        {series.map((s, k) => (
+      <ul className="mb-2 flex flex-wrap gap-x-6 gap-y-2 text-small text-ink empty:hidden" aria-label="Legenda do gráfico">
+        {series.length > 1 && series.map((s, k) => (
           <li key={s.id} className="inline-flex items-center gap-2 font-semibold"><AmostraSerie estilo={s.anterior ? ANTERIOR : k} />{s.curto}</li>
         ))}
+        {!zero && <li className="text-ink-soft">O eixo vertical não começa em zero</li>}
         {largo
           ? referencias.filter((r) => !visiveis.includes(r)).map((r) => (
               <li key={r.rotulo} className="inline-flex items-center gap-2 text-ink-soft">
@@ -212,7 +220,7 @@ export function GraficoExplorador({ series, referencias, foco, onFoco, titulo, m
               <line key={r.rotulo} x1={ml} x2={W - mr} y1={Y(r.valor)} y2={Y(r.valor)} className={CLASSE_REF[r.estilo].traco} strokeWidth={1.75} strokeDasharray={TRACO_REF[r.estilo]} />
             ))}
             {rotulosRef.map(({ r, y, texto }) => {
-              const w = texto.length * 6.6 + 18
+              const w = texto.length * 7.4 + 18
               return (
                 <g key={r.rotulo}>
                   <rect x={W - mr + 8} y={y - 11} width={w} height={22} rx={5} className={CLASSE_REF[r.estilo].caixa} strokeWidth={1} />
