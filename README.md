@@ -15,6 +15,7 @@ fontes públicas, lidas por scripts e guardadas em `data/`:
 | `data/paginas.json` | 35 páginas do Tesouro em `sefaz.es.gov.br` | texto (HTML saneado) e grupos de arquivos de cada área |
 | `data/acervo.json` | as mesmas páginas | lista plana dos ≈ 730 arquivos, usada na busca de `/publicacoes` |
 | `data/noticias.json` | `sefaz.es.gov.br/noticias` | notícias da SEFAZ filtradas por temas do Tesouro, com imagem reduzida em `public/img/noticias/` (requer `pip install pillow`) |
+| `data/rreo.json` | API do Siconfi (RREO do Poder Executivo, Anexos 01, 03 e 06, 2019 em diante) | painel fiscal: receita, despesa e investimentos contra previsão e dotação, receita corrente líquida, resultados primário e nominal contra as metas da LDO; gera também `public/dados/rreo-es.csv` |
 | `data/indicadores.json` | API do Siconfi (RGF do Poder Executivo, 2019 em diante) e dados abertos da CAPAG (Tesouro Transparente) | painel fiscal: limites da LRF por quadrimestre e notas da CAPAG; gera também `public/dados/*.csv` |
 | `data/curadoria-noticias.json` | edição manual | notícias fixadas no início do carrossel (`destaques`, lista de endereços; vazia = as três mais recentes) e correções do tipo de imagem (`foto` ou `arte`) |
 
@@ -26,7 +27,7 @@ da verdade (evita versões desatualizadas de documentos fiscais e um repositóri
 | `/` | Página inicial (hero, carrossel de notícias, acesso rápido, painel fiscal, publicações em destaque, orientações) |
 | `/tesouro/[área]` | Uma página para cada área do Tesouro (35), com o texto original e os documentos |
 | `/publicacoes` | Busca em todo o acervo, com filtro por tipo e por ano (`?tipo=` e `?q=` na URL) |
-| `/indicadores` | Painel fiscal quantitativo: gráfico grande no centro, barra para trocar de indicador (limites da LRF e CAPAG), números do período em foco, comparação de até 3 indicadores, CSV e link da escolha; texto de apoio e metodologia recolhidos abaixo |
+| `/indicadores` | Painel fiscal quantitativo: gráfico grande no centro, barra para trocar de indicador (orçamento e execução, resultados e metas, limites da LRF e CAPAG), números do período em foco, comparação de até 3 indicadores, CSV e link da escolha; texto de apoio e metodologia recolhidos abaixo |
 | `/noticias`, `/noticias/[slug]` | Lista e página de cada notícia do Tesouro, com o texto completo (a fonte original é citada no fim) |
 | `/contato` | Fale conosco: formulário para a Subsecretaria, as gerências e as subgerências do Tesouro |
 | `/servicos` | "Finanças": serviços e orientações para órgãos, gestores e servidores |
@@ -43,7 +44,7 @@ Detalhes importantes:
 
 - A data que a SEFAZ mostra em cada linha é a de **atualização do arquivo**, não a do período de referência. O portal
   ordena e destaca pelo período (`ano` + `periodo`, extraídos do título) e rotula a data como "Atualizado em".
-- **Painel fiscal**: o script `atualizar_indicadores.py` não recalcula nada além de razões entre valores publicados. A CAPAG de uma edição nova entra sozinha quando o Tesouro Nacional a publica nos dados abertos (a de 2026 ainda não estava lá). O degrau da dívida líquida em 2025 (item "demais haveres financeiros") é um fato do próprio RGF e aparece como nota; confirmar o texto com a Subsecretaria. Limites de dívida e garantias anteriores a 2024 usam o valor fixo das Resoluções do Senado (200% e 22%).
+- **Painel fiscal**: o script `atualizar_indicadores.py` não recalcula nada além de razões entre valores publicados. A CAPAG de uma edição nova entra sozinha quando o Tesouro Nacional a publica nos dados abertos (a de 2026 ainda não estava lá). O degrau da dívida líquida em 2025 (item "demais haveres financeiros") é um fato do próprio RGF e aparece como nota; confirmar o texto com a Subsecretaria. Limites de dívida e garantias anteriores a 2024 usam o valor fixo das Resoluções do Senado (200% e 22%). Os valores do RREO acumulam no ano: cada barra é o último bimestre disponível do exercício, e o ano em curso aparece com asterisco por ser parcial. O resultado primário e o nominal usam o resultado único até 2022 e o resultado sem RPPS a partir de 2023 (mudança do próprio demonstrativo); as metas são as do Anexo de Metas Fiscais da LDO, reproduzidas no RREO.
 - Para incluir uma página nova do Tesouro, acrescente o endereço em `PAGINAS` (`scripts/atualizar_conteudo.py`).
 - A página inicial é conduzida pelas notícias: um único carrossel mostra as três notícias mais recentes (as fixadas em `destaques` vêm primeiro). Rotação a cada 7 s com transição suave, pausa por botão, ao passar o mouse ou com foco de teclado, e sem rotação para quem prefere menos movimento. As três manchetes ficam sempre visíveis como abas. Cada notícia abre dentro do portal, em `/noticias/[slug]`: o coletor baixa o texto completo da matéria na SEFAZ, limpa a formatação herdada do Word e guarda só parágrafos, listas, links e destaques. No fim de cada matéria há o link para a publicação original. Fotos são cortadas; cartões gráficos (`arte`) aparecem inteiros.
 - Os reconhecimentos (A+, 1º lugar, nota A) são os citados nas notícias da SEFAZ; se mudarem, edite `Reconhecimentos` em `app/page.tsx`.
@@ -113,7 +114,7 @@ As áreas ficam em `lib/areas.ts`, montadas a partir do Lei nº 12.379/2025 e De
 
 ## Atualização automática dos dados
 
-A rotina `.github/workflows/atualizar-dados.yml` roda toda segunda-feira, às 06h17 em Brasília (e pode ser disparada à mão em Actions). Ela executa os três coletores (`scripts/atualizar_indicadores.py`, `atualizar_noticias.py` e `atualizar_conteudo.py`), ignora mudanças que sejam só a data da coleta, confere que `npm run build` continua passando e, havendo dado novo, abre um PR "Atualização automática de dados" para conferência. Uma falha numa fonte não impede as outras de atualizar, e o PR informa o resultado de cada coleta.
+A rotina `.github/workflows/atualizar-dados.yml` roda toda segunda-feira, às 06h17 em Brasília (e pode ser disparada à mão em Actions). Ela executa os quatro coletores (`scripts/atualizar_indicadores.py`, `atualizar_rreo.py`, `atualizar_noticias.py` e `atualizar_conteudo.py`), ignora mudanças que sejam só a data da coleta, confere que `npm run build` continua passando e, havendo dado novo, abre um PR "Atualização automática de dados" para conferência. Uma falha numa fonte não impede as outras de atualizar, e o PR informa o resultado de cada coleta.
 
 Para que a rotina possa abrir o PR, ative no GitHub, em Settings > Actions > General > Workflow permissions, a opção **Allow GitHub Actions to create and approve pull requests**. Quem quiser publicar sem passar por revisão pode ativar a mesclagem automática (auto-merge) nesses PRs; a recomendação é manter a conferência humana, já que os números são fiscais.
 

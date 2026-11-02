@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useId, useMemo, useState } from 'react'
 import type { ComponentType, SVGProps } from 'react'
 import { GraficoExplorador, type ModoGrafico, type SerieGrafico } from './GraficoExplorador'
-import { IconCalendar, IconChevron, IconCoins, IconDoc, IconInfo, IconShield, IconTarget } from './Icons'
+import { IconBars, IconCalendar, IconChevron, IconCoins, IconDoc, IconInfo, IconShield, IconTarget } from './Icons'
 import type { Familia, Indicador } from '@/lib/indicadores'
 import { numero } from '@/lib/formato'
 
@@ -12,10 +12,13 @@ const SEGUNDOS_POR_GRAFICO = 9
 
 /** Categorias do painel. Cada uma é uma fonte oficial; novas categorias entram aqui quando houver coletor. */
 const CATEGORIAS: { id: Familia; nome: string; curto: string; Icone: ComponentType<SVGProps<SVGSVGElement>> }[] = [
+  { id: 'orcamento', nome: 'Orçamento e execução', curto: 'Orçamento', Icone: IconBars },
+  { id: 'resultados', nome: 'Resultados e metas', curto: 'Metas', Icone: IconTarget },
   { id: 'lrf', nome: 'Limites fiscais (LRF)', curto: 'Limites (LRF)', Icone: IconShield },
   { id: 'capag', nome: 'Capacidade de pagamento (CAPAG)', curto: 'CAPAG', Icone: IconCoins },
 ]
-const PADRAO: Record<Familia, string> = { lrf: 'pessoal', capag: 'endividamento' }
+const PADRAO: Record<Familia, string> = { orcamento: 'receita', resultados: 'primario', lrf: 'pessoal', capag: 'endividamento' }
+const FAMILIAS_VALIDAS: Familia[] = ['orcamento', 'resultados', 'lrf', 'capag']
 
 type Nota = { id: string; ano: number; sub: number; texto: string }
 
@@ -35,13 +38,14 @@ const rotulo = 'text-label font-semibold uppercase text-ink-soft'
  */
 export function ExploradorIndicadores({ indicadores, notas, classificacoes, geradoEm }: { indicadores: Indicador[]; notas: Nota[]; classificacoes: Record<number, string | null>; geradoEm: string }) {
   const uid = useId()
-  const [familia, setFamilia] = useState<Familia>('lrf')
-  const [ids, setIds] = useState<string[]>([PADRAO.lrf])
+  const [familia, setFamilia] = useState<Familia>('orcamento')
+  const [ids, setIds] = useState<string[]>([PADRAO.orcamento])
   const [foco, setFoco] = useState<number | null>(null)
   const [modo, setModo] = useState<ModoGrafico>('barras')
   const [zero, setZero] = useState(true)
   const [mostrarLimites, setMostrarLimites] = useState(true)
   const [anoAnterior, setAnoAnterior] = useState(false)
+  const [comReferencia, setComReferencia] = useState(true)
   const [tocando, setTocando] = useState(false)
   const [pausado, setPausado] = useState(false)
   const [movimentoReduzido, setMovimentoReduzido] = useState(false)
@@ -60,7 +64,8 @@ export function ExploradorIndicadores({ indicadores, notas, classificacoes, gera
   // lê a escolha do endereço, uma vez
   useEffect(() => {
     const q = new URLSearchParams(window.location.search)
-    const f: Familia = q.get('g') === 'capag' ? 'capag' : 'lrf'
+    const g = q.get('g') as Familia
+    const f: Familia = FAMILIAS_VALIDAS.includes(g) ? g : 'orcamento'
     const lista = indicadores.filter((i) => i.familia === f)
     const pedidos = (q.get('i') ?? '').split(',').filter((x) => lista.some((i) => i.id === x)).slice(0, MAXIMO)
     setFamilia(f)
@@ -88,7 +93,10 @@ export function ExploradorIndicadores({ indicadores, notas, classificacoes, gera
   const posicao = indicadores.findIndex((i) => i.id === principal.id)
 
   const series: SerieGrafico[] = escolhidos.map((i) => ({ id: i.id, curto: i.curto, acumulaNoAno: i.acumulaNoAno, pontos: i.pontos }))
-  if (anoAnterior && !comparando) {
+  if (comReferencia && !comparando && principal.comparacao) {
+    series.push({ id: 'referencia', curto: principal.comparacao.curto, anterior: true, acumulaNoAno: false, pontos: principal.comparacao.pontos })
+  }
+  if (anoAnterior && !comparando && (familia === 'lrf' || familia === 'capag')) {
     series.push({
       id: 'anterior', curto: 'Mesmo período do ano anterior', anterior: true, acumulaNoAno: principal.acumulaNoAno,
       pontos: principal.pontos.map((p) => ({ ...p, valor: principal.pontos.find((q) => q.ano === p.ano - 1 && q.sub === p.sub)?.valor ?? null })),
@@ -124,7 +132,7 @@ export function ExploradorIndicadores({ indicadores, notas, classificacoes, gera
 
   const baixarCsv = useCallback(() => {
     const base = series.filter((s) => !s.anterior)
-    const cab = ['periodo', 'ano', ...escolhidos.map((i) => i.id + '_pct')]
+    const cab = ['periodo', 'ano', ...escolhidos.map((i) => i.id + (reais ? '_bilhoes_reais' : '_pct'))]
     const linhas = base[0].pontos.map((p, k) => [p.extenso, p.ano, ...base.map((s) => s.pontos[k].valor ?? '')].join(','))
     const blob = new Blob(['﻿' + [cab.join(','), ...linhas].join('\n') + '\n'], { type: 'text/csv;charset=utf-8' })
     const url = URL.createObjectURL(blob)
@@ -141,17 +149,27 @@ export function ExploradorIndicadores({ indicadores, notas, classificacoes, gera
 
   const abrirMetodologia = () => { document.getElementById('metodo')?.setAttribute('open', '') }
 
+  const reais = principal.unidade === 'R$ bi'
+  const sufixo = reais ? ' bi' : '%'
+  const moeda = (v: number | null) => (v === null ? 'sem dado' : reais ? `R$ ${numero(v, Math.abs(v) < 10 ? 2 : 1)} bi` : `${numero(v, 1)}%`)
+
   // resumo do ponto em foco, em uma linha
   const resumo = (() => {
     if (!pontoFoco) return ''
     const v = pontoFoco.valor
-    const partes = [`${numero(v, 1)}% em ${pontoFoco.extenso}`]
+    const partes = [`${moeda(v)} em ${pontoFoco.extenso}`]
+    const ref = !comparando ? series.find((x) => x.id === 'referencia')?.pontos[focoAtual]?.valor ?? null : null
+    if (ref !== null && v !== null && principal.comparacao) {
+      if (principal.comparacao.curto === 'Meta da LDO') partes.push(`meta da LDO de ${moeda(ref)}: ${v >= ref ? 'resultado igual ou acima da meta' : 'resultado abaixo da meta'}`)
+      else if (ref !== 0) partes.push(`${numero((v / ref) * 100, 1)}% da ${principal.comparacao.curto.toLowerCase()} (${moeda(ref)})`)
+    }
+    if (pontoFoco.parcial) partes.push('valor parcial do ano')
     const nota = principal.pontos.find((p) => p.ano === pontoFoco.ano && p.sub === pontoFoco.sub)?.nota
     if (!comparando && nota) partes.push(`nota ${nota}`)
     if (!comparando && familia === 'capag' && classificacoes[pontoFoco.ano]) partes.push(`classificação geral da CAPAG: ${classificacoes[pontoFoco.ano]}`)
     const limite = !comparando && familia === 'lrf' ? principal.referencias.find((r) => r.estilo === 'limite') : undefined
     if (limite && v !== null) partes.push(`folga de ${numero(limite.valor - v, 1)} p.p. até o limite legal de ${numero(limite.valor, 0)}%`)
-    const ant = focoAtual > 0 && !(series[0].acumulaNoAno && series[0].pontos[focoAtual - 1].ano !== pontoFoco.ano) ? series[0].pontos[focoAtual - 1].valor : null
+    const ant = reais ? null : focoAtual > 0 && !(series[0].acumulaNoAno && series[0].pontos[focoAtual - 1].ano !== pontoFoco.ano) ? series[0].pontos[focoAtual - 1].valor : null
     if (!comparando && v !== null && ant !== null) { const d = Math.round((v - ant) * 100) / 100; partes.push(`${d > 0 ? '+' : d < 0 ? '−' : ''}${numero(Math.abs(d), 1)} p.p. sobre o período anterior`) }
     return partes.join(' · ')
   })()
@@ -205,7 +223,7 @@ export function ExploradorIndicadores({ indicadores, notas, classificacoes, gera
 
           <div className="mt-4">
             <div className="flex items-center justify-between gap-3">
-              <p className="text-small text-ink-soft">Valores em %</p>
+              <p className="text-small text-ink-soft">{reais ? 'R$ bilhões' : 'Valores em %'}</p>
   <div className="flex shrink-0 items-center gap-2">
     <div className="grid grid-cols-2 overflow-hidden rounded-brand border border-navy" role="group" aria-label="Visualização">
       {(['barras', 'linha'] as const).map((m) => (
@@ -221,14 +239,24 @@ export function ExploradorIndicadores({ indicadores, notas, classificacoes, gera
         </label>
         <fieldset className="border-t border-line pt-3">
           <legend className={`${rotulo} mb-1`}>Comparar com</legend>
-          <label className={`flex min-h-11 items-center gap-3 text-small ${!comparando && principal.referencias.length ? 'cursor-pointer' : 'opacity-60'}`}>
-            <input type="checkbox" checked={mostrarLimites && !comparando && principal.referencias.length > 0} disabled={comparando || principal.referencias.length === 0} onChange={(e) => setMostrarLimites(e.target.checked)} className="h-5 w-5 accent-[rgb(var(--navy))]" />
-            Limites legais
-          </label>
-          <label className={`flex min-h-11 items-center gap-3 text-small ${!comparando ? 'cursor-pointer' : 'opacity-60'}`}>
-            <input type="checkbox" checked={anoAnterior && !comparando} disabled={comparando} onChange={(e) => setAnoAnterior(e.target.checked)} className="h-5 w-5 accent-[rgb(var(--navy))]" />
-            Mesmo período do ano anterior
-          </label>
+          {principal.referencias.length > 0 && (
+            <label className={`flex min-h-11 items-center gap-3 text-small ${!comparando ? 'cursor-pointer' : 'opacity-60'}`}>
+              <input type="checkbox" checked={mostrarLimites && !comparando} disabled={comparando} onChange={(e) => setMostrarLimites(e.target.checked)} className="h-5 w-5 accent-[rgb(var(--navy))]" />
+              {familia === 'lrf' ? 'Limites legais' : 'Faixas das notas'}
+            </label>
+          )}
+          {principal.comparacao && (
+            <label className={`flex min-h-11 items-center gap-3 text-small ${!comparando ? 'cursor-pointer' : 'opacity-60'}`}>
+              <input type="checkbox" checked={comReferencia && !comparando} disabled={comparando} onChange={(e) => setComReferencia(e.target.checked)} className="h-5 w-5 accent-[rgb(var(--navy))]" />
+              {principal.comparacao.curto}
+            </label>
+          )}
+          {(familia === 'lrf' || familia === 'capag') && (
+            <label className={`flex min-h-11 items-center gap-3 text-small ${!comparando ? 'cursor-pointer' : 'opacity-60'}`}>
+              <input type="checkbox" checked={anoAnterior && !comparando} disabled={comparando} onChange={(e) => setAnoAnterior(e.target.checked)} className="h-5 w-5 accent-[rgb(var(--navy))]" />
+              Mesmo período do ano anterior
+            </label>
+          )}
           {ids.length < MAXIMO && (
             <div className="mt-1">
               <label htmlFor={`${uid}-outro`} className="sr-only">Adicionar outro indicador do mesmo grupo</label>
@@ -260,14 +288,14 @@ export function ExploradorIndicadores({ indicadores, notas, classificacoes, gera
     </details>
   </div>
             </div>
-            <GraficoExplorador series={series} referencias={refs} foco={focoAtual} onFoco={setFoco} titulo={titulo} modo={modo} zero={zero} animKey={ids.join('+')} />
+            <GraficoExplorador series={series} referencias={refs} foco={focoAtual} onFoco={setFoco} titulo={titulo} modo={modo} zero={zero} animKey={ids.join('+')} unidade={sufixo} />
             {n > 1 && pontoFoco && (
               <div className="mt-1">
                 <label htmlFor={`${uid}-foco`} className="sr-only">Período em foco</label>
                 <input
                   id={`${uid}-foco`} type="range" min={0} max={n - 1} step={1} value={focoAtual}
                   onChange={(e) => setFoco(Number(e.target.value))}
-                  aria-valuetext={`${pontoFoco.extenso}: ${series.filter((s) => !s.anterior).map((s) => `${s.curto} ${numero(s.pontos[focoAtual].valor, 2)}%`).join('; ')}`}
+                  aria-valuetext={`${pontoFoco.extenso}: ${series.filter((s) => !s.anterior).map((s) => `${s.curto} ${moeda(s.pontos[focoAtual].valor)}`).join('; ')}`}
                   className="h-11 w-full" style={{ accentColor: 'rgb(var(--navy))' }}
                 />
                 <p className="flex justify-between text-small text-ink-soft"><span>{series[0].pontos[0].rotulo}</span><span className="hidden sm:inline">Arraste ou use as setas para percorrer os períodos</span><span>{series[0].pontos[n - 1].rotulo}</span></p>
@@ -340,7 +368,7 @@ export function ExploradorIndicadores({ indicadores, notas, classificacoes, gera
           <table className="w-full min-w-[22rem] text-left text-small">
             <caption className="sr-only">{titulo}, série completa</caption>
             <thead className="sticky top-0 bg-surface">
-              <tr><th scope="col" className="px-3 py-2">Período</th>{series.map((s) => <th key={s.id} scope="col" className="px-3 py-2 text-right">{s.curto} (%)</th>)}</tr>
+              <tr><th scope="col" className="px-3 py-2">Período</th>{series.map((s) => <th key={s.id} scope="col" className="px-3 py-2 text-right">{s.curto} ({reais ? 'R$ bi' : '%'})</th>)}</tr>
             </thead>
             <tbody>
               {[...series[0].pontos.keys()].reverse().map((k) => (

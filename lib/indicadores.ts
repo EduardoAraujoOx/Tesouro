@@ -1,5 +1,6 @@
 import raw from '@/data/indicadores.json'
 import definicoesRaw from '@/data/definicoes-indicadores.json'
+import rreoRaw from '@/data/rreo.json'
 
 export type Limites = { valor: number | null; limite: number | null; alerta: number | null; prudencial?: number | null; limiteFixo?: boolean; montante?: number | null }
 export type PeriodoLrf = {
@@ -111,8 +112,8 @@ export function degrauHaveres(): { de: number; para: number; em: PeriodoLrf } | 
  * Os objetos são simples (serializáveis) para seguirem do servidor para o navegador.
  * ---------------------------------------------------------------------------------------------- */
 
-export type Familia = 'lrf' | 'capag'
-export type PontoIndicador = { ano: number; sub: number; rotulo: string; extenso: string; valor: number | null; nota?: string | null }
+export type Familia = 'orcamento' | 'resultados' | 'lrf' | 'capag'
+export type PontoIndicador = { ano: number; sub: number; rotulo: string; extenso: string; valor: number | null; nota?: string | null; parcial?: boolean }
 export type ReferenciaIndicador = { rotulo: string; valor: number; estilo: 'limite' | 'alerta' | 'prudencial'; texto?: string }
 export type Indicador = {
   id: string
@@ -129,12 +130,18 @@ export type Indicador = {
   fonte: string
   termos?: { termo: string; texto: string }[]
   periodicidade: 'quadrimestral' | 'anual'
+  /** Unidade dos valores: percentual ou R$ bilhões. */
+  unidade: '%' | 'R$ bi'
   pontos: PontoIndicador[]
+  /** Série de referência exibida ao lado (previsão, dotação ou meta da LDO), quando existe. */
+  comparacao?: { curto: string; pontos: PontoIndicador[] }
   referencias: ReferenciaIndicador[]
   acumulaNoAno?: boolean
 }
 
 export const FAMILIAS: Record<Familia, { id: Familia; nome: string; descricao: string; padrao: string[] }> = {
+  orcamento: { id: 'orcamento', nome: 'Orçamento e execução', descricao: 'RREO, a cada bimestre', padrao: ['receita'] },
+  resultados: { id: 'resultados', nome: 'Resultados e metas', descricao: 'RREO e LDO, a cada bimestre', padrao: ['primario'] },
   lrf: { id: 'lrf', nome: 'Limites da LRF', descricao: 'Relatório de Gestão Fiscal, a cada quadrimestre', padrao: ['pessoal'] },
   capag: { id: 'capag', nome: 'CAPAG', descricao: 'Capacidade de pagamento, uma edição por ano', padrao: ['endividamento'] },
 }
@@ -158,6 +165,63 @@ const CAPAG_FAIXAS: Record<keyof typeof CAPAG_NOTAS, ReferenciaIndicador[]> = {
 }
 
 
+
+/* ------------------------------------------------------------------------------------------------
+ * RREO (Siconfi): execução orçamentária e resultados fiscais, um ponto por exercício, em R$ bilhões.
+ * Os valores do RREO acumulam no ano; o último ponto, do ano em curso, é parcial.
+ * ---------------------------------------------------------------------------------------------- */
+type PeriodoRreo = {
+  ano: number; bimestre: number
+  receitaPrevista: number | null; receitaRealizada: number | null
+  despesaAutorizada: number | null; despesaLiquidada: number | null
+  investimentoAutorizado: number | null; investimentoLiquidado: number | null
+  rcl12m: number | null
+  primario: number | null; metaPrimario: number | null
+  nominal: number | null; metaNominal: number | null
+  semRpps: boolean
+}
+const rreo = rreoRaw as unknown as { geradoEm: string; serie: PeriodoRreo[] }
+export const serieRreo = rreo.serie
+export const rreoColetadoEm = rreo.geradoEm
+
+const MESES = ['', 'janeiro e fevereiro', 'janeiro a abril', 'janeiro a junho', 'janeiro a agosto', 'janeiro a outubro', 'janeiro a dezembro']
+export const ultimoRreo = serieRreo[serieRreo.length - 1]
+export const periodoUltimoRreo = `${ultimoRreo.bimestre}º bimestre de ${ultimoRreo.ano} (${MESES[ultimoRreo.bimestre]})`
+const bi = (v: number | null) => (v === null ? null : v / 1e9)
+
+function pontosRreo(campo: keyof PeriodoRreo, acumulado = true): PontoIndicador[] {
+  return serieRreo.map((p) => {
+    const parcial = p.bimestre < 6
+    return {
+      ano: p.ano,
+      sub: 1,
+      rotulo: parcial ? `${p.ano}*` : String(p.ano),
+      extenso: parcial
+        ? `${p.bimestre}º bimestre de ${p.ano} (${MESES[p.bimestre]})${acumulado ? '' : ', últimos doze meses'}`
+        : `Exercício de ${p.ano}`,
+      valor: bi(p[campo] as number | null),
+      parcial,
+    }
+  })
+}
+
+function indicadoresRreo(): Indicador[] {
+  const base = { periodicidade: 'anual' as const, unidade: 'R$ bi' as const, referencias: [] as ReferenciaIndicador[] }
+  const com = (id: string, familia: Familia, campo: keyof PeriodoRreo, comp?: { curto: string; campo: keyof PeriodoRreo }, acumulado = true): Indicador => ({
+    id, familia, ...definicoes[id], ...base,
+    pontos: pontosRreo(campo, acumulado),
+    ...(comp ? { comparacao: { curto: comp.curto, pontos: pontosRreo(comp.campo) } } : {}),
+  })
+  return [
+    com('receita', 'orcamento', 'receitaRealizada', { curto: 'Previsão atualizada', campo: 'receitaPrevista' }),
+    com('despesa', 'orcamento', 'despesaLiquidada', { curto: 'Dotação atualizada', campo: 'despesaAutorizada' }),
+    com('investimentos', 'orcamento', 'investimentoLiquidado', { curto: 'Dotação atualizada', campo: 'investimentoAutorizado' }),
+    com('rcl', 'orcamento', 'rcl12m', undefined, false),
+    com('primario', 'resultados', 'primario', { curto: 'Meta da LDO', campo: 'metaPrimario' }),
+    com('nominal', 'resultados', 'nominal', { curto: 'Meta da LDO', campo: 'metaNominal' }),
+  ]
+}
+
 /** Monta as séries do painel a partir dos dados coletados (valores) e de `data/definicoes-indicadores.json` (textos). */
 export function catalogoIndicadores(): Indicador[] {
   const lrf: Indicador[] = ORDEM_LRF.map((k) => {
@@ -171,6 +235,7 @@ export function catalogoIndicadores(): Indicador[] {
       familia: 'lrf',
       ...definicoes[k],
       periodicidade: 'quadrimestral',
+      unidade: '%',
       pontos: serieLrf.map((p) => ({
         ano: p.ano,
         sub: p.quad,
@@ -187,10 +252,11 @@ export function catalogoIndicadores(): Indicador[] {
     familia: 'capag',
     ...definicoes[k],
     periodicidade: 'anual',
+    unidade: '%',
     pontos: serieCapag.map((e) => ({ ano: e.ano, sub: 1, rotulo: String(e.ano), extenso: `Edição ${e.ano}`, valor: e[k], nota: e[CAPAG_NOTAS[k]] })),
     referencias: CAPAG_FAIXAS[k],
   }))
-  return [...lrf, ...capag]
+  return [...indicadoresRreo(), ...lrf, ...capag]
 }
 
 /** Classificação geral da CAPAG por edição (A, A+, B...), mostrada ao lado das séries do grupo CAPAG. */

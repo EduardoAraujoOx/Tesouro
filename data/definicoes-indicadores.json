@@ -153,5 +153,141 @@
       }
     ],
     "porQueImporta": "Mostra se há caixa suficiente para pagar o que vence. É uma das medidas que compõem a nota da CAPAG."
+  },
+  "receita": {
+    "nome": "Receita realizada",
+    "curto": "Receita realizada",
+    "subtitulo": "R$ bilhões, acumulado no exercício, comparado com a previsão atualizada",
+    "definicao": "Total que o Estado efetivamente arrecadou no exercício, sem contar as receitas intraorçamentárias, que são repasses entre órgãos do próprio Estado. A referência é a previsão atualizada da receita na lei orçamentária.",
+    "formula": "Receitas (exceto intraorçamentárias) realizadas até o bimestre, conforme o Balanço Orçamentário do RREO",
+    "leitura": "Barra azul acima da barra cinza indica arrecadação maior que a prevista. No ano em curso o valor é parcial (até o bimestre mais recente) e a previsão é a do ano inteiro, então a barra ainda não alcançou a previsão.",
+    "porQueImporta": "A arrecadação sustenta as despesas do ano. Quando supera a previsão, abre folga para investimentos e para pagar compromissos; quando fica abaixo, exige contenção de despesas.",
+    "limite": "Sem limite legal. A referência é a previsão atualizada da receita",
+    "base": "Lei Complementar nº 101/2000 (LRF), art. 52, e Manual de Demonstrativos Fiscais da STN",
+    "fonte": "Siconfi, RREO do Poder Executivo, Anexo 01 (Balanço Orçamentário)",
+    "termos": [
+      {
+        "termo": "Previsão atualizada",
+        "texto": "Estimativa de arrecadação da lei orçamentária, já com as alterações feitas ao longo do ano."
+      },
+      {
+        "termo": "Receitas intraorçamentárias",
+        "texto": "Valores que um órgão do Estado repassa a outro. Ficam de fora para não contar duas vezes o mesmo dinheiro."
+      }
+    ]
+  },
+  "despesa": {
+    "nome": "Despesa liquidada",
+    "curto": "Despesa liquidada",
+    "subtitulo": "R$ bilhões, acumulado no exercício, comparado com a dotação atualizada",
+    "definicao": "Despesas cujo bem ou serviço já foi entregue e verificado (fase da liquidação), sem contar as despesas intraorçamentárias. A referência é a dotação atualizada, o valor que a lei autoriza gastar no ano.",
+    "formula": "Despesas (exceto intraorçamentárias) liquidadas até o bimestre, conforme o Balanço Orçamentário do RREO",
+    "leitura": "Quanto mais próxima da dotação, maior a execução do orçamento autorizado. A despesa não pode ultrapassar a dotação. No ano em curso o valor é parcial e a dotação é a do ano inteiro.",
+    "porQueImporta": "Mostra quanto do orçamento autorizado já virou serviço entregue. Uma execução muito baixa pode indicar atraso nas entregas; uma muito alta, pouca margem para imprevistos.",
+    "limite": "A despesa não pode exceder a dotação autorizada",
+    "base": "Constituição Federal, art. 167, II, e Lei nº 4.320/1964",
+    "fonte": "Siconfi, RREO do Poder Executivo, Anexo 01 (Balanço Orçamentário)",
+    "termos": [
+      {
+        "termo": "Dotação atualizada",
+        "texto": "Valor que a lei orçamentária, com suas alterações, autoriza gastar no ano."
+      },
+      {
+        "termo": "Liquidação",
+        "texto": "Fase da despesa em que se confirma que o bem foi entregue ou o serviço foi prestado, antes do pagamento."
+      }
+    ]
+  },
+  "investimentos": {
+    "nome": "Investimentos liquidados",
+    "curto": "Investimentos",
+    "subtitulo": "R$ bilhões, acumulado no exercício, comparado com a dotação atualizada",
+    "definicao": "Despesas com obras, equipamentos e outros bens duráveis que o Estado já recebeu e verificou no exercício. A referência é a dotação atualizada para investimentos.",
+    "formula": "Despesas de capital do grupo Investimentos, liquidadas até o bimestre, conforme o Balanço Orçamentário do RREO",
+    "leitura": "Compare a barra azul com a cinza: a distância mostra quanto do investimento autorizado ainda não foi entregue. No ano em curso o valor é parcial e a dotação é a do ano inteiro.",
+    "porQueImporta": "Investimento é o que fica para os próximos anos: obras, equipamentos e estruturas. Acompanhar sua execução mostra o ritmo de entrega do Estado.",
+    "limite": "Sem limite legal. A referência é a dotação atualizada de investimentos",
+    "base": "Lei nº 4.320/1964, art. 12, e Manual de Demonstrativos Fiscais da STN",
+    "fonte": "Siconfi, RREO do Poder Executivo, Anexo 01 (Balanço Orçamentário)",
+    "termos": [
+      {
+        "termo": "Despesas de capital",
+        "texto": "Gastos que aumentam o patrimônio público, como obras e compra de equipamentos, e a amortização da dívida."
+      },
+      {
+        "termo": "Dotação atualizada",
+        "texto": "Valor que a lei orçamentária, com suas alterações, autoriza gastar no ano."
+      }
+    ]
+  },
+  "rcl": {
+    "nome": "Receita corrente líquida",
+    "curto": "Receita corrente líquida",
+    "subtitulo": "R$ bilhões, soma dos últimos doze meses ao fim de cada ano",
+    "definicao": "Receita corrente do Estado (impostos, transferências e outras) descontadas as parcelas que, por lei, pertencem a outros entes e as demais deduções previstas na LRF. É a régua dos limites de gasto com pessoal e de endividamento.",
+    "formula": "Soma, nos últimos doze meses, das receitas correntes menos as deduções (RCL = I − II)",
+    "leitura": "Cada barra é a RCL dos doze meses encerrados no último bimestre do ano (em 2026, até agosto), em valores correntes, sem correção pela inflação.",
+    "porQueImporta": "Quanto maior a RCL, maior em reais o espaço dos limites de pessoal e de dívida. Ela é o denominador de vários indicadores deste painel.",
+    "limite": "Sem limite legal",
+    "base": "Lei Complementar nº 101/2000 (LRF), art. 2º, IV",
+    "fonte": "Siconfi, RREO do Poder Executivo, Anexo 03 (Receita Corrente Líquida)",
+    "termos": [
+      {
+        "termo": "Receitas correntes",
+        "texto": "O que o Estado arrecada de forma regular, como impostos e transferências."
+      },
+      {
+        "termo": "Deduções",
+        "texto": "Parcelas da receita que, por lei, pertencem a outros entes, como a parte dos municípios no ICMS."
+      }
+    ]
+  },
+  "primario": {
+    "nome": "Resultado primário",
+    "curto": "Resultado primário",
+    "subtitulo": "R$ bilhões, acumulado no exercício, comparado com a meta da LDO",
+    "definicao": "Diferença entre as receitas e as despesas primárias, isto é, sem contar juros, amortizações e outras operações financeiras. Resultado positivo (superávit) indica que o Estado arrecadou mais do que gastou antes de pagar a dívida; negativo, o contrário.",
+    "formula": "Receita primária menos despesa primária, apurada acima da linha (a partir de 2023, sem o RPPS)",
+    "leitura": "A barra azul é o resultado realizado e a barra cinza, a meta fixada na LDO para o ano. A meta é cumprida quando o resultado fica igual ou acima dela, ainda que seja negativo. No ano em curso o resultado é parcial e a meta é a do ano inteiro.",
+    "porQueImporta": "Indica se o Estado financia suas despesas de funcionamento e seus investimentos com a própria arrecadação, sem recorrer a nova dívida. É uma das metas fiscais da LDO.",
+    "limite": "Meta anual fixada na LDO, diferente a cada ano",
+    "base": "Lei Complementar nº 101/2000 (LRF), arts. 4º, §1º, e 52, II, e LDO de cada ano",
+    "fonte": "Siconfi, RREO do Poder Executivo, Anexo 06 (Resultado Primário e Nominal)",
+    "termos": [
+      {
+        "termo": "Receitas e despesas primárias",
+        "texto": "Receitas e despesas do dia a dia do Estado, sem as operações financeiras, como juros, amortizações e empréstimos."
+      },
+      {
+        "termo": "RPPS",
+        "texto": "Regime Próprio de Previdência Social dos servidores. A partir de 2023 o demonstrativo separa o resultado sem o RPPS, que é o que o painel mostra; nos anos anteriores o resultado era único."
+      },
+      {
+        "termo": "Acima da linha",
+        "texto": "Apuração que parte das receitas e despesas do período, em oposição à que parte da variação da dívida."
+      }
+    ]
+  },
+  "nominal": {
+    "nome": "Resultado nominal",
+    "curto": "Resultado nominal",
+    "subtitulo": "R$ bilhões, acumulado no exercício, comparado com a meta da LDO",
+    "definicao": "Resultado primário acrescido dos juros e encargos recebidos e descontados os juros e encargos pagos. Mostra o resultado fiscal completo do período, já com o custo da dívida e o rendimento dos ativos financeiros.",
+    "formula": "Resultado primário + (juros e encargos ativos − juros e encargos passivos), apurado acima da linha (a partir de 2023, sem o RPPS)",
+    "leitura": "A barra azul é o resultado realizado e a barra cinza, a meta fixada na LDO para o ano. A meta é cumprida quando o resultado fica igual ou acima dela. No ano em curso o resultado é parcial e a meta é a do ano inteiro.",
+    "porQueImporta": "Mostra se, considerando também o custo da dívida e o rendimento dos ativos financeiros, a situação fiscal do Estado melhora ou piora no ano.",
+    "limite": "Meta anual fixada na LDO, diferente a cada ano",
+    "base": "Lei Complementar nº 101/2000 (LRF), arts. 4º, §1º, e 52, II, e LDO de cada ano",
+    "fonte": "Siconfi, RREO do Poder Executivo, Anexo 06 (Resultado Primário e Nominal)",
+    "termos": [
+      {
+        "termo": "Juros e encargos ativos",
+        "texto": "Rendimentos que o Estado recebe, por exemplo, de aplicações financeiras."
+      },
+      {
+        "termo": "Juros e encargos passivos",
+        "texto": "Juros e encargos que o Estado paga pela dívida."
+      }
+    ]
   }
 }

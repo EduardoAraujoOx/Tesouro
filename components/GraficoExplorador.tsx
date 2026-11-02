@@ -3,7 +3,7 @@
 import { useEffect, useId, useRef, useState, type PointerEvent } from 'react'
 import { numero } from '@/lib/formato'
 
-export type PontoGrafico = { ano: number; sub: number; rotulo: string; extenso: string; valor: number | null }
+export type PontoGrafico = { ano: number; sub: number; rotulo: string; extenso: string; valor: number | null; parcial?: boolean }
 export type SerieGrafico = { id: string; curto: string; pontos: PontoGrafico[]; acumulaNoAno?: boolean; anterior?: boolean }
 export type ReferenciaGrafico = { rotulo: string; valor: number; estilo: 'limite' | 'alerta' | 'prudencial'; texto?: string }
 export type ModoGrafico = 'linha' | 'barras'
@@ -99,6 +99,7 @@ export function GraficoExplorador({ series, referencias, foco, onFoco, titulo, m
   if (n === 0 || todos.length === 0) return <p className="rounded-brand bg-surface p-4 text-body text-ink-soft">Sem dados no período escolhido.</p>
 
   const vmin = Math.min(...todos), vmax = Math.max(...todos)
+  const nf = (v: number, casas = 1) => (unidade === '%' ? numero(v, casas) : numero(v, Math.abs(v) < 10 ? 2 : 1))
   const textoRef = (r: ReferenciaGrafico) => r.texto ?? `${{ limite: 'Legal', prudencial: 'Prudencial', alerta: 'Alerta' }[r.estilo]} ${numero(r.valor, r.valor % 1 ? 1 : 0)}${unidade}`
   const visiveis = referencias.filter((r) => r.valor <= vmax * 2 + 5)
   const topo = Math.max(vmax, ...visiveis.map((r) => r.valor))
@@ -128,7 +129,7 @@ export function GraficoExplorador({ series, referencias, foco, onFoco, titulo, m
     return `${abre ? 'M' : 'L'}${X(i).toFixed(1)},${Y(p.valor).toFixed(1)}`
   }).join(' ')
 
-  const unica = series.length === 1 && !series[0].anterior
+  const unica = series.filter((x) => !x.anterior).length === 1 && !series[0].anterior
   const comArea = modo === 'linha' && unica
   const validos = series[0].pontos.map((p, i) => ({ p, i })).filter(({ p }) => p.valor !== null)
   const area = comArea && validos.length > 1 && !series[0].acumulaNoAno
@@ -158,7 +159,7 @@ export function GraficoExplorador({ series, referencias, foco, onFoco, titulo, m
     if (!v.length) return `${s.curto}: sem dados.`
     const a = v[0], b = v[v.length - 1]
     const valores = v.map((p) => p.valor as number)
-    return `${s.curto}: de ${numero(a.valor, 1)}${unidade} em ${a.extenso} para ${numero(b.valor, 1)}${unidade} em ${b.extenso}; mínimo ${numero(Math.min(...valores), 1)}${unidade}, máximo ${numero(Math.max(...valores), 1)}${unidade}.`
+    return `${s.curto}: de ${nf(a.valor as number)}${unidade} em ${a.extenso} para ${nf(b.valor as number)}${unidade} em ${b.extenso}; mínimo ${nf(Math.min(...valores))}${unidade}, máximo ${nf(Math.max(...valores))}${unidade}.`
   }).join(' ')
 
   const larguraBarra = Math.min(46, (passoX * 0.72) / series.length)
@@ -166,9 +167,9 @@ export function GraficoExplorador({ series, referencias, foco, onFoco, titulo, m
 
   return (
     <figure>
-      <ul className="mb-2 flex flex-wrap gap-x-6 gap-y-2 text-small text-ink empty:hidden" aria-label="Legenda do gráfico">
+      <ul className="mb-2 flex flex-wrap gap-x-5 gap-y-1 text-small text-ink empty:hidden" aria-label="Legenda do gráfico">
         {series.length > 1 && series.map((s, k) => (
-          <li key={s.id} className="inline-flex items-center gap-2 font-semibold"><AmostraSerie estilo={s.anterior ? ANTERIOR : k} />{s.curto}</li>
+          <li key={s.id} className="inline-flex items-center gap-2 font-semibold">{modo === 'barras' ? <svg width="14" height="14" aria-hidden="true" className="shrink-0"><rect x="1" y="1" width="12" height="12" rx="2" strokeWidth="1.25" className={s.anterior ? 'fill-serie3/25 stroke-serie3' : `${ESTILOS[k].preenchimento} stroke-transparent`} /></svg> : <AmostraSerie estilo={s.anterior ? ANTERIOR : k} />}{s.curto}</li>
         ))}
         {!zero && <li className="text-ink-soft">O eixo vertical não começa em zero</li>}
         {largo
@@ -244,10 +245,12 @@ export function GraficoExplorador({ series, referencias, foco, onFoco, titulo, m
                   if (p.valor === null) return null
                   const yv = Y(p.valor)
                   const degrade = unica && k === 0
+                  const ref = !!s.anterior
                   return (
                     <rect key={`${s.id}-${i}`} x={xBarra(i, k)} y={Math.min(yv, Y0)} width={larguraBarra - 1.5} height={Math.max(1, Math.abs(Y0 - yv))} rx={2}
                       fill={degrade && i !== foco ? `url(#${id}-b)` : undefined}
-                      className={degrade ? (i === foco ? 'fill-navy' : '') : `${ESTILOS[s.anterior ? ANTERIOR : k].preenchimento} ${i === foco ? '' : 'opacity-80'}`} />
+                      strokeWidth={ref ? 1.25 : undefined}
+                      className={ref ? 'fill-serie3/25 stroke-serie3' : degrade ? (i === foco ? 'fill-navy' : '') : `${ESTILOS[k].preenchimento} ${i === foco ? '' : 'opacity-80'}`} />
                   )
                 }))
               : (
@@ -267,12 +270,12 @@ export function GraficoExplorador({ series, referencias, foco, onFoco, titulo, m
           {modo === 'barras' && unica && (() => {
             const vs = series[0].pontos.map((p, i) => ({ v: p.valor, i })).filter((x): x is { v: number; i: number } => x.v !== null)
             if (!vs.length) return null
-            const todos = passoX >= 34
+            const todos = passoX >= (series.length > 1 ? 52 : 34)
             const destaque = new Set([vs.reduce((a, b) => (b.v > a.v ? b : a)).i, vs.reduce((a, b) => (b.v < a.v ? b : a)).i, vs[vs.length - 1].i])
             return (
               <g key={`rotulos-${animKey}`} className="anim-aparece" aria-hidden="true">
                 {vs.filter((x) => x.i !== foco && (todos || destaque.has(x.i))).map((x) => (
-                  <text key={x.i} x={X(x.i)} y={x.v >= 0 ? Y(x.v) - 6 : Y(x.v) + 15} textAnchor="middle" className="fill-ink" style={{ fontSize: 12, fontWeight: 600 }}>{numero(x.v, 1)}</text>
+                  <text key={x.i} x={series.length > 1 ? xBarra(x.i, 0) + (larguraBarra - 1.5) / 2 : X(x.i)} y={x.v >= 0 ? Y(x.v) - 6 : Y(x.v) + 15} textAnchor="middle" className="fill-ink" style={{ fontSize: 12, fontWeight: 600 }}>{nf(x.v)}</text>
                 ))}
               </g>
             )
@@ -281,7 +284,7 @@ export function GraficoExplorador({ series, referencias, foco, onFoco, titulo, m
           {/* rótulo do valor no ponto em foco */}
           {comPilula.map(({ s, k }, j) => {
             const v = s.pontos[foco].valor as number
-            const texto = `${numero(v, 1)}${unidade}`
+            const texto = `${nf(v)}${unidade}`
             const w = texto.length * 7.6 + 18
             const x = Math.max(ml, Math.min(W - mr - w, X(foco) - w / 2))
             return (

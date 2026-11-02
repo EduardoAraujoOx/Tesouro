@@ -43,6 +43,11 @@ jobs:
         continue-on-error: true
         run: python3 scripts/atualizar_indicadores.py
 
+      - name: Coletar execução orçamentária e metas (RREO)
+        id: rreo
+        continue-on-error: true
+        run: python3 scripts/atualizar_rreo.py
+
       - name: Coletar notícias da SEFAZ
         id: noticias
         continue-on-error: true
@@ -75,6 +80,7 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
           RESULTADO_INDICADORES: ${{ steps.indicadores.outcome }}
+          RESULTADO_RREO: ${{ steps.rreo.outcome }}
           RESULTADO_NOTICIAS: ${{ steps.noticias.outcome }}
           RESULTADO_CONTEUDO: ${{ steps.conteudo.outcome }}
         run: |
@@ -88,7 +94,7 @@ jobs:
           cat > corpo.md <<CORPO
           Atualização automática dos dados, gerada pela rotina semanal.
 
-          Resultado de cada coleta: indicadores (Siconfi e CAPAG): $RESULTADO_INDICADORES; notícias: $RESULTADO_NOTICIAS; acervo da SEFAZ: $RESULTADO_CONTEUDO.
+          Resultado de cada coleta: indicadores (Siconfi e CAPAG): $RESULTADO_INDICADORES; orçamento e metas (RREO): $RESULTADO_RREO; notícias: $RESULTADO_NOTICIAS; acervo da SEFAZ: $RESULTADO_CONTEUDO.
 
           O site foi construído com sucesso usando estes dados. Conferir o painel fiscal na prévia da Vercel antes de mesclar.
           CORPO
