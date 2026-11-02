@@ -11,9 +11,9 @@ const MAXIMO = 3
 const SEGUNDOS_POR_GRAFICO = 9
 
 /** Categorias do painel. Cada uma é uma fonte oficial; novas categorias entram aqui quando houver coletor. */
-const CATEGORIAS: { id: Familia; nome: string; Icone: ComponentType<SVGProps<SVGSVGElement>> }[] = [
-  { id: 'lrf', nome: 'Limites fiscais (LRF)', Icone: IconShield },
-  { id: 'capag', nome: 'Capacidade de pagamento (CAPAG)', Icone: IconCoins },
+const CATEGORIAS: { id: Familia; nome: string; curto: string; Icone: ComponentType<SVGProps<SVGSVGElement>> }[] = [
+  { id: 'lrf', nome: 'Limites fiscais (LRF)', curto: 'Limites (LRF)', Icone: IconShield },
+  { id: 'capag', nome: 'Capacidade de pagamento (CAPAG)', curto: 'CAPAG', Icone: IconCoins },
 ]
 const PADRAO: Record<Familia, string> = { lrf: 'pessoal', capag: 'endividamento' }
 
@@ -156,8 +156,8 @@ export function ExploradorIndicadores({ indicadores, notas, classificacoes, gera
     return partes.join(' · ')
   })()
 
-  const botao = 'inline-flex min-h-11 items-center justify-center rounded-brand px-4 text-small font-semibold'
-  const seletor = 'h-11 w-full rounded-brand border border-ink-soft/50 bg-paper px-3 text-body font-semibold text-ink'
+  const botao = 'inline-flex min-h-10 items-center justify-center rounded-brand px-3 text-small font-semibold'
+  const seletor = 'h-10 w-full rounded-brand border border-ink-soft/50 bg-paper px-3 text-small font-semibold text-ink md:text-body'
   const trocarModo = (m: ModoGrafico) => { setModo(m); setZero(m === 'barras') }
 
   return (
@@ -168,96 +168,98 @@ export function ExploradorIndicadores({ indicadores, notas, classificacoes, gera
       onBlur={(e) => { if (!e.currentTarget.contains(e.relatedTarget as Node | null)) setPausado(false) }}
     >
       {/* ---------- Categorias ---------- */}
-      <div role="group" aria-label="Categoria de indicadores" className="relative -mx-5 flex gap-2 overflow-x-auto px-5 pb-1 md:mx-0 md:flex-wrap md:overflow-visible md:px-0">
-        {CATEGORIAS.map(({ id, nome, Icone }) => {
+      <div role="group" aria-label="Categoria de indicadores" className="relative -mx-5 flex gap-1 overflow-x-auto border-b border-line px-5 md:mx-0 md:px-0">
+        {CATEGORIAS.map(({ id, nome, curto, Icone }) => {
           const ativo = familia === id
           return (
             <button
               key={id} type="button" aria-pressed={ativo} onClick={() => escolherCategoria(id)}
-              className={`relative inline-flex min-h-12 shrink-0 items-center gap-2.5 rounded-brand border px-4 text-body font-semibold ${ativo ? 'border-navy bg-navy text-on-navy' : 'border-line bg-surface text-ink hover:bg-paper'}`}
+              className={`relative -mb-px inline-flex min-h-10 shrink-0 items-center gap-2 border-b-2 px-3 text-small font-semibold md:text-body ${ativo ? 'border-navy text-navy' : 'border-transparent text-ink-soft hover:text-ink'}`}
             >
-              <Icone className="h-6 w-6" aria-hidden="true" />{nome}
+              <Icone className="h-5 w-5" aria-hidden="true" /><span className="md:hidden">{curto}</span><span className="hidden md:inline">{nome}</span>
             </button>
           )
         })}
       </div>
 
       {/* ---------- Seletor de indicador ---------- */}
-      <div className="mt-3 flex flex-wrap items-center gap-x-3 gap-y-1 border-b border-line pb-4 md:mt-4 md:pb-5">
-        <label htmlFor={`${uid}-var`} className="w-full text-small font-semibold text-ink-soft md:w-auto md:text-body md:text-ink">Indicador:</label>
+      <div className="mt-3 flex items-center gap-2 md:mt-4 md:gap-3">
+        <label htmlFor={`${uid}-var`} className="sr-only md:not-sr-only md:text-small md:font-semibold md:text-ink-soft">Indicador:</label>
         <select id={`${uid}-var`} value={principal.id} onChange={(e) => escolher(e.target.value)} className={`${seletor} min-w-0 flex-1 md:max-w-md md:flex-none`}>
           {daFamilia.map((i) => <option key={i.id} value={i.id}>{i.curto}</option>)}
         </select>
-        <button type="button" onClick={() => andar(-1)} className={`${botao} shrink-0 border border-line text-ink hover:bg-surface`}><IconChevron className="h-4 w-4 rotate-90" /><span className="sr-only">Indicador anterior</span></button>
+        <button type="button" onClick={() => andar(-1)} className={`${botao} shrink-0 border border-line text-ink hover:bg-surface`}><IconChevron className="h-4 w-4 rotate-90" aria-hidden="true" /><span className="sr-only">Indicador anterior</span></button>
         <button type="button" onClick={() => andar(1)} className={`${botao} shrink-0 border border-line text-ink hover:bg-surface`}><IconChevron className="h-4 w-4 -rotate-90" /><span className="sr-only">Próximo indicador</span></button>
         <a href="#sobre-indicador" className={`${botao} hidden shrink-0 text-navy hover:bg-surface md:inline-flex`}><IconInfo className="h-6 w-6" aria-hidden="true" /><span className="sr-only">Ver o que é este indicador</span></a>
       </div>
 
-      <div className="mt-6 grid grid-cols-1 gap-8 lg:grid-cols-12 lg:gap-10">
+      <div className="mt-5 grid grid-cols-1 gap-6 border-t border-line pt-5 lg:grid-cols-12 lg:gap-10">
         {/* ---------- Gráfico ---------- */}
         <div className="min-w-0 lg:col-span-8">
-          <div className="flex flex-wrap items-start justify-between gap-x-4 gap-y-3">
+          <div>
             <div className="min-w-0">
-              <h2 key={principal.id} className="anim-aparece text-headline"><span className="md:hidden">{principal.curto}</span><span className="hidden md:inline">{principal.nome}</span></h2>
-              <p className="mt-1 text-body text-ink-soft">{principal.subtitulo}</p>
-            </div>
-            <div className="flex items-center gap-2">
-              <div className="grid grid-cols-2 overflow-hidden rounded-brand border border-navy" role="group" aria-label="Visualização">
-                {(['barras', 'linha'] as const).map((m) => (
-                  <button key={m} type="button" aria-pressed={modo === m} onClick={() => trocarModo(m)} className={`min-h-11 px-3 text-small font-semibold ${modo === m ? 'bg-navy text-on-navy' : 'bg-paper text-navy hover:bg-surface'}`}>{m === 'linha' ? 'Linha' : 'Barras'}</button>
-                ))}
-              </div>
-              <details className="relative">
-                <summary className={`${botao} cursor-pointer list-none border border-line text-ink hover:bg-surface`}>Opções</summary>
-                <div className="absolute right-0 z-20 mt-2 w-[min(20rem,calc(100vw-2.5rem))] space-y-3 rounded-brand border border-line bg-paper p-4 shadow-lg">
-                  <label className="flex min-h-11 cursor-pointer items-center gap-3 text-small">
-                    <input type="checkbox" checked={zero} onChange={(e) => setZero(e.target.checked)} className="h-5 w-5 accent-[rgb(var(--navy))]" />
-                    Eixo vertical começa em zero
-                  </label>
-                  <fieldset className="border-t border-line pt-3">
-                    <legend className={`${rotulo} mb-1`}>Comparar com</legend>
-                    <label className={`flex min-h-11 items-center gap-3 text-small ${!comparando && principal.referencias.length ? 'cursor-pointer' : 'opacity-60'}`}>
-                      <input type="checkbox" checked={mostrarLimites && !comparando && principal.referencias.length > 0} disabled={comparando || principal.referencias.length === 0} onChange={(e) => setMostrarLimites(e.target.checked)} className="h-5 w-5 accent-[rgb(var(--navy))]" />
-                      Limites legais
-                    </label>
-                    <label className={`flex min-h-11 items-center gap-3 text-small ${!comparando ? 'cursor-pointer' : 'opacity-60'}`}>
-                      <input type="checkbox" checked={anoAnterior && !comparando} disabled={comparando} onChange={(e) => setAnoAnterior(e.target.checked)} className="h-5 w-5 accent-[rgb(var(--navy))]" />
-                      Mesmo período do ano anterior
-                    </label>
-                    {ids.length < MAXIMO && (
-                      <div className="mt-1">
-                        <label htmlFor={`${uid}-outro`} className="sr-only">Adicionar outro indicador do mesmo grupo</label>
-                        <select id={`${uid}-outro`} value="" onChange={(e) => adicionar(e.target.value)} className={seletor}>
-                          <option value="">Outro indicador…</option>
-                          {daFamilia.filter((i) => !ids.includes(i.id)).map((i) => <option key={i.id} value={i.id}>{i.curto}</option>)}
-                        </select>
-                      </div>
-                    )}
-                    {comparando && (
-                      <ul className="mt-2 flex flex-wrap gap-2" aria-label="Indicadores adicionados à comparação">
-                        {escolhidos.slice(1).map((i) => (
-                          <li key={i.id}><button type="button" onClick={() => remover(i.id)} className="inline-flex min-h-11 items-center gap-2 rounded-full border border-navy px-4 text-small font-semibold text-navy hover:bg-surface">{i.curto}<span aria-hidden="true">×</span><span className="sr-only">Remover da comparação</span></button></li>
-                        ))}
-                      </ul>
-                    )}
-                  </fieldset>
-                  {!movimentoReduzido && (
-                    <button type="button" aria-pressed={tocando} onClick={() => setTocando((v) => !v)} className={`${botao} w-full border border-navy text-navy hover:bg-surface`}>
-                      {tocando ? 'Pausar apresentação' : 'Apresentação automática'}
-                    </button>
-                  )}
-                  <div className="flex flex-wrap gap-2 border-t border-line pt-3">
-                    <button type="button" onClick={baixarCsv} className={`${botao} border border-navy text-navy hover:bg-surface`}>Baixar dados (CSV)</button>
-                    <button type="button" onClick={copiarLink} className={`${botao} border border-line text-ink hover:bg-surface`}>Copiar link</button>
-                  </div>
-                  <p role="status" className="text-small text-ink-soft">{aviso}</p>
-                </div>
-              </details>
+              <h2 key={principal.id} className="anim-aparece text-title md:text-headline"><span className="md:hidden">{principal.curto}</span><span className="hidden md:inline">{principal.nome}</span></h2>
+              <p className="mt-1 text-small text-ink-soft md:text-body">{principal.subtitulo}</p>
             </div>
           </div>
 
           <div className="mt-4">
-            <p className="text-small text-ink-soft">Valores em %</p>
+            <div className="flex items-center justify-between gap-3">
+              <p className="text-small text-ink-soft">Valores em %</p>
+  <div className="flex shrink-0 items-center gap-2">
+    <div className="grid grid-cols-2 overflow-hidden rounded-brand border border-navy" role="group" aria-label="Visualização">
+      {(['barras', 'linha'] as const).map((m) => (
+        <button key={m} type="button" aria-pressed={modo === m} onClick={() => trocarModo(m)} className={`min-h-9 px-3 text-small font-semibold ${modo === m ? 'bg-navy text-on-navy' : 'bg-paper text-navy hover:bg-surface'}`}>{m === 'linha' ? 'Linha' : 'Barras'}</button>
+      ))}
+    </div>
+    <details className="relative">
+      <summary className={`${botao} min-h-9 cursor-pointer list-none border border-line text-ink hover:bg-surface`}>Opções</summary>
+      <div className="absolute right-0 z-20 mt-2 w-[min(20rem,calc(100vw-2.5rem))] space-y-3 rounded-brand border border-line bg-paper p-4 shadow-lg">
+        <label className="flex min-h-11 cursor-pointer items-center gap-3 text-small">
+          <input type="checkbox" checked={zero} onChange={(e) => setZero(e.target.checked)} className="h-5 w-5 accent-[rgb(var(--navy))]" />
+          Eixo vertical começa em zero
+        </label>
+        <fieldset className="border-t border-line pt-3">
+          <legend className={`${rotulo} mb-1`}>Comparar com</legend>
+          <label className={`flex min-h-11 items-center gap-3 text-small ${!comparando && principal.referencias.length ? 'cursor-pointer' : 'opacity-60'}`}>
+            <input type="checkbox" checked={mostrarLimites && !comparando && principal.referencias.length > 0} disabled={comparando || principal.referencias.length === 0} onChange={(e) => setMostrarLimites(e.target.checked)} className="h-5 w-5 accent-[rgb(var(--navy))]" />
+            Limites legais
+          </label>
+          <label className={`flex min-h-11 items-center gap-3 text-small ${!comparando ? 'cursor-pointer' : 'opacity-60'}`}>
+            <input type="checkbox" checked={anoAnterior && !comparando} disabled={comparando} onChange={(e) => setAnoAnterior(e.target.checked)} className="h-5 w-5 accent-[rgb(var(--navy))]" />
+            Mesmo período do ano anterior
+          </label>
+          {ids.length < MAXIMO && (
+            <div className="mt-1">
+              <label htmlFor={`${uid}-outro`} className="sr-only">Adicionar outro indicador do mesmo grupo</label>
+              <select id={`${uid}-outro`} value="" onChange={(e) => adicionar(e.target.value)} className={seletor}>
+                <option value="">Outro indicador…</option>
+                {daFamilia.filter((i) => !ids.includes(i.id)).map((i) => <option key={i.id} value={i.id}>{i.curto}</option>)}
+              </select>
+            </div>
+          )}
+          {comparando && (
+            <ul className="mt-2 flex flex-wrap gap-2" aria-label="Indicadores adicionados à comparação">
+              {escolhidos.slice(1).map((i) => (
+                <li key={i.id}><button type="button" onClick={() => remover(i.id)} className="inline-flex min-h-11 items-center gap-2 rounded-full border border-navy px-4 text-small font-semibold text-navy hover:bg-surface">{i.curto}<span aria-hidden="true">×</span><span className="sr-only">Remover da comparação</span></button></li>
+              ))}
+            </ul>
+          )}
+        </fieldset>
+        {!movimentoReduzido && (
+          <button type="button" aria-pressed={tocando} onClick={() => setTocando((v) => !v)} className={`${botao} w-full border border-navy text-navy hover:bg-surface`}>
+            {tocando ? 'Pausar apresentação' : 'Apresentação automática'}
+          </button>
+        )}
+        <div className="flex flex-wrap gap-2 border-t border-line pt-3">
+          <button type="button" onClick={baixarCsv} className={`${botao} border border-navy text-navy hover:bg-surface`}>Baixar dados (CSV)</button>
+          <button type="button" onClick={copiarLink} className={`${botao} border border-line text-ink hover:bg-surface`}>Copiar link</button>
+        </div>
+        <p role="status" className="text-small text-ink-soft">{aviso}</p>
+      </div>
+    </details>
+  </div>
+            </div>
             <GraficoExplorador series={series} referencias={refs} foco={focoAtual} onFoco={setFoco} titulo={titulo} modo={modo} zero={zero} animKey={ids.join('+')} />
             {n > 1 && pontoFoco && (
               <div className="mt-1">
