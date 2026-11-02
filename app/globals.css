@@ -113,3 +113,7 @@ h1, h2, h3 { @apply font-serif font-semibold text-navy; font-optical-sizing: aut
 .grad-topo { stop-color: rgb(var(--serie3)); }
 .grad-base { stop-color: rgb(var(--navy)); }
 :root[data-contrast='alto'] .grad-topo { stop-color: rgb(var(--navy)); }
+
+/* Faixa do painel fiscal: a imagem some e a sombra vira cor sólida no alto contraste */
+.banner-sombra { background: linear-gradient(90deg, rgb(var(--navy-deep)) 0%, rgb(var(--navy-deep)) 36%, rgb(var(--navy-deep) / 0.55) 62%, rgb(var(--navy-deep) / 0) 100%); }
+:root[data-contrast='alto'] .banner-img { display: none; }

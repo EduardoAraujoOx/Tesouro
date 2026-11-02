@@ -190,6 +190,7 @@ export function ExploradorIndicadores({ indicadores, notas, classificacoes, gera
         </select>
         <button type="button" onClick={() => andar(-1)} className={`${botao} shrink-0 border border-line text-ink hover:bg-surface`}><IconChevron className="h-4 w-4 rotate-90" /><span className="sr-only">Indicador anterior</span></button>
         <button type="button" onClick={() => andar(1)} className={`${botao} shrink-0 border border-line text-ink hover:bg-surface`}><IconChevron className="h-4 w-4 -rotate-90" /><span className="sr-only">Próximo indicador</span></button>
+        <a href="#sobre-indicador" className={`${botao} hidden shrink-0 text-navy hover:bg-surface md:inline-flex`}><IconInfo className="h-6 w-6" aria-hidden="true" /><span className="sr-only">Ver o que é este indicador</span></a>
       </div>
 
       <div className="mt-6 grid grid-cols-1 gap-8 lg:grid-cols-12 lg:gap-10">
@@ -197,7 +198,7 @@ export function ExploradorIndicadores({ indicadores, notas, classificacoes, gera
         <div className="min-w-0 lg:col-span-8">
           <div className="flex flex-wrap items-start justify-between gap-x-4 gap-y-3">
             <div className="min-w-0">
-              <h1 key={principal.id} className="anim-aparece text-headline"><span className="md:hidden">{principal.curto}</span><span className="hidden md:inline">{principal.nome}</span></h1>
+              <h2 key={principal.id} className="anim-aparece text-headline"><span className="md:hidden">{principal.curto}</span><span className="hidden md:inline">{principal.nome}</span></h2>
               <p className="mt-1 text-body text-ink-soft">{principal.subtitulo}</p>
             </div>
             <div className="flex items-center gap-2">
@@ -256,6 +257,7 @@ export function ExploradorIndicadores({ indicadores, notas, classificacoes, gera
           </div>
 
           <div className="mt-4">
+            <p className="text-small text-ink-soft">Valores em %</p>
             <GraficoExplorador series={series} referencias={refs} foco={focoAtual} onFoco={setFoco} titulo={titulo} modo={modo} zero={zero} animKey={ids.join('+')} />
             {n > 1 && pontoFoco && (
               <div className="mt-1">
@@ -277,45 +279,46 @@ export function ExploradorIndicadores({ indicadores, notas, classificacoes, gera
         </div>
 
         {/* ---------- Explicação do indicador ---------- */}
-        <aside aria-label={`Sobre o indicador ${principal.curto}`} className="divide-y divide-line lg:col-span-4 lg:border-l lg:border-line lg:pl-8">
+        <aside id="sobre-indicador" aria-label={`Sobre o indicador ${principal.curto}`} className="scroll-mt-4 divide-y divide-line lg:col-span-4 lg:border-l lg:border-line lg:pl-8">
           <div className="flex gap-4 pb-5">
             <IconInfo className="mt-1 h-8 w-8 shrink-0 text-navy" aria-hidden="true" />
             <div>
-              <h2 className="text-title">O que é?</h2>
+              <h3 className="text-title">O que é?</h3>
               <p className="mt-1 text-body text-ink">{principal.definicao}</p>
-              <p className="mt-2 text-small text-ink-soft"><strong className="text-ink">Cálculo:</strong> {principal.formula}.</p>
             </div>
           </div>
           <div className="flex gap-4 py-5">
             <IconTarget className="mt-1 h-8 w-8 shrink-0 text-navy" aria-hidden="true" />
             <div>
-              <h2 className="text-title">Por que importa?</h2>
+              <h3 className="text-title">Por que importa?</h3>
               <p className="mt-1 text-body text-ink">{principal.porQueImporta}</p>
             </div>
           </div>
-          <div className="py-5">
-            <p className={rotulo}>Como ler</p>
-            <p className="mt-1 text-body text-ink">{principal.leitura}</p>
-            <p className={`${rotulo} mt-4`}>Limite e base legal</p>
-            <p className="mt-1 text-body text-ink">{principal.limite}. {principal.base}.</p>
-          </div>
-          {principal.termos && principal.termos.length > 0 && (
-            <details className="group py-2">
-              <summary className="flex min-h-11 cursor-pointer items-center justify-between gap-3 text-body font-semibold text-ink">Termos usados<span aria-hidden="true" className="text-ink-soft transition-transform group-open:rotate-180">⌄</span></summary>
-              <dl className="space-y-3 pb-3">
-                {principal.termos.map((t) => (
-                  <div key={t.termo}>
-                    <dt className="text-body font-semibold text-ink">{t.termo}</dt>
-                    <dd className="text-body text-ink-soft">{t.texto}</dd>
-                  </div>
-                ))}
-              </dl>
-            </details>
-          )}
-          <div className="flex gap-4 pt-5">
+          <div className="flex gap-4 py-5">
             <IconDoc className="mt-0.5 h-8 w-8 shrink-0 text-navy" aria-hidden="true" />
             <p className="text-body text-ink"><strong>Fonte:</strong> {principal.fonte}.</p>
           </div>
+          <details className="group pt-1">
+            <summary className="flex min-h-12 cursor-pointer items-center justify-between gap-3 text-body font-semibold text-navy">Como ler, cálculo, limite legal e termos<span aria-hidden="true" className="text-ink-soft transition-transform group-open:rotate-180">⌄</span></summary>
+            <div className="space-y-4 pb-3">
+              <div><p className={rotulo}>Como ler</p><p className="mt-1 text-body text-ink">{principal.leitura}</p></div>
+              <div><p className={rotulo}>Como é calculado</p><p className="mt-1 text-body text-ink">{principal.formula}.</p></div>
+              <div><p className={rotulo}>Limite e base legal</p><p className="mt-1 text-body text-ink">{principal.limite}. {principal.base}.</p></div>
+              {principal.termos && principal.termos.length > 0 && (
+                <div>
+                  <p className={rotulo}>Termos usados</p>
+                  <dl className="mt-1 space-y-3">
+                    {principal.termos.map((t) => (
+                      <div key={t.termo}>
+                        <dt className="text-body font-semibold text-ink">{t.termo}</dt>
+                        <dd className="text-body text-ink-soft">{t.texto}</dd>
+                      </div>
+                    ))}
+                  </dl>
+                </div>
+              )}
+            </div>
+          </details>
         </aside>
       </div>
 
@@ -326,7 +329,7 @@ export function ExploradorIndicadores({ indicadores, notas, classificacoes, gera
           <strong>Último dado disponível:</strong> {ultimoPonto?.extenso ?? 'sem dado'}
           <span className="text-small text-ink-soft">· coletado em {new Date(geradoEm).toLocaleDateString('pt-BR', { timeZone: 'America/Sao_Paulo' })}, atualizado automaticamente</span>
         </p>
-        <a href="#metodo" onClick={abrirMetodologia} className="text-body font-semibold text-navy underline underline-offset-4">Metodologia</a>
+        <a href="#metodo" onClick={abrirMetodologia} className="inline-flex items-center gap-2 text-body font-semibold text-navy underline underline-offset-4">Metodologia<span aria-hidden="true">→</span></a>
       </div>
 
       <details className="group mt-4 border-y border-line py-1">

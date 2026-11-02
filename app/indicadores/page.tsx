@@ -1,4 +1,5 @@
 import type { Metadata } from 'next'
+import Image from 'next/image'
 import Link from 'next/link'
 import { ExploradorIndicadores } from '@/components/ExploradorIndicadores'
 import { IconExternal } from '@/components/Icons'
@@ -30,7 +31,25 @@ export default function Indicadores() {
     : []
 
   return (
-    <div className="mx-auto max-w-page px-5 py-5 md:px-8 md:py-8">
+    <>
+    <section aria-labelledby="titulo-pagina" className="relative isolate overflow-hidden bg-navy-deep text-on-navy">
+      <div aria-hidden="true" className="banner-img absolute inset-y-0 right-0 -z-20 hidden w-[72%] md:block">
+        <Image src="/img/banner-indicadores.jpg" alt="" fill sizes="72vw" className="object-cover object-right" />
+      </div>
+      <div aria-hidden="true" className="banner-sombra absolute inset-0 -z-10 hidden md:block" />
+      <div className="mx-auto max-w-page px-5 py-4 md:px-8 md:py-5">
+        <nav aria-label="Você está em" className="hidden text-small md:block">
+          <ol className="flex items-center gap-2">
+            <li><Link href="/" className="underline underline-offset-4">Início</Link></li>
+            <li aria-hidden="true">/</li>
+            <li aria-current="page">Painel fiscal</li>
+          </ol>
+        </nav>
+        <h1 id="titulo-pagina" className="text-headline !text-on-navy md:mt-2">Painel fiscal</h1>
+        <p className="mt-1 hidden max-w-lg text-body text-on-navy md:block">Acompanhe os principais limites da Lei de Responsabilidade Fiscal (LRF) e a capacidade de pagamento do Estado, com dados oficiais atualizados automaticamente.</p>
+      </div>
+    </section>
+    <div className="mx-auto max-w-page px-5 py-5 md:px-8 md:py-6">
       <ExploradorIndicadores indicadores={indicadores} notas={notas} classificacoes={classificacoesCapag} geradoEm={coletadoEm} />
 
       <details id="metodo" className="group mt-10 border-t border-line pt-2">
@@ -63,5 +82,6 @@ export default function Indicadores() {
         </div>
       </details>
     </div>
+    </>
   )
 }
