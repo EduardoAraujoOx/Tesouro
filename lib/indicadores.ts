@@ -1,5 +1,5 @@
 import raw from '@/data/indicadores.json'
-import { numero } from './formato'
+import definicoesRaw from '@/data/definicoes-indicadores.json'
 
 export type Limites = { valor: number | null; limite: number | null; alerta: number | null; prudencial?: number | null; limiteFixo?: boolean; montante?: number | null }
 export type PeriodoLrf = {
@@ -30,6 +30,7 @@ const dados = raw as unknown as {
   lrf: { serie: PeriodoLrf[] }
 }
 
+export const coletadoEm = dados.geradoEm
 export const serieLrf = dados.lrf.serie
 export const serieCapag = dados.capag.serie
 export const fontes = dados.fontes
@@ -118,8 +119,11 @@ export type Indicador = {
   familia: Familia
   nome: string
   curto: string
-  oQue: string
+  subtitulo: string
+  definicao: string
+  formula: string
   leitura: string
+  limite: string
   base: string
   fonte: string
   periodicidade: 'quadrimestral' | 'anual'
@@ -133,44 +137,23 @@ export const FAMILIAS: Record<Familia, { id: Familia; nome: string; descricao: s
   capag: { id: 'capag', nome: 'CAPAG', descricao: 'Capacidade de pagamento, uma edição por ano', padrao: ['endividamento'] },
 }
 
-const CAPAG_DEF: { id: 'endividamento' | 'poupanca' | 'liquidez'; nota: 'notaEndividamento' | 'notaPoupanca' | 'notaLiquidez'; nome: string; oQue: string }[] = [
-  {
-    id: 'endividamento',
-    nota: 'notaEndividamento',
-    nome: 'Endividamento (CAPAG)',
-    oQue: 'Peso da dívida consolidada em relação à receita corrente líquida. Mede o quanto do orçamento anual está comprometido com a dívida acumulada.',
-  },
-  {
-    id: 'poupanca',
-    nota: 'notaPoupanca',
-    nome: 'Poupança corrente (CAPAG)',
-    oQue: 'Parcela da receita corrente que é consumida pela despesa corrente. Quanto menor, mais sobra para investir e amortizar dívida.',
-  },
-  {
-    id: 'liquidez',
-    nota: 'notaLiquidez',
-    nome: 'Liquidez (CAPAG)',
-    oQue: 'Relação entre as obrigações financeiras e a disponibilidade de caixa. Mede se o caixa cobre o que vence no curto prazo.',
-  },
-]
+type Definicao = Pick<Indicador, 'nome' | 'curto' | 'subtitulo' | 'definicao' | 'formula' | 'leitura' | 'limite' | 'base' | 'fonte'>
+const definicoes = definicoesRaw as unknown as Record<string, Definicao>
 
+const CAPAG_NOTAS = { endividamento: 'notaEndividamento', poupanca: 'notaPoupanca', liquidez: 'notaLiquidez' } as const
+
+/** Monta as séries do painel a partir dos dados coletados (valores) e de `data/definicoes-indicadores.json` (textos). */
 export function catalogoIndicadores(): Indicador[] {
   const lrf: Indicador[] = ORDEM_LRF.map((k) => {
-    const def = INDICADORES_LRF[k]
     const ref = ultimoLrf[k]
     const referencias: ReferenciaIndicador[] = []
-    if (ref.limite != null) referencias.push({ rotulo: 'Limite', valor: ref.limite, estilo: 'limite' })
-    if (ref.prudencial != null) referencias.push({ rotulo: 'Prudencial', valor: ref.prudencial, estilo: 'prudencial' })
-    if (ref.alerta != null) referencias.push({ rotulo: 'Alerta', valor: ref.alerta, estilo: 'alerta' })
+    if (ref.limite != null) referencias.push({ rotulo: 'Limite legal', valor: ref.limite, estilo: 'limite' })
+    if (ref.prudencial != null) referencias.push({ rotulo: 'Limite prudencial', valor: ref.prudencial, estilo: 'prudencial' })
+    if (ref.alerta != null) referencias.push({ rotulo: 'Limite de alerta', valor: ref.alerta, estilo: 'alerta' })
     return {
       id: k,
       familia: 'lrf',
-      nome: def.nome,
-      curto: def.curto,
-      oQue: def.oQue,
-      leitura: 'Em % da receita corrente líquida ajustada, ao fim de cada quadrimestre. Quanto menor, maior a folga em relação ao limite legal.',
-      base: def.base,
-      fonte: `${def.anexo}, Siconfi`,
+      ...definicoes[k],
       periodicidade: 'quadrimestral',
       pontos: serieLrf.map((p) => ({
         ano: p.ano,
@@ -183,24 +166,16 @@ export function catalogoIndicadores(): Indicador[] {
       acumulaNoAno: k === 'credito',
     }
   })
-  const capag: Indicador[] = CAPAG_DEF.map((d) => ({
-    id: d.id,
+  const capag: Indicador[] = (Object.keys(CAPAG_NOTAS) as (keyof typeof CAPAG_NOTAS)[]).map((k) => ({
+    id: k,
     familia: 'capag',
-    nome: d.nome,
-    curto: d.nome.replace(' (CAPAG)', ''),
-    oQue: d.oQue,
-    leitura: 'Em %, calculado pelo Tesouro Nacional a cada edição. Quanto menor o valor, melhor a nota do indicador.',
-    base: 'Portaria do Tesouro Nacional sobre a CAPAG',
-    fonte: 'Tesouro Transparente, CAPAG dos Estados e do DF',
+    ...definicoes[k],
     periodicidade: 'anual',
-    pontos: serieCapag.map((e) => ({ ano: e.ano, sub: 1, rotulo: String(e.ano), extenso: `Edição ${e.ano}`, valor: e[d.id], nota: e[d.nota] })),
+    pontos: serieCapag.map((e) => ({ ano: e.ano, sub: 1, rotulo: String(e.ano), extenso: `Edição ${e.ano}`, valor: e[k], nota: e[CAPAG_NOTAS[k]] })),
     referencias: [],
   }))
   return [...lrf, ...capag]
 }
-
-/** Texto curto de situação, usado no resumo do explorador. */
-export const resumoValor = (v: number | null, casas = 2) => `${numero(v, casas)}%`
 
 /** Classificação geral da CAPAG por edição (A, A+, B...), mostrada ao lado das séries do grupo CAPAG. */
 export const classificacoesCapag: Record<number, string | null> = Object.fromEntries(serieCapag.map((e) => [e.ano, e.classificacao]))

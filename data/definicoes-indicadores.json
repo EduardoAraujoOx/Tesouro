@@ -1,0 +1,80 @@
+{
+  "_leia-me": "Definições mostradas no painel fiscal. Edite os textos aqui; os valores dos gráficos vêm dos coletores e se atualizam sozinhos. Cada indicador usa a mesma chave (id) do painel.",
+  "pessoal": {
+    "nome": "Despesa com pessoal (Poder Executivo)",
+    "curto": "Despesa com pessoal",
+    "subtitulo": "Percentual da Receita Corrente Líquida (RCL) ajustada",
+    "definicao": "Quanto da receita corrente líquida o Poder Executivo gasta com folha de pagamento e encargos, somando os últimos doze meses.",
+    "formula": "Despesa total com pessoal, em 12 meses, dividida pela RCL ajustada",
+    "leitura": "Quanto menor, maior a folga em relação ao limite. Ao passar de 90% do limite há alerta; a 95%, o limite prudencial impõe vedações, como a criação de cargos.",
+    "limite": "49% da RCL para o Poder Executivo",
+    "base": "Lei de Responsabilidade Fiscal, arts. 20, 22 e 59",
+    "fonte": "Relatório de Gestão Fiscal, Anexo 1, via Siconfi"
+  },
+  "divida": {
+    "nome": "Dívida consolidada líquida",
+    "curto": "Dívida consolidada líquida",
+    "subtitulo": "Percentual da Receita Corrente Líquida (RCL) ajustada",
+    "definicao": "Dívida de longo prazo do Estado menos o dinheiro em caixa, as aplicações financeiras e os demais haveres financeiros.",
+    "formula": "Dívida consolidada menos as deduções (caixa e haveres financeiros), dividida pela RCL ajustada",
+    "leitura": "Quando o valor é negativo, o Estado tem mais ativos financeiros do que dívida. O limite não pode ser ultrapassado.",
+    "limite": "200% da RCL",
+    "base": "Resolução do Senado Federal nº 40/2001",
+    "fonte": "Relatório de Gestão Fiscal, Anexo 2, via Siconfi"
+  },
+  "garantias": {
+    "nome": "Garantias concedidas",
+    "curto": "Garantias concedidas",
+    "subtitulo": "Percentual da Receita Corrente Líquida (RCL) ajustada",
+    "definicao": "Valor das garantias que o Estado oferece a empréstimos de outras entidades e que teria de pagar caso o devedor não pague.",
+    "formula": "Saldo das garantias concedidas dividido pela RCL ajustada",
+    "leitura": "Quanto menor, menor o risco que o Estado assume por dívidas de terceiros.",
+    "limite": "22% da RCL",
+    "base": "Resolução do Senado Federal nº 43/2001",
+    "fonte": "Relatório de Gestão Fiscal, Anexo 3, via Siconfi"
+  },
+  "credito": {
+    "nome": "Operações de crédito",
+    "curto": "Operações de crédito",
+    "subtitulo": "Percentual da Receita Corrente Líquida (RCL) ajustada, acumulado no exercício",
+    "definicao": "Valor dos empréstimos que o Estado contratou no exercício, somados desde janeiro.",
+    "formula": "Operações de crédito contratadas no exercício, divididas pela RCL ajustada",
+    "leitura": "O valor é acumulado no ano e volta a zero em janeiro, por isso a linha recomeça a cada ano.",
+    "limite": "16% da RCL",
+    "base": "Resolução do Senado Federal nº 43/2001",
+    "fonte": "Relatório de Gestão Fiscal, Anexo 4, via Siconfi"
+  },
+  "endividamento": {
+    "nome": "Endividamento (CAPAG)",
+    "curto": "Endividamento",
+    "subtitulo": "Percentual da Receita Corrente Líquida (RCL), por edição anual",
+    "definicao": "Peso da dívida consolidada em relação à receita corrente líquida. Mede o quanto do orçamento anual está comprometido com a dívida acumulada.",
+    "formula": "Dívida consolidada dividida pela RCL",
+    "leitura": "Quanto menor o valor, melhor a nota do indicador. O Tesouro Nacional atribui uma nota a cada edição.",
+    "limite": "Sem limite legal; o Tesouro Nacional atribui nota",
+    "base": "Portaria do Tesouro Nacional sobre a CAPAG",
+    "fonte": "Tesouro Transparente, CAPAG dos Estados e do DF"
+  },
+  "poupanca": {
+    "nome": "Poupança corrente (CAPAG)",
+    "curto": "Poupança corrente",
+    "subtitulo": "Percentual das receitas correntes ajustadas, por edição anual",
+    "definicao": "Parcela da receita corrente que é consumida pela despesa corrente. Quanto menor, mais sobra para investir e amortizar dívida.",
+    "formula": "Despesas correntes divididas pelas receitas correntes ajustadas",
+    "leitura": "Quanto menor o valor, melhor a nota do indicador. O Tesouro Nacional atribui uma nota a cada edição.",
+    "limite": "Sem limite legal; o Tesouro Nacional atribui nota",
+    "base": "Portaria do Tesouro Nacional sobre a CAPAG",
+    "fonte": "Tesouro Transparente, CAPAG dos Estados e do DF"
+  },
+  "liquidez": {
+    "nome": "Liquidez (CAPAG)",
+    "curto": "Liquidez",
+    "subtitulo": "Percentual da disponibilidade de caixa, por edição anual",
+    "definicao": "Relação entre as obrigações financeiras e a disponibilidade de caixa. Mede se o caixa cobre o que vence no curto prazo.",
+    "formula": "Obrigações financeiras divididas pela disponibilidade de caixa",
+    "leitura": "Quanto menor o valor, melhor a nota do indicador. O Tesouro Nacional atribui uma nota a cada edição.",
+    "limite": "Sem limite legal; o Tesouro Nacional atribui nota",
+    "base": "Portaria do Tesouro Nacional sobre a CAPAG",
+    "fonte": "Tesouro Transparente, CAPAG dos Estados e do DF"
+  }
+}

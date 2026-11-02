@@ -110,3 +110,11 @@ Para ativar o envio, defina na Vercel (Settings, Environment Variables):
 Sem essas variáveis o formulário mostra o aviso "Envio em implantação" e não entrega mensagens. Em desenvolvimento, `CONTATO_MODO_TESTE=1` valida e devolve o protocolo sem enviar nada.
 
 As áreas ficam em `lib/areas.ts`, montadas a partir do Lei nº 12.379/2025 e Decreto nº 6.005-R/2025 (Anexo III e competências). **A estrutura muda por decreto: a Subsecretaria deve validar a lista, revisar os assuntos de cada área e informar o e-mail de cada uma** (campo `email`; sem ele, vale `CONTATO_EMAIL_PADRAO`). Para uma proteção mais forte contra robôs, considere o Vercel BotID ou o Cloudflare Turnstile.
+
+## Atualização automática dos dados
+
+A rotina `.github/workflows/atualizar-dados.yml` roda toda segunda-feira, às 06h17 em Brasília (e pode ser disparada à mão em Actions). Ela executa os três coletores (`scripts/atualizar_indicadores.py`, `atualizar_noticias.py` e `atualizar_conteudo.py`), ignora mudanças que sejam só a data da coleta, confere que `npm run build` continua passando e, havendo dado novo, abre um PR "Atualização automática de dados" para conferência. Uma falha numa fonte não impede as outras de atualizar, e o PR informa o resultado de cada coleta.
+
+Para que a rotina possa abrir o PR, ative no GitHub, em Settings > Actions > General > Workflow permissions, a opção **Allow GitHub Actions to create and approve pull requests**. Quem quiser publicar sem passar por revisão pode ativar a mesclagem automática (auto-merge) nesses PRs; a recomendação é manter a conferência humana, já que os números são fiscais.
+
+As definições e os textos de cada variável do painel ficam em `data/definicoes-indicadores.json`; os valores vêm dos coletores.
