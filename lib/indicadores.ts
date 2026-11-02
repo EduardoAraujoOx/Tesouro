@@ -123,6 +123,7 @@ export type Indicador = {
   definicao: string
   formula: string
   leitura: string
+  porQueImporta: string
   limite: string
   base: string
   fonte: string
@@ -138,7 +139,7 @@ export const FAMILIAS: Record<Familia, { id: Familia; nome: string; descricao: s
   capag: { id: 'capag', nome: 'CAPAG', descricao: 'Capacidade de pagamento, uma edição por ano', padrao: ['endividamento'] },
 }
 
-type Definicao = Pick<Indicador, 'nome' | 'curto' | 'subtitulo' | 'definicao' | 'formula' | 'leitura' | 'limite' | 'base' | 'fonte' | 'termos'>
+type Definicao = Pick<Indicador, 'nome' | 'curto' | 'subtitulo' | 'definicao' | 'formula' | 'leitura' | 'porQueImporta' | 'limite' | 'base' | 'fonte' | 'termos'>
 const definicoes = definicoesRaw as unknown as Record<string, Definicao>
 
 const CAPAG_NOTAS = { endividamento: 'notaEndividamento', poupanca: 'notaPoupanca', liquidez: 'notaLiquidez' } as const

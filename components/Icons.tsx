@@ -68,6 +68,16 @@ export const IconContrast = (p: P) => (
   <svg {...base} {...p}><circle cx="12" cy="12" r="8.5" /><path d="M12 3.5v17a8.5 8.5 0 0 0 0-17z" fill="currentColor" /></svg>
 )
 
+export const IconShield = (p: P) => (
+  <svg {...base} {...p}><path d="M12 3 5 6v5.5c0 4.4 2.9 7.7 7 9.5 4.1-1.8 7-5.1 7-9.5V6z" /><path d="m9 12 2.2 2.2L15.5 10" /></svg>
+)
+export const IconInfo = (p: P) => (
+  <svg {...base} {...p}><circle cx="12" cy="12" r="9" /><path d="M12 11v5.5M12 7.5h.01" strokeWidth={2.2} /></svg>
+)
+export const IconTarget = (p: P) => (
+  <svg {...base} {...p}><circle cx="12" cy="12" r="9" /><circle cx="12" cy="12" r="5" /><circle cx="12" cy="12" r="1.2" fill="currentColor" /></svg>
+)
+
 export const iconePorNome = {
   bars: IconBars,
   coins: IconCoins,

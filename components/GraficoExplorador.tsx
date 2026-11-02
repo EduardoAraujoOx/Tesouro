@@ -262,6 +262,21 @@ export function GraficoExplorador({ series, referencias, foco, onFoco, titulo, m
               )}
           </g>
 
+          {/* valores escritos sobre as barras: todos quando cabem; senão o maior, o menor e o mais recente */}
+          {modo === 'barras' && unica && (() => {
+            const vs = series[0].pontos.map((p, i) => ({ v: p.valor, i })).filter((x): x is { v: number; i: number } => x.v !== null)
+            if (!vs.length) return null
+            const todos = passoX >= 34
+            const destaque = new Set([vs.reduce((a, b) => (b.v > a.v ? b : a)).i, vs.reduce((a, b) => (b.v < a.v ? b : a)).i, vs[vs.length - 1].i])
+            return (
+              <g key={`rotulos-${animKey}`} className="anim-aparece" aria-hidden="true">
+                {vs.filter((x) => x.i !== foco && (todos || destaque.has(x.i))).map((x) => (
+                  <text key={x.i} x={X(x.i)} y={x.v >= 0 ? Y(x.v) - 6 : Y(x.v) + 15} textAnchor="middle" className="fill-ink" style={{ fontSize: 12, fontWeight: 600 }}>{numero(x.v, 1)}</text>
+                ))}
+              </g>
+            )
+          })()}
+
           {/* rótulo do valor no ponto em foco */}
           {comPilula.map(({ s, k }, j) => {
             const v = s.pontos[foco].valor as number

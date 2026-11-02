@@ -19,7 +19,8 @@
         "termo": "Despesa com pessoal",
         "texto": "Salários, aposentadorias, pensões e encargos de servidores do Poder Executivo, somados nos últimos doze meses."
       }
-    ]
+    ],
+    "porQueImporta": "A folha de pagamento é uma das maiores despesas do Estado. Mantê-la abaixo do limite preserva espaço no orçamento para investimentos e evita as vedações previstas na lei, como a criação de cargos."
   },
   "divida": {
     "nome": "Dívida consolidada líquida",
@@ -40,7 +41,8 @@
         "termo": "Haveres financeiros",
         "texto": "Dinheiro em caixa, aplicações financeiras e outros valores que o Estado tem a receber e que podem ser usados para quitar dívidas."
       }
-    ]
+    ],
+    "porQueImporta": "Mostra se o Estado deve mais do que tem. Um valor baixo ou negativo indica folga financeira e maior capacidade de investir e de enfrentar imprevistos sem se endividar."
   },
   "garantias": {
     "nome": "Garantias concedidas",
@@ -61,7 +63,8 @@
         "termo": "Garantia",
         "texto": "Compromisso do Estado de pagar a dívida de outra entidade caso ela não consiga pagar."
       }
-    ]
+    ],
+    "porQueImporta": "Uma garantia pode virar dívida do Estado se o devedor não pagar. Um valor baixo indica pouco risco assumido por obrigações de terceiros."
   },
   "credito": {
     "nome": "Operações de crédito",
@@ -82,7 +85,8 @@
         "termo": "Operação de crédito",
         "texto": "Empréstimo ou financiamento contratado pelo Estado."
       }
-    ]
+    ],
+    "porQueImporta": "A lei limita quanto o Estado pode contratar de empréstimos a cada ano. Acompanhar o valor mostra se o Estado depende de crédito para financiar suas ações."
   },
   "endividamento": {
     "nome": "Endividamento (CAPAG)",
@@ -103,7 +107,8 @@
         "termo": "Dívida consolidada",
         "texto": "Compromissos financeiros de longo prazo assumidos pelo Estado."
       }
-    ]
+    ],
+    "porQueImporta": "Indica quanto da receita anual seria necessário para quitar a dívida. É uma das medidas que compõem a nota da CAPAG, usada pelo Tesouro Nacional na avaliação de crédito dos estados."
   },
   "poupanca": {
     "nome": "Poupança corrente (CAPAG)",
@@ -124,7 +129,8 @@
         "termo": "Despesas correntes",
         "texto": "O que o Estado gasta para manter os serviços funcionando, como folha de pagamento e custeio."
       }
-    ]
+    ],
+    "porQueImporta": "Mostra quanto sobra da receita depois de pagar as despesas de funcionamento. Quanto maior a sobra, maior a capacidade de investir com recursos próprios."
   },
   "liquidez": {
     "nome": "Liquidez (CAPAG)",
@@ -145,6 +151,7 @@
         "termo": "Disponibilidade de caixa",
         "texto": "Dinheiro que o Estado tem disponível para pagar essas obrigações."
       }
-    ]
+    ],
+    "porQueImporta": "Mostra se há caixa suficiente para pagar o que vence. É uma das medidas que compõem a nota da CAPAG."
   }
 }
