@@ -20,7 +20,7 @@ const CATEGORIAS: { id: Familia; nome: string; curto: string; Icone: ComponentTy
   { id: 'previdencia', nome: 'Previdência', curto: 'Previdência', Icone: IconBank },
   { id: 'funcoes', nome: 'Despesas por função', curto: 'Funções', Icone: IconPie },
 ]
-const PADRAO: Record<Familia, string> = { orcamento: 'receita', arrecadacao: 'icms', lrf: 'pessoal', caixa: 'caixa-apos', capag: 'endividamento', previdencia: 'aportes', funcoes: 'educacao' }
+const PADRAO: Record<Familia, string> = { orcamento: 'receita', arrecadacao: 'icms', lrf: 'pessoal', caixa: 'caixa-apos', capag: 'endividamento', previdencia: 'aportes', funcoes: 'minimo-educacao' }
 const FAMILIAS_VALIDAS: Familia[] = ['orcamento', 'arrecadacao', 'lrf', 'caixa', 'capag', 'previdencia', 'funcoes']
 
 type Nota = { id: string; ano: number; sub: number; texto: string }
@@ -178,8 +178,8 @@ export function ExploradorIndicadores({ indicadores, notas, classificacoes, gera
     const nota = principal.pontos.find((p) => p.ano === pontoFoco.ano && p.sub === pontoFoco.sub)?.nota
     if (!comparando && nota) partes.push(`nota ${nota}`)
     if (!comparando && familia === 'capag' && classificacoes[pontoFoco.ano]) partes.push(`classificação geral da CAPAG: ${classificacoes[pontoFoco.ano]}`)
-    const limite = !comparando && familia === 'lrf' ? principal.referencias.find((r) => r.estilo === 'limite') : undefined
-    if (limite && v !== null) partes.push(`folga de ${numero(limite.valor - v, 1)} p.p. até o limite legal de ${numero(limite.valor, 0)}%`)
+    const limite = !comparando && familia !== 'capag' ? principal.referencias.find((r) => r.estilo === 'limite') : undefined
+    if (limite && v !== null) partes.push(principal.sentido === 'minimo' ? `${numero(v - limite.valor, 1)} p.p. acima do mínimo constitucional de ${numero(limite.valor, 0)}%` : `folga de ${numero(limite.valor - v, 1)} p.p. até o limite legal de ${numero(limite.valor, 0)}%`)
     const ant = reais ? null : focoAtual > 0 && !(series[0].acumulaNoAno && series[0].pontos[focoAtual - 1].ano !== pontoFoco.ano) ? series[0].pontos[focoAtual - 1].valor : null
     if (!comparando && v !== null && ant !== null) { const d = Math.round((v - ant) * 100) / 100; partes.push(`${d > 0 ? '+' : d < 0 ? '−' : ''}${numero(Math.abs(d), 1)} p.p. sobre o período anterior`) }
     return partes.join(' · ')
@@ -253,7 +253,7 @@ export function ExploradorIndicadores({ indicadores, notas, classificacoes, gera
           {principal.referencias.length > 0 && (
             <label className={`flex min-h-11 items-center gap-3 text-small ${!comparando ? 'cursor-pointer' : 'opacity-60'}`}>
               <input type="checkbox" checked={mostrarLimites && !comparando} disabled={comparando} onChange={(e) => setMostrarLimites(e.target.checked)} className="h-5 w-5 accent-[rgb(var(--navy))]" />
-              {familia === 'lrf' ? 'Limites legais' : 'Faixas das notas'}
+              {familia === 'capag' ? 'Faixas das notas' : principal.sentido === 'minimo' ? 'Mínimo constitucional' : 'Limites legais'}
             </label>
           )}
           {principal.comparacao && (

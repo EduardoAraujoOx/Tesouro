@@ -16,6 +16,7 @@ fontes públicas, lidas por scripts e guardadas em `data/`:
 | `data/acervo.json` | as mesmas páginas | lista plana dos ≈ 730 arquivos, usada na busca de `/publicacoes` |
 | `data/noticias.json` | `sefaz.es.gov.br/noticias` | notícias da SEFAZ filtradas por temas do Tesouro, com imagem reduzida em `public/img/noticias/` (requer `pip install pillow`) |
 | `data/rreo.json` | API do Siconfi (RREO do Poder Executivo, Anexos 01, 03 e 06, 2019 em diante) | painel fiscal: receita, despesa e investimentos contra previsão e dotação, receita corrente líquida, resultados primário e nominal contra as metas da LDO; gera também `public/dados/rreo-es.csv` |
+| `data/minimos.json` | RREO do 6º bimestre publicado pela SEFAZ-ES (PDF, lido com `pdftotext`) | painel fiscal: percentual aplicado em educação (mínimo de 25%) e em saúde (mínimo de 12%); gera `public/dados/minimos-es.csv` |
 | `data/indicadores.json` | API do Siconfi (RGF do Poder Executivo, 2019 em diante) e dados abertos da CAPAG (Tesouro Transparente) | painel fiscal: limites da LRF por quadrimestre e notas da CAPAG; gera também `public/dados/*.csv` |
 | `data/curadoria-noticias.json` | edição manual | notícias fixadas no início do carrossel (`destaques`, lista de endereços; vazia = as três mais recentes) e correções do tipo de imagem (`foto` ou `arte`) |
 
@@ -114,7 +115,7 @@ As áreas ficam em `lib/areas.ts`, montadas a partir do Lei nº 12.379/2025 e De
 
 ## Atualização automática dos dados
 
-A rotina `.github/workflows/atualizar-dados.yml` roda toda segunda-feira, às 06h17 em Brasília (e pode ser disparada à mão em Actions). Ela executa os quatro coletores (`scripts/atualizar_indicadores.py`, `atualizar_rreo.py`, `atualizar_noticias.py` e `atualizar_conteudo.py`), ignora mudanças que sejam só a data da coleta, confere que `npm run build` continua passando e, havendo dado novo, abre um PR "Atualização automática de dados" para conferência. Uma falha numa fonte não impede as outras de atualizar, e o PR informa o resultado de cada coleta.
+A rotina `.github/workflows/atualizar-dados.yml` roda toda segunda-feira, às 06h17 em Brasília (e pode ser disparada à mão em Actions). Ela executa os cinco coletores (`scripts/atualizar_indicadores.py`, `atualizar_rreo.py`, `atualizar_minimos.py`, `atualizar_noticias.py` e `atualizar_conteudo.py`), ignora mudanças que sejam só a data da coleta, confere que `npm run build` continua passando e, havendo dado novo, abre um PR "Atualização automática de dados" para conferência. Uma falha numa fonte não impede as outras de atualizar, e o PR informa o resultado de cada coleta.
 
 Para que a rotina possa abrir o PR, ative no GitHub, em Settings > Actions > General > Workflow permissions, a opção **Allow GitHub Actions to create and approve pull requests**. Quem quiser publicar sem passar por revisão pode ativar a mesclagem automática (auto-merge) nesses PRs; a recomendação é manter a conferência humana, já que os números são fiscais.
 

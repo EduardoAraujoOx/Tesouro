@@ -571,5 +571,49 @@
         "texto": "Índice oficial de inflação, usado aqui para trazer valores de meses diferentes ao mesmo poder de compra."
       }
     ]
+  },
+  "minimo-educacao": {
+    "nome": "Aplicação em educação (mínimo constitucional)",
+    "curto": "Mínimo em educação",
+    "subtitulo": "% da receita de impostos e transferências aplicado em manutenção e desenvolvimento do ensino",
+    "definicao": "Percentual da receita de impostos e das transferências que o Estado aplicou, no ano, em manutenção e desenvolvimento do ensino. A Constituição obriga os estados a aplicar no mínimo 25%.",
+    "formula": "Despesa aplicada em manutenção e desenvolvimento do ensino dividida pela receita líquida de impostos e transferências, conforme o demonstrativo do RREO do 6º bimestre",
+    "leitura": "Quanto maior, mais acima do mínimo. A linha vermelha marca os 25% exigidos; barras abaixo da linha significariam descumprimento. Cada barra é o resultado do ano inteiro.",
+    "porQueImporta": "É um dos dois pisos constitucionais de gasto social. Mostra se o Estado cumpre o mínimo de aplicação em educação e com que folga.",
+    "limite": "Mínimo de 25% da receita de impostos e transferências",
+    "base": "Constituição Federal, art. 212, e Lei nº 9.394/1996 (LDB), art. 72",
+    "fonte": "RREO do 6º bimestre publicado pela SEFAZ-ES (demonstrativo de manutenção e desenvolvimento do ensino, Anexo 8)",
+    "termos": [
+      {
+        "termo": "Manutenção e desenvolvimento do ensino",
+        "texto": "Despesas que a lei reconhece como gasto em educação para fins do mínimo constitucional, como pessoal da educação, material escolar e transporte escolar."
+      },
+      {
+        "termo": "Receita líquida de impostos e transferências",
+        "texto": "Arrecadação de impostos do Estado somada às transferências recebidas, descontadas as parcelas repassadas aos municípios."
+      }
+    ]
+  },
+  "minimo-saude": {
+    "nome": "Aplicação em saúde (mínimo constitucional)",
+    "curto": "Mínimo em saúde",
+    "subtitulo": "% da receita de impostos e transferências aplicado em ações e serviços públicos de saúde",
+    "definicao": "Percentual da receita de impostos e das transferências que o Estado aplicou, no ano, em ações e serviços públicos de saúde. A lei obriga os estados a aplicar no mínimo 12%.",
+    "formula": "Despesa aplicada em ações e serviços públicos de saúde dividida pela receita líquida de impostos e transferências, conforme o demonstrativo do RREO do 6º bimestre",
+    "leitura": "Quanto maior, mais acima do mínimo. A linha vermelha marca os 12% exigidos; barras abaixo da linha significariam descumprimento. Cada barra é o resultado do ano inteiro.",
+    "porQueImporta": "É um dos dois pisos constitucionais de gasto social. Mostra se o Estado cumpre o mínimo de aplicação em saúde e com que folga.",
+    "limite": "Mínimo de 12% da receita de impostos e transferências",
+    "base": "Constituição Federal, art. 198, §2º, II, e Lei Complementar nº 141/2012, art. 6º",
+    "fonte": "RREO do 6º bimestre publicado pela SEFAZ-ES (demonstrativo de ações e serviços públicos de saúde, Anexo 12)",
+    "termos": [
+      {
+        "termo": "Ações e serviços públicos de saúde (ASPS)",
+        "texto": "Despesas que a lei reconhece como gasto em saúde para fins do mínimo constitucional, como atenção básica, hospitais e vigilância sanitária."
+      },
+      {
+        "termo": "Receita líquida de impostos e transferências",
+        "texto": "Arrecadação de impostos do Estado somada às transferências recebidas, descontadas as parcelas repassadas aos municípios."
+      }
+    ]
   }
 }

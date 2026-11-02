@@ -1,6 +1,7 @@
 import raw from '@/data/indicadores.json'
 import definicoesRaw from '@/data/definicoes-indicadores.json'
 import rreoRaw from '@/data/rreo.json'
+import minimosRaw from '@/data/minimos.json'
 
 export type Limites = { valor: number | null; limite: number | null; alerta: number | null; prudencial?: number | null; limiteFixo?: boolean; montante?: number | null }
 export type PeriodoLrf = {
@@ -137,6 +138,8 @@ export type Indicador = {
   comparacao?: { curto: string; pontos: PontoIndicador[]; tipo?: 'referencia' | 'ano-anterior' }
   referencias: ReferenciaIndicador[]
   acumulaNoAno?: boolean
+  /** 'minimo': a referência é um piso (quanto maior, melhor). Padrão: teto. */
+  sentido?: 'minimo' | 'maximo'
 }
 
 export const FAMILIAS: Record<Familia, { id: Familia; nome: string; descricao: string; padrao: string[] }> = {
@@ -271,6 +274,17 @@ function indicadorArrecadacao(id: string, serie: MensalRreo): Indicador {
   }
 }
 
+const minimos = (minimosRaw as unknown as { serie: { ano: number; ensino: number | null; saude: number | null }[] }).serie
+export const ultimoMinimos = minimos[minimos.length - 1]
+
+function indicadorMinimo(id: 'minimo-educacao' | 'minimo-saude', campo: 'ensino' | 'saude', piso: number): Indicador {
+  return {
+    id, familia: 'funcoes', ...definicoes[id], periodicidade: 'anual', unidade: '%', sentido: 'minimo',
+    pontos: minimos.map((m) => ({ ano: m.ano, sub: 6, rotulo: String(m.ano), extenso: `Exercício de ${m.ano}`, valor: m[campo] })),
+    referencias: [{ rotulo: 'Mínimo constitucional', valor: piso, estilo: 'limite', texto: `Mínimo ${piso}%` }],
+  }
+}
+
 function indicadoresRreo(): Indicador[] {
   const base = { periodicidade: 'anual' as const, unidade: 'R$ bi' as const, referencias: [] as ReferenciaIndicador[] }
   const com = (id: string, familia: Familia, campo: string, comp?: { curto: string; campo: string }, acumulado = true): Indicador => ({
@@ -301,6 +315,8 @@ function indicadoresRreo(): Indicador[] {
     com('aportes', 'previdencia', 'previdenciaAportes'),
     com('capitalizacao', 'previdencia', 'previdenciaCapitalizacao'),
     com('militares', 'previdencia', 'previdenciaMilitares'),
+    indicadorMinimo('minimo-educacao', 'ensino', 25),
+    indicadorMinimo('minimo-saude', 'saude', 12),
     ...(['educacao', 'saude', 'seguranca', 'transporte', 'funcao-previdencia', 'encargos'] as const).map((id) => {
       const k = id === 'funcao-previdencia' ? 'previdencia' : id
       return com(id, 'funcoes', `funcao_${k}_liquidada`, { curto: 'Dotação atualizada', campo: `funcao_${k}_autorizada` })
