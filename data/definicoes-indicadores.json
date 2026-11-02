@@ -8,7 +8,7 @@
     "formula": "Despesa total com pessoal, em 12 meses, dividida pela RCL ajustada",
     "leitura": "Quanto menor, maior a folga em relação ao limite. Ao passar de 90% do limite há alerta; a 95%, o limite prudencial impõe vedações, como a criação de cargos.",
     "limite": "49% da RCL para o Poder Executivo",
-    "base": "Lei de Responsabilidade Fiscal, arts. 20, 22 e 59",
+    "base": "Lei de Responsabilidade Fiscal, arts. 19, 20, 22 e 59",
     "fonte": "Relatório de Gestão Fiscal, Anexo 1, via Siconfi",
     "termos": [
       {
@@ -443,8 +443,8 @@
     "definicao": "O que sobra do caixa livre depois de pagar as obrigações já assumidas e de reservar o dinheiro das despesas empenhadas no ano cujo serviço ou obra ainda não foi entregue (restos a pagar não processados). É a medida mais conservadora do que resta de recursos livres para um novo governo.",
     "formula": "Caixa bruto dos recursos não vinculados, menos as obrigações financeiras (restos a pagar de anos anteriores e do exercício e demais obrigações) e menos os restos a pagar empenhados e ainda não liquidados do exercício (item i do Anexo 5 do RGF)",
     "leitura": "A barra azul é o caixa livre após os restos a pagar e a barra clara, o caixa antes deles: a diferença são as despesas do ano ainda por entregar e pagar. O valor só é apurado em dezembro. Ligue a correção pelo IPCA em Opções para comparar os anos em poder de compra.",
-    "porQueImporta": "Mostra quanto de recursos livres o Estado tem, de fato, depois de honrar o que já assumiu. A LRF veda, nos dois últimos quadrimestres do mandato, assumir obrigação que não possa ser paga com a disponibilidade de caixa.",
-    "limite": "Sem limite numérico. A LRF exige disponibilidade de caixa para as obrigações assumidas nos dois últimos quadrimestres do mandato",
+    "porQueImporta": "Mostra quanto de recursos livres o Estado tem, de fato, depois de honrar o que já assumiu. A LRF veda ao titular de Poder ou órgão, nos dois últimos quadrimestres do mandato, assumir obrigação de despesa que não possa ser paga integralmente no mandato, ou cujas parcelas passem ao seguinte, sem disponibilidade de caixa suficiente.",
+    "limite": "Sem limite numérico. A LRF exige disponibilidade de caixa para as obrigações assumidas nos dois últimos quadrimestres do mandato (art. 42)",
     "base": "Lei Complementar nº 101/2000 (LRF), arts. 42 e 55, III, e Manual de Demonstrativos Fiscais da STN (Anexo 5 do RGF)",
     "fonte": "Siconfi, RGF do Poder Executivo, Anexo 5 (3º quadrimestre)",
     "termos": [
