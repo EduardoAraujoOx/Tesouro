@@ -85,7 +85,7 @@ export function GraficoExplorador({ series, referencias, foco, onFoco, titulo, m
   const n = series[0]?.pontos.length ?? 0
   const W = largura
   const largo = W >= 760
-  const H = Math.round(Math.max(340, Math.min(580, W * 0.4)))
+  const H = Math.round(Math.max(largo ? 340 : 300, Math.min(580, W * 0.4)))
   const ml = 52, mt = 22, mb = 40
   const mr = referencias.length && largo ? 178 : 18
   const todos = series.flatMap((s) => s.pontos.map((p) => p.valor)).filter((v): v is number => v !== null)
@@ -145,7 +145,7 @@ export function GraficoExplorador({ series, referencias, foco, onFoco, titulo, m
     onFoco(Math.max(0, Math.min(n - 1, Math.floor((x - ml) / passoX))))
   }
 
-  const resumo = `${titulo}. ` + series.filter((s) => !s.anterior).map((s) => {
+  const resumo = `${titulo}. ${referencias.length ? `Limites: ${referencias.map((r) => `${r.rotulo.toLowerCase()} ${numero(r.valor, r.valor % 1 ? 1 : 0)}${unidade}`).join(', ')}. ` : ''}` + series.filter((s) => !s.anterior).map((s) => {
     const v = s.pontos.filter((p) => p.valor !== null)
     if (!v.length) return `${s.curto}: sem dados.`
     const a = v[0], b = v[v.length - 1]
@@ -162,12 +162,23 @@ export function GraficoExplorador({ series, referencias, foco, onFoco, titulo, m
         {series.map((s, k) => (
           <li key={s.id} className="inline-flex items-center gap-2 font-semibold"><AmostraSerie estilo={s.anterior ? ANTERIOR : k} />{s.curto}</li>
         ))}
-        {referencias.map((r) => (
-          <li key={r.rotulo} className="inline-flex items-center gap-2 text-ink-soft">
-            <svg width="34" height="14" aria-hidden="true"><line x1="0" x2="34" y1="7" y2="7" className={CLASSE_REF[r.estilo].traco} strokeWidth="2" strokeDasharray={TRACO_REF[r.estilo]} /></svg>
-            {r.rotulo} {numero(r.valor, r.valor % 1 ? 1 : 0)}{unidade}{visiveis.includes(r) ? '' : ' (fora da escala)'}
-          </li>
-        ))}
+        {largo
+          ? referencias.map((r) => (
+              <li key={r.rotulo} className="inline-flex items-center gap-2 text-ink-soft">
+                <svg width="34" height="14" aria-hidden="true"><line x1="0" x2="34" y1="7" y2="7" className={CLASSE_REF[r.estilo].traco} strokeWidth="2" strokeDasharray={TRACO_REF[r.estilo]} /></svg>
+                {r.rotulo} {numero(r.valor, r.valor % 1 ? 1 : 0)}{unidade}{visiveis.includes(r) ? '' : ' (fora da escala)'}
+              </li>
+            ))
+          : referencias.length > 0 && (
+              <li className="flex w-full flex-wrap gap-x-4 gap-y-1 text-label text-ink-soft" style={{ letterSpacing: 0 }}>
+                {referencias.map((r) => (
+                  <span key={r.rotulo} className="inline-flex items-center gap-1.5">
+                    <svg width="20" height="10" aria-hidden="true"><line x1="0" x2="20" y1="5" y2="5" className={CLASSE_REF[r.estilo].traco} strokeWidth="2" strokeDasharray={TRACO_REF[r.estilo]} /></svg>
+                    {{ limite: 'Legal', prudencial: 'Prudencial', alerta: 'Alerta' }[r.estilo]} {numero(r.valor, r.valor % 1 ? 1 : 0)}{unidade}
+                  </span>
+                ))}
+              </li>
+            )}
       </ul>
 
       <div ref={caixa} className="w-full">

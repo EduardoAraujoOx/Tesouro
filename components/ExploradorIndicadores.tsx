@@ -165,22 +165,20 @@ export function ExploradorIndicadores({ indicadores, notas, classificacoes, gera
       onFocus={(e) => { if (e.target.matches(':focus-visible')) setPausado(true) }}
       onBlur={(e) => { if (!e.currentTarget.contains(e.relatedTarget as Node | null)) setPausado(false) }}
     >
+      <div className="flex flex-col">
       {/* ---------- Título e período ---------- */}
-      <div className="flex flex-wrap items-start justify-between gap-x-6 gap-y-4">
-        <div className="min-w-0">
-          <p className="text-label font-semibold uppercase text-navy">Painel fiscal</p>
-          <h1 key={principal.id} className="anim-aparece mt-1 text-display">{principal.nome}</h1>
-          <p className="mt-1 text-lead text-ink-soft">{principal.subtitulo}</p>
-        </div>
-        <details className="relative">
-          <summary className="flex min-h-14 cursor-pointer list-none items-center gap-3 rounded-brand border border-line bg-paper px-4 py-2 hover:bg-surface">
+      <div className="order-1 grid grid-cols-[1fr_auto] items-start gap-x-4 md:gap-y-1">
+        <p className="col-start-1 row-start-1 self-center text-label font-semibold uppercase text-navy">Painel fiscal</p>
+        <details className="relative col-start-2 row-start-1 md:row-span-3">
+          <summary className="flex min-h-11 cursor-pointer list-none items-center gap-3 rounded-brand border border-line bg-paper px-3 py-1 hover:bg-surface md:min-h-14 md:px-4 md:py-2">
             <span className="text-left">
-              <span className="block text-small text-ink-soft">Período</span>
-              <span className="block text-body font-semibold text-ink">{deAtual} a {ateAtual}</span>
+              <span className="hidden text-small text-ink-soft md:block">Período</span>
+              <span className="block text-small font-semibold text-ink md:text-body">{deAtual} a {ateAtual}</span>
             </span>
             <IconChevron className="h-5 w-5 text-ink-soft" />
           </summary>
           <div className="absolute right-0 z-20 mt-2 w-72 rounded-brand border border-line bg-paper p-4 shadow-lg">
+            <p className="mb-2 text-small font-semibold text-ink">Período</p>
             <div className="grid grid-cols-2 gap-3">
               <div>
                 <label htmlFor={`${uid}-de`} className="block text-small text-ink-soft">De</label>
@@ -193,12 +191,14 @@ export function ExploradorIndicadores({ indicadores, notas, classificacoes, gera
             </div>
           </div>
         </details>
+        <h1 key={principal.id} className="anim-aparece col-span-2 row-start-2 mt-1 text-section md:col-span-1 md:text-display">{principal.nome}</h1>
+        <p className="col-span-2 row-start-3 mt-1 text-body text-ink-soft md:col-span-1 md:text-lead">{principal.subtitulo}</p>
       </div>
 
-      <p className="mt-4 min-h-6 text-body font-medium text-ink" aria-live="polite">{resumo}</p>
+      <p className="order-3 mt-4 min-h-6 text-body font-medium text-ink md:order-2" aria-live="polite">{resumo}</p>
 
       {/* ---------- Gráfico ---------- */}
-      <div className="mt-4 rounded-brand border border-line bg-paper p-4 md:p-6">
+      <div className="order-2 mt-4 rounded-brand border border-line bg-paper p-3 md:order-3 md:p-6">
         <GraficoExplorador series={series} referencias={refs} foco={focoAtual} onFoco={setFoco} titulo={titulo} modo={modo} animKey={ids.join('+')} />
         {n > 1 && pontoFoco && (
           <div className="mt-2">
@@ -215,6 +215,7 @@ export function ExploradorIndicadores({ indicadores, notas, classificacoes, gera
         {notas.filter((x) => ids.includes(x.id) && x.ano >= deAtual && x.ano <= ateAtual).map((x) => (
           <p key={x.id + x.ano + x.sub} className="mt-4 rounded-brand bg-surface p-4 text-small text-ink-soft"><strong className="text-ink">Nota sobre a série.</strong> {x.texto}</p>
         ))}
+      </div>
       </div>
 
       {/* ---------- Controles e definição ---------- */}
