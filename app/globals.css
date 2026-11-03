@@ -17,8 +17,11 @@
   --hero-overlay: 5 32 63;      /* azul-marinho profundo sobre a foto */
   --btn-bg: 255 255 255;        /* botão primário sobre a foto */
   --btn-fg: 8 43 87;
-  --serie2: 163 23 79;          /* #A3174F, segunda série dos gráficos */
-  --serie3: 10 108 126;         /* #0A6C7E, terceira série */
+  --serie2: 194 56 111;         /* #C2386F, rosa da logomarca em tom mais escuro (contraste 4,7:1 sobre branco) */
+  --serie3: 15 125 176;         /* #0F7DB0, azul-celeste da logomarca em tom mais escuro (contraste 4,9:1) */
+  --limite: 179 38 30;          /* #B3261E, limite legal */
+  --prudencial: 180 83 9;       /* #B45309, limite prudencial */
+  --alerta: 133 77 14;          /* #854D0E, limite de alerta */
 }
 
 /* Alto contraste: fundo preto, texto branco, destaque amarelo (padrão de portais de governo). */
@@ -36,6 +39,9 @@
   --btn-fg: 0 0 0;
   --serie2: 255 255 255;
   --serie3: 0 255 255;
+  --limite: 255 255 255;
+  --prudencial: 255 255 255;
+  --alerta: 255 255 255;
 }
 :root[data-contrast='alto'] img.invert-hc { filter: invert(1) hue-rotate(180deg); }
 
@@ -95,3 +101,19 @@ h1, h2, h3 { @apply font-serif font-semibold text-navy; font-optical-sizing: aut
 .prose-tesouro a { @apply font-medium text-navy underline underline-offset-4; }
 .prose-tesouro a:hover { text-decoration-thickness: 2px; }
 .prose-tesouro blockquote { @apply border-l-4 border-line pl-4 text-ink-soft; }
+
+/* Transição entre gráficos do painel: a linha ou as barras são reveladas da esquerda para a direita. */
+@keyframes revela { from { clip-path: inset(0 100% 0 0); } to { clip-path: inset(-4px -4px -4px -4px); } }
+@keyframes aparece { from { opacity: 0; } to { opacity: 1; } }
+.anim-revela { animation: revela 0.9s cubic-bezier(0.22, 0.61, 0.36, 1) both; }
+.anim-aparece { animation: aparece 0.5s ease-out both; }
+@media (prefers-reduced-motion: reduce) { .anim-revela, .anim-aparece { animation: none; } }
+
+/* Barras e área do gráfico de série única: do azul-celeste ao azul-marinho, como o traço da logomarca. */
+.grad-topo { stop-color: rgb(var(--serie3)); }
+.grad-base { stop-color: rgb(var(--navy)); }
+:root[data-contrast='alto'] .grad-topo { stop-color: rgb(var(--navy)); }
+
+/* Faixa do painel fiscal: a imagem some e a sombra vira cor sólida no alto contraste */
+.banner-sombra { background: linear-gradient(90deg, rgb(var(--navy-deep)) 0%, rgb(var(--navy-deep)) 36%, rgb(var(--navy-deep) / 0.55) 62%, rgb(var(--navy-deep) / 0) 100%); }
+:root[data-contrast='alto'] .banner-img { display: none; }

@@ -9,7 +9,7 @@
     "start": "next start",
     "lint": "next lint",
     "typecheck": "tsc --noEmit",
-    "acervo": "python3 scripts/atualizar_conteudo.py && python3 scripts/atualizar_noticias.py && python3 scripts/atualizar_indicadores.py"
+    "acervo": "python3 scripts/atualizar_conteudo.py && python3 scripts/atualizar_noticias.py && python3 scripts/atualizar_indicadores.py && python3 scripts/atualizar_rreo.py && python3 scripts/atualizar_minimos.py"
   },
   "dependencies": {
     "@fontsource-variable/inter": "^5.2.5",

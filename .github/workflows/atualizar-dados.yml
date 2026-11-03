@@ -1,0 +1,110 @@
+name: Atualizar dados do painel
+
+# Toda segunda-feira (06h17 em Brasília) consulta as fontes oficiais: Siconfi e Tesouro Transparente (indicadores),
+# site da SEFAZ (notícias e acervo). Se houver dado novo e o site continuar construindo, abre uma proposta de
+# atualização para conferência. Também pode ser disparada à mão, em Actions > Atualizar dados do painel > Run workflow.
+on:
+  schedule:
+    - cron: '17 9 * * 1'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: write
+
+concurrency:
+  group: atualizar-dados
+  cancel-in-progress: false
+
+jobs:
+  atualizar:
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: npm
+
+      - name: Instalar dependências
+        run: |
+          pip install pillow
+          npm ci
+
+      # Cada coletor roda em seu passo; uma falha numa fonte não impede as outras de atualizar.
+      - name: Coletar indicadores (Siconfi e CAPAG)
+        id: indicadores
+        continue-on-error: true
+        run: python3 scripts/atualizar_indicadores.py
+
+      - name: Coletar execução orçamentária e metas (RREO)
+        id: rreo
+        continue-on-error: true
+        run: python3 scripts/atualizar_rreo.py
+
+      - name: Instalar leitor de PDF
+        run: sudo apt-get update -qq && sudo apt-get install -y -qq poppler-utils
+
+      - name: Coletar mínimos de educação e saúde (RREO)
+        id: minimos
+        continue-on-error: true
+        run: python3 scripts/atualizar_minimos.py
+
+      - name: Coletar notícias da SEFAZ
+        id: noticias
+        continue-on-error: true
+        run: python3 scripts/atualizar_noticias.py
+
+      - name: Coletar acervo e páginas da SEFAZ
+        id: conteudo
+        continue-on-error: true
+        run: python3 scripts/atualizar_conteudo.py
+
+      - name: Verificar se há dado novo
+        id: mudou
+        run: |
+          git add -A
+          # a data da coleta muda sempre; só interessa se os dados mudaram
+          if git diff --cached --quiet -I'"geradoEm"'; then
+            echo "mudou=nao" >> "$GITHUB_OUTPUT"
+            echo "Sem dado novo nas fontes."
+          else
+            echo "mudou=sim" >> "$GITHUB_OUTPUT"
+            git diff --cached --stat -I'"geradoEm"' | tail -20
+          fi
+
+      - name: Conferir que o site continua construindo
+        if: steps.mudou.outputs.mudou == 'sim'
+        run: npm run build
+
+      - name: Abrir proposta de atualização
+        if: steps.mudou.outputs.mudou == 'sim'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          RESULTADO_INDICADORES: ${{ steps.indicadores.outcome }}
+          RESULTADO_RREO: ${{ steps.rreo.outcome }}
+          RESULTADO_MINIMOS: ${{ steps.minimos.outcome }}
+          RESULTADO_NOTICIAS: ${{ steps.noticias.outcome }}
+          RESULTADO_CONTEUDO: ${{ steps.conteudo.outcome }}
+        run: |
+          DATA=$(date -u +%Y%m%d)
+          RAMO="dados/atualizacao-$DATA"
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git checkout -b "$RAMO"
+          git commit -m "Atualiza dados do painel e do acervo ($(date -u +%d/%m/%Y))"
+          git push --force origin "$RAMO"
+          cat > corpo.md <<CORPO
+          Atualização automática dos dados, gerada pela rotina semanal.
+
+          Resultado de cada coleta: indicadores (Siconfi e CAPAG): $RESULTADO_INDICADORES; orçamento e arrecadação (RREO, RGF, ANP): $RESULTADO_RREO; mínimos de educação e saúde: $RESULTADO_MINIMOS; notícias: $RESULTADO_NOTICIAS; acervo da SEFAZ: $RESULTADO_CONTEUDO.
+
+          O site foi construído com sucesso usando estes dados. Conferir o painel fiscal na prévia da Vercel antes de mesclar.
+          CORPO
+          gh pr create --base main --head "$RAMO" --title "Atualização automática de dados ($(date -u +%d/%m/%Y))" --body-file corpo.md || gh pr list --head "$RAMO"
