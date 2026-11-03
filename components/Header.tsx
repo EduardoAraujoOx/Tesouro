@@ -21,7 +21,7 @@ function ItemLink({ l, className, onClick }: { l: L; className?: string; onClick
 }
 
 function estaAtivo(item: ItemMenu, pathname: string): boolean {
-  return !!item.prefixos?.some((p) => pathname === p || pathname.startsWith(p.endsWith('/') ? p : `${p}/`))
+  return !!item.prefixos?.some((p) => (p === '/' ? pathname === '/' : pathname === p || pathname.startsWith(p.endsWith('/') ? p : `${p}/`)))
 }
 
 export function Header() {

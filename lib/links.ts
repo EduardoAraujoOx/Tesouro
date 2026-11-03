@@ -13,12 +13,13 @@ export type ItemMenu = { rotulo: string; href?: string; filhos?: Link[]; prefixo
 
 /**
  * Menu principal: seis itens, cada um responde a uma pergunta diferente (sem sobreposição):
- * o que há de novo (Notícias), como está o Estado (Painel fiscal), onde estão os documentos (Publicações, por assunto),
- * o que preciso para trabalhar (Serviços), quem somos (Institucional) e como falar com o Tesouro (Fale conosco).
+ * a página inicial (Início), como está o Estado (Indicadores), onde estão os documentos (Publicações, por assunto),
+ * o que preciso para trabalhar (Serviços e Orientações), quem somos e o que há de novo (O Tesouro) e como falar com
+ * o Tesouro (Fale conosco). As notícias aparecem na página inicial e em O Tesouro.
  */
 export const menu: ItemMenu[] = [
-  { rotulo: 'Notícias', href: '/noticias', prefixos: ['/noticias'] },
-  { rotulo: 'Painel fiscal', href: '/indicadores', prefixos: ['/indicadores'] },
+  { rotulo: 'Início', href: '/', prefixos: ['/'] },
+  { rotulo: 'Indicadores', href: '/indicadores', prefixos: ['/indicadores'] },
   {
     rotulo: 'Publicações',
     prefixos: ['/publicacoes', '/tesouro/'],
@@ -34,26 +35,33 @@ export const menu: ItemMenu[] = [
       { rotulo: 'Todas as publicações', href: '/publicacoes' },
     ],
   },
-  { rotulo: 'Serviços', href: '/servicos', prefixos: ['/servicos'] },
+  { rotulo: 'Serviços e Orientações', href: '/servicos', prefixos: ['/servicos'] },
   {
-    rotulo: 'Institucional',
-    prefixos: ['/sobre', '/creditos', '/cidadao'],
+    rotulo: 'O Tesouro',
+    prefixos: ['/sobre', '/creditos', '/cidadao', '/noticias'],
     filhos: [
       { rotulo: 'Conheça o Tesouro Estadual', href: '/sobre' },
       { rotulo: 'Tesouro Cidadão', href: '/cidadao' },
+      { rotulo: 'Notícias', href: '/noticias' },
       { rotulo: 'Legislação do Tesouro Estadual', href: T('demais-legislacoes-contabeis') },
       { rotulo: 'Fundo Soberano (FUNSES)', href: T('funses') },
     ],
   },
-  { rotulo: 'Fale conosco', href: '/contato', prefixos: ['/contato'] },
+  { rotulo: 'Fale Conosco', href: '/contato', prefixos: ['/contato'] },
 ]
 
-// `curto` é o rótulo usado no celular, como no mockup mobile.
+/**
+ * Acessos rápidos da página inicial. O destino da Reforma Tributária é provisório (a notícia do ciclo de palestras
+ * do Tesouro): o conteúdo desse acesso será definido depois.
+ */
 export const acessoRapido = [
-  { rotulo: 'Resultado do Tesouro', curto: 'Resultado do Tesouro', href: T('resultado-do-tesouro-estadual'), icone: 'bars' },
-  { rotulo: 'Dívida Pública', curto: 'Dívida Pública', href: T(DIVIDA), icone: 'coins' },
-  { rotulo: 'Contabilidade Aplicada', curto: 'Contabilidade', href: '/publicacoes?tipo=normas-contabeis', icone: 'doc' },
-  { rotulo: 'Transferências aos Municípios', curto: 'Municípios', href: T('transferencias-constitucionais-aos-municipios'), icone: 'people' },
+  { rotulo: 'Reforma Tributária', href: '/noticias/sefaz-realiza-segundo-encontro-do-ciclo-de-palestras-do-tesouro-estadual-sobre-reforma-tributaria', icone: 'layers' },
+  { rotulo: 'Indicadores', href: '/indicadores', icone: 'bars' },
+  { rotulo: 'Relatórios da LRF', detalhe: 'RREO e RGF', href: '/publicacoes?tipo=lrf', icone: 'doc' },
+  { rotulo: 'Dívida Pública', href: T(DIVIDA), icone: 'coins' },
+  { rotulo: 'Transferências aos Municípios', href: T('transferencias-constitucionais-aos-municipios'), icone: 'people' },
+  { rotulo: 'Resultado do Tesouro', href: T('resultado-do-tesouro-estadual'), icone: 'pie' },
+  { rotulo: 'Normas e Manuais', href: '/publicacoes?tipo=normas-contabeis', icone: 'book' },
 ] as const
 
 export const orientacoes = [

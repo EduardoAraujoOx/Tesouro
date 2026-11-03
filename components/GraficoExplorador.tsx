@@ -120,7 +120,8 @@ export function GraficoExplorador({ series, referencias, foco, onFoco, titulo, m
   const refPontos = series[0].pontos
   const nAnos = new Set(refPontos.map((p) => p.ano)).size
   const umPorPonto = nAnos === refPontos.length || nAnos === 1
-  const textoX = (p: PontoGrafico) => (umPorPonto ? p.rotulo : String(p.ano))
+  // anos em colunas apertadas viram '’25' para caberem todos
+  const textoX = (p: PontoGrafico) => (umPorPonto ? (passoX < 34 && /^\d{4}\*?$/.test(p.rotulo) ? `’${p.rotulo.slice(2)}` : p.rotulo) : String(p.ano))
   const larguraX = (p: PontoGrafico) => textoX(p).length * 6.4 + 4
   let ultimoX = -999, ultimaL = 0
   const rotulosX = refPontos

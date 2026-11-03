@@ -15,7 +15,7 @@ fontes públicas, lidas por scripts e guardadas em `data/`:
 | `data/paginas.json` | 35 páginas do Tesouro em `sefaz.es.gov.br` | texto (HTML saneado) e grupos de arquivos de cada área |
 | `data/acervo.json` | as mesmas páginas | lista plana dos ≈ 730 arquivos, usada na busca de `/publicacoes` |
 | `data/noticias.json` | `sefaz.es.gov.br/noticias` | notícias da SEFAZ filtradas por temas do Tesouro, com imagem reduzida em `public/img/noticias/` (requer `pip install pillow`) |
-| `data/rreo.json` | API do Siconfi (RREO do Poder Executivo, Anexos 01, 03 e 06, 2019 em diante) | painel fiscal: receita, despesa e investimentos contra previsão e dotação, receita corrente líquida, resultados primário e nominal contra as metas da LDO; gera também `public/dados/rreo-es.csv` |
+| `data/rreo.json` | API do Siconfi (RREO do Poder Executivo, Anexos 01, 03 e 06, 2019 em diante) | painel fiscal: receita, despesa e investimentos contra previsão e dotação, receita corrente líquida, despesas por função, previdência, caixa dos recursos livres, arrecadação mensal de ICMS, FPE e royalties e IPCA; gera também os CSV `rreo-es`, `caixa-es` e `arrecadacao-es` em `public/dados` |
 | `data/minimos.json` | RREO do 6º bimestre publicado pela SEFAZ-ES (PDF, lido com `pdftotext`) | painel fiscal: percentual aplicado em educação (mínimo de 25%) e em saúde (mínimo de 12%); gera `public/dados/minimos-es.csv` |
 | `data/indicadores.json` | API do Siconfi (RGF do Poder Executivo, 2019 em diante) e dados abertos da CAPAG (Tesouro Transparente) | painel fiscal: limites da LRF por quadrimestre e notas da CAPAG; gera também `public/dados/*.csv` |
 | `data/curadoria-noticias.json` | edição manual | notícias fixadas no início do carrossel (`destaques`, lista de endereços; vazia = as três mais recentes) e correções do tipo de imagem (`foto` ou `arte`) |
@@ -25,10 +25,10 @@ da verdade (evita versões desatualizadas de documentos fiscais e um repositóri
 
 | Rota | Conteúdo |
 |---|---|
-| `/` | Página inicial (hero, carrossel de notícias, acesso rápido, painel fiscal, publicações em destaque, orientações) |
+| `/` | Página inicial: abertura com foto de Vitória, indicadores em destaque (CAPAG e limites da LRF, com gráfico e explicação), sete acessos rápidos, publicações recentes, notícias e Tesouro Cidadão |
 | `/tesouro/[área]` | Uma página para cada área do Tesouro (35), com o texto original e os documentos |
 | `/publicacoes` | Busca em todo o acervo, com filtro por tipo e por ano (`?tipo=` e `?q=` na URL) |
-| `/indicadores` | Painel fiscal quantitativo: gráfico grande no centro, barra para trocar de indicador (orçamento e execução, resultados e metas, limites da LRF e CAPAG), números do período em foco, comparação de até 3 indicadores, CSV e link da escolha; texto de apoio e metodologia recolhidos abaixo |
+| `/indicadores` | Indicadores fiscais: sete categorias (orçamento, arrecadação, limites da LRF, caixa, CAPAG, previdência e despesas por função), gráfico grande, definições ao lado, correção pelo IPCA, comparação de até 3 indicadores, CSV e link da escolha; metodologia recolhida abaixo |
 | `/noticias`, `/noticias/[slug]` | Lista e página de cada notícia do Tesouro, com o texto completo (a fonte original é citada no fim) |
 | `/cidadao` | Tesouro Cidadão: números do Balanço Cidadão, perguntas e respostas ligadas aos dados do painel, documentos cidadãos, glossário e ferramentas do Tesouro Nacional |
 | `/cidadao/em-busca-do-tesouro` | Leitor das revistinhas e do manual do programa Em Busca do Tesouro (Tesouro Nacional), exibido dentro do portal |
@@ -66,7 +66,7 @@ npm run build && npm start
 
 ## Navegação e página inicial
 
-O menu tem seis itens, cada um para uma pergunta diferente: Notícias (o que há de novo), Painel fiscal (como está o Estado), Publicações (onde estão os documentos, agrupados por assunto), Serviços (o que preciso para trabalhar), Institucional (quem somos) e Fale conosco. A definição está em `lib/links.ts` (`menu`). Assuntos como Dívida, Contabilidade e Municípios ficam dentro de Publicações, e não ao lado dela. A página inicial tem um único bloco de notícias (o carrossel de três); a lista completa fica em `/noticias`.
+O menu tem seis itens, cada um para uma pergunta diferente: Início, Indicadores (como está o Estado), Publicações (onde estão os documentos, agrupados por assunto), Serviços e Orientações (o que preciso para trabalhar), O Tesouro (quem somos, Tesouro Cidadão e notícias) e Fale Conosco. A definição está em `lib/links.ts` (`menu`). Os acessos rápidos da página inicial ficam em `acessoRapido`; o destino de Reforma Tributária é provisório (a notícia do ciclo de palestras) até a Subsecretaria definir o conteúdo.
 
 ## Tipografia
 

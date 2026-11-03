@@ -20,6 +20,12 @@ export const IconBank = (p: P) => (
 export const IconPie = (p: P) => (
   <svg {...base} {...p}><circle cx="12" cy="12" r="9" /><path d="M12 3v9h9" /></svg>
 )
+export const IconLayers = (p: P) => (
+  <svg {...base} {...p}><path d="m12 3 9 5-9 5-9-5 9-5Z" /><path d="m3 13 9 5 9-5" /><path d="m3 17.5 9 5 9-5" /></svg>
+)
+export const IconBook = (p: P) => (
+  <svg {...base} {...p}><path d="M12 6c-1.6-1.3-4-2-8-2v14c4 0 6.4.7 8 2 1.6-1.3 4-2 8-2V4c-4 0-6.4.7-8 2Z" /><path d="M12 6v14" /></svg>
+)
 export const IconSearch = (p: P) => (
   <svg {...base} {...p}><circle cx="11" cy="11" r="7" /><path d="m20 20-3.5-3.5" /></svg>
 )
@@ -90,6 +96,9 @@ export const iconePorNome = {
   doc: IconDoc,
   people: IconPeople,
   calc: IconCalc,
+  layers: IconLayers,
+  book: IconBook,
+  pie: IconPie,
 } as const
 export const IconPause = (p: P) => (
   <svg {...base} {...p}><rect x="6.5" y="5" width="3.8" height="14" rx="1" fill="currentColor" stroke="none" /><rect x="13.7" y="5" width="3.8" height="14" rx="1" fill="currentColor" stroke="none" /></svg>

@@ -1,7 +1,8 @@
 import type { Metadata } from 'next'
 import { PageHeader } from '@/components/PageHeader'
 import { IconExternal } from '@/components/Icons'
-import { servicos } from '@/lib/links'
+import { iconePorNome } from '@/components/Icons'
+import { orientacoes, servicos } from '@/lib/links'
 import Link from 'next/link'
 
 export const metadata: Metadata = {
@@ -16,6 +17,26 @@ export default function Servicos() {
       Rotinas, sistemas e orientações do Tesouro Estadual voltadas a órgãos, gestores e servidores públicos.
     </PageHeader>
     <div className="mx-auto max-w-page px-5 py-6 md:px-8 md:py-8">
+      <section aria-labelledby="orientacoes" className="mb-10">
+        <h2 id="orientacoes" className="text-title">Orientações</h2>
+        <span className="accent-bar" aria-hidden="true" />
+        <ul className="mt-4 grid gap-3 md:grid-cols-3">
+          {orientacoes.map((o) => {
+            const Icone = iconePorNome[o.icone]
+            return (
+              <li key={o.titulo}>
+                <Link href={o.href} className="flex h-full gap-4 rounded-brand border border-line p-4 hover:bg-surface">
+                  <Icone className="mt-0.5 h-10 w-10 shrink-0 text-navy" strokeWidth={1.3} />
+                  <span className="min-w-0">
+                    <span className="block text-lead font-semibold text-ink">{o.titulo}</span>
+                    <span className="mt-1 block text-body text-ink-soft">{o.texto}</span>
+                  </span>
+                </Link>
+              </li>
+            )
+          })}
+        </ul>
+      </section>
       <div className="grid gap-10 md:grid-cols-3">
         {servicos.map((g) => (
           <section key={g.grupo} aria-labelledby={g.grupo.replace(/\W/g, '')}>
