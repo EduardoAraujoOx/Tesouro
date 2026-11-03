@@ -38,6 +38,12 @@ export function FormularioContato({ habilitado }: { habilitado: boolean }) {
   const [site, setSite] = useState('') // armadilha para robôs
 
   useEffect(() => { inicio.current = Date.now() }, [])
+  // endereço com ?area=sigla (por exemplo, vindo da página Conheça o Tesouro) já escolhe a área
+  useEffect(() => {
+    const area = areaPorId(new URLSearchParams(window.location.search).get('area') ?? '')
+    if (!area || area.nivel === 'subsecretaria') return
+    setC((a) => (area.nivel === 'gerencia' ? { ...a, gerencia: area.id, subgerencia: '' } : { ...a, gerencia: area.pai ?? a.gerencia, subgerencia: area.id }))
+  }, [])
   useEffect(() => { if (estado.tipo === 'ok') confirmacao.current?.focus() }, [estado.tipo])
 
   const set = <K extends keyof Campos>(k: K, v: Campos[K]) => setC((a) => ({ ...a, [k]: v }))

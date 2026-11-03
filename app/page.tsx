@@ -157,6 +157,27 @@ function NoticiasPrincipais() {
   )
 }
 
+function TesouroCidadao() {
+  return (
+    <section aria-labelledby="cidadao" className="mx-auto mt-14 max-w-page px-5 md:px-8">
+      <div className="grid gap-6 rounded-brand bg-surface p-6 md:grid-cols-12 md:items-center md:p-10">
+        <div className="md:col-span-8">
+          <h2 id="cidadao" className="text-section">Tesouro Cidadão</h2>
+          <span className="accent-bar" aria-hidden="true" />
+          <p className="mt-4 max-w-2xl text-lead text-ink-soft">
+            Os demonstrativos fiscais publicados pelo Tesouro Estadual, como ler cada um e como acompanhar a situação das contas do Estado, com materiais de educação fiscal para toda a família.
+          </p>
+        </div>
+        <div className="md:col-span-4 md:justify-self-end">
+          <Link href="/cidadao" className={`${btnPrimario} w-full md:w-auto`}>
+            Acompanhar as contas do Estado <IconArrow className="h-5 w-5" />
+          </Link>
+        </div>
+      </div>
+    </section>
+  )
+}
+
 function Orientacoes() {
   return (
     <section aria-labelledby="orientacoes" className="mx-auto mt-14 max-w-page px-5 md:px-8">
@@ -201,6 +222,7 @@ export default function Home() {
       <div className="mt-10 md:mt-12"><AcessoRapido /></div>
       <PainelFiscal />
       <Destaques />
+      <TesouroCidadao />
       <Orientacoes />
     </>
   )

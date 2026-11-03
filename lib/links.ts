@@ -37,9 +37,10 @@ export const menu: ItemMenu[] = [
   { rotulo: 'Serviços', href: '/servicos', prefixos: ['/servicos'] },
   {
     rotulo: 'Institucional',
-    prefixos: ['/sobre', '/creditos'],
+    prefixos: ['/sobre', '/creditos', '/cidadao'],
     filhos: [
       { rotulo: 'Conheça o Tesouro Estadual', href: '/sobre' },
+      { rotulo: 'Tesouro Cidadão', href: '/cidadao' },
       { rotulo: 'Legislação do Tesouro Estadual', href: T('demais-legislacoes-contabeis') },
       { rotulo: 'Fundo Soberano (FUNSES)', href: T('funses') },
     ],
