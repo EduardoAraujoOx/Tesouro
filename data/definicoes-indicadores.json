@@ -1,0 +1,619 @@
+{
+  "_leia-me": "Definições mostradas no painel fiscal. Edite os textos aqui; os valores dos gráficos vêm dos coletores e se atualizam sozinhos. Cada indicador usa a mesma chave (id) do painel.",
+  "pessoal": {
+    "nome": "Despesa com pessoal (Poder Executivo)",
+    "curto": "Despesa com pessoal",
+    "subtitulo": "Percentual da Receita Corrente Líquida (RCL) ajustada",
+    "definicao": "Quanto da receita corrente líquida o Poder Executivo gasta com folha de pagamento e encargos, somando os últimos doze meses.",
+    "formula": "Despesa total com pessoal, em 12 meses, dividida pela RCL ajustada",
+    "leitura": "Quanto menor, maior a folga em relação ao limite. Ao passar de 90% do limite há alerta; a 95%, o limite prudencial impõe vedações, como a criação de cargos.",
+    "limite": "49% da RCL para o Poder Executivo",
+    "base": "Lei de Responsabilidade Fiscal, arts. 19, 20, 22 e 59",
+    "fonte": "Relatório de Gestão Fiscal, Anexo 1, via Siconfi",
+    "termos": [
+      {
+        "termo": "Receita corrente líquida (RCL)",
+        "texto": "O quanto o Estado arrecada de forma regular, descontadas as partes que, por lei, pertencem a outros entes, como os municípios. É a régua usada para medir gastos e dívida."
+      },
+      {
+        "termo": "Despesa com pessoal",
+        "texto": "Salários, aposentadorias, pensões e encargos de servidores do Poder Executivo, somados nos últimos doze meses."
+      }
+    ],
+    "porQueImporta": "A folha de pagamento é uma das maiores despesas do Estado. Mantê-la abaixo do limite preserva espaço no orçamento para investimentos e evita as vedações previstas na lei, como a criação de cargos."
+  },
+  "divida": {
+    "nome": "Dívida consolidada líquida",
+    "curto": "Dívida consolidada líquida",
+    "subtitulo": "Percentual da Receita Corrente Líquida (RCL) ajustada",
+    "definicao": "Dívida de longo prazo do Estado menos o dinheiro em caixa, as aplicações financeiras e os demais haveres financeiros.",
+    "formula": "Dívida consolidada menos as deduções (caixa e haveres financeiros), dividida pela RCL ajustada",
+    "leitura": "Quando o valor é negativo, o Estado tem mais ativos financeiros do que dívida. O limite não pode ser ultrapassado.",
+    "limite": "200% da RCL",
+    "base": "Resolução do Senado Federal nº 40/2001",
+    "fonte": "Relatório de Gestão Fiscal, Anexo 2, via Siconfi",
+    "termos": [
+      {
+        "termo": "Receita corrente líquida (RCL)",
+        "texto": "O quanto o Estado arrecada de forma regular, descontadas as partes que, por lei, pertencem a outros entes, como os municípios. É a régua usada para medir gastos e dívida."
+      },
+      {
+        "termo": "Haveres financeiros",
+        "texto": "Dinheiro em caixa, aplicações financeiras e outros valores que o Estado tem a receber e que podem ser usados para quitar dívidas."
+      }
+    ],
+    "porQueImporta": "Mostra se o Estado deve mais do que tem. Um valor baixo ou negativo indica folga financeira e maior capacidade de investir e de enfrentar imprevistos sem se endividar."
+  },
+  "garantias": {
+    "nome": "Garantias concedidas",
+    "curto": "Garantias concedidas",
+    "subtitulo": "Percentual da Receita Corrente Líquida (RCL) ajustada",
+    "definicao": "Valor das garantias que o Estado oferece a empréstimos de outras entidades e que teria de pagar caso o devedor não pague.",
+    "formula": "Saldo das garantias concedidas dividido pela RCL ajustada",
+    "leitura": "Quanto menor, menor o risco que o Estado assume por dívidas de terceiros.",
+    "limite": "22% da RCL",
+    "base": "Resolução do Senado Federal nº 43/2001",
+    "fonte": "Relatório de Gestão Fiscal, Anexo 3, via Siconfi",
+    "termos": [
+      {
+        "termo": "Receita corrente líquida (RCL)",
+        "texto": "O quanto o Estado arrecada de forma regular, descontadas as partes que, por lei, pertencem a outros entes, como os municípios. É a régua usada para medir gastos e dívida."
+      },
+      {
+        "termo": "Garantia",
+        "texto": "Compromisso do Estado de pagar a dívida de outra entidade caso ela não consiga pagar."
+      }
+    ],
+    "porQueImporta": "Uma garantia pode virar dívida do Estado se o devedor não pagar. Um valor baixo indica pouco risco assumido por obrigações de terceiros."
+  },
+  "credito": {
+    "nome": "Operações de crédito",
+    "curto": "Operações de crédito",
+    "subtitulo": "Percentual da Receita Corrente Líquida (RCL) ajustada, acumulado no exercício",
+    "definicao": "Valor dos empréstimos que o Estado contratou no exercício, somados desde janeiro.",
+    "formula": "Operações de crédito contratadas no exercício, divididas pela RCL ajustada",
+    "leitura": "O valor é acumulado no ano e volta a zero em janeiro, por isso a linha recomeça a cada ano.",
+    "limite": "16% da RCL",
+    "base": "Resolução do Senado Federal nº 43/2001",
+    "fonte": "Relatório de Gestão Fiscal, Anexo 4, via Siconfi",
+    "termos": [
+      {
+        "termo": "Receita corrente líquida (RCL)",
+        "texto": "O quanto o Estado arrecada de forma regular, descontadas as partes que, por lei, pertencem a outros entes, como os municípios. É a régua usada para medir gastos e dívida."
+      },
+      {
+        "termo": "Operação de crédito",
+        "texto": "Empréstimo ou financiamento contratado pelo Estado."
+      }
+    ],
+    "porQueImporta": "A lei limita quanto o Estado pode contratar de empréstimos a cada ano. Acompanhar o valor mostra se o Estado depende de crédito para financiar suas ações."
+  },
+  "endividamento": {
+    "nome": "Endividamento (CAPAG)",
+    "curto": "Endividamento",
+    "subtitulo": "CAPAG: percentual da Receita Corrente Líquida (RCL), por edição anual",
+    "definicao": "Peso da dívida consolidada em relação à receita corrente líquida. Mede o quanto do orçamento anual está comprometido com a dívida acumulada.",
+    "formula": "Dívida consolidada bruta dividida pela receita corrente líquida (RCL)",
+    "leitura": "Quanto menor, melhor. As linhas do gráfico marcam as faixas das notas: abaixo de 60% a nota do indicador é A; de 60% a menos de 100%, B; a partir de 100%, C.",
+    "limite": "Sem limite legal. Faixas das notas: A abaixo de 60%, B de 60% a menos de 100%, C a partir de 100%",
+    "base": "Portaria Normativa MF nº 1.583/2023, alterada pela Portaria MF nº 1.764/2024",
+    "fonte": "Tesouro Transparente, CAPAG dos Estados e do DF",
+    "termos": [
+      {
+        "termo": "Receita corrente líquida (RCL)",
+        "texto": "O quanto o Estado arrecada de forma regular, descontadas as partes que, por lei, pertencem a outros entes, como os municípios. É a régua usada para medir gastos e dívida."
+      },
+      {
+        "termo": "Dívida consolidada",
+        "texto": "Compromissos financeiros de longo prazo assumidos pelo Estado."
+      }
+    ],
+    "porQueImporta": "Indica quanto da receita anual seria necessário para quitar a dívida. É uma das medidas que compõem a nota da CAPAG, usada pelo Tesouro Nacional na avaliação de crédito dos estados."
+  },
+  "poupanca": {
+    "nome": "Poupança corrente (CAPAG)",
+    "curto": "Poupança corrente",
+    "subtitulo": "CAPAG: percentual das receitas correntes ajustadas, por edição anual",
+    "definicao": "Parcela da receita corrente que é consumida pela despesa corrente. Quanto menor, mais sobra para investir e amortizar dívida.",
+    "formula": "Despesa corrente dividida pela receita corrente ajustada, em média ponderada dos três últimos exercícios (pesos de 50%, 30% e 20%, do mais recente ao mais antigo)",
+    "leitura": "Quanto menor, melhor. As linhas do gráfico marcam as faixas das notas: abaixo de 85% a nota do indicador é A; de 85% a menos de 95%, B; a partir de 95%, C.",
+    "limite": "Sem limite legal. Faixas das notas: A abaixo de 85%, B de 85% a menos de 95%, C a partir de 95%",
+    "base": "Portaria Normativa MF nº 1.583/2023, alterada pela Portaria MF nº 1.764/2024",
+    "fonte": "Tesouro Transparente, CAPAG dos Estados e do DF",
+    "termos": [
+      {
+        "termo": "Receitas correntes",
+        "texto": "O que o Estado arrecada de forma regular, como impostos e transferências."
+      },
+      {
+        "termo": "Despesas correntes",
+        "texto": "O que o Estado gasta para manter os serviços funcionando, como folha de pagamento e custeio."
+      }
+    ],
+    "porQueImporta": "Mostra quanto sobra da receita depois de pagar as despesas de funcionamento. Quanto maior a sobra, maior a capacidade de investir com recursos próprios."
+  },
+  "liquidez": {
+    "nome": "Liquidez relativa (CAPAG)",
+    "curto": "Liquidez relativa",
+    "subtitulo": "CAPAG: percentual da receita corrente líquida, por edição anual",
+    "definicao": "Quanto sobra de caixa depois de pagar as obrigações financeiras, em relação à receita corrente líquida. Mede se o caixa cobre o que o Estado deve no curto prazo.",
+    "formula": "Disponibilidade de caixa bruta menos obrigações financeiras, dividida pela receita corrente líquida (RCL)",
+    "leitura": "Quanto maior, melhor, ao contrário dos outros dois indicadores. A linha do gráfico marca a faixa da nota A: a partir de 5% a nota do indicador é A; acima de zero e abaixo de 5%, B; zero ou menos, C.",
+    "limite": "Sem limite legal. Faixas das notas: A a partir de 5%, B acima de zero e abaixo de 5%, C zero ou negativo",
+    "base": "Portaria Normativa MF nº 1.583/2023, alterada pela Portaria MF nº 1.764/2024",
+    "fonte": "Tesouro Transparente, CAPAG dos Estados e do DF",
+    "termos": [
+      {
+        "termo": "Obrigações financeiras",
+        "texto": "Compromissos de pagamento que o Estado precisa honrar."
+      },
+      {
+        "termo": "Disponibilidade de caixa",
+        "texto": "Dinheiro que o Estado tem disponível para pagar essas obrigações."
+      }
+    ],
+    "porQueImporta": "Mostra se há caixa suficiente para pagar o que vence. É uma das medidas que compõem a nota da CAPAG."
+  },
+  "receita": {
+    "nome": "Receita realizada",
+    "curto": "Receita realizada",
+    "subtitulo": "R$ bilhões, acumulado no exercício, comparado com a previsão atualizada",
+    "definicao": "Total que o Estado efetivamente arrecadou no exercício, sem contar as receitas intraorçamentárias, que são repasses entre órgãos do próprio Estado. A referência é a previsão atualizada da receita na lei orçamentária.",
+    "formula": "Receitas (exceto intraorçamentárias) realizadas até o bimestre, conforme o Balanço Orçamentário do RREO",
+    "leitura": "Barra azul acima da barra cinza indica arrecadação maior que a prevista. No ano em curso o valor é parcial (até o bimestre mais recente) e a previsão é a do ano inteiro, então a barra ainda não alcançou a previsão.",
+    "porQueImporta": "A arrecadação sustenta as despesas do ano. Quando supera a previsão, abre folga para investimentos e para pagar compromissos; quando fica abaixo, exige contenção de despesas.",
+    "limite": "Sem limite legal. A referência é a previsão atualizada da receita",
+    "base": "Lei Complementar nº 101/2000 (LRF), art. 52, e Manual de Demonstrativos Fiscais da STN",
+    "fonte": "Siconfi, RREO do Poder Executivo, Anexo 01 (Balanço Orçamentário)",
+    "termos": [
+      {
+        "termo": "Previsão atualizada",
+        "texto": "Estimativa de arrecadação da lei orçamentária, já com as alterações feitas ao longo do ano."
+      },
+      {
+        "termo": "Receitas intraorçamentárias",
+        "texto": "Valores que um órgão do Estado repassa a outro. Ficam de fora para não contar duas vezes o mesmo dinheiro."
+      }
+    ]
+  },
+  "despesa": {
+    "nome": "Despesa liquidada",
+    "curto": "Despesa liquidada",
+    "subtitulo": "R$ bilhões, acumulado no exercício, comparado com a dotação atualizada",
+    "definicao": "Despesas cujo bem ou serviço já foi entregue e verificado (fase da liquidação), sem contar as despesas intraorçamentárias. A referência é a dotação atualizada, o valor que a lei autoriza gastar no ano.",
+    "formula": "Despesas (exceto intraorçamentárias) liquidadas até o bimestre, conforme o Balanço Orçamentário do RREO",
+    "leitura": "Quanto mais próxima da dotação, maior a execução do orçamento autorizado. A despesa não pode ultrapassar a dotação. No ano em curso o valor é parcial e a dotação é a do ano inteiro.",
+    "porQueImporta": "Mostra quanto do orçamento autorizado já virou serviço entregue. Uma execução muito baixa pode indicar atraso nas entregas; uma muito alta, pouca margem para imprevistos.",
+    "limite": "A despesa não pode exceder a dotação autorizada",
+    "base": "Constituição Federal, art. 167, II, e Lei nº 4.320/1964",
+    "fonte": "Siconfi, RREO do Poder Executivo, Anexo 01 (Balanço Orçamentário)",
+    "termos": [
+      {
+        "termo": "Dotação atualizada",
+        "texto": "Valor que a lei orçamentária, com suas alterações, autoriza gastar no ano."
+      },
+      {
+        "termo": "Liquidação",
+        "texto": "Fase da despesa em que se confirma que o bem foi entregue ou o serviço foi prestado, antes do pagamento."
+      }
+    ]
+  },
+  "investimentos": {
+    "nome": "Investimentos liquidados",
+    "curto": "Investimentos",
+    "subtitulo": "R$ bilhões, acumulado no exercício, comparado com a dotação atualizada",
+    "definicao": "Despesas com obras, equipamentos e outros bens duráveis que o Estado já recebeu e verificou no exercício. A referência é a dotação atualizada para investimentos.",
+    "formula": "Despesas de capital do grupo Investimentos, liquidadas até o bimestre, conforme o Balanço Orçamentário do RREO",
+    "leitura": "Compare a barra azul com a cinza: a distância mostra quanto do investimento autorizado ainda não foi entregue. No ano em curso o valor é parcial e a dotação é a do ano inteiro.",
+    "porQueImporta": "Investimento é o que fica para os próximos anos: obras, equipamentos e estruturas. Acompanhar sua execução mostra o ritmo de entrega do Estado.",
+    "limite": "Sem limite legal. A referência é a dotação atualizada de investimentos",
+    "base": "Lei nº 4.320/1964, art. 12, e Manual de Demonstrativos Fiscais da STN",
+    "fonte": "Siconfi, RREO do Poder Executivo, Anexo 01 (Balanço Orçamentário)",
+    "termos": [
+      {
+        "termo": "Despesas de capital",
+        "texto": "Gastos que aumentam o patrimônio público, como obras e compra de equipamentos, e a amortização da dívida."
+      },
+      {
+        "termo": "Dotação atualizada",
+        "texto": "Valor que a lei orçamentária, com suas alterações, autoriza gastar no ano."
+      }
+    ]
+  },
+  "rcl": {
+    "nome": "Receita corrente líquida",
+    "curto": "Receita corrente líquida",
+    "subtitulo": "R$ bilhões, soma dos últimos doze meses ao fim de cada ano",
+    "definicao": "Receita corrente do Estado (impostos, transferências e outras) descontadas as parcelas que, por lei, pertencem a outros entes e as demais deduções previstas na LRF. É a régua dos limites de gasto com pessoal e de endividamento.",
+    "formula": "Soma, nos últimos doze meses, das receitas correntes menos as deduções (RCL = I − II)",
+    "leitura": "Cada barra é a RCL dos doze meses encerrados no último bimestre do ano (em 2026, até agosto), em valores correntes, sem correção pela inflação.",
+    "porQueImporta": "Quanto maior a RCL, maior em reais o espaço dos limites de pessoal e de dívida. Ela é o denominador de vários indicadores deste painel.",
+    "limite": "Sem limite legal",
+    "base": "Lei Complementar nº 101/2000 (LRF), art. 2º, IV",
+    "fonte": "Siconfi, RREO do Poder Executivo, Anexo 03 (Receita Corrente Líquida)",
+    "termos": [
+      {
+        "termo": "Receitas correntes",
+        "texto": "O que o Estado arrecada de forma regular, como impostos e transferências."
+      },
+      {
+        "termo": "Deduções",
+        "texto": "Parcelas da receita que, por lei, pertencem a outros entes, como a parte dos municípios no ICMS."
+      }
+    ]
+  },
+  "educacao": {
+    "nome": "Despesa na função Educação",
+    "curto": "Educação",
+    "subtitulo": "R$ bilhões, acumulado no exercício, comparado com a dotação atualizada",
+    "definicao": "Gasto do Estado classificado na função Educação, que reúne o ensino infantil, fundamental, médio, profissional e superior e as ações de apoio e administração da área.",
+    "formula": "Despesas (exceto intraorçamentárias) liquidadas na função, até o bimestre, conforme o Anexo 02 do RREO",
+    "leitura": "A barra azul é a despesa liquidada no ano e a barra clara, a dotação atualizada da função, isto é, o que a lei autoriza gastar. No ano em curso o valor é parcial e a dotação é a do ano inteiro.",
+    "porQueImporta": "Mostra quanto o Estado aplica em educação e quanto do valor autorizado já foi executado no ano.",
+    "limite": "Sem limite legal neste demonstrativo. O mínimo constitucional de aplicação em educação é apurado em outro demonstrativo do RREO, que o painel não reproduz",
+    "base": "Constituição Federal, art. 212, e Portaria MOG nº 42/1999 (funções de governo)",
+    "fonte": "Siconfi, RREO do Poder Executivo, Anexo 02 (Despesas por Função e Subfunção)",
+    "termos": [
+      {
+        "termo": "Função de governo",
+        "texto": "Classificação das despesas por área de atuação do Estado, como saúde, educação e segurança, igual para União, estados e municípios."
+      },
+      {
+        "termo": "Dotação atualizada",
+        "texto": "Valor que a lei orçamentária, com suas alterações, autoriza gastar no ano."
+      }
+    ]
+  },
+  "saude": {
+    "nome": "Despesa na função Saúde",
+    "curto": "Saúde",
+    "subtitulo": "R$ bilhões, acumulado no exercício, comparado com a dotação atualizada",
+    "definicao": "Gasto do Estado classificado na função Saúde, como atenção básica, assistência hospitalar e ambulatorial, vigilância sanitária e epidemiológica e demais ações da área.",
+    "formula": "Despesas (exceto intraorçamentárias) liquidadas na função, até o bimestre, conforme o Anexo 02 do RREO",
+    "leitura": "A barra azul é a despesa liquidada no ano e a barra clara, a dotação atualizada da função, isto é, o que a lei autoriza gastar. No ano em curso o valor é parcial e a dotação é a do ano inteiro.",
+    "porQueImporta": "Mostra quanto o Estado aplica em saúde e quanto do valor autorizado já foi executado no ano.",
+    "limite": "Sem limite legal neste demonstrativo. O mínimo constitucional de aplicação em saúde é apurado em outro demonstrativo do RREO, que o painel não reproduz",
+    "base": "Constituição Federal, art. 198, Lei Complementar nº 141/2012 e Portaria MOG nº 42/1999 (funções de governo)",
+    "fonte": "Siconfi, RREO do Poder Executivo, Anexo 02 (Despesas por Função e Subfunção)",
+    "termos": [
+      {
+        "termo": "Função de governo",
+        "texto": "Classificação das despesas por área de atuação do Estado, como saúde, educação e segurança, igual para União, estados e municípios."
+      },
+      {
+        "termo": "Dotação atualizada",
+        "texto": "Valor que a lei orçamentária, com suas alterações, autoriza gastar no ano."
+      }
+    ]
+  },
+  "seguranca": {
+    "nome": "Despesa na função Segurança Pública",
+    "curto": "Segurança pública",
+    "subtitulo": "R$ bilhões, acumulado no exercício, comparado com a dotação atualizada",
+    "definicao": "Gasto do Estado classificado na função Segurança Pública, como policiamento, defesa civil e demais ações de segurança.",
+    "formula": "Despesas (exceto intraorçamentárias) liquidadas na função, até o bimestre, conforme o Anexo 02 do RREO",
+    "leitura": "A barra azul é a despesa liquidada no ano e a barra clara, a dotação atualizada da função, isto é, o que a lei autoriza gastar. No ano em curso o valor é parcial e a dotação é a do ano inteiro.",
+    "porQueImporta": "Mostra quanto o Estado aplica em segurança pública e quanto do valor autorizado já foi executado no ano.",
+    "limite": "Sem limite legal",
+    "base": "Constituição Federal, art. 144, e Portaria MOG nº 42/1999 (funções de governo)",
+    "fonte": "Siconfi, RREO do Poder Executivo, Anexo 02 (Despesas por Função e Subfunção)",
+    "termos": [
+      {
+        "termo": "Função de governo",
+        "texto": "Classificação das despesas por área de atuação do Estado, como saúde, educação e segurança, igual para União, estados e municípios."
+      },
+      {
+        "termo": "Dotação atualizada",
+        "texto": "Valor que a lei orçamentária, com suas alterações, autoriza gastar no ano."
+      }
+    ]
+  },
+  "transporte": {
+    "nome": "Despesa na função Transporte",
+    "curto": "Transporte",
+    "subtitulo": "R$ bilhões, acumulado no exercício, comparado com a dotação atualizada",
+    "definicao": "Gasto do Estado classificado na função Transporte, como construção e conservação de rodovias e demais ações de infraestrutura de transporte.",
+    "formula": "Despesas (exceto intraorçamentárias) liquidadas na função, até o bimestre, conforme o Anexo 02 do RREO",
+    "leitura": "A barra azul é a despesa liquidada no ano e a barra clara, a dotação atualizada da função, isto é, o que a lei autoriza gastar. No ano em curso o valor é parcial e a dotação é a do ano inteiro.",
+    "porQueImporta": "Mostra quanto o Estado aplica em infraestrutura de transporte, uma das áreas com mais investimento, e quanto do valor autorizado já foi executado.",
+    "limite": "Sem limite legal",
+    "base": "Portaria MOG nº 42/1999 (funções de governo)",
+    "fonte": "Siconfi, RREO do Poder Executivo, Anexo 02 (Despesas por Função e Subfunção)",
+    "termos": [
+      {
+        "termo": "Função de governo",
+        "texto": "Classificação das despesas por área de atuação do Estado, como saúde, educação e segurança, igual para União, estados e municípios."
+      },
+      {
+        "termo": "Dotação atualizada",
+        "texto": "Valor que a lei orçamentária, com suas alterações, autoriza gastar no ano."
+      }
+    ]
+  },
+  "funcao-previdencia": {
+    "nome": "Despesa na função Previdência Social",
+    "curto": "Previdência (função)",
+    "subtitulo": "R$ bilhões, acumulado no exercício, comparado com a dotação atualizada",
+    "definicao": "Gasto do Estado classificado na função Previdência Social, como o pagamento de aposentadorias e pensões de servidores.",
+    "formula": "Despesas (exceto intraorçamentárias) liquidadas na função, até o bimestre, conforme o Anexo 02 do RREO",
+    "leitura": "A barra azul é a despesa liquidada no ano e a barra clara, a dotação atualizada da função, isto é, o que a lei autoriza gastar. No ano em curso o valor é parcial e a dotação é a do ano inteiro.",
+    "porQueImporta": "Aposentadorias e pensões formam uma despesa obrigatória e crescente. Acompanhá-la mostra o peso da previdência dos servidores no orçamento.",
+    "limite": "Sem limite legal",
+    "base": "Constituição Federal, art. 40, e Portaria MOG nº 42/1999 (funções de governo)",
+    "fonte": "Siconfi, RREO do Poder Executivo, Anexo 02 (Despesas por Função e Subfunção)",
+    "termos": [
+      {
+        "termo": "Função de governo",
+        "texto": "Classificação das despesas por área de atuação do Estado, como saúde, educação e segurança, igual para União, estados e municípios."
+      },
+      {
+        "termo": "Dotação atualizada",
+        "texto": "Valor que a lei orçamentária, com suas alterações, autoriza gastar no ano."
+      }
+    ]
+  },
+  "encargos": {
+    "nome": "Despesa na função Encargos Especiais",
+    "curto": "Encargos especiais",
+    "subtitulo": "R$ bilhões, acumulado no exercício, comparado com a dotação atualizada",
+    "definicao": "Despesas que não geram um bem ou serviço no processo produtivo corrente, como o pagamento de dívidas, ressarcimentos e indenizações.",
+    "formula": "Despesas (exceto intraorçamentárias) liquidadas na função, até o bimestre, conforme o Anexo 02 do RREO",
+    "leitura": "A barra azul é a despesa liquidada no ano e a barra clara, a dotação atualizada da função, isto é, o que a lei autoriza gastar. No ano em curso o valor é parcial e a dotação é a do ano inteiro.",
+    "porQueImporta": "Mostra quanto do orçamento é destinado a compromissos que não entregam diretamente serviço à população, como o serviço da dívida.",
+    "limite": "Sem limite legal",
+    "base": "Portaria MOG nº 42/1999 (funções de governo)",
+    "fonte": "Siconfi, RREO do Poder Executivo, Anexo 02 (Despesas por Função e Subfunção)",
+    "termos": [
+      {
+        "termo": "Função de governo",
+        "texto": "Classificação das despesas por área de atuação do Estado, como saúde, educação e segurança, igual para União, estados e municípios."
+      },
+      {
+        "termo": "Dotação atualizada",
+        "texto": "Valor que a lei orçamentária, com suas alterações, autoriza gastar no ano."
+      }
+    ]
+  },
+  "aportes": {
+    "nome": "Aportes do Tesouro à previdência",
+    "curto": "Aportes do Tesouro",
+    "subtitulo": "R$ bilhões, acumulado no exercício",
+    "definicao": "Recursos que o Tesouro do Estado repassa ao fundo em repartição (plano financeiro) do regime próprio de previdência, para cobrir a diferença entre as contribuições recebidas e os benefícios pagos.",
+    "formula": "Aportes realizados para cobertura de insuficiências financeiras do plano financeiro, conforme o Anexo 04 do RREO",
+    "leitura": "Quanto maior o aporte, maior o peso da previdência dos servidores sobre o orçamento do Tesouro. No ano em curso o valor é parcial.",
+    "porQueImporta": "É a parte da previdência dos servidores paga com a receita de impostos do Estado. Mostra quanto do orçamento é comprometido com aposentadorias e pensões que as contribuições não cobrem.",
+    "limite": "Sem limite legal",
+    "base": "Lei Complementar nº 101/2000 (LRF), arts. 52 e 53, e Lei nº 9.717/1998",
+    "fonte": "Siconfi, RREO do Poder Executivo, Anexo 04 (Receitas e Despesas Previdenciárias do RPPS)",
+    "termos": [
+      {
+        "termo": "RPPS",
+        "texto": "Regime Próprio de Previdência Social: o regime de aposentadorias e pensões dos servidores efetivos do Estado."
+      },
+      {
+        "termo": "Fundo em repartição",
+        "texto": "Plano em que as contribuições de hoje pagam os benefícios de hoje. Quando não bastam, o Tesouro cobre a diferença."
+      }
+    ]
+  },
+  "capitalizacao": {
+    "nome": "Resultado do fundo em capitalização",
+    "curto": "Fundo em capitalização",
+    "subtitulo": "R$ bilhões, acumulado no exercício",
+    "definicao": "Diferença entre as receitas e as despesas previdenciárias do fundo em capitalização (plano previdenciário), em que as contribuições são acumuladas e aplicadas para pagar benefícios futuros.",
+    "formula": "Total das receitas do fundo em capitalização menos o total de suas despesas liquidadas, conforme o Anexo 04 do RREO",
+    "leitura": "Valor positivo indica que o fundo recebeu mais do que pagou no ano e acumula recursos. É o resultado do exercício, não o patrimônio acumulado. No ano em curso o valor é parcial.",
+    "porQueImporta": "Mostra a poupança que o regime forma, ano a ano, para pagar os benefícios dos servidores no futuro.",
+    "limite": "Sem limite legal",
+    "base": "Lei Complementar nº 101/2000 (LRF), arts. 52 e 53, e Lei nº 9.717/1998",
+    "fonte": "Siconfi, RREO do Poder Executivo, Anexo 04 (Receitas e Despesas Previdenciárias do RPPS)",
+    "termos": [
+      {
+        "termo": "RPPS",
+        "texto": "Regime Próprio de Previdência Social: o regime de aposentadorias e pensões dos servidores efetivos do Estado."
+      },
+      {
+        "termo": "Fundo em capitalização",
+        "texto": "Plano em que as contribuições são acumuladas e investidas, formando reservas para pagar benefícios futuros."
+      }
+    ]
+  },
+  "militares": {
+    "nome": "Resultado dos inativos e pensionistas militares",
+    "curto": "Militares inativos",
+    "subtitulo": "R$ bilhões, acumulado no exercício",
+    "definicao": "Diferença entre as contribuições dos militares e as despesas com inativos e pensionistas militares, que o Tesouro paga diretamente. Resultado negativo significa que o Tesouro cobre a diferença.",
+    "formula": "Contribuições dos militares menos as despesas liquidadas com inativos e pensionistas militares, conforme o Anexo 04 do RREO",
+    "leitura": "O valor é negativo quando as despesas superam as contribuições. O demonstrativo traz esta linha a partir de 2021. No ano em curso o valor é parcial.",
+    "porQueImporta": "Os militares não fazem parte do regime próprio dos servidores civis; a diferença entre o que contribuem e o que recebem fica a cargo do Tesouro. Mostra quanto isso pesa no orçamento.",
+    "limite": "Sem limite legal",
+    "base": "Lei Complementar nº 101/2000 (LRF), arts. 52 e 53, e Lei nº 9.717/1998",
+    "fonte": "Siconfi, RREO do Poder Executivo, Anexo 04 (Receitas e Despesas Previdenciárias do RPPS)",
+    "termos": [
+      {
+        "termo": "Inativos e pensionistas",
+        "texto": "Servidores aposentados e dependentes que recebem pensão."
+      }
+    ]
+  },
+  "caixa-apos": {
+    "nome": "Caixa líquido após os restos a pagar",
+    "curto": "Caixa líquido (após RP)",
+    "subtitulo": "R$ bilhões em 31 de dezembro, recursos livres do Poder Executivo",
+    "definicao": "O que sobra do caixa livre depois de pagar as obrigações já assumidas e de reservar o dinheiro das despesas empenhadas no ano cujo serviço ou obra ainda não foi entregue (restos a pagar não processados). É a medida mais conservadora do que resta de recursos livres para um novo governo.",
+    "formula": "Caixa bruto dos recursos não vinculados, menos as obrigações financeiras (restos a pagar de anos anteriores e do exercício e demais obrigações) e menos os restos a pagar empenhados e ainda não liquidados do exercício (item i do Anexo 5 do RGF)",
+    "leitura": "A barra azul é o caixa livre após os restos a pagar e a barra clara, o caixa antes deles: a diferença são as despesas do ano ainda por entregar e pagar. O valor só é apurado em dezembro. Ligue a correção pelo IPCA em Opções para comparar os anos em poder de compra.",
+    "porQueImporta": "Mostra quanto de recursos livres o Estado tem, de fato, depois de honrar o que já assumiu. A LRF veda ao titular de Poder ou órgão, nos dois últimos quadrimestres do mandato, assumir obrigação de despesa que não possa ser paga integralmente no mandato, ou cujas parcelas passem ao seguinte, sem disponibilidade de caixa suficiente.",
+    "limite": "Sem limite numérico. A LRF exige disponibilidade de caixa para as obrigações assumidas nos dois últimos quadrimestres do mandato (art. 42)",
+    "base": "Lei Complementar nº 101/2000 (LRF), arts. 42 e 55, III, e Manual de Demonstrativos Fiscais da STN (Anexo 5 do RGF)",
+    "fonte": "Siconfi, RGF do Poder Executivo, Anexo 5 (3º quadrimestre)",
+    "termos": [
+      {
+        "termo": "Recursos não vinculados",
+        "texto": "Também chamados de recursos livres: o dinheiro que não tem destinação legal específica e pode ser usado em qualquer despesa."
+      },
+      {
+        "termo": "Restos a pagar",
+        "texto": "Despesas empenhadas em um ano que ainda não foram pagas até 31 de dezembro e ficam para pagamento no ano seguinte."
+      },
+      {
+        "termo": "Empenho",
+        "texto": "Reserva de dinheiro do orçamento para uma despesa contratada."
+      }
+    ]
+  },
+  "caixa-antes": {
+    "nome": "Caixa líquido antes dos restos a pagar",
+    "curto": "Caixa líquido (antes dos RP)",
+    "subtitulo": "R$ bilhões em 31 de dezembro, recursos livres do Poder Executivo",
+    "definicao": "O que sobra do caixa bruto livre depois de pagar as obrigações financeiras já assumidas, isto é, as despesas cujo serviço ou bem já foi entregue e ainda não foram pagas, os restos a pagar de anos anteriores e outras obrigações financeiras.",
+    "formula": "Caixa bruto dos recursos não vinculados menos as obrigações financeiras (item g do Anexo 5 do RGF)",
+    "leitura": "A barra azul é o caixa livre líquido das obrigações e a barra clara, o caixa bruto: a diferença são as obrigações financeiras já assumidas. Ligue a correção pelo IPCA em Opções para comparar os anos em poder de compra.",
+    "porQueImporta": "Mostra o caixa livre que sobra das obrigações já vencidas ou em andamento, antes de considerar as despesas do ano ainda por entregar.",
+    "limite": "Sem limite numérico",
+    "base": "Lei Complementar nº 101/2000 (LRF), arts. 42 e 55, III, e Manual de Demonstrativos Fiscais da STN (Anexo 5 do RGF)",
+    "fonte": "Siconfi, RGF do Poder Executivo, Anexo 5 (3º quadrimestre)",
+    "termos": [
+      {
+        "termo": "Recursos não vinculados",
+        "texto": "Também chamados de recursos livres: o dinheiro que não tem destinação legal específica e pode ser usado em qualquer despesa."
+      },
+      {
+        "termo": "Restos a pagar",
+        "texto": "Despesas empenhadas em um ano que ainda não foram pagas até 31 de dezembro e ficam para pagamento no ano seguinte."
+      },
+      {
+        "termo": "Empenho",
+        "texto": "Reserva de dinheiro do orçamento para uma despesa contratada."
+      }
+    ]
+  },
+  "caixa-bruto": {
+    "nome": "Caixa bruto dos recursos livres",
+    "curto": "Caixa bruto",
+    "subtitulo": "R$ bilhões em 31 de dezembro, recursos livres do Poder Executivo",
+    "definicao": "Dinheiro disponível nos recursos livres, antes de descontar qualquer compromisso. O nome oficial é disponibilidade de caixa bruta do total dos recursos não vinculados.",
+    "formula": "Disponibilidade de caixa bruta do total dos recursos não vinculados (item a do Anexo 5 do RGF)",
+    "leitura": "Cada barra é o saldo em 31 de dezembro. Não desconta obrigação alguma, por isso deve ser lido junto com o caixa líquido. Ligue a correção pelo IPCA em Opções para comparar os anos em poder de compra.",
+    "porQueImporta": "É o ponto de partida do caixa livre. Sozinho não diz quanto o Estado pode gastar, porque ainda não desconta o que já deve.",
+    "limite": "Sem limite numérico",
+    "base": "Lei Complementar nº 101/2000 (LRF), arts. 42 e 55, III, e Manual de Demonstrativos Fiscais da STN (Anexo 5 do RGF)",
+    "fonte": "Siconfi, RGF do Poder Executivo, Anexo 5 (3º quadrimestre)",
+    "termos": [
+      {
+        "termo": "Recursos não vinculados",
+        "texto": "Também chamados de recursos livres: o dinheiro que não tem destinação legal específica e pode ser usado em qualquer despesa."
+      }
+    ]
+  },
+  "icms": {
+    "nome": "ICMS",
+    "curto": "ICMS",
+    "subtitulo": "R$ bilhões acumulados no ano, contra o mesmo período do ano anterior corrigido pelo IPCA",
+    "definicao": "Arrecadação do Imposto sobre Circulação de Mercadorias e Serviços pelo Estado, antes das transferências aos municípios e ao Fundeb.",
+    "formula": "Soma dos valores mensais da receita de ICMS informados no demonstrativo da receita corrente líquida (Anexo 3 do RREO), de janeiro até o mês indicado",
+    "leitura": "A barra azul é o acumulado do ano até cada mês e a barra clara, o acumulado do mesmo período do ano anterior, com cada mês corrigido pelo IPCA para os preços do mês correspondente do ano atual. Barra azul acima da clara indica crescimento acima da inflação.",
+    "porQueImporta": "O ICMS é a principal fonte de recursos do Estado. Comparar com o ano anterior já descontada a inflação mostra se a arrecadação cresce de fato ou apenas acompanha os preços.",
+    "limite": "Sem limite legal",
+    "base": "Constituição Federal, art. 155, II, e Lei Complementar nº 101/2000 (LRF), art. 53, §1º, I",
+    "fonte": "Siconfi, RREO do Poder Executivo, Anexo 3 (Receita Corrente Líquida); IPCA do Banco Central",
+    "termos": [
+      {
+        "termo": "Fundeb",
+        "texto": "Fundo de manutenção da educação básica, formado por parte da arrecadação de estados e municípios."
+      },
+      {
+        "termo": "IPCA",
+        "texto": "Índice oficial de inflação, usado aqui para trazer valores de meses diferentes ao mesmo poder de compra."
+      }
+    ]
+  },
+  "fpe": {
+    "nome": "Cota-parte do FPE",
+    "curto": "FPE",
+    "subtitulo": "R$ bilhões acumulados no ano, contra o mesmo período do ano anterior corrigido pelo IPCA",
+    "definicao": "Parcela do Fundo de Participação dos Estados que cabe ao Espírito Santo: transferência da União, formada por parte da arrecadação de impostos federais e distribuída entre os estados por critérios definidos em lei. Os valores são os de antes da dedução para o Fundeb.",
+    "formula": "Soma dos valores mensais da cota-parte do FPE informados no demonstrativo da receita corrente líquida (Anexo 3 do RREO), de janeiro até o mês indicado",
+    "leitura": "A barra azul é o acumulado do ano até cada mês e a barra clara, o acumulado do mesmo período do ano anterior, com cada mês corrigido pelo IPCA para os preços do mês correspondente do ano atual. Barra azul acima da clara indica crescimento acima da inflação.",
+    "porQueImporta": "O FPE é uma das maiores transferências que o Estado recebe da União. Como depende da arrecadação federal, mostra o quanto da receita vem de fora do Estado.",
+    "limite": "Sem limite legal",
+    "base": "Constituição Federal, art. 159, I, a, e Lei Complementar nº 62/1989",
+    "fonte": "Siconfi, RREO do Poder Executivo, Anexo 3 (Receita Corrente Líquida); IPCA do Banco Central",
+    "termos": [
+      {
+        "termo": "Fundeb",
+        "texto": "Fundo de manutenção da educação básica, formado por parte da arrecadação de estados e municípios."
+      },
+      {
+        "termo": "IPCA",
+        "texto": "Índice oficial de inflação, usado aqui para trazer valores de meses diferentes ao mesmo poder de compra."
+      }
+    ]
+  },
+  "royalties": {
+    "nome": "Royalties de petróleo e gás",
+    "curto": "Royalties",
+    "subtitulo": "R$ bilhões acumulados no ano, contra o mesmo período do ano anterior corrigido pelo IPCA",
+    "definicao": "Compensação financeira paga pelas empresas que produzem petróleo e gás natural, repassada pela ANP aos estados produtores, como o Espírito Santo. Não inclui a participação especial.",
+    "formula": "Soma dos valores mensais de royalties distribuídos pela ANP ao Espírito Santo, por mês de caixa, de janeiro até o mês indicado",
+    "leitura": "A barra azul é o acumulado do ano até cada mês e a barra clara, o acumulado do mesmo período do ano anterior, com cada mês corrigido pelo IPCA para os preços do mês correspondente do ano atual. Barra azul acima da clara indica crescimento acima da inflação. Os dados abertos da ANP são publicados com defasagem; por isso a série pode terminar antes das demais.",
+    "porQueImporta": "Os royalties dependem do preço do petróleo, do câmbio e da produção, e variam bastante de um ano para outro. Acompanhá-los ajuda a separar o que é receita estável do que é receita volátil.",
+    "limite": "Sem limite legal",
+    "base": "Lei nº 9.478/1997 e Lei nº 7.990/1989",
+    "fonte": "ANP, dados abertos de royalties por estado; IPCA do Banco Central",
+    "termos": [
+      {
+        "termo": "Mês de caixa",
+        "texto": "Mês em que o valor foi efetivamente repassado ao Estado, e não o mês da produção que o originou."
+      },
+      {
+        "termo": "IPCA",
+        "texto": "Índice oficial de inflação, usado aqui para trazer valores de meses diferentes ao mesmo poder de compra."
+      }
+    ]
+  },
+  "minimo-educacao": {
+    "nome": "Aplicação em educação (mínimo constitucional)",
+    "curto": "Mínimo em educação",
+    "subtitulo": "% da receita de impostos e transferências aplicado em manutenção e desenvolvimento do ensino",
+    "definicao": "Percentual da receita de impostos e das transferências que o Estado aplicou, no ano, em manutenção e desenvolvimento do ensino. A Constituição obriga os estados a aplicar no mínimo 25%.",
+    "formula": "Despesa aplicada em manutenção e desenvolvimento do ensino dividida pela receita líquida de impostos e transferências, conforme o demonstrativo do RREO do 6º bimestre",
+    "leitura": "Quanto maior, mais acima do mínimo. A linha vermelha marca os 25% exigidos; barras abaixo da linha significariam descumprimento. Cada barra é o resultado do ano inteiro.",
+    "porQueImporta": "É um dos dois pisos constitucionais de gasto social. Mostra se o Estado cumpre o mínimo de aplicação em educação e com que folga.",
+    "limite": "Mínimo de 25% da receita de impostos e transferências",
+    "base": "Constituição Federal, art. 212, e Lei nº 9.394/1996 (LDB), art. 72",
+    "fonte": "RREO do 6º bimestre publicado pela SEFAZ-ES (demonstrativo de manutenção e desenvolvimento do ensino, Anexo 8)",
+    "termos": [
+      {
+        "termo": "Manutenção e desenvolvimento do ensino",
+        "texto": "Despesas que a lei reconhece como gasto em educação para fins do mínimo constitucional, como pessoal da educação, material escolar e transporte escolar."
+      },
+      {
+        "termo": "Receita líquida de impostos e transferências",
+        "texto": "Arrecadação de impostos do Estado somada às transferências recebidas, descontadas as parcelas repassadas aos municípios."
+      }
+    ]
+  },
+  "minimo-saude": {
+    "nome": "Aplicação em saúde (mínimo constitucional)",
+    "curto": "Mínimo em saúde",
+    "subtitulo": "% da receita de impostos e transferências aplicado em ações e serviços públicos de saúde",
+    "definicao": "Percentual da receita de impostos e das transferências que o Estado aplicou, no ano, em ações e serviços públicos de saúde. A lei obriga os estados a aplicar no mínimo 12%.",
+    "formula": "Despesa aplicada em ações e serviços públicos de saúde dividida pela receita líquida de impostos e transferências, conforme o demonstrativo do RREO do 6º bimestre",
+    "leitura": "Quanto maior, mais acima do mínimo. A linha vermelha marca os 12% exigidos; barras abaixo da linha significariam descumprimento. Cada barra é o resultado do ano inteiro.",
+    "porQueImporta": "É um dos dois pisos constitucionais de gasto social. Mostra se o Estado cumpre o mínimo de aplicação em saúde e com que folga.",
+    "limite": "Mínimo de 12% da receita de impostos e transferências",
+    "base": "Constituição Federal, art. 198, §2º, II, e Lei Complementar nº 141/2012, art. 6º",
+    "fonte": "RREO do 6º bimestre publicado pela SEFAZ-ES (demonstrativo de ações e serviços públicos de saúde, Anexo 12)",
+    "termos": [
+      {
+        "termo": "Ações e serviços públicos de saúde (ASPS)",
+        "texto": "Despesas que a lei reconhece como gasto em saúde para fins do mínimo constitucional, como atenção básica, hospitais e vigilância sanitária."
+      },
+      {
+        "termo": "Receita líquida de impostos e transferências",
+        "texto": "Arrecadação de impostos do Estado somada às transferências recebidas, descontadas as parcelas repassadas aos municípios."
+      }
+    ]
+  }
+}

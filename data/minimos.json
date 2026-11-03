@@ -1,0 +1,48 @@
+{
+  "geradoEm": "2026-11-02T23:41:27+00:00",
+  "fonte": "RREO do 6º bimestre publicado pela SEFAZ-ES (percentuais apurados nos demonstrativos de ensino e de saúde)",
+  "serie": [
+    {
+      "ano": 2019,
+      "ensino": 27.8,
+      "saude": 17.17,
+      "fonte": "https://sefaz.es.gov.br/media/Tesouro%20Estadual/RREO/rreo-6o-b-2019.pdf"
+    },
+    {
+      "ano": 2020,
+      "ensino": 26.98,
+      "saude": 16.82,
+      "fonte": "https://sefaz.es.gov.br/media/Tesouro%20Estadual/RREO/rreo-6-bim.pdf"
+    },
+    {
+      "ano": 2021,
+      "ensino": 25.85,
+      "saude": 14.51,
+      "fonte": "https://sefaz.es.gov.br/media/Tesouro%20Estadual/RREO/RREO%206BIM%202021.pdf"
+    },
+    {
+      "ano": 2022,
+      "ensino": 25.76,
+      "saude": 15.66,
+      "fonte": "https://sefaz.es.gov.br/media/Tesouro%20Estadual/RREO/RREO%206bim%202022%201-1.pdf"
+    },
+    {
+      "ano": 2023,
+      "ensino": 25.61,
+      "saude": 17.19,
+      "fonte": "https://sefaz.es.gov.br/media/Tesouro%20Estadual/RREO%206bime%202023.pdf"
+    },
+    {
+      "ano": 2024,
+      "ensino": 25.72,
+      "saude": 15.43,
+      "fonte": "https://sefaz.es.gov.br/media/Tesouro%20Estadual/RREO/6%20bim%202024.pdf"
+    },
+    {
+      "ano": 2025,
+      "ensino": 25.28,
+      "saude": 16.46,
+      "fonte": "https://sefaz.es.gov.br/media/Tesouro%20Estadual/RREO/rreo-6b-2025.pdf"
+    }
+  ]
+}

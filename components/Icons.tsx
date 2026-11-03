@@ -14,6 +14,12 @@ const base = {
   focusable: false,
 }
 
+export const IconBank = (p: P) => (
+  <svg {...base} {...p}><path d="m3 9 9-5 9 5M5 9v9M9.5 9v9M14.5 9v9M19 9v9M3 20h18" /></svg>
+)
+export const IconPie = (p: P) => (
+  <svg {...base} {...p}><circle cx="12" cy="12" r="9" /><path d="M12 3v9h9" /></svg>
+)
 export const IconSearch = (p: P) => (
   <svg {...base} {...p}><circle cx="11" cy="11" r="7" /><path d="m20 20-3.5-3.5" /></svg>
 )
@@ -66,6 +72,16 @@ export const IconAccess = (p: P) => (
 )
 export const IconContrast = (p: P) => (
   <svg {...base} {...p}><circle cx="12" cy="12" r="8.5" /><path d="M12 3.5v17a8.5 8.5 0 0 0 0-17z" fill="currentColor" /></svg>
+)
+
+export const IconShield = (p: P) => (
+  <svg {...base} {...p}><path d="M12 3 5 6v5.5c0 4.4 2.9 7.7 7 9.5 4.1-1.8 7-5.1 7-9.5V6z" /><path d="m9 12 2.2 2.2L15.5 10" /></svg>
+)
+export const IconInfo = (p: P) => (
+  <svg {...base} {...p}><circle cx="12" cy="12" r="9" /><path d="M12 11v5.5M12 7.5h.01" strokeWidth={2.2} /></svg>
+)
+export const IconTarget = (p: P) => (
+  <svg {...base} {...p}><circle cx="12" cy="12" r="9" /><circle cx="12" cy="12" r="5" /><circle cx="12" cy="12" r="1.2" fill="currentColor" /></svg>
 )
 
 export const iconePorNome = {
