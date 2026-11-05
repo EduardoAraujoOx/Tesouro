@@ -67,7 +67,7 @@ export const transparencia = {
     'Neste portal, cidadãos, pesquisadores e gestores encontram indicadores fiscais, demonstrativos contábeis, informações sobre a dívida pública, transferências aos municípios e publicações técnicas.',
   ],
   links: [
-    { rotulo: 'Painel fiscal', href: '/indicadores' },
+    { rotulo: 'Indicadores fiscais', href: '/indicadores' },
     { rotulo: 'Relatórios e publicações', href: '/publicacoes' },
     { rotulo: 'Dívida pública', href: '/tesouro/relatorio-anual-da-divida-publica-e-do-progarma-de-ajuste-fiscal' },
     { rotulo: 'Prestação de contas', href: '/tesouro/prestacao-de-contas-do-governador' },

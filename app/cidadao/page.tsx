@@ -43,7 +43,7 @@ const glossario = [
   ['Dívida consolidada líquida (DCL)', 'Dívida de longo prazo menos o caixa e outros ativos financeiros. Quando é negativa, o Estado tem mais ativos financeiros do que dívida.'],
   ['Poupança corrente', 'Parcela da receita corrente que sobra depois de pagar as despesas correntes. É o que o Estado pode usar para investir sem se endividar.'],
   ['Resultado primário', 'Diferença entre as receitas e as despesas do Estado, sem contar os juros da dívida.'],
-  ['Siconfi', 'Sistema do Tesouro Nacional em que estados e municípios entregam seus relatórios contábeis e fiscais. É a fonte dos números do painel fiscal deste portal.'],
+  ['Siconfi', 'Sistema do Tesouro Nacional em que estados e municípios entregam seus relatórios contábeis e fiscais. É a fonte dos números dos indicadores deste portal.'],
 ] as const
 
 const outrasFerramentas = [
@@ -122,8 +122,8 @@ export default function Cidadao() {
             <li className="border-t-2 border-navy pt-4">
               <p className="text-small font-semibold text-navy">4. Compare no tempo e com outros estados</p>
               <h3 className="mt-1 text-title">Séries históricas e comparações</h3>
-              <p className="mt-2 text-body text-ink-soft">Um número isolado diz pouco. O painel fiscal mostra como cada indicador evoluiu desde 2019, e o Tesouro Nacional permite comparar o Espírito Santo com os demais estados.</p>
-              <p className="mt-3 flex flex-wrap gap-x-5 gap-y-1"><Link href="/indicadores" className={interno}>Explorar o painel fiscal</Link>{ext('https://contaspublicasbrasil.tesourotransparente.gov.br/', 'Contas Públicas do Brasil')}</p>
+              <p className="mt-2 text-body text-ink-soft">Um número isolado diz pouco. Os indicadores do portal mostram como cada indicador evoluiu desde 2019, e o Tesouro Nacional permite comparar o Espírito Santo com os demais estados.</p>
+              <p className="mt-3 flex flex-wrap gap-x-5 gap-y-1"><Link href="/indicadores" className={interno}>Explorar os indicadores</Link>{ext('https://contaspublicasbrasil.tesourotransparente.gov.br/', 'Contas Públicas do Brasil')}</p>
             </li>
           </ol>
         </section>
@@ -152,7 +152,7 @@ export default function Cidadao() {
           <div className="mt-6 max-w-4xl divide-y divide-line border-y border-line">
             {[
               ['Qual a diferença entre o RREO e o RGF?', <p key="a">O RREO mostra a execução do orçamento: o que foi arrecadado e gasto a cada dois meses. O RGF verifica a gestão fiscal: a cada quatro meses, informa se o Estado respeita os limites da lei para despesa com pessoal, dívida, garantias e operações de crédito.</p>],
-              ['Os números do portal são os oficiais?', <p key="b">Sim. Os limites da Lei de Responsabilidade Fiscal vêm do Relatório de Gestão Fiscal entregue ao Siconfi e a CAPAG vem do Tesouro Nacional. O portal não altera esses valores e informa a fonte de cada um. A explicação completa está na <Link href="/indicadores#metodo" className={interno}>metodologia do painel fiscal</Link>.</p>],
+              ['Os números do portal são os oficiais?', <p key="b">Sim. Os limites da Lei de Responsabilidade Fiscal vêm do Relatório de Gestão Fiscal entregue ao Siconfi e a CAPAG vem do Tesouro Nacional. O portal não altera esses valores e informa a fonte de cada um. A explicação completa está na <Link href="/indicadores#metodo" className={interno}>metodologia dos indicadores</Link>.</p>],
               ['Não achei a informação que procuro. O que faço?', <p key="c">Escreva pelo <Link href="/contato" className={interno}>Fale conosco</Link> e escolha a área do Tesouro que deve receber a mensagem. Pedidos formais de acesso à informação seguem pelo canal próprio da Lei de Acesso à Informação, no rodapé do portal.</p>],
             ].map(([q, r]) => (
               <details key={q as string} className="group py-1">

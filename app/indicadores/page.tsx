@@ -9,7 +9,7 @@ import {
 } from '@/lib/indicadores'
 
 export const metadata: Metadata = {
-  title: 'Painel fiscal',
+  title: 'Indicadores fiscais',
   description: 'Painel quantitativo com os indicadores fiscais oficiais do Espírito Santo: execução do orçamento, arrecadação, caixa, limites da Lei de Responsabilidade Fiscal e nota da CAPAG, em séries históricas atualizadas automaticamente.',
 }
 
@@ -60,10 +60,10 @@ export default function Indicadores() {
           <ol className="flex items-center gap-2">
             <li><Link href="/" className="underline underline-offset-4">Início</Link></li>
             <li aria-hidden="true">/</li>
-            <li aria-current="page">Painel fiscal</li>
+            <li aria-current="page">Indicadores</li>
           </ol>
         </nav>
-        <h1 id="titulo-pagina" className="text-headline !text-on-navy md:mt-2">Painel fiscal</h1>
+        <h1 id="titulo-pagina" className="text-headline !text-on-navy md:mt-2">Indicadores fiscais</h1>
         <p className="mt-1 hidden max-w-2xl text-body text-on-navy md:block">Acompanhe a execução do orçamento, a arrecadação, o caixa, os limites da Lei de Responsabilidade Fiscal (LRF) e a capacidade de pagamento do Estado, com dados oficiais atualizados automaticamente.</p>
       </div>
     </section>
