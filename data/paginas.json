@@ -1,5 +1,5 @@
 {
- "geradoEm": "2026-11-01T09:55:08+00:00",
+ "geradoEm": "2026-11-09T19:58:15+00:00",
  "fonte": "https://sefaz.es.gov.br",
  "paginas": [
   {
@@ -6999,6 +6999,15 @@
      "titulo": "Obrigações de Pequeno Valor (OPV) Não Dativos",
      "itens": [
       {
+       "titulo": "OPV- NÃO DATIVOS OUTUBRO 2026",
+       "descricao": "",
+       "atualizadoEm": "06/11/2026",
+       "tamanho": "789 KB",
+       "formato": "pdf",
+       "url": "https://sefaz.es.gov.br/media/Tesouro%20Estadual/OPV/opv-nao-dativos-outubro-2026.pdf",
+       "exibicao": "OPV- NÃO DATIVOS OUTUBRO 2026"
+      },
+      {
        "titulo": "OPV- NÃO DATIVOS SETEMBRO 2026",
        "descricao": "",
        "atualizadoEm": "07/10/2026",
@@ -7095,6 +7104,15 @@
      "tipo": "arquivos",
      "titulo": "Obrigações de Pequeno Valor (OPV) Dativos",
      "itens": [
+      {
+       "titulo": "OPV- DATIVOS OUTUBRO 2026",
+       "descricao": "",
+       "atualizadoEm": "06/11/2026",
+       "tamanho": "1 MB",
+       "formato": "pdf",
+       "url": "https://sefaz.es.gov.br/media/Tesouro%20Estadual/OPV/opv-dativos-outubro-2026.pdf",
+       "exibicao": "OPV- DATIVOS OUTUBRO 2026"
+      },
       {
        "titulo": "OPV- DATIVOS SETEMBRO 2026",
        "descricao": "",
