@@ -1,0 +1,26 @@
+{
+  "snapshot_date": "2026-11-12",
+  "generated_at": "2026-11-12T19:01:19.752266+00:00",
+  "sources": {
+    "execution_csv": "https://dados.es.gov.br/dataset/99e16b13-0e6f-4504-8544-00de842ab1fd/resource/240f70ca-c810-442b-bade-bb0ea3280880/download/orcamentosexecucoes-2026.csv",
+    "order_resource_id": "8bff110c-0f80-4eff-bc79-503a752bf923",
+    "ckan_datastore": "https://dados.es.gov.br/api/3/action/datastore_search"
+  },
+  "payment_lag_quality": {
+    "raw_order_rows": 226968,
+    "deduplicated_order_rows": 113481,
+    "duplicate_rate": 0.50001322,
+    "missing_data_emissao_ob_after_dedup": 0,
+    "dedupe_key": [
+      "CodigoUg",
+      "CodigoNL",
+      "CodigoOB",
+      "ValorOB"
+    ]
+  },
+  "notes": [
+    "As bases brutas permanecem no Portal de Dados Abertos e não são versionadas.",
+    "O escopo poder_executivo_aproximado é heurístico e deve ser validado antes de uso oficial.",
+    "A base de ordem cronológica descreve pagamentos com OB; não mede diretamente a idade das liquidações ainda não pagas."
+  ]
+}
