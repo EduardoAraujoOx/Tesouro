@@ -64,3 +64,55 @@ export function ColunasMeses({ anterior, corrente, rotuloAnterior, rotuloCorrent
     </div>
   )
 }
+
+export type ColunaAnual = {
+  rotulo: string
+  /** valor da barra, em R$ */
+  v: number
+  /** 'real' = realizado; 'estim' = estimativa ou projeção (barra clara tracejada); 'ploa' = proposta de 2027 (azul-marinho) */
+  tipo: 'real' | 'estim' | 'ploa'
+  /** faixa de incerteza da projeção (R$) */
+  faixa?: [number, number]
+  /** traço de referência (R$) com o seu nome */
+  marca?: { v: number; rotulo: string }
+}
+
+/** Colunas por ano: valor em bilhões em cima, variação sobre a coluna anterior embaixo. Faixa e traço de referência opcionais. */
+export function ColunasAnuais({ colunas, descricao }: { colunas: ColunaAnual[]; descricao: string }) {
+  const max = Math.max(...colunas.flatMap((c) => [c.v, c.faixa?.[1] ?? 0, c.marca?.v ?? 0]))
+  const topo = max * 1.08
+  const h = (x: number) => `${(x / topo) * 100}%`
+  const bi = (x: number) => numero(x / 1e9, 1)
+  return (
+    <div role="img" aria-label={descricao}>
+      <div className="flex gap-1.5 sm:gap-4">
+        {colunas.map((c, k) => {
+          const ant = k > 0 ? colunas[k - 1].v : null
+          const d = ant ? (c.v / ant - 1) * 100 : null
+          return (
+            <div key={c.rotulo} className="flex min-w-0 flex-1 flex-col items-center">
+              <div className="relative h-52 w-full">
+                <div className="absolute inset-x-0 bottom-0 mx-auto w-full max-w-[4.5rem]" style={{ height: h(c.v) }}>
+                  <span className="absolute inset-x-0 -top-5 text-center text-small font-semibold tabular-nums text-ink">{bi(c.v)}</span>
+                  <span className="block h-full w-full" style={{
+                    background: c.tipo === 'ploa' ? COR.ploa : c.tipo === 'real' ? COR.empenhado : COR.atualizada,
+                    outline: c.tipo === 'estim' ? `1.5px dashed ${COR.contornoAtualizada}` : undefined, outlineOffset: -1.5,
+                    borderRadius: '4px 4px 0 0',
+                  }} />
+                </div>
+                {c.faixa && (
+                  <span aria-hidden="true" className="absolute left-1/2 w-0.5 -translate-x-1/2 bg-ink" style={{ bottom: h(c.faixa[0]), height: `calc(${h(c.faixa[1])} - ${h(c.faixa[0])})` }} />
+                )}
+                {c.marca && (
+                  <span aria-hidden="true" title={`${c.marca.rotulo}: ${bi(c.marca.v)} bi`} className="absolute inset-x-0 mx-auto flex max-w-[4.5rem] items-center border-t-2 border-serie2" style={{ bottom: h(c.marca.v) }} />
+                )}
+              </div>
+              <span className="mt-1.5 w-full border-t border-line pt-1 text-center text-label font-semibold normal-case leading-tight tracking-normal text-ink sm:text-small">{c.rotulo}</span>
+              <span className={`text-label normal-case tracking-normal tabular-nums ${d === null ? 'text-transparent' : 'text-ink-soft'}`}>{d === null ? '–' : fmtPct(d)}</span>
+            </div>
+          )
+        })}
+      </div>
+    </div>
+  )
+}

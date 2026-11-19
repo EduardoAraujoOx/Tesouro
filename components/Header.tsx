@@ -70,13 +70,12 @@ export function Header() {
   if (pathname.startsWith('/painel')) {
     return (
       <header className="border-b border-line bg-paper print:hidden">
-        <div className="mx-auto flex max-w-[1600px] items-center justify-between gap-4 px-4 py-2.5 sm:px-5 md:px-8 md:py-3">
-          <Link href="/painel" className="block">
-            <span className="block text-lead font-semibold leading-tight text-navy md:text-title">{IDENTIDADE.nome}</span>
-            <span className="block text-small text-ink-soft">{IDENTIDADE.apoio}</span>
-            <span className="accent-bar" aria-hidden="true" />
+        <div className="mx-auto flex max-w-[1600px] items-baseline justify-between gap-4 px-4 py-2.5 sm:px-5 md:px-8 md:py-3">
+          <Link href="/painel" className="flex flex-wrap items-baseline gap-x-3 gap-y-0">
+            <span className="text-lead font-semibold leading-tight text-navy">{IDENTIDADE.nome}</span>
+            <span className="text-label normal-case tracking-normal text-ink-soft">{IDENTIDADE.apoio}</span>
           </Link>
-          <span className="hidden text-right text-body font-semibold text-ink md:block">{IDENTIDADE.painel}</span>
+          <span className="hidden text-small font-semibold text-ink md:block">{IDENTIDADE.painel}</span>
         </div>
       </header>
     )

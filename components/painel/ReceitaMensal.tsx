@@ -7,30 +7,12 @@ import { Cartao, COR, Legenda, TabelaDelta, TabelaItens } from './Graficos'
 import { ColunasMeses, fmtPct, type ItemSerie } from './GraficosMacro'
 import { Faixa } from './Faixa'
 import { titulo, type Linha } from './dados'
+import { porMes, soma, type DadosReceita } from './projecao'
 
-/** Linhas do arquivo de receita: [mes, alinea, fonte, bruta, deducao, liquida_tipo] (R$). */
-export type DadosReceita = {
-  anos: Record<string, { fechado: boolean; linhas: (string | number)[][] }>
-  nomes: { alinea: Record<string, string>; fonte: Record<string, string> }
-  coletado_em: string
-}
+export type { DadosReceita }
 
 const MESES = ['jan', 'fev', 'mar', 'abr', 'mai', 'jun', 'jul', 'ago', 'set', 'out', 'nov', 'dez']
 const NOMES_MES = ['janeiro', 'fevereiro', 'março', 'abril', 'maio', 'junho', 'julho', 'agosto', 'setembro', 'outubro', 'novembro', 'dezembro']
-
-/** Soma por mês (1 a 12) de uma coluna do arquivo (3 = bruta, 4 = dedução), filtrando pelo prefixo da alínea. */
-function porMes(linhas: (string | number)[][], col: 3 | 4 | 'liq', prefixos?: string[], exclui?: string[]): number[] {
-  const m = Array(12).fill(0)
-  for (const l of linhas) {
-    const alinea = String(l[1])
-    if (prefixos && !prefixos.some((p) => alinea.startsWith(p))) continue
-    if (exclui && exclui.some((p) => alinea.startsWith(p))) continue
-    const v = col === 'liq' ? Number(l[3]) + Number(l[4]) : Number(l[col])
-    m[Number(l[0]) - 1] += v
-  }
-  return m
-}
-const soma = (v: number[], ate = 12) => v.slice(0, ate).reduce((s, x) => s + x, 0)
 
 export function ReceitaMensal({ dados, macro, ipca }: { dados: DadosReceita; macro: LinhaMacro[]; ipca: Record<string, number> }) {
   const R = useMemo(() => Object.fromEntries(macro.map((x) => [x.chave, x.valores])) as Record<string, number[]>, [macro])
