@@ -6,7 +6,7 @@ import type { LinhaMacro } from '@/lib/macro'
 import { Cartao, Legenda, COR, TabelaItens } from './Graficos'
 import { ColunasAnuais, fmtPct, variacoes, type ColunaAnual } from './GraficosMacro'
 import { Faixa } from './Faixa'
-import { fatorPrecos, ipcaAnual, projetaReceita2026, type DadosReceita } from './projecao'
+import { fatorPrecos, ipcaAnual, projecaoItens, projetaReceita2026, type DadosReceita, type ItemProjetado } from './projecao'
 
 type Vista = 'receita' | 'despesa' | 'resultado'
 const VISTAS: { id: Vista; rotulo: string }[] = [
@@ -25,7 +25,8 @@ const dMi = (x: number) => `${sinal(x)}${milhoes(Math.abs(x), 0)}`
 /** crescimento médio anual composto entre duas colunas distantes `n` anos */
 const aa = (de: number, para: number, n: number) => (de > 0 && para > 0 ? (Math.pow(para / de, 1 / n) - 1) * 100 : undefined)
 
-type Linha = { chave: string; rotulo: string; nivel: number; negrito?: boolean; v: number[]; destaca?: boolean }
+type Linha = { chave: string; rotulo: string; nivel: number; negrito?: boolean; v: number[]; proj?: ItemProjetado }
+const MESES_NOME = ['janeiro', 'fevereiro', 'março', 'abril', 'maio', 'junho', 'julho', 'agosto', 'setembro', 'outubro', 'novembro', 'dezembro']
 
 export function VisaoGeral({ receita, despesa, ipca: ipcaParams, fonteIpca, dados }: {
   receita: LinhaMacro[]; despesa: LinhaMacro[]; ipca: Record<string, number>; fonteIpca: string; dados: DadosReceita
@@ -37,6 +38,7 @@ export function VisaoGeral({ receita, despesa, ipca: ipcaParams, fonteIpca, dado
   const ipca = useMemo(() => ipcaAnual(Object.fromEntries(Object.entries(ipcaParams).map(([a, v]) => [a, v]))), [ipcaParams])
   const i27 = ipca[2027]
   const proj = useMemo(() => projetaReceita2026(dados), [dados])
+  const itensProj = useMemo(() => projecaoItens(dados), [dados])
   const pick = (m: Record<string, number[]>, ...ch: string[]) => COL.map((c) => ch.reduce((s, k) => s + m[k][c], 0))
   const soma = (...a: number[][]) => COL.map((_, j) => a.reduce((s, x) => s + x[j], 0))
 
@@ -76,14 +78,17 @@ export function VisaoGeral({ receita, despesa, ipca: ipcaParams, fonteIpca, dado
     { chave: 'res', rotulo: 'Reservas (RPPS e contingência)', nivel: 0, v: pick(D, 'reserva_rpps', 'reserva_contingencia') },
     { chave: 'tot', rotulo: '= Despesa total', nivel: 0, negrito: true, v: pick(D, 'total') },
   ]
-  const lista = vista === 'receita' ? linhasReceita : linhasDespesa
+  const lista = vista === 'receita' ? linhasReceita.map((l) => ({ ...l, proj: itensProj[l.chave] })) : linhasDespesa
   const total = lista[lista.length - 1]
-  const dTotal = variacoes(total.v[3], total.v[4], i27).nominal as number
+  const comProj = vista === 'receita'
+  /* base de 2026 para medir o quanto 2027 se afasta: no ritmo (projeção) quando há, no provável da PLOA nos demais casos */
+  const base26 = (l: Linha) => (comProj && l.proj ? l.proj.central : l.v[3])
+  const dTotal = variacoes(base26(total), total.v[4], i27).nominal as number
   /* o que destoa: variação 2027 sobre o provável de 2026 ao menos 5 pontos percentuais distante da do total, em item de pelo menos R$ 100 milhões de variação */
   const destoa = (l: Linha) => {
     if (l === total || l.negrito) return 0
-    const d = variacoes(l.v[3], l.v[4], i27).nominal
-    const valor = Math.abs(l.v[4] - l.v[3])
+    const d = variacoes(base26(l), l.v[4], i27).nominal
+    const valor = Math.abs(l.v[4] - base26(l))
     if (d === undefined || d === null || valor < 1e8) return 0
     return d - dTotal >= 5 ? 1 : dTotal - d >= 5 ? -1 : 0
   }
@@ -106,6 +111,7 @@ export function VisaoGeral({ receita, despesa, ipca: ipcaParams, fonteIpca, dado
     return { ...c, v: c.v * f, faixa: c.faixa && ([c.faixa[0] * f, c.faixa[1] * f] as [number, number]), marca: c.marca && { ...c.marca, v: c.marca.v * f } }
   })
   const proj26 = colunasBrutas[3].v
+  const nomeCorte = MESES_NOME[proj.meses - 1]
 
   /* ---------- faixa de números ---------- */
   const v27 = serieTotal[5]
@@ -121,9 +127,9 @@ export function VisaoGeral({ receita, despesa, ipca: ipcaParams, fonteIpca, dado
   let faixa: { r: string; v: string; s?: string; destaque?: boolean }[]
   if (vista === 'receita') {
     faixa = [
-      { r: 'Projeção de fechamento de 2026', v: bilhoes(proj.central), s: `faixa ${numero(proj.min / 1e9, 1)} a ${numero(proj.max / 1e9, 1)} bi; PLOA prevê ${bilhoes(R.total[4])}`, destaque: true },
+      { r: 'Projeção de fechamento de 2026', v: bilhoes(proj.central), s: `faixa ${numero(proj.min / 1e9, 1)} a ${numero(proj.max / 1e9, 1)} bi; a PLOA estima ${bilhoes(R.total[4])}`, destaque: true },
       { r: 'PLOA 2027 sobre a projeção de 2026', v: fmtPct(sobreProj.nominal), s: `real ${fmtPct(sobreProj.real)}; receita de ${bilhoes(v27)}` },
-      { r: 'Acumulado de 2026 até o mês fechado', v: bilhoes(proj.acumulado), s: `${fmtPct((proj.acumulado / proj.acumulado25 - 1) * 100)} sobre o mesmo período de 2025` },
+      { r: `Arrecadado de janeiro a ${nomeCorte} de 2026`, v: bilhoes(proj.acumulado), s: `${fmtPct((proj.acumulado / proj.acumulado25 - 1) * 100)} sobre o mesmo período de 2025` },
       { r: 'Ritmo de crescimento ao ano', v: `${fmtPct(ritmo2)}`, s: `2025 a 2027; de 2023 a 2025 foi ${fmtPct(ritmo1)}` },
     ]
   } else if (vista === 'despesa') {
@@ -151,9 +157,14 @@ export function VisaoGeral({ receita, despesa, ipca: ipcaParams, fonteIpca, dado
   const colunasTabela = [
     { rotulo: 'R$ milhões', valor: celulaLinha },
     { rotulo: 'Destaque', valor: (l: Linha) => { const d = destoa(l); return d === 0 ? '' : <span title={d > 0 ? 'Cresce bem mais que o total' : 'Cresce bem menos que o total'} className={d > 0 ? 'text-serie3' : 'text-serie2'}>{d > 0 ? '▲' : '▼'}<span className="sr-only">{d > 0 ? ' cresce bem mais que o total' : ' cresce bem menos que o total'}</span></span> } },
-    ...ANOS.map((a, j) => ({ rotulo: a, valor: (l: Linha) => <span className={l.negrito || j === 4 ? 'font-semibold' : ''}>{mi(l.v[j])}</span> })),
-    { rotulo: 'Δ% 27/26', valor: (l: Linha) => fmtPct(variacoes(l.v[3], l.v[4], i27).nominal) },
-    { rotulo: 'Real', valor: (l: Linha) => fmtPct(variacoes(l.v[3], l.v[4], i27).real) },
+    ...ANOS.flatMap((a, j) => {
+      const col = { rotulo: a, valor: (l: Linha) => <span className={l.negrito || j === 4 ? 'font-semibold' : ''}>{mi(l.v[j])}</span> }
+      return j === 3 && comProj
+        ? [col, { rotulo: `Proj. 26`, valor: (l: Linha) => (l.proj ? <span title={l.proj.base === 'resíduo' ? 'Resultado: receita líquida projetada menos a soma das linhas' : l.proj.base === '2025' ? 'Sazonalidade só de 2025' : undefined}>{mi(l.proj.central)}{l.proj.base === '2025' ? '*' : ''}</span> : '–') }]
+        : [col]
+    }),
+    { rotulo: comProj ? 'Δ% 27/proj.' : 'Δ% 27/26', valor: (l: Linha) => fmtPct(variacoes(base26(l), l.v[4], i27).nominal) },
+    { rotulo: 'Real', valor: (l: Linha) => fmtPct(variacoes(base26(l), l.v[4], i27).real) },
     { rotulo: 'a.a. 23–25', valor: (l: Linha) => fmtPct(aa(l.v[0], l.v[2], 2)) },
     { rotulo: 'a.a. 25–27', valor: (l: Linha) => fmtPct(aa(l.v[2], l.v[4], 2)) },
   ]
@@ -212,7 +223,7 @@ export function VisaoGeral({ receita, despesa, ipca: ipcaParams, fonteIpca, dado
           <Cartao titulo={vista === 'receita' ? 'Receita por grupo: o que o orçamento de 2027 supõe' : 'Despesa por grupo: o que o orçamento de 2027 supõe'}>
             <TabelaItens altura="livre" itens={itensTabela} colunas={colunasTabela} legenda={`${vista === 'receita' ? 'Receita' : 'Despesa'} por grupo, em R$ milhões`} />
             <p className="mt-2 text-label normal-case tracking-normal text-ink-soft">
-              Δ% e Real: 2027 sobre o provável de 2026. a.a.: crescimento médio anual composto. ▲ ▼ marcam itens cuja variação difere em 5 pontos percentuais ou mais da do total (e de ao menos R$ 100 milhões), para indicar onde olhar primeiro.
+              {comProj ? 'Proj. 26: fechamento projetado pelo ritmo de arrecadação (ver o método abaixo); Δ% e Real: 2027 sobre essa projeção. * só há mês a mês de 2025 para essa linha. ' : 'Δ% e Real: 2027 sobre o provável de 2026. '}a.a.: crescimento médio anual composto. ▲ ▼ marcam itens cuja variação difere em 5 pontos percentuais ou mais da do total (e de ao menos R$ 100 milhões), para indicar onde olhar primeiro.
             </p>
           </Cartao>
 
@@ -220,9 +231,9 @@ export function VisaoGeral({ receita, despesa, ipca: ipcaParams, fonteIpca, dado
             <details className="rounded-brand border border-line bg-paper p-3 text-small sm:p-4 print:hidden">
               <summary className="cursor-pointer font-semibold text-ink">Como projetamos o fechamento de 2026</summary>
               <div className="mt-2 max-w-3xl space-y-2 text-ink-soft">
-                <p>A receita líquida de 2026 acumulada até o mês fechado ({bilhoes(proj.acumulado)}) é dividida pela fração que esses mesmos meses representaram na arrecadação de 2025 ({numero(proj.participacao * 100, 1)}%), o que dá {bilhoes(proj.central)}. A hipótese é que a sazonalidade de 2026 repete a de 2025.</p>
-                <p>Para testar essa hipótese, a faixa de {numero(proj.min / 1e9, 1)} a {numero(proj.max / 1e9, 1)} bi refaz a conta com a sazonalidade do ICMS (principal tributo) de cada ano de 2022 a 2025: até o mês {proj.mesesIcms}, o ICMS representou {proj.sazonalidadeIcms.map((s) => `${numero(s.participacao * 100, 1)}% em ${s.ano}`).join(', ')} do total do ano.</p>
-                <p>Não entram na projeção receitas extraordinárias, operações de crédito ainda não contratadas nem mudanças de alíquota. A estimativa deve ser lida como ordem de grandeza para comparar com a PLOA, e não como previsão oficial.</p>
+                <p>Para cada tipo de receita, o acumulado líquido de 2026 até {nomeCorte} é dividido pela fração que o mesmo período representou, em média, na arrecadação do ano inteiro em 2022–2025 (Siconfi, RREO). Para a receita total, {bilhoes(proj.acumulado)} ÷ {numero(proj.participacao * 100, 1)}% = {bilhoes(proj.central)}. Só entra arrecadação realizada: não se usa orçamento nem previsão de nenhum ano.</p>
+                <p>A faixa de {numero(proj.min / 1e9, 1)} a {numero(proj.max / 1e9, 1)} bi usa a menor e a maior participação desses quatro anos ({proj.sazonalidade.map((s) => `${numero(s.participacao * 100, 1)}% em ${s.ano}`).join('; ')}). Para o ICMS a participação é mês a mês; para IPVA, IRRF e ITCD só há o ano de 2025.</p>
+                <p>A projeção supõe que o resto do ano se comporta como nos anos anteriores: não inclui receita extraordinária nem operação de crédito que ainda não entrou, e linhas que oscilam muito de um ano para o outro (marcadas na tabela de ritmo, na aba Receita) devem ser lidas com cautela. É uma ordem de grandeza independente da PLOA, não uma previsão oficial.</p>
               </div>
             </details>
           )}
