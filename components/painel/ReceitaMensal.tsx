@@ -104,13 +104,13 @@ export function ReceitaMensal({ dados, macro, ipca }: { dados: DadosReceita; mac
         ]}
         nota={`Líquida = arrecadação bruta menos deduções. Projeção: arrecadação até ${NOMES_MES[ultimo - 1]} dividida pela participação desses meses em 2025.`}
       />
-      <div className="mt-3 grid gap-3 lg:grid-cols-12">
-        <Cartao className="lg:col-span-12" titulo="Receita líquida por mês: 2026 e 2025"
+      <div className="mt-3 grid grid-cols-1 gap-3 2xl:grid-cols-12">
+        <Cartao className="2xl:col-span-12" titulo="Receita líquida por mês: 2026 e 2025"
           legenda={<Legenda itens={[{ cor: COR.atualizada, contorno: COR.contornoAtualizada, rotulo: '2025' }, { cor: COR.ploa, rotulo: `2026 (até ${NOMES_MES[ultimo - 1]})` }]} />}
           grafico={<ColunasMeses anterior={liq25} corrente={mesesCom26} rotuloAnterior="2025" rotuloCorrente="2026" />}
           tabela={<TabelaItens itens={MESES.map((m, i) => ({ chave: m, mes: m, a: liq25[i], c: mesesCom26[i] }))} legenda="Receita líquida por mês, em R$ milhões"
             colunas={[{ rotulo: 'Mês', valor: (x) => x.mes }, { rotulo: '2025', valor: (x) => milhoes(x.a) }, { rotulo: '2026', valor: (x) => (x.c === null ? '–' : milhoes(x.c)) }, { rotulo: 'Δ%', valor: (x) => (x.c !== null && x.a ? fmtPct((x.c / x.a - 1) * 100) : '–') }]} />} />
-        <Cartao className="lg:col-span-12" titulo="Perfil mensal proposto para 2027 (ensaio das metas de arrecadação)"
+        <Cartao className="2xl:col-span-12" titulo="Perfil mensal proposto para 2027 (ensaio das metas de arrecadação)"
           grafico={<TabelaItens itens={itensPerfil} colunas={colsPerfil} legenda="Perfil mensal proposto da receita de 2027, em R$ milhões" />} />
       </div>
       <p className="mt-3 text-small text-ink-soft">

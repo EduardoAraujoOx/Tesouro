@@ -107,18 +107,20 @@ export function VisaoGeral({ receita, despesa, ipca, fonteIpca }: Omit<Props, 'm
         ]}
         nota={`Real: deflacionado pelo IPCA 2027 de ${numero(i27 * 100, 2)}% (Focus). R$ milhões nas tabelas e barras.`}
       />
-      <div className="mt-3 grid gap-3 lg:grid-cols-12">
-        <Cartao className="lg:col-span-7" titulo="Receita líquida e despesa: 2023 a 2027"
+      <div className="par-impressao mt-3 grid grid-cols-1 gap-3 xl:grid-cols-12">
+        <Cartao className="xl:col-span-7" titulo="Receita líquida e despesa: 2023 a 2027"
           legenda={<Legenda itens={[{ cor: COR.ploa, rotulo: 'Receita (líquida das deduções)' }, { cor: COR.empenhado, rotulo: 'Despesa' }]} />}
           grafico={<ColunasReceitaDespesa grupos={grupos} />}
           tabela={<TabelaItens itens={grupos.map((g) => ({ chave: g.rotulo, ...g }))} legenda="Receita e despesa por ano, em R$ milhões"
             colunas={[{ rotulo: 'Ano', valor: (g) => g.rotulo }, { rotulo: 'Receita', valor: (g) => milhoes(g.receita) }, { rotulo: 'Despesa', valor: (g) => milhoes(g.despesa) }, { rotulo: 'Resultado', valor: (g) => dMi(g.receita - g.despesa) }]} />} />
-        <Cartao className="lg:col-span-5" titulo="Resultado orçamentário"
+        <Cartao className="xl:col-span-5" titulo="Resultado orçamentário"
           grafico={<ResultadoTabela linhas={linhasRes} />} />
-        <Cartao className="lg:col-span-7" titulo="Receita por origem" legenda={<Legenda itens={LEG3} />}
+      </div>
+      <div className="mt-3 grid grid-cols-1 gap-3 2xl:grid-cols-12">
+        <Cartao className="2xl:col-span-7" titulo="Receita por origem" legenda={<Legenda itens={LEG3} />}
           grafico={<BarrasSeries itens={itensR} series={SERIES3} base={1} alvo={2} ipca={i27} rotuloBase="Prov. 26" rotuloAlvo="2027" />}
           tabela={<TabelaItens itens={itensR} colunas={colsSerie('Origem')} legenda="Receita por origem, em R$ milhões" />} />
-        <Cartao className="lg:col-span-5" titulo="Despesa por grupo" legenda={<Legenda itens={LEG3.map((l) => (l.rotulo === '2027' ? { ...l, rotulo: 'Proposta 2027' } : l.rotulo === 'Provável 2026' ? { ...l, rotulo: 'Execução provável 2026' } : l))} />}
+        <Cartao className="2xl:col-span-5" titulo="Despesa por grupo" legenda={<Legenda itens={LEG3.map((l) => (l.rotulo === '2027' ? { ...l, rotulo: 'Proposta 2027' } : l.rotulo === 'Provável 2026' ? { ...l, rotulo: 'Execução provável 2026' } : l))} />}
           grafico={<BarrasSeries itens={itensD} series={SERIES3} base={1} alvo={2} ipca={i27} rotuloBase="Prov. 26" rotuloAlvo="2027" />}
           tabela={<TabelaItens itens={itensD} colunas={colsSerie('Grupo')} legenda="Despesa por grupo, em R$ milhões" />} />
       </div>
@@ -129,17 +131,17 @@ export function VisaoGeral({ receita, despesa, ipca, fonteIpca }: Omit<Props, 'm
 
 function ResultadoTabela({ linhas }: { linhas: { chave: string; rotulo: string; v: number[] }[] }) {
   return (
-    <div tabIndex={0} role="region" aria-label="Resultado orçamentário, em R$ milhões" className="overflow-x-auto rounded-brand border border-line">
+    <div tabIndex={0} role="region" aria-label="Resultado orçamentário, em R$ milhões" className="rola overflow-x-auto rounded-brand border border-line">
       <table className="w-full text-left text-small">
         <caption className="sr-only">Resultado orçamentário em R$ milhões: 2025, provável 2026 e 2027</caption>
-        <thead className="bg-surface"><tr><th scope="col" className="px-3 py-2">R$ milhões</th><th scope="col" className="px-3 py-2 text-right">2025</th><th scope="col" className="px-3 py-2 text-right">Prov. 2026</th><th scope="col" className="px-3 py-2 text-right">2027</th></tr></thead>
+        <thead className="bg-surface"><tr><th scope="col" className="sticky left-0 bg-surface px-3 py-2">R$ milhões</th><th scope="col" className="px-2 py-2 text-right sm:px-3">2025</th><th scope="col" className="px-2 py-2 text-right sm:px-3">Prov. 26</th><th scope="col" className="px-2 py-2 text-right sm:px-3">2027</th></tr></thead>
         <tbody>
           {linhas.map((l) => {
             const total = l.rotulo.startsWith('=')
             return (
               <tr key={l.chave} className={`border-t border-line ${total ? 'bg-surface font-semibold' : ''}`}>
-                <th scope="row" className="px-3 py-1.5 font-normal">{l.rotulo}</th>
-                {l.v.map((x, j) => <td key={j} className="px-3 py-1.5 text-right tabular-nums">{milhoes(x === 0 ? 0 : x)}</td>)}
+                <th scope="row" className={`sticky left-0 z-[1] min-w-[6.5rem] whitespace-normal px-3 py-1.5 shadow-[1px_0_0_rgb(var(--line))] ${total ? 'bg-surface font-semibold' : 'bg-paper font-normal'}`}>{l.rotulo}</th>
+                {l.v.map((x, j) => <td key={j} className="whitespace-nowrap px-2 py-1.5 text-right tabular-nums sm:px-3">{milhoes(x === 0 ? 0 : x)}</td>)}
               </tr>
             )
           })}
@@ -194,7 +196,7 @@ export function Receita({ receita, ipca, mensal }: Omit<Props, 'despesa' | 'font
   const maxC = Math.max(...cenarios.map((c) => c.v))
 
   // quadro oficial da receita, completo
-  const itensQuadro = receita.map((l) => ({ chave: l.chave, rotulo: `${'   '.repeat(l.nivel)}${l.rotulo}`, v: l.valores }))
+  const itensQuadro = receita.map((l) => ({ chave: l.chave, rotulo: l.rotulo, nivel: l.nivel, v: l.valores }))
   const varQ = (v: number[]) => variacoes(v[4], v[5], i27)
 
   return (
@@ -207,8 +209,8 @@ export function Receita({ receita, ipca, mensal }: Omit<Props, 'despesa' | 'font
         ]}
         nota="Projeção simples: ICMS de 2025 vezes a variação acumulada de 2026 no mesmo período."
       />
-      <div className="mt-3 grid gap-3 lg:grid-cols-12">
-        <Cartao className="lg:col-span-7" titulo={`Arrecadação mensal: ${NOMES[qual]}`}
+      <div className="mt-3 grid grid-cols-1 gap-3 2xl:grid-cols-12">
+        <Cartao className="2xl:col-span-7" titulo={`Arrecadação mensal: ${NOMES[qual]}`}
           direita={
             <div role="group" aria-label="Série" className="inline-flex overflow-hidden rounded-brand border border-line text-small">
               {(['icms', 'fpe', 'royalties'] as const).map((k) => (
@@ -220,7 +222,7 @@ export function Receita({ receita, ipca, mensal }: Omit<Props, 'despesa' | 'font
           grafico={<ColunasMeses anterior={info.a} corrente={info.c} rotuloAnterior={String(info.ant)} rotuloCorrente={String(info.corr)} />}
           tabela={<TabelaItens itens={mesNome.map((m, i) => ({ chave: m, mes: m, a: info.a[i], c: info.c[i] }))} legenda={`${NOMES[qual]} por mês, em R$ milhões`}
             colunas={[{ rotulo: 'Mês', valor: (x) => x.mes }, { rotulo: String(info.ant), valor: (x) => (x.a === null ? '–' : milhoes(x.a)) }, { rotulo: String(info.corr), valor: (x) => (x.c === null ? '–' : milhoes(x.c)) }, { rotulo: 'Δ%', valor: (x) => (x.a && x.c !== null ? fmtPct((x.c / x.a - 1) * 100) : '–') }]} />} />
-        <Cartao className="lg:col-span-5" titulo="ICMS: do realizado de 2026 à estimativa de 2027"
+        <Cartao className="2xl:col-span-5" titulo="ICMS: do realizado de 2026 à estimativa de 2027"
           grafico={
             <ul className="space-y-3 pt-1">
               {cenarios.map((c) => (
@@ -233,9 +235,9 @@ export function Receita({ receita, ipca, mensal }: Omit<Props, 'despesa' | 'font
             </ul>
           }
           tabela={<TabelaItens itens={cenarios.map((c) => ({ chave: c.rotulo, ...c }))} legenda="ICMS por cenário, em R$ milhões" colunas={[{ rotulo: 'Cenário', valor: (x) => x.rotulo }, { rotulo: 'R$ mi', valor: (x) => milhoes(x.v) }, { rotulo: 'Δ% prov.', valor: (x) => fmtPct((x.v / cenarios[1].v - 1) * 100) }]} />} />
-        <Cartao className="lg:col-span-12" titulo="Evolução da receita: quadro oficial da PLOA"
+        <Cartao className="2xl:col-span-12" titulo="Evolução da receita: quadro oficial da PLOA"
           grafico={<TabelaItens itens={itensQuadro} legenda="Evolução da receita, em R$ milhões" colunas={[
-            { rotulo: 'R$ milhões', valor: (x) => x.rotulo },
+            { rotulo: 'R$ milhões', valor: (x) => <span className={x.nivel === 0 ? 'font-semibold' : ''} style={{ paddingLeft: `${x.nivel * 0.75}rem` }}>{x.rotulo}</span> },
             ...(['2023', '2024', '2025', 'Orç. 2026', 'Prov. 2026', '2027'] as const).map((r, j) => ({ rotulo: r, valor: (x: (typeof itensQuadro)[number]) => milhoes(x.v[j], 0) })),
             { rotulo: 'Δ% 27/26', valor: (x) => fmtPct(varQ(x.v).nominal) },
             { rotulo: 'Real', valor: (x) => fmtPct(varQ(x.v).real) },
