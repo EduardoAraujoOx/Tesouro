@@ -5,6 +5,7 @@ import { bilhoes, milhoes, numero } from '@/lib/formato'
 import type { LinhaMacro } from '@/lib/macro'
 import { Cartao, COR, Legenda, TabelaDelta, TabelaItens } from './Graficos'
 import { ColunasMeses, fmtPct, variacoes, type ItemSerie } from './GraficosMacro'
+import { COD_RECEITA } from './codigos'
 import { Faixa } from './Faixa'
 
 type Mensal = Record<'icms' | 'fpe' | 'royalties', Record<string, number>>
@@ -99,7 +100,7 @@ export function Receita({ receita, ipca, mensal }: Omit<Props, 'despesa' | 'font
         </Cartao>
         <Cartao titulo="Evolução da receita: quadro oficial da PLOA"
           grafico={<TabelaItens itens={itensQuadro} legenda="Evolução da receita, em R$ milhões" colunas={[
-            { rotulo: 'R$ milhões', valor: (x) => <span className={x.nivel === 0 ? 'font-semibold' : ''} style={{ paddingLeft: `${x.nivel * 0.75}rem` }}>{x.rotulo}</span> },
+            { rotulo: 'R$ milhões · natureza', valor: (x) => <span className={x.nivel === 0 ? 'font-semibold' : ''} style={{ paddingLeft: `${x.nivel * 0.75}rem` }}>{COD_RECEITA[x.chave] && <span className="block text-label normal-case tracking-normal tabular-nums text-ink-soft md:mr-1.5 md:inline-block md:min-w-[6.5rem] md:text-small">{COD_RECEITA[x.chave]}</span>}{x.rotulo}</span> },
             ...(['2023', '2024', '2025', 'Orç. 2026', 'Prov. 2026', '2027'] as const).map((r, j) => ({ rotulo: r, valor: (x: (typeof itensQuadro)[number]) => milhoes(x.v[j], 0) })),
             { rotulo: 'Δ% 27/26', valor: (x) => fmtPct(varQ(x.v).nominal) },
             { rotulo: 'Real', valor: (x) => fmtPct(varQ(x.v).real) },

@@ -8,6 +8,7 @@ import { fmtPct } from './GraficosMacro'
 import { Faixa } from './Faixa'
 import { Receita } from './Macro'
 import { VisaoGeral } from './Agregado'
+import { Metodo } from './Metodo'
 import { CoberturaFontes, ReceitaMensal, type DadosReceita } from './ReceitaMensal'
 import type { LinhaMacro } from '@/lib/macro'
 import { ATU, EMP, INI, PLOA, agrupa, execucaoPct, titulo, total, variacaoPct, type Item, type Linha, type Soma } from './dados'
@@ -15,13 +16,14 @@ import { ATU, EMP, INI, PLOA, agrupa, execucaoPct, titulo, total, variacaoPct, t
 type Nomes = { uo: Record<string, string>; programa: Record<string, string>; acao: Record<string, string>; gnd: Record<string, string>; fonte: Record<string, string> }
 type Escopo = 'executivo' | 'outros' | 'todos'
 type Alerta = 'abaixo' | 'novas' | 'extintas'
-type Aba = 'visao' | 'receita' | 'despesa' | 'fontes' | 'atencao'
+type Aba = 'visao' | 'receita' | 'despesa' | 'fontes' | 'atencao' | 'metodo'
 const ABAS: { id: Aba; rotulo: string; nota: string }[] = [
   { id: 'visao', rotulo: 'Visão geral', nota: 'Receita, despesa e resultado: a proposta de 2027 contra a história e a projeção de 2026' },
   { id: 'receita', rotulo: 'Receita', nota: 'Arrecadação de 2026, perfil mensal proposto para 2027 e quadro oficial detalhado' },
   { id: 'despesa', rotulo: 'Despesa', nota: 'PLOA 2027 contra a dotação e o empenho de 2026, por unidade orçamentária' },
   { id: 'fontes', rotulo: 'Fontes e grupos', nota: 'Grupos de despesa, fontes de recursos e cobertura da despesa pela receita' },
   { id: 'atencao', rotulo: 'Atenção', nota: 'Ações que merecem leitura cuidadosa antes da programação do exercício' },
+  { id: 'metodo', rotulo: 'Método e fontes', nota: 'Se as fontes batem entre si, como a receita de 2026 é projetada e quão boa é a projeção' },
 ]
 
 const cap = titulo
@@ -233,7 +235,8 @@ export function Painel({ linhas, nomes, coleta, outrosPoderes, macro, receitaMes
       </div>
 
       <div role="tabpanel" id={`painel-${aba}`} aria-labelledby={`aba-${aba}`} className="mt-4">
-        {aba === 'visao' && <VisaoGeral receita={macro.receita} despesa={macro.despesa} ipca={macro.ipca} fonteIpca={macro.fonteIpca} dados={receitaMes} />}
+        {aba === 'visao' && <VisaoGeral receita={macro.receita} despesa={macro.despesa} ipca={macro.ipca} fonteIpca={macro.fonteIpca} dados={receitaMes} irParaMetodo={() => { escolheAba('metodo'); window.scrollTo({ top: 0 }) }} />}
+        {aba === 'metodo' && <Metodo receita={macro.receita} dados={receitaMes} />}
         {aba === 'receita' && (
           <>
             <ReceitaMensal dados={receitaMes} macro={macro.receita} ipca={macro.ipca} />

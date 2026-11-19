@@ -6,6 +6,7 @@ import type { LinhaMacro } from '@/lib/macro'
 import { Cartao, Legenda, COR, TabelaItens } from './Graficos'
 import { ColunasAnuais, fmtPct, variacoes, type ColunaAnual } from './GraficosMacro'
 import { Faixa } from './Faixa'
+import { COD_DESPESA, COD_GRUPO } from './codigos'
 import { fatorPrecos, ipcaAnual, projecaoItens, projetaReceita2026, type DadosReceita, type ItemProjetado } from './projecao'
 
 type Vista = 'receita' | 'despesa' | 'resultado'
@@ -28,8 +29,8 @@ const aa = (de: number, para: number, n: number) => (de > 0 && para > 0 ? (Math.
 type Linha = { chave: string; rotulo: string; nivel: number; negrito?: boolean; v: number[]; proj?: ItemProjetado }
 const MESES_NOME = ['janeiro', 'fevereiro', 'março', 'abril', 'maio', 'junho', 'julho', 'agosto', 'setembro', 'outubro', 'novembro', 'dezembro']
 
-export function VisaoGeral({ receita, despesa, ipca: ipcaParams, fonteIpca, dados }: {
-  receita: LinhaMacro[]; despesa: LinhaMacro[]; ipca: Record<string, number>; fonteIpca: string; dados: DadosReceita
+export function VisaoGeral({ receita, despesa, ipca: ipcaParams, fonteIpca, dados, irParaMetodo }: {
+  receita: LinhaMacro[]; despesa: LinhaMacro[]; ipca: Record<string, number>; fonteIpca: string; dados: DadosReceita; irParaMetodo: () => void
 }) {
   const [vista, setVista] = useState<Vista>('receita')
   const [base, setBase] = useState<'nominal' | 'real'>('nominal')
@@ -150,12 +151,15 @@ export function VisaoGeral({ receita, despesa, ipca: ipcaParams, fonteIpca, dado
   }
 
   /* ---------- tabelas ---------- */
+  const codigoDe = (l: Linha) => (vista === 'receita' ? COD_GRUPO[l.chave] : vista === 'despesa' ? COD_DESPESA[l.chave] : '') ?? ''
   const celulaLinha = (l: Linha): ReactNode => (
-    <span className={l.negrito ? 'font-semibold' : l.nivel ? 'text-ink-soft' : ''} style={{ paddingLeft: `${l.nivel * 0.9}rem` }}>{l.rotulo}</span>
+    <span className={l.negrito ? 'font-semibold' : l.nivel ? 'text-ink-soft' : ''} style={{ paddingLeft: `${l.nivel * 0.9}rem` }}>
+      {codigoDe(l) && <span className="block text-label normal-case tracking-normal tabular-nums text-ink-soft md:mr-1.5 md:inline-block md:min-w-[6.5rem] md:text-small">{codigoDe(l)}</span>}{l.rotulo}
+    </span>
   )
   const itensTabela = lista.map((l) => ({ ...l, chave: l.chave }))
   const colunasTabela = [
-    { rotulo: 'R$ milhões', valor: celulaLinha },
+    { rotulo: vista === 'receita' ? 'R$ milhões · natureza' : 'R$ milhões · GND', valor: celulaLinha },
     { rotulo: 'Destaque', valor: (l: Linha) => { const d = destoa(l); return d === 0 ? '' : <span title={d > 0 ? 'Cresce bem mais que o total' : 'Cresce bem menos que o total'} className={d > 0 ? 'text-serie3' : 'text-serie2'}>{d > 0 ? '▲' : '▼'}<span className="sr-only">{d > 0 ? ' cresce bem mais que o total' : ' cresce bem menos que o total'}</span></span> } },
     ...ANOS.flatMap((a, j) => {
       const col = { rotulo: a, valor: (l: Linha) => <span className={l.negrito || j === 4 ? 'font-semibold' : ''}>{mi(l.v[j])}</span> }
@@ -228,14 +232,9 @@ export function VisaoGeral({ receita, despesa, ipca: ipcaParams, fonteIpca, dado
           </Cartao>
 
           {vista === 'receita' && (
-            <details className="rounded-brand border border-line bg-paper p-3 text-small sm:p-4 print:hidden">
-              <summary className="cursor-pointer font-semibold text-ink">Como projetamos o fechamento de 2026</summary>
-              <div className="mt-2 max-w-3xl space-y-2 text-ink-soft">
-                <p>Para cada tipo de receita, o acumulado líquido de 2026 até {nomeCorte} é dividido pela fração que o mesmo período representou, em média, na arrecadação do ano inteiro em 2022–2025 (Siconfi, RREO). Para a receita total, {bilhoes(proj.acumulado)} ÷ {numero(proj.participacao * 100, 1)}% = {bilhoes(proj.central)}. Só entra arrecadação realizada: não se usa orçamento nem previsão de nenhum ano.</p>
-                <p>A faixa de {numero(proj.min / 1e9, 1)} a {numero(proj.max / 1e9, 1)} bi usa a menor e a maior participação desses quatro anos ({proj.sazonalidade.map((s) => `${numero(s.participacao * 100, 1)}% em ${s.ano}`).join('; ')}). Para o ICMS a participação é mês a mês; para IPVA, IRRF e ITCD só há o ano de 2025.</p>
-                <p>A projeção supõe que o resto do ano se comporta como nos anos anteriores: não inclui receita extraordinária nem operação de crédito que ainda não entrou, e linhas que oscilam muito de um ano para o outro (marcadas na tabela de ritmo, na aba Receita) devem ser lidas com cautela. É uma ordem de grandeza independente da PLOA, não uma previsão oficial.</p>
-              </div>
-            </details>
+            <p className="text-small text-ink-soft print:hidden">
+              A projeção de 2026 usa o ritmo de arrecadação de cada tipo de receita. <button type="button" onClick={irParaMetodo} className="font-semibold text-navy underline underline-offset-4">Como é feita, quão boa é e se as fontes batem</button>.
+            </p>
           )}
         </div>
       )}
