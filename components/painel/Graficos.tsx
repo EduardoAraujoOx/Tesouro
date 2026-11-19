@@ -35,7 +35,7 @@ export const LEGENDA_PARES = [
 
 /** Cartão de painel com alternância entre gráfico e tabela (a tabela é a leitura exata e acessível do mesmo dado). */
 export function Cartao({ titulo, legenda, grafico, tabela, direita, className = '' }: {
-  titulo: string; legenda?: ReactNode; grafico: ReactNode; tabela: ReactNode; direita?: ReactNode; className?: string
+  titulo: string; legenda?: ReactNode; grafico: ReactNode; tabela?: ReactNode; direita?: ReactNode; className?: string
 }) {
   const [vista, setVista] = useState<'grafico' | 'tabela'>('grafico')
   return (
@@ -44,16 +44,16 @@ export function Cartao({ titulo, legenda, grafico, tabela, direita, className = 
         <h2 className="text-lead font-semibold">{titulo}</h2>
         <div className="flex items-center gap-2">
           {direita}
-          <div role="group" aria-label={`Forma de ver: ${titulo}`} className="inline-flex overflow-hidden rounded-brand border border-line text-small">
+          {tabela !== undefined && <div role="group" aria-label={`Forma de ver: ${titulo}`} className="inline-flex overflow-hidden rounded-brand border border-line text-small print:hidden">
             {([['grafico', 'Gráfico'], ['tabela', 'Tabela']] as const).map(([v, r]) => (
               <button key={v} type="button" aria-pressed={vista === v} onClick={() => setVista(v)}
                 className={`px-3 py-1 ${vista === v ? 'bg-navy font-semibold text-on-navy' : 'bg-paper text-ink'}`}>{r}</button>
             ))}
-          </div>
+          </div>}
         </div>
       </div>
       {legenda && vista === 'grafico' && <div className="mt-2">{legenda}</div>}
-      <div className="mt-3">{vista === 'grafico' ? grafico : tabela}</div>
+      <div className="mt-3">{vista === 'grafico' || tabela === undefined ? grafico : tabela}</div>
     </section>
   )
 }
@@ -116,7 +116,7 @@ export function BarrasPares({ itens, onEscolhe }: { itens: Item[]; onEscolhe?: (
                 onMouseMove={(e) => posiciona(k, e.clientX, e.clientY)}
                 onFocus={(e) => { const r = e.currentTarget.getBoundingClientRect(); posiciona(k, r.left + 40, r.top) }}
                 onBlur={() => setD(null)}
-                aria-label={`${i.rotulo}: PLOA 2027 ${milhoes(v[PLOA])} milhões; atualizada 2026 ${milhoes(v[ATU])}; empenhado 2026 ${milhoes(v[EMP])}`}
+                aria-label={onEscolhe ? undefined : `${i.rotulo}: PLOA 2027 ${milhoes(v[PLOA])} milhões; atualizada 2026 ${milhoes(v[ATU])}; empenhado 2026 ${milhoes(v[EMP])}`}
                 className={`grid items-center gap-x-3 gap-y-1 py-2 md:grid-cols-[auto_1fr_4.5rem_4.5rem_4rem] ${onEscolhe ? 'cursor-pointer hover:bg-surface' : ''}`}
               >
                 <div className="min-w-0 md:w-60">

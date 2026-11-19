@@ -1,0 +1,6 @@
+{
+  "ipca": { "2026": 0.0502, "2027": 0.0422 },
+  "pib_real": { "2026": 0.0198, "2027": 0.0152 },
+  "fonte": "Focus (BCB), mediana, conforme o painel macro do diagnóstico fiscal do painel-es (branch diagnostico-fiscal, out/2026). Parâmetro editável: atualizar quando o Focus mudar.",
+  "usado_em": "Variação real = (1 + variação nominal) / (1 + IPCA do ano) - 1, com o IPCA do ano de destino da comparação."
+}

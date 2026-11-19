@@ -33,3 +33,16 @@ Quando uma leitura de OCR erra um dígito (por exemplo 3 por 5 ou 8 por 3), a co
 - Em 251 das 1.366 linhas o GND ou a fonte foi atribuído pelo Resumo geral da unidade, e não lido diretamente. A soma por unidade, GND e fonte é exata, mas a distribuição entre linhas de mesmo valor dentro da unidade pode estar trocada.
 - Função e subfunção não são lidas do PDF (a leitura por OCR dessas duas colunas coincide com 2026 em apenas 82% dos casos): vêm da base de 2026 e ficam em branco nas 18 chaves novas.
 - Ao trocar a PLOA pela LOA, repetir o procedimento com o novo documento; os conferes pelas somas impressas continuam valendo.
+
+## Quadros macro (visão geral e receita do painel)
+
+`scripts/ploa/macro_ploa.py ARQUIVO.pdf` lê dois quadros oficiais da Mensagem nº 189/2026 e grava `data/ploa2027-macro.json`:
+
+- **Evolução da Receita** (p. 97): arrecadação de 2023 a 2025, orçamento de 2026, **arrecadação provável de 2026** e estimativa de 2027, por origem (ICMS, IPVA, IRRF, ITCD, taxas, transferências, receitas de capital e deduções);
+- **Evolução da Despesa** (p. 130): execução de 2023 a 2025, orçamento de 2026, **execução provável de 2026** e proposta de 2027, por grupo (pessoal, juros, outras correntes, investimentos, inversões, amortização e reservas).
+
+Cada coluna só é aceita se fechar as equações do próprio quadro (por exemplo, receitas correntes igual à soma das origens, impostos igual a IRRF mais IPVA mais ITCD mais ICMS, e total igual a correntes mais capital menos deduções), com tolerância de R$ 2 para o arredondamento do documento. Além disso, o orçamento de 2026 tem de ser igual à dotação inicial de 2026 (R$ 32.030.806.668) e o total de 2027 igual ao total geral da PLOA (R$ 35.426.564.064). Um erro de leitura do OCR que as equações revelam é corrigido pela leitura alternativa ou pela troca de um dígito por confusão visual conhecida, e só se a equação passar a fechar.
+
+`data/parametros-macro.json` guarda o IPCA de 2026 e 2027 (Focus) usado para a variação real; é um parâmetro editável.
+
+A série mensal de ICMS do RREO (`data/rreo.json`) coincide ao real com o quadro da PLOA em 2023, 2024 e 2025, e por isso é usada na projeção simples de fechamento de 2026 (ICMS de 2025 vezes a variação acumulada de 2026 no mesmo período).

@@ -48,7 +48,7 @@ export function TopBar() {
     'inline-flex h-9 min-w-9 items-center justify-center rounded px-2 text-small font-semibold text-on-navy hover:bg-white/15 focus-visible:outline-white'
 
   return (
-    <div role="region" aria-label={painel ? IDENTIDADE.faixa : 'Governo do Estado do Espírito Santo'} className="on-dark bg-navy-deep text-on-navy">
+    <div role="region" aria-label={painel ? IDENTIDADE.faixa : 'Governo do Estado do Espírito Santo'} className="on-dark bg-navy-deep text-on-navy print:hidden">
       <div className="mx-auto flex min-h-11 max-w-page items-center justify-center gap-4 px-5 text-small md:justify-between md:px-8">
         {painel ? (
           <p className="py-2 font-semibold">{IDENTIDADE.faixa}</p>

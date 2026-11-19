@@ -1,14 +1,24 @@
 'use client'
 
-import { Fragment, useId, useMemo, useState } from 'react'
+import { Fragment, useEffect, useId, useMemo, useState } from 'react'
 import { bilhoes, milhoes, numero, pct } from '@/lib/formato'
 import { IDENTIDADE } from '@/lib/identidade-painel'
 import { Cartao, BarrasPares, BarrasVariacao, COR, Legenda, LEGENDA_PARES, TabelaItens } from './Graficos'
+import { Faixa } from './Faixa'
+import { Receita, VisaoGeral } from './Macro'
+import type { LinhaMacro } from '@/lib/macro'
 import { ATU, EMP, INI, PLOA, agrupa, execucaoPct, titulo, total, variacaoPct, type Item, type Linha, type Soma } from './dados'
 
 type Nomes = { uo: Record<string, string>; programa: Record<string, string>; acao: Record<string, string>; gnd: Record<string, string>; fonte: Record<string, string> }
 type Escopo = 'executivo' | 'outros' | 'todos'
 type Alerta = 'abaixo' | 'novas' | 'extintas'
+type Aba = 'visao' | 'receita' | 'despesa' | 'fontes'
+const ABAS: { id: Aba; rotulo: string }[] = [
+  { id: 'visao', rotulo: 'Visão geral' },
+  { id: 'receita', rotulo: 'Receita' },
+  { id: 'despesa', rotulo: 'Despesa por unidade' },
+  { id: 'fontes', rotulo: 'Fontes e grupos' },
+]
 
 const cap = titulo
 const sinal = (x: number) => (x > 0 ? '+' : x < 0 ? '−' : '')
@@ -16,7 +26,18 @@ const dMi = (x: number) => `${sinal(x)}${milhoes(Math.abs(x))}`
 const dPct = (x: number | null) => (x === null ? 'novo' : `${sinal(x)}${numero(Math.abs(x), 1)}%`)
 const topN = (itens: Item[], n: number) => [...itens].sort((a, b) => Math.max(b.v[PLOA], b.v[ATU]) - Math.max(a.v[PLOA], a.v[ATU])).slice(0, n)
 
-export function Painel({ linhas, nomes, coleta, outrosPoderes }: { linhas: Linha[]; nomes: Nomes; coleta: string; outrosPoderes: string[] }) {
+type MacroProps = {
+  receita: LinhaMacro[]; despesa: LinhaMacro[]; ipca: Record<string, number>; fonteIpca: string
+  mensal: Record<'icms' | 'fpe' | 'royalties', Record<string, number>>
+}
+
+export function Painel({ linhas, nomes, coleta, outrosPoderes, macro }: { linhas: Linha[]; nomes: Nomes; coleta: string; outrosPoderes: string[]; macro: MacroProps }) {
+  const [aba, setAba] = useState<Aba>('visao')
+  useEffect(() => {
+    const h = window.location.hash.slice(1)
+    if (ABAS.some((a) => a.id === h)) setAba(h as Aba)
+  }, [])
+  const escolheAba = (a: Aba) => { setAba(a); try { window.history.replaceState(null, '', `#${a}`) } catch { /* sem histórico: segue */ } }
   const idUo = useId()
   const outros = useMemo(() => new Set(outrosPoderes), [outrosPoderes])
   const [escopo, setEscopo] = useState<Escopo>('executivo')
@@ -121,9 +142,8 @@ export function Painel({ linhas, nomes, coleta, outrosPoderes }: { linhas: Linha
   ]
   const tituloNivel = uoAtiva ? 'Ações da unidade' : 'Unidades orçamentárias'
 
-  return (
-    <div className="painel mx-auto max-w-[1600px] px-5 py-4 md:px-8">
-      {/* filtros */}
+  const filtros = (
+    <>
       <div className="flex flex-wrap items-end gap-x-6 gap-y-3">
         <fieldset>
           <legend className="text-small text-ink-soft">Recorte</legend>
@@ -143,37 +163,48 @@ export function Painel({ linhas, nomes, coleta, outrosPoderes }: { linhas: Linha
           </select>
         </div>
               </div>
+    </>
+  )
 
-      {/* totais do recorte, numa linha (o detalhe está nos gráficos e na tabela) */}
-      <div className="mt-3 flex flex-wrap items-baseline gap-x-8 gap-y-1 rounded-brand border border-line bg-surface px-4 py-2 text-small tabular-nums">
-        <dl className="contents">
-          {resumo.map((k) => (
-            <div key={k.r} className="flex items-baseline gap-2">
-              <dt className="text-ink-soft">{k.r}</dt>
-              <dd className={`font-semibold ${k.destaque ? 'text-navy' : 'text-ink'}`}>{k.v}{k.s && <span className="ml-1.5 font-normal text-ink-soft">{k.s}</span>}</dd>
-            </div>
+  return (
+    <div className="painel mx-auto max-w-[1600px] px-5 py-4 md:px-8">
+      <div className="print:hidden flex flex-wrap items-center justify-between gap-3 border-b border-line">
+        <div role="tablist" aria-label="Seções do painel" className="flex gap-1 overflow-x-auto">
+          {ABAS.map((a) => (
+            <button key={a.id} type="button" role="tab" id={`aba-${a.id}`} aria-selected={aba === a.id} aria-controls={`painel-${a.id}`} tabIndex={aba === a.id ? 0 : -1}
+              onClick={() => escolheAba(a.id)}
+              onKeyDown={(e) => {
+                const i = ABAS.findIndex((x) => x.id === aba)
+                if (e.key === 'ArrowRight') { e.preventDefault(); escolheAba(ABAS[(i + 1) % ABAS.length].id) }
+                if (e.key === 'ArrowLeft') { e.preventDefault(); escolheAba(ABAS[(i + ABAS.length - 1) % ABAS.length].id) }
+              }}
+              className={`-mb-px whitespace-nowrap border-b-2 px-4 py-2.5 text-body font-semibold ${aba === a.id ? 'border-navy text-navy' : 'border-transparent text-ink-soft hover:text-ink'}`}>
+              {a.rotulo}
+            </button>
           ))}
-        </dl>
-        <p className="text-ink-soft">R$ milhões, valores correntes</p>
+        </div>
+        <button type="button" onClick={() => window.print()} className="mb-1 rounded-brand border border-line px-3 py-1.5 text-small font-semibold text-ink hover:bg-surface">Exportar PDF</button>
       </div>
+      <h1 className="hidden text-title font-semibold print:block">{IDENTIDADE.nome} · {IDENTIDADE.painel} · {ABAS.find((a) => a.id === aba)?.rotulo}</h1>
 
-      {/* gráficos */}
-      <div className="mt-3 grid gap-3 lg:grid-cols-12">
+      <div role="tabpanel" id={`painel-${aba}`} aria-labelledby={`aba-${aba}`} className="mt-3">
+        {aba === 'visao' && <VisaoGeral receita={macro.receita} despesa={macro.despesa} ipca={macro.ipca} fonteIpca={macro.fonteIpca} />}
+        {aba === 'receita' && <Receita receita={macro.receita} ipca={macro.ipca} mensal={macro.mensal} />}
+        {aba === 'despesa' && (
+          <>
+            <div className="print:hidden">{filtros}</div>
+            {/* totais do recorte, numa linha */}
+      <Faixa itens={resumo} nota="R$ milhões, valores correntes" />
+
+            <div className="mt-3 grid gap-3 lg:grid-cols-12">
         <Cartao className="lg:col-span-7" titulo={`${tituloNivel}: 15 maiores`} legenda={<Legenda itens={LEGENDA_PARES} />}
           grafico={<BarrasPares itens={principal} onEscolhe={uoAtiva ? undefined : (c) => { setUoSel(c); setAberta(null) }} />}
           tabela={<TabelaItens itens={principal} colunas={colsPares(tituloNivel)} legenda={`${tituloNivel}, 15 maiores`} />} />
         <Cartao className="lg:col-span-5" titulo="PLOA 2027 menos atualizada 2026" legenda={<Legenda itens={[{ cor: COR.alta, rotulo: 'Aumento' }, { cor: COR.baixa, rotulo: 'Redução' }]} />}
           grafico={<BarrasVariacao itens={variacao} />}
           tabela={<TabelaItens itens={variacao} colunas={colsPares(tituloNivel)} legenda="Maiores aumentos e reduções da PLOA sobre a atualizada de 2026" />} />
-        <Cartao className="lg:col-span-5" titulo="Grupo de despesa" legenda={<Legenda itens={LEGENDA_PARES} />}
-          grafico={<BarrasPares itens={porGnd} />}
-          tabela={<TabelaItens itens={porGnd} colunas={colsPares('Grupo')} legenda="Por grupo de natureza da despesa" />} />
-        <Cartao className="lg:col-span-7" titulo="Fontes de recursos: 12 maiores" legenda={<Legenda itens={LEGENDA_PARES} />}
-          grafico={<BarrasPares itens={porFonte} />}
-          tabela={<TabelaItens itens={porFonte} colunas={colsPares('Fonte')} legenda="Doze maiores fontes de recursos" />} />
-      </div>
-
-      {/* tabela */}
+            </div>
+            {/* tabela */}
       <section aria-label={tituloNivel} className="mt-4 rounded-brand border border-line bg-paper p-4">
         <h2 className="text-lead font-semibold">{tituloNivel}</h2>
         <div tabIndex={0} role="region" aria-label={`Tabela: ${tituloNivel}`} className="mt-3 max-h-[36rem] overflow-auto rounded-brand border border-line">
@@ -225,7 +256,7 @@ export function Painel({ linhas, nomes, coleta, outrosPoderes }: { linhas: Linha
         </div>
       </section>
 
-      {/* alertas */}
+            {/* alertas */}
       <section aria-label="Pontos de atenção" className="mt-4 rounded-brand border border-line bg-paper p-4">
         <div className="flex flex-wrap items-center justify-between gap-3">
           <h2 className="text-lead font-semibold">Pontos de atenção</h2>
@@ -252,9 +283,29 @@ export function Painel({ linhas, nomes, coleta, outrosPoderes }: { linhas: Linha
         </div>
       </section>
 
-      <p className="mt-4 text-small text-ink-soft">
-        Fonte: Portal de Dados Abertos do ES (2025 e 2026, coleta em {coleta}); PLOA 2027: Mensagem nº 189/2026, proposta e não a LOA. Δ = PLOA 2027 menos atualizada 2026.
-        <br />{IDENTIDADE.aviso}
+          </>
+        )}
+        {aba === 'fontes' && (
+          <>
+            <div className="print:hidden">{filtros}</div>
+            {/* totais do recorte, numa linha */}
+      <Faixa itens={resumo} nota="R$ milhões, valores correntes" />
+
+            <div className="mt-3 grid gap-3 lg:grid-cols-12">
+        <Cartao className="lg:col-span-5" titulo="Grupo de despesa" legenda={<Legenda itens={LEGENDA_PARES} />}
+          grafico={<BarrasPares itens={porGnd} />}
+          tabela={<TabelaItens itens={porGnd} colunas={colsPares('Grupo')} legenda="Por grupo de natureza da despesa" />} />
+        <Cartao className="lg:col-span-7" titulo="Fontes de recursos: 12 maiores" legenda={<Legenda itens={LEGENDA_PARES} />}
+          grafico={<BarrasPares itens={porFonte} />}
+          tabela={<TabelaItens itens={porFonte} colunas={colsPares('Fonte')} legenda="Doze maiores fontes de recursos" />} />
+            </div>
+          </>
+        )}
+      </div>
+
+      <p className="mt-4 text-small text-ink-soft print:mt-2">
+        {aba === 'despesa' || aba === 'fontes' ? <>Fonte: Portal de Dados Abertos do ES (2025 e 2026, coleta em {coleta}); PLOA 2027: Mensagem nº 189/2026, proposta e não a LOA. Δ = PLOA 2027 menos atualizada 2026.<br /></> : null}
+        {IDENTIDADE.aviso}
       </p>
     </div>
   )
