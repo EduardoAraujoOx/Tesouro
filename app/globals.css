@@ -120,13 +120,42 @@ h1, h2, h3 { @apply font-serif font-semibold text-navy; font-optical-sizing: aut
 .banner-sombra { background: linear-gradient(90deg, rgb(var(--navy-deep)) 0%, rgb(var(--navy-deep)) 36%, rgb(var(--navy-deep) / 0.55) 62%, rgb(var(--navy-deep) / 0) 100%); }
 :root[data-contrast='alto'] .banner-img { display: none; }
 
-/* Impressão e PDF do painel: A4 paisagem, sem controles; tabelas com rolagem viram páginas inteiras */
+/* Rolagem contida de tabelas largas: sombra nas bordas quando há mais conteúdo para o lado (some quando se chega ao fim). */
+.rola {
+  background:
+    linear-gradient(to right, rgb(var(--paper)) 30%, rgb(var(--paper) / 0)) left center / 28px 100% no-repeat local,
+    linear-gradient(to left, rgb(var(--paper)) 30%, rgb(var(--paper) / 0)) right center / 28px 100% no-repeat local,
+    radial-gradient(farthest-side at 0 50%, rgb(0 0 0 / 0.16), rgb(0 0 0 / 0)) left center / 10px 100% no-repeat scroll,
+    radial-gradient(farthest-side at 100% 50%, rgb(0 0 0 / 0.16), rgb(0 0 0 / 0)) right center / 10px 100% no-repeat scroll;
+  overscroll-behavior-x: contain;
+}
+/* A barra fixa de abas não cobre o que recebe foco ou é alvo de âncora */
+html:has(.painel) { scroll-padding-top: 3.75rem; }
+
+/* Impressão e PDF do painel: A4 paisagem, cores preservadas, tabelas inteiras, cabeçalhos repetidos a cada página */
 @media print {
-  @page { size: A4 landscape; margin: 10mm; }
-  body { background: #fff; }
+  @page {
+    size: A4 landscape;
+    margin: 12mm 10mm 14mm;
+    @bottom-left { content: "Transição de Governo · Painel orçamentário 2027"; font: 8pt sans-serif; color: #5b6573; }
+    @bottom-right { content: "Página " counter(page) " de " counter(pages); font: 8pt sans-serif; color: #5b6573; }
+  }
+  html { font-size: 13px; }
+  html, body { background: #fff !important; }
+  .painel, .painel * { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  .painel { max-width: none; padding: 0; }
   .painel .overflow-auto, .painel .overflow-x-auto { overflow: visible !important; max-height: none !important; }
-  .painel section { break-inside: avoid; margin-bottom: 4mm; }
-  .painel .lg\:grid-cols-12 { display: block !important; }
-  .painel .lg\:grid-cols-12 > section { width: 100%; }
-  .painel thead { position: static !important; }
+  .painel section { break-inside: avoid; margin-bottom: 4mm; box-shadow: none; }
+  .painel section[data-longa] { break-inside: auto; }
+  .painel [class*="xl:grid-cols-12"] { display: block !important; }
+  .painel .par-impressao { display: grid !important; grid-template-columns: 7fr 5fr; gap: 4mm; align-items: start; }
+  .painel thead { display: table-header-group; }
+  .painel tfoot { display: table-row-group; }
+  .painel tr, .painel li { break-inside: avoid; }
+  .painel th, .painel td { position: static !important; box-shadow: none !important; }
+  .painel .rola { background: none; }
+  .painel .sticky { position: static !important; }
+  .painel table { min-width: 0 !important; width: 100%; }
+  .painel th[scope="row"] { max-width: none !important; }
+  .painel [role="tooltip"] { display: none !important; }
 }

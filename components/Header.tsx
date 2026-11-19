@@ -69,14 +69,14 @@ export function Header() {
   // O painel de dados tem identidade própria (transição de governo): sem logomarca do Tesouro, menu nem busca do portal.
   if (pathname.startsWith('/painel')) {
     return (
-      <header className="border-b border-line bg-paper">
-        <div className="mx-auto flex max-w-[1600px] items-center justify-between gap-4 px-5 py-3 md:px-8">
+      <header className="border-b border-line bg-paper print:hidden">
+        <div className="mx-auto flex max-w-[1600px] items-center justify-between gap-4 px-4 py-2.5 sm:px-5 md:px-8 md:py-3">
           <Link href="/painel" className="block">
             <span className="block text-lead font-semibold leading-tight text-navy md:text-title">{IDENTIDADE.nome}</span>
             <span className="block text-small text-ink-soft">{IDENTIDADE.apoio}</span>
             <span className="accent-bar" aria-hidden="true" />
           </Link>
-          <span className="text-right text-small font-semibold text-ink md:text-body">{IDENTIDADE.painel}</span>
+          <span className="hidden text-right text-body font-semibold text-ink md:block">{IDENTIDADE.painel}</span>
         </div>
       </header>
     )

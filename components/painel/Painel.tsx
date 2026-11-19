@@ -14,11 +14,11 @@ type Nomes = { uo: Record<string, string>; programa: Record<string, string>; aca
 type Escopo = 'executivo' | 'outros' | 'todos'
 type Alerta = 'abaixo' | 'novas' | 'extintas'
 type Aba = 'visao' | 'receita' | 'despesa' | 'fontes'
-const ABAS: { id: Aba; rotulo: string }[] = [
-  { id: 'visao', rotulo: 'Visão geral' },
-  { id: 'receita', rotulo: 'Receita' },
-  { id: 'despesa', rotulo: 'Despesa por unidade' },
-  { id: 'fontes', rotulo: 'Fontes e grupos' },
+const ABAS: { id: Aba; rotulo: string; curto: string; nota: string }[] = [
+  { id: 'visao', rotulo: 'Visão geral', curto: 'Visão geral', nota: 'Receita e despesa: PLOA 2027 contra 2026' },
+  { id: 'receita', rotulo: 'Receita', curto: 'Receita', nota: 'Arrecadação, projeção de 2026 e perfil mensal de 2027' },
+  { id: 'despesa', rotulo: 'Despesa por unidade', curto: 'Despesa', nota: 'PLOA 2027 contra dotação e empenho de 2026, por unidade' },
+  { id: 'fontes', rotulo: 'Fontes e grupos', curto: 'Fontes', nota: 'Grupos de despesa, fontes de recursos e cobertura' },
 ]
 
 const cap = titulo
@@ -44,7 +44,7 @@ export function Painel({ linhas, nomes, coleta, outrosPoderes, macro, receitaMes
   const [escopo, setEscopo] = useState<Escopo>('executivo')
   const [uoSel, setUoSel] = useState('')
   const [alerta, setAlerta] = useState<Alerta>('abaixo')
-  const [ordem, setOrdem] = useState<{ col: number; desc: boolean }>({ col: 1, desc: true })
+  const [ordem, setOrdem] = useState<{ col: number; desc: boolean }>({ col: 0, desc: true })
   const [aberta, setAberta] = useState<string | null>(null)
 
   const doEscopo = useMemo(
@@ -144,33 +144,33 @@ export function Painel({ linhas, nomes, coleta, outrosPoderes, macro, receitaMes
   const tituloNivel = uoAtiva ? 'Ações da unidade' : 'Unidades orçamentárias'
 
   const filtros = (
-    <>
-      <div className="flex flex-wrap items-end gap-x-6 gap-y-3">
-        <fieldset>
-          <legend className="text-small text-ink-soft">Recorte</legend>
-          <div className="mt-1 flex flex-wrap gap-2">
-            {([['executivo', 'Executivo'], ['outros', 'Outros Poderes'], ['todos', 'Todos']] as [Escopo, string][]).map(([v, r]) => (
-              <label key={v} className={`cursor-pointer rounded-brand border px-3 py-1.5 text-small ${escopo === v ? 'border-navy bg-navy font-semibold text-on-navy' : 'border-line bg-paper'}`}>
-                <input type="radio" name="recorte" value={v} checked={escopo === v} onChange={() => { setEscopo(v); setUoSel(''); setAberta(null) }} className="sr-only" />{r}
-              </label>
-            ))}
-          </div>
-        </fieldset>
-        <div className="min-w-[16rem] max-w-md flex-1">
-          <label htmlFor={idUo} className="text-small text-ink-soft">Unidade</label>
-          <select id={idUo} value={uoAtiva} onChange={(e) => { setUoSel(e.target.value); setAberta(null) }} className="mt-1 block w-full rounded-brand border border-line bg-paper px-3 py-1.5 text-small">
-            <option value="">Todas ({unidades.length})</option>
-            {unidades.map((u) => <option key={u} value={u}>{u} {cap(nomes.uo[u] ?? '')}</option>)}
-          </select>
+    <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-end sm:gap-x-6">
+      <fieldset>
+        <legend className="text-small text-ink-soft">Recorte</legend>
+        <div className="mt-1 grid grid-cols-3 gap-1.5 sm:flex">
+          {([['executivo', 'Executivo'], ['outros', 'Outros Poderes'], ['todos', 'Todos']] as [Escopo, string][]).map(([v, r]) => (
+            <label key={v} className={`cursor-pointer rounded-brand border px-2 py-1.5 text-center text-small sm:px-3 ${escopo === v ? 'border-navy bg-navy font-semibold text-on-navy' : 'border-line bg-paper'}`}>
+              <input type="radio" name="recorte" value={v} checked={escopo === v} onChange={() => { setEscopo(v); setUoSel(''); setAberta(null) }} className="sr-only" />{r}
+            </label>
+          ))}
         </div>
-              </div>
-    </>
+      </fieldset>
+      <div className="min-w-0 sm:min-w-[16rem] sm:max-w-md sm:flex-1">
+        <label htmlFor={idUo} className="text-small text-ink-soft">Unidade</label>
+        <select id={idUo} value={uoAtiva} onChange={(e) => { setUoSel(e.target.value); setAberta(null) }} className="mt-1 block w-full rounded-brand border border-line bg-paper px-3 py-1.5 text-small">
+          <option value="">Todas ({unidades.length})</option>
+          {unidades.map((u) => <option key={u} value={u}>{u} {cap(nomes.uo[u] ?? '')}</option>)}
+        </select>
+      </div>
+    </div>
   )
 
+  const abaAtual = ABAS.find((a) => a.id === aba)!
   return (
-    <div className="painel mx-auto max-w-[1600px] px-5 py-4 md:px-8">
-      <div className="print:hidden flex flex-wrap items-center justify-between gap-3 border-b border-line">
-        <div role="tablist" aria-label="Seções do painel" className="flex gap-1 overflow-x-auto">
+    <div className="painel mx-auto max-w-[1600px] px-4 pb-8 sm:px-5 md:px-8">
+      {/* barra fixa: seções do painel (no celular, quatro abas de largura igual) */}
+      <div className="print:hidden sticky top-0 z-30 -mx-4 border-b border-line bg-paper px-4 sm:-mx-5 sm:px-5 md:-mx-8 md:px-8">
+        <div role="tablist" aria-label="Seções do painel" className="flex">
           {ABAS.map((a) => (
             <button key={a.id} type="button" role="tab" id={`aba-${a.id}`} aria-selected={aba === a.id} aria-controls={`painel-${a.id}`} tabIndex={aba === a.id ? 0 : -1}
               onClick={() => escolheAba(a.id)}
@@ -179,16 +179,31 @@ export function Painel({ linhas, nomes, coleta, outrosPoderes, macro, receitaMes
                 if (e.key === 'ArrowRight') { e.preventDefault(); escolheAba(ABAS[(i + 1) % ABAS.length].id) }
                 if (e.key === 'ArrowLeft') { e.preventDefault(); escolheAba(ABAS[(i + ABAS.length - 1) % ABAS.length].id) }
               }}
-              className={`-mb-px whitespace-nowrap border-b-2 px-4 py-2.5 text-body font-semibold ${aba === a.id ? 'border-navy text-navy' : 'border-transparent text-ink-soft hover:text-ink'}`}>
-              {a.rotulo}
+              className={`-mb-px flex-1 whitespace-nowrap border-b-[3px] px-1 py-3 text-center text-small font-semibold md:flex-none md:px-5 md:text-body ${aba === a.id ? 'border-navy text-navy' : 'border-transparent text-ink-soft hover:text-ink'}`}>
+              <span className="md:hidden">{a.curto}</span><span className="hidden md:inline">{a.rotulo}</span>
             </button>
           ))}
         </div>
-        <button type="button" onClick={() => window.print()} className="mb-1 rounded-brand border border-line px-3 py-1.5 text-small font-semibold text-ink hover:bg-surface">Exportar PDF</button>
       </div>
-      <h1 className="hidden text-title font-semibold print:block">{IDENTIDADE.nome} · {IDENTIDADE.painel} · {ABAS.find((a) => a.id === aba)?.rotulo}</h1>
 
-      <div role="tabpanel" id={`painel-${aba}`} aria-labelledby={`aba-${aba}`} className="mt-3">
+      {/* título da seção e exportação */}
+      <div className="mt-4 flex items-start justify-between gap-3 print:hidden">
+        <div className="min-w-0">
+          <h1 className="text-title font-semibold leading-tight md:text-section">{abaAtual.rotulo}</h1>
+          <p className="mt-0.5 text-small text-ink-soft">{abaAtual.nota}</p>
+        </div>
+        <button type="button" onClick={() => window.print()} title="Abre a impressão: escolha “Salvar como PDF”" className="inline-flex shrink-0 items-center gap-1.5 rounded-brand border border-line bg-paper px-3 py-1.5 text-small font-semibold text-ink hover:bg-surface">
+          <svg aria-hidden="true" viewBox="0 0 20 20" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"><path d="M10 3v9m0 0-3.5-3.5M10 12l3.5-3.5M4 14v2h12v-2" /></svg>
+          PDF<span className="sr-only"> (exportar esta seção)</span>
+        </button>
+      </div>
+      <div className="hidden print:block">
+        <p className="text-label normal-case tracking-normal text-ink-soft">{IDENTIDADE.nome} · {IDENTIDADE.apoio}</p>
+        <h1 className="text-title font-semibold">{IDENTIDADE.painel} · {abaAtual.rotulo}</h1>
+        <p className="text-small text-ink-soft">{abaAtual.nota}</p>
+      </div>
+
+      <div role="tabpanel" id={`painel-${aba}`} aria-labelledby={`aba-${aba}`} className="mt-4">
         {aba === 'visao' && <VisaoGeral receita={macro.receita} despesa={macro.despesa} ipca={macro.ipca} fonteIpca={macro.fonteIpca} />}
         {aba === 'receita' && (
           <>
@@ -202,25 +217,25 @@ export function Painel({ linhas, nomes, coleta, outrosPoderes, macro, receitaMes
             {/* totais do recorte, numa linha */}
       <Faixa itens={resumo} nota="R$ milhões, valores correntes" />
 
-            <div className="mt-3 grid gap-3 lg:grid-cols-12">
-        <Cartao className="lg:col-span-7" titulo={`${tituloNivel}: 15 maiores`} legenda={<Legenda itens={LEGENDA_PARES} />}
+            <div className="mt-3 grid grid-cols-1 gap-3 2xl:grid-cols-12">
+        <Cartao className="2xl:col-span-7" titulo={`${tituloNivel}: 15 maiores`} legenda={<Legenda itens={LEGENDA_PARES} />}
           grafico={<BarrasPares itens={principal} onEscolhe={uoAtiva ? undefined : (c) => { setUoSel(c); setAberta(null) }} />}
           tabela={<TabelaItens itens={principal} colunas={colsPares(tituloNivel)} legenda={`${tituloNivel}, 15 maiores`} />} />
-        <Cartao className="lg:col-span-5" titulo="PLOA 2027 menos atualizada 2026" legenda={<Legenda itens={[{ cor: COR.alta, rotulo: 'Aumento' }, { cor: COR.baixa, rotulo: 'Redução' }]} />}
+        <Cartao className="2xl:col-span-5" titulo="PLOA 2027 menos atualizada 2026" legenda={<Legenda itens={[{ cor: COR.alta, rotulo: 'Aumento' }, { cor: COR.baixa, rotulo: 'Redução' }]} />}
           grafico={<BarrasVariacao itens={variacao} />}
           tabela={<TabelaItens itens={variacao} colunas={colsPares(tituloNivel)} legenda="Maiores aumentos e reduções da PLOA sobre a atualizada de 2026" />} />
             </div>
             {/* tabela */}
-      <section aria-label={tituloNivel} className="mt-4 rounded-brand border border-line bg-paper p-4">
-        <h2 className="text-lead font-semibold">{tituloNivel}</h2>
-        <div tabIndex={0} role="region" aria-label={`Tabela: ${tituloNivel}`} className="mt-3 max-h-[36rem] overflow-auto rounded-brand border border-line">
-          <table className="w-full min-w-[56rem] text-left text-small">
+      <section aria-label={tituloNivel} data-longa className="mt-3 min-w-0 rounded-brand border border-line bg-paper p-3 sm:p-4 md:p-5">
+        <h2 className="text-body font-semibold md:text-lead">{tituloNivel}</h2>
+        <div tabIndex={0} role="region" aria-label={`Tabela: ${tituloNivel}`} className="rola mt-3 max-h-[36rem] overflow-auto rounded-brand border border-line">
+          <table className="w-full min-w-max text-left text-small">
             <caption className="sr-only">{tituloNivel}, em R$ milhões</caption>
-            <thead className="sticky top-0 z-10 bg-surface">
+            <thead>
               <tr>
-                <th scope="col" className="px-3 py-2">{tituloNivel}</th>
+                <th scope="col" className="sticky left-0 top-0 z-20 min-w-[9.5rem] bg-surface px-3 py-2">{tituloNivel}</th>
                 {colunas.map((c, j) => (
-                  <th key={c.rotulo} scope="col" aria-sort={ordem.col === j ? (ordem.desc ? 'descending' : 'ascending') : 'none'} className="px-3 py-2 text-right">
+                  <th key={c.rotulo} scope="col" aria-sort={ordem.col === j ? (ordem.desc ? 'descending' : 'ascending') : 'none'} className="sticky top-0 z-10 whitespace-nowrap bg-surface px-3 py-2 text-right">
                     <button type="button" onClick={() => setOrdem(ordem.col === j ? { col: j, desc: !ordem.desc } : { col: j, desc: true })} className="font-semibold underline-offset-4 hover:underline">
                       {c.rotulo}<span aria-hidden="true" className="text-ink-soft">{ordem.col === j ? (ordem.desc ? ' ▼' : ' ▲') : ''}</span>
                     </button>
@@ -234,20 +249,20 @@ export function Painel({ linhas, nomes, coleta, outrosPoderes, macro, receitaMes
                 return (
                   <Fragment key={u.chave}>
                     <tr className="border-t border-line align-top">
-                      <th scope="row" className="px-3 py-1.5 font-normal">
+                      <th scope="row" className="sticky left-0 z-[1] min-w-[9.5rem] max-w-[11rem] whitespace-normal bg-paper px-3 py-1.5 font-normal shadow-[1px_0_0_rgb(var(--line))] md:max-w-[30rem]">
                         {uoAtiva ? (
                           <><span className="block font-semibold">{u.rotulo}</span><span className="text-ink-soft">{u.sub}</span></>
                         ) : (
                           <button type="button" aria-expanded={abre} onClick={() => setAberta(abre ? null : u.chave)} className="text-left font-semibold text-navy underline-offset-4 hover:underline">
-                            <span aria-hidden="true">{abre ? '− ' : '+ '}</span>{u.rotulo}<span className="ml-2 font-normal text-ink-soft">{u.chave}</span>
+                            <span aria-hidden="true">{abre ? '− ' : '+ '}</span>{u.rotulo}<span className="block text-label font-normal normal-case tracking-normal text-ink-soft">{u.chave}</span>
                           </button>
                         )}
                       </th>
                       {celulas(u.v)}
                     </tr>
                     {abre && filhos(u.chave).map((a) => (
-                      <tr key={a.chave} className="border-t border-line bg-surface/60 align-top">
-                        <th scope="row" className="px-3 py-1.5 pl-8 font-normal"><span className="block">{a.rotulo}</span><span className="text-ink-soft">{a.chave.split('|')[2]} · programa {a.chave.split('|')[1]}</span></th>
+                      <tr key={a.chave} className="border-t border-line bg-surface align-top">
+                        <th scope="row" className="sticky left-0 z-[1] min-w-[9.5rem] max-w-[11rem] whitespace-normal bg-surface px-3 py-1.5 pl-6 font-normal shadow-[1px_0_0_rgb(var(--line))] md:max-w-[30rem] md:pl-8"><span className="block">{a.rotulo}</span><span className="text-ink-soft">{a.chave.split('|')[2]} · programa {a.chave.split('|')[1]}</span></th>
                         {celulas(a.v)}
                       </tr>
                     ))}
@@ -255,20 +270,20 @@ export function Painel({ linhas, nomes, coleta, outrosPoderes, macro, receitaMes
                 )
               })}
             </tbody>
-            <tfoot className="sticky bottom-0 border-t-2 border-line bg-surface font-semibold">
-              <tr><th scope="row" className="px-3 py-1.5">Total ({linhasTabela.length})</th>{celulas(tot)}</tr>
+            <tfoot className="border-t-2 border-line bg-surface font-semibold">
+              <tr><th scope="row" className="sticky left-0 bg-surface px-3 py-1.5">Total ({linhasTabela.length})</th>{celulas(tot)}</tr>
             </tfoot>
           </table>
         </div>
       </section>
 
             {/* alertas */}
-      <section aria-label="Pontos de atenção" className="mt-4 rounded-brand border border-line bg-paper p-4">
+      <section aria-label="Pontos de atenção" className="mt-3 min-w-0 rounded-brand border border-line bg-paper p-3 sm:p-4 md:p-5">
         <div className="flex flex-wrap items-center justify-between gap-3">
-          <h2 className="text-lead font-semibold">Pontos de atenção</h2>
-          <div role="group" aria-label="Tipo de ponto de atenção" className="inline-flex flex-wrap overflow-hidden rounded-brand border border-line text-small">
+          <h2 className="text-body font-semibold md:text-lead">Pontos de atenção</h2>
+          <div role="group" aria-label="Tipo de ponto de atenção" className="flex w-full flex-col divide-y divide-line overflow-hidden rounded-brand border border-line text-small sm:inline-flex sm:w-auto sm:flex-row sm:divide-x sm:divide-y-0">
             {([['abaixo', 'PLOA abaixo do empenhado 26'], ['novas', 'Ações novas'], ['extintas', 'Sem dotação na PLOA']] as [Alerta, string][]).map(([v, r]) => (
-              <button key={v} type="button" aria-pressed={alerta === v} onClick={() => setAlerta(v)} className={`px-3 py-1.5 ${alerta === v ? 'bg-navy font-semibold text-on-navy' : 'bg-paper text-ink'}`}>
+              <button key={v} type="button" aria-pressed={alerta === v} onClick={() => setAlerta(v)} className={`px-3 py-2 text-left sm:py-1.5 sm:text-center ${alerta === v ? 'bg-navy font-semibold text-on-navy' : 'bg-paper text-ink'}`}>
                 {r} <span className="tabular-nums opacity-80">({contagens[v]})</span>
               </button>
             ))}
@@ -279,7 +294,7 @@ export function Painel({ linhas, nomes, coleta, outrosPoderes, macro, receitaMes
             itens={listas[alerta]}
             legenda={alerta === 'abaixo' ? 'Ações em que a PLOA 2027 é menor que o empenhado de 2026' : alerta === 'novas' ? 'Ações novas na PLOA 2027' : 'Ações com empenho em 2026 e sem dotação na PLOA 2027'}
             colunas={[
-              { rotulo: 'Ação', valor: (i) => `${i.rotulo} · ${i.sub ?? ''}` },
+              { rotulo: 'Ação', valor: (i) => <><span className="block font-medium text-ink">{i.rotulo}</span><span className="block text-label normal-case tracking-normal text-ink-soft">{i.sub}</span></> },
               { rotulo: 'PLOA 27', valor: (i) => milhoes(i.v[PLOA]) },
               { rotulo: 'Atual. 26', valor: (i) => milhoes(i.v[ATU]) },
               { rotulo: 'Emp. 26', valor: (i) => milhoes(i.v[EMP]) },
@@ -297,11 +312,11 @@ export function Painel({ linhas, nomes, coleta, outrosPoderes, macro, receitaMes
             {/* totais do recorte, numa linha */}
       <Faixa itens={resumo} nota="R$ milhões, valores correntes" />
 
-            <div className="mt-3 grid gap-3 lg:grid-cols-12">
-        <Cartao className="lg:col-span-5" titulo="Grupo de despesa" legenda={<Legenda itens={LEGENDA_PARES} />}
+            <div className="mt-3 grid grid-cols-1 gap-3 2xl:grid-cols-12">
+        <Cartao className="2xl:col-span-5" titulo="Grupo de despesa" legenda={<Legenda itens={LEGENDA_PARES} />}
           grafico={<BarrasPares itens={porGnd} />}
           tabela={<TabelaItens itens={porGnd} colunas={colsPares('Grupo')} legenda="Por grupo de natureza da despesa" />} />
-        <Cartao className="lg:col-span-7" titulo="Fontes de recursos: 12 maiores" legenda={<Legenda itens={LEGENDA_PARES} />}
+        <Cartao className="2xl:col-span-7" titulo="Fontes de recursos: 12 maiores" legenda={<Legenda itens={LEGENDA_PARES} />}
           grafico={<BarrasPares itens={porFonte} />}
           tabela={<TabelaItens itens={porFonte} colunas={colsPares('Fonte')} legenda="Doze maiores fontes de recursos" />} />
             </div>
@@ -322,13 +337,13 @@ export function Painel({ linhas, nomes, coleta, outrosPoderes, macro, receitaMes
     const dv = variacaoPct(v)
     return (
       <>
-        <td className="px-3 py-1.5 text-right font-semibold tabular-nums">{milhoes(v[PLOA])}</td>
-        <td className="px-3 py-1.5 text-right tabular-nums">{milhoes(v[INI])}</td>
-        <td className="px-3 py-1.5 text-right tabular-nums">{milhoes(v[ATU])}</td>
-        <td className="px-3 py-1.5 text-right tabular-nums">{milhoes(v[EMP])}</td>
-        <td className="px-3 py-1.5 text-right tabular-nums">{ex === null ? '–' : `${numero(ex, 0)}%`}</td>
-        <td className="px-3 py-1.5 text-right tabular-nums">{dMi(v[PLOA] - v[ATU])}</td>
-        <td className="px-3 py-1.5 text-right tabular-nums">{dPct(dv)}</td>
+        <td className="whitespace-nowrap px-3 py-1.5 text-right font-semibold tabular-nums">{milhoes(v[PLOA])}</td>
+        <td className="whitespace-nowrap px-3 py-1.5 text-right tabular-nums">{milhoes(v[INI])}</td>
+        <td className="whitespace-nowrap px-3 py-1.5 text-right tabular-nums">{milhoes(v[ATU])}</td>
+        <td className="whitespace-nowrap px-3 py-1.5 text-right tabular-nums">{milhoes(v[EMP])}</td>
+        <td className="whitespace-nowrap px-3 py-1.5 text-right tabular-nums">{ex === null ? '–' : `${numero(ex, 0)}%`}</td>
+        <td className="whitespace-nowrap px-3 py-1.5 text-right tabular-nums">{dMi(v[PLOA] - v[ATU])}</td>
+        <td className="whitespace-nowrap px-3 py-1.5 text-right tabular-nums">{dPct(dv)}</td>
       </>
     )
   }
