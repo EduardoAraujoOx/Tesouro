@@ -142,6 +142,26 @@ export function projetaReceita2026(dados: DadosReceita): Projecao {
   }
 }
 
+/** Teste retroativo do método: em cada ano de 2022 a 2025, projeta o fechamento a partir do mesmo corte de outubro, usando só os até quatro anos anteriores, e compara com o realizado. */
+export type RetroGrupo = { id: string; rotulo: string; erros: { ano: number; erro: number | null }[]; erroMedio: number | null }
+export function retroteste(): { grupos: RetroGrupo[]; total: RetroGrupo; bimestre: number } {
+  const bimestre = 5
+  const dados: { id: string; rotulo: string; rreo: string[] }[] = [...GRUPOS, { id: 'total', rotulo: 'Receita líquida total', rreo: TOTAL_RREO }]
+  const feitos = dados.map((g) => {
+    const erros = [2022, 2023, 2024, 2025].map((ano) => {
+      const previos = Array.from({ length: 4 }, (_, i) => ano - 4 + i).filter((a) => a >= 2019)
+      const sh = previos.map((a) => (somaContas(a, 6, g.rreo) > 0 ? somaContas(a, bimestre, g.rreo) / somaContas(a, 6, g.rreo) : NaN)).filter(Number.isFinite)
+      const real = somaContas(ano, 6, g.rreo)
+      if (!sh.length || real <= 0) return { ano, erro: null }
+      const proj = somaContas(ano, bimestre, g.rreo) / (sh.reduce((s, x) => s + x, 0) / sh.length)
+      return { ano, erro: (proj / real - 1) * 100 }
+    })
+    const v = erros.map((e) => e.erro).filter((e): e is number => e !== null)
+    return { id: g.id, rotulo: g.rotulo, erros, erroMedio: v.length ? v.reduce((s, x) => s + Math.abs(x), 0) / v.length : null }
+  })
+  return { grupos: feitos.slice(0, -1), total: feitos[feitos.length - 1], bimestre }
+}
+
 export type ItemProjetado = { central: number; min?: number; max?: number; base: 'bimestres' | 'icms' | '2025' | 'resíduo' }
 
 /**
@@ -212,4 +232,40 @@ export function fatorPrecos(ipca: Record<number, number>, de: number, para: numb
   let f = 1
   for (let a = de + 1; a <= para; a++) f *= 1 + (ipca[a] ?? 0)
   return f
+}
+
+/** Conferência do ano fechado mais recente: o quadro da PLOA, o Portal (bruto e líquido) e o RREO (líquido), linha a linha. */
+export type LinhaConciliacao = { chave: string; cod: string; rotulo: string; ploa: number | null; portalBruto: number; rreo: number | null; portalLiquido: number }
+export function conciliacao(dados: DadosReceita, quadro: Record<string, number[]>, ano = 2025): LinhaConciliacao[] {
+  const linhas = dados.anos[String(ano)]?.linhas ?? []
+  /** posição do ano nos seis valores do quadro da PLOA (2023, 2024, 2025, ...) */
+  const col = ano - 2023
+  const soma = (pref: string[], liquido: boolean, exclui: string[] = []) =>
+    linhas.filter((l) => pref.some((p) => naturezaDe(l).startsWith(p)) && !exclui.some((p) => naturezaDe(l).startsWith(p))).reduce((s, l) => s + Number(l[3]) + (liquido ? Number(l[4]) : 0), 0)
+  const rreo = (cs: string[]) => somaContas(ano, 6, cs)
+  const def: { chave: string; cod: string; rotulo: string; q: string[]; pref: string[]; rreo?: string[] }[] = [
+    { chave: 'impostos', cod: '1.1.1', rotulo: 'Impostos', q: ['impostos'], pref: ['111'], rreo: ['Impostos'] },
+    { chave: 'icms', cod: '1.1.1.4', rotulo: 'ICMS', q: ['icms'], pref: ['1114'] },
+    { chave: 'ipva', cod: '1.1.1.2.51', rotulo: 'IPVA', q: ['ipva'], pref: ['111251'] },
+    { chave: 'itcd', cod: '1.1.1.2.52', rotulo: 'ITCD', q: ['itcd'], pref: ['111252'] },
+    { chave: 'irrf', cod: '1.1.1.3.03', rotulo: 'IRRF', q: ['irrf'], pref: ['111303'] },
+    { chave: 'taxas', cod: '1.1.2–1.1.3', rotulo: 'Taxas e contribuição de melhoria', q: ['taxas', 'contrib_melhoria'], pref: ['112', '113'], rreo: ['Taxas'] },
+    { chave: 'contrib', cod: '1.2', rotulo: 'Contribuições', q: ['contribuicoes'], pref: ['12'], rreo: ['CONTRIBUIÇÕES'] },
+    { chave: 'patrim', cod: '1.3', rotulo: 'Receita patrimonial', q: ['patrimonial'], pref: ['13'], rreo: ['RECEITA PATRIMONIAL'] },
+    { chave: 'servicos', cod: '1.4–1.6', rotulo: 'Agropecuária, industrial e serviços', q: ['agropecuaria', 'industrial', 'servicos'], pref: ['14', '15', '16'], rreo: ['RECEITA AGROPECUÁRIA', 'RECEITA INDUSTRIAL', 'RECEITA DE SERVIÇOS'] },
+    { chave: 'transf', cod: '1.7', rotulo: 'Transferências correntes', q: ['transf_correntes'], pref: ['17'], rreo: ['TRANSFERÊNCIAS CORRENTES'] },
+    { chave: 'outras', cod: '1.9', rotulo: 'Outras receitas correntes', q: ['outras_correntes'], pref: ['19'], rreo: ['OUTRAS RECEITAS CORRENTES'] },
+    { chave: 'intra', cod: '7', rotulo: 'Correntes intraorçamentárias', q: ['intra'], pref: ['7', '8'], rreo: ['RECEITAS (INTRA-ORÇAMENTÁRIAS) (II)'] },
+    { chave: 'cred', cod: '2.1', rotulo: 'Operações de crédito', q: ['operacoes_credito'], pref: ['21'], rreo: ['OPERAÇÕES DE CRÉDITO'] },
+    { chave: 'capout', cod: '2.2–2.4, 2.9', rotulo: 'Alienação, amortizações, transferências e outras de capital', q: ['alienacao', 'amortizacao_emprestimos', 'transf_capital', 'outras_capital'], pref: ['22', '23', '24', '25', '29'], rreo: ['ALIENAÇÃO DE BENS', 'AMORTIZAÇÕES DE EMPRÉSTIMOS', 'TRANSFERÊNCIAS DE CAPITAL', 'OUTRAS RECEITAS DE CAPITAL'] },
+  ]
+  const out: LinhaConciliacao[] = def.map((d) => ({
+    chave: d.chave, cod: d.cod, rotulo: d.rotulo,
+    ploa: d.q.reduce((s, k) => s + (quadro[k]?.[col] ?? 0), 0),
+    portalBruto: soma(d.pref, false), portalLiquido: soma(d.pref, true), rreo: d.rreo ? rreo(d.rreo) : null,
+  }))
+  const totalLinhas = linhas.reduce((s, l) => s + Number(l[3]), 0)
+  out.push({ chave: 'ded', cod: '9', rotulo: 'Deduções (municípios, Fundeb e outras)', ploa: quadro.deducoes?.[col] ?? 0, portalBruto: linhas.reduce((s, l) => s + Number(l[4]), 0), rreo: null, portalLiquido: 0 })
+  out.push({ chave: 'total', cod: '', rotulo: 'Receita líquida total', ploa: quadro.total?.[col] ?? 0, portalBruto: totalLinhas + linhas.reduce((s, l) => s + Number(l[4]), 0), rreo: rreo(TOTAL_RREO), portalLiquido: totalLinhas + linhas.reduce((s, l) => s + Number(l[4]), 0) })
+  return out
 }

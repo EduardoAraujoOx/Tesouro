@@ -5,6 +5,7 @@ import { milhoes, numero } from '@/lib/formato'
 import { Cartao, TabelaItens } from './Graficos'
 import { fmtPct, variacoes } from './GraficosMacro'
 import { ANOS_RITMO, ritmoReceita, type DadosReceita, type RitmoGrupo } from './projecao'
+import { COD_GRUPO } from './codigos'
 
 const NOMES_MES = ['janeiro', 'fevereiro', 'março', 'abril', 'maio', 'junho', 'julho', 'agosto', 'setembro', 'outubro', 'novembro', 'dezembro']
 const mi = (x: number) => milhoes(x === 0 ? 0 : x, 0)
@@ -21,7 +22,7 @@ export function RitmoReceita({ dados }: { dados: DadosReceita }) {
   return (
     <Cartao titulo={`Ritmo da arrecadação até ${mes}, ano a ano`}>
       <TabelaItens altura="livre" itens={linhas} legenda={`Arrecadação líquida acumulada de janeiro a ${mes}, por tipo de receita, em R$ milhões`} colunas={[
-        { rotulo: 'R$ milhões', valor: (g) => <span className={g.id === 'total' ? 'font-semibold' : ''}>{g.rotulo}{g.oscila && <span title="A participação do período no ano oscila muito entre os anos: projeção pouco confiável" className="ml-1 text-ink-soft">≈</span>}</span> },
+        { rotulo: 'R$ milhões · natureza', valor: (g) => <span className={g.id === 'total' ? 'font-semibold' : ''}>{COD_GRUPO[g.id] && <span className="block text-label normal-case tracking-normal tabular-nums text-ink-soft md:mr-1.5 md:inline-block md:min-w-[6.5rem] md:text-small">{COD_GRUPO[g.id]}</span>}{g.rotulo}{g.oscila && <span title="A participação do período no ano oscila muito entre os anos: projeção pouco confiável" className="ml-1 text-ink-soft">≈</span>}</span> },
         ...ANOS_RITMO.map((a) => ({ rotulo: String(a), valor: (g: RitmoGrupo) => mi(g.acumulado[a]), secundaria: true })),
         { rotulo: '2026', valor: (g) => <span className="font-semibold">{mi(g.acumulado[2026])}</span>, secundaria: true },
         { rotulo: 'Δ% 24', valor: (g) => fmtPct(crescimento(g.acumulado[2023], g.acumulado[2024])), secundaria: true },
