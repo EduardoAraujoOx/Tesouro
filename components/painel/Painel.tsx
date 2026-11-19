@@ -2,6 +2,7 @@
 
 import { Fragment, useId, useMemo, useState } from 'react'
 import { bilhoes, milhoes, numero, pct } from '@/lib/formato'
+import { IDENTIDADE } from '@/lib/identidade-painel'
 import { Cartao, BarrasPares, BarrasVariacao, COR, Legenda, LEGENDA_PARES, TabelaItens } from './Graficos'
 import { ATU, EMP, INI, PLOA, agrupa, execucaoPct, titulo, total, variacaoPct, type Item, type Linha, type Soma } from './dados'
 
@@ -253,6 +254,7 @@ export function Painel({ linhas, nomes, coleta, outrosPoderes }: { linhas: Linha
 
       <p className="mt-4 text-small text-ink-soft">
         Fonte: Portal de Dados Abertos do ES (2025 e 2026, coleta em {coleta}); PLOA 2027: Mensagem nº 189/2026, proposta e não a LOA. Δ = PLOA 2027 menos atualizada 2026.
+        <br />{IDENTIDADE.aviso}
       </p>
     </div>
   )

@@ -1,9 +1,12 @@
 import type { Metadata } from 'next'
 import { Painel } from '@/components/painel/Painel'
+import { IDENTIDADE } from '@/lib/identidade-painel'
 import { coletadoEm, linhasCompactas, nomesPainel, ORGAOS_OUTROS_PODERES } from '@/lib/orcamento'
 
 export const metadata: Metadata = {
-  title: 'Painel do orçamento',
+  title: { absolute: `${IDENTIDADE.nome} · ${IDENTIDADE.painel}` },
+  description: IDENTIDADE.aviso,
+  openGraph: { type: 'website', locale: 'pt_BR', siteName: IDENTIDADE.nome, title: IDENTIDADE.painel, description: IDENTIDADE.aviso },
   robots: { index: false, follow: false },
 }
 
