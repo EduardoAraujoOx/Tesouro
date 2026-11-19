@@ -1,0 +1,575 @@
+{
+ "extraido_em": "2026-11-19",
+ "colunas": [
+  "2023",
+  "2024",
+  "2025",
+  "orcamento2026",
+  "provavel2026",
+  "estimativa2027"
+ ],
+ "documento": "Mensagem nº 189/2026 (PLOA 2027), Evolução da Receita (p. 97) e Evolução da Despesa (p. 130)",
+ "receita": [
+  {
+   "chave": "receitas_correntes",
+   "rotulo": "Receitas correntes",
+   "nivel": 0,
+   "valores": [
+    32420688009,
+    37778516917,
+    40355336240,
+    41181007539,
+    44498405034,
+    45242095708
+   ]
+  },
+  {
+   "chave": "impostos_taxas_cm",
+   "rotulo": "Impostos, taxas e contribuições de melhoria",
+   "nivel": 1,
+   "valores": [
+    21229276542,
+    24864679486,
+    27118148236,
+    28298559377,
+    29770511652,
+    31449065397
+   ]
+  },
+  {
+   "chave": "impostos",
+   "rotulo": "Impostos",
+   "nivel": 2,
+   "valores": [
+    20199380725,
+    23711128575,
+    25833291863,
+    27029579907,
+    28392952828,
+    30046910128
+   ]
+  },
+  {
+   "chave": "irrf",
+   "rotulo": "IRRF",
+   "nivel": 3,
+   "valores": [
+    1203033162,
+    1416824882,
+    1623176346,
+    1662645444,
+    1692153674,
+    1759054101
+   ]
+  },
+  {
+   "chave": "ipva",
+   "rotulo": "IPVA",
+   "nivel": 3,
+   "valores": [
+    1098875804,
+    1188068852,
+    1354748784,
+    1351449871,
+    1403457604,
+    1513190869
+   ]
+  },
+  {
+   "chave": "itcd",
+   "rotulo": "ITCD",
+   "nivel": 3,
+   "valores": [
+    164093138,
+    217679510,
+    239520016,
+    203682302,
+    266120574,
+    215492839
+   ]
+  },
+  {
+   "chave": "icms",
+   "rotulo": "ICMS",
+   "nivel": 3,
+   "valores": [
+    17733378621,
+    20888555332,
+    22615846717,
+    23811802290,
+    25031220976,
+    26559172319
+   ]
+  },
+  {
+   "chave": "taxas",
+   "rotulo": "Taxas",
+   "nivel": 2,
+   "valores": [
+    1029895817,
+    1153550911,
+    1284856373,
+    1268979470,
+    1377558824,
+    1402155269
+   ]
+  },
+  {
+   "chave": "contrib_melhoria",
+   "rotulo": "Contribuições de melhoria",
+   "nivel": 2,
+   "valores": [
+    0,
+    0,
+    0,
+    0,
+    0,
+    0
+   ]
+  },
+  {
+   "chave": "contribuicoes",
+   "rotulo": "Receita de contribuições",
+   "nivel": 1,
+   "valores": [
+    679953973,
+    743216214,
+    783309144,
+    804941085,
+    816861892,
+    909979557
+   ]
+  },
+  {
+   "chave": "patrimonial",
+   "rotulo": "Receita patrimonial",
+   "nivel": 1,
+   "valores": [
+    1686809806,
+    1658439643,
+    1995129647,
+    1665309820,
+    1955025033,
+    1996352683
+   ]
+  },
+  {
+   "chave": "agropecuaria",
+   "rotulo": "Receita agropecuária",
+   "nivel": 1,
+   "valores": [
+    0,
+    1219847,
+    2983,
+    300000,
+    349192,
+    300000
+   ]
+  },
+  {
+   "chave": "industrial",
+   "rotulo": "Receita industrial",
+   "nivel": 1,
+   "valores": [
+    6279247,
+    4491514,
+    5134843,
+    5295000,
+    5398257,
+    5728510
+   ]
+  },
+  {
+   "chave": "servicos",
+   "rotulo": "Receita de serviços",
+   "nivel": 1,
+   "valores": [
+    61801342,
+    77872425,
+    97470294,
+    78567935,
+    91494269,
+    77290782
+   ]
+  },
+  {
+   "chave": "transf_correntes",
+   "rotulo": "Transferências correntes",
+   "nivel": 1,
+   "valores": [
+    7945221907,
+    8502502404,
+    9075248613,
+    9061922594,
+    10366191213,
+    9586931501
+   ]
+  },
+  {
+   "chave": "transf_corr_uniao",
+   "rotulo": "Transferências da União",
+   "nivel": 2,
+   "valores": [
+    6428709136,
+    6569097405,
+    6985851491,
+    6852399512,
+    7838654863,
+    7210366539
+   ]
+  },
+  {
+   "chave": "transf_corr_outras",
+   "rotulo": "Outras transferências",
+   "nivel": 2,
+   "valores": [
+    1516512772,
+    1933404999,
+    2089397122,
+    2209523082,
+    2527536350,
+    2376564962
+   ]
+  },
+  {
+   "chave": "outras_correntes",
+   "rotulo": "Outras receitas correntes",
+   "nivel": 1,
+   "valores": [
+    811345192,
+    1926095385,
+    1280892480,
+    1266111728,
+    1492573526,
+    1216447278
+   ]
+  },
+  {
+   "chave": "intra",
+   "rotulo": "Receitas correntes intraorçamentárias",
+   "nivel": 0,
+   "valores": [
+    390141666,
+    409025553,
+    487127600,
+    501272422,
+    441907832,
+    464258375
+   ]
+  },
+  {
+   "chave": "receitas_capital",
+   "rotulo": "Receitas de capital",
+   "nivel": 0,
+   "valores": [
+    1803182831,
+    940455290,
+    1958532959,
+    1625148210,
+    1286884593,
+    2270311192
+   ]
+  },
+  {
+   "chave": "operacoes_credito",
+   "rotulo": "Operações de crédito",
+   "nivel": 1,
+   "valores": [
+    531031719,
+    684350070,
+    605363397,
+    1256607302,
+    980096161,
+    1761708098
+   ]
+  },
+  {
+   "chave": "alienacao",
+   "rotulo": "Alienação de bens",
+   "nivel": 1,
+   "valores": [
+    597051316,
+    34651799,
+    35481311,
+    16772292,
+    20746330,
+    19854320
+   ]
+  },
+  {
+   "chave": "amortizacao_emprestimos",
+   "rotulo": "Amortização de empréstimos",
+   "nivel": 1,
+   "valores": [
+    0,
+    27099855,
+    247500,
+    5971882,
+    0,
+    0
+   ]
+  },
+  {
+   "chave": "transf_capital",
+   "rotulo": "Transferências de capital",
+   "nivel": 1,
+   "valores": [
+    204635042,
+    99559006,
+    1214362148,
+    220723298,
+    180838994,
+    383695469
+   ]
+  },
+  {
+   "chave": "transf_cap_uniao",
+   "rotulo": "Transferências da União",
+   "nivel": 2,
+   "valores": [
+    204635042,
+    99544404,
+    1214244351,
+    204827663,
+    167815672,
+    188670469
+   ]
+  },
+  {
+   "chave": "transf_cap_outras",
+   "rotulo": "Outras transferências",
+   "nivel": 2,
+   "valores": [
+    0,
+    14601,
+    117797,
+    15895635,
+    13023322,
+    195025000
+   ]
+  },
+  {
+   "chave": "outras_capital",
+   "rotulo": "Outras receitas de capital",
+   "nivel": 1,
+   "valores": [
+    470464753,
+    94794561,
+    103078602,
+    125073436,
+    105203108,
+    105053305
+   ]
+  },
+  {
+   "chave": "deducoes",
+   "rotulo": "Deduções da receita",
+   "nivel": 0,
+   "valores": [
+    -8719848418,
+    -9905725892,
+    -10601938508,
+    -11276621503,
+    -11902540058,
+    -12550101211
+   ]
+  },
+  {
+   "chave": "ded_municipios",
+   "rotulo": "Transferências a municípios",
+   "nivel": 1,
+   "valores": [
+    -5235528514,
+    -5962219229,
+    -6418607951,
+    -6795804431,
+    -7156863229,
+    -7555426888
+   ]
+  },
+  {
+   "chave": "ded_fundeb",
+   "rotulo": "FUNDEB",
+   "nivel": 1,
+   "valores": [
+    -3484319904,
+    -3943506663,
+    -4183330557,
+    -4480817072,
+    -4745676829,
+    -4994674323
+   ]
+  },
+  {
+   "chave": "ded_outras",
+   "rotulo": "Outras deduções",
+   "nivel": 1,
+   "valores": [
+    0,
+    0,
+    0,
+    0,
+    0,
+    0
+   ]
+  },
+  {
+   "chave": "total",
+   "rotulo": "Total",
+   "nivel": 0,
+   "valores": [
+    25894164088,
+    29222271868,
+    32199058290,
+    32030806668,
+    34324657401,
+    35426564064
+   ]
+  }
+ ],
+ "despesa": [
+  {
+   "chave": "despesas_correntes",
+   "rotulo": "Despesas correntes",
+   "nivel": 0,
+   "valores": [
+    19361331270,
+    21960606696,
+    24084944948,
+    24349600024,
+    26361529063,
+    26547041883
+   ]
+  },
+  {
+   "chave": "pessoal",
+   "rotulo": "Pessoal e encargos sociais",
+   "nivel": 1,
+   "valores": [
+    10974705850,
+    12056503729,
+    13146085585,
+    13584423545,
+    14253379112,
+    15122591303
+   ]
+  },
+  {
+   "chave": "juros",
+   "rotulo": "Juros e encargos da dívida pública",
+   "nivel": 1,
+   "valores": [
+    397811756,
+    445689282,
+    452356395,
+    605376806,
+    565689156,
+    569614329
+   ]
+  },
+  {
+   "chave": "outras_correntes",
+   "rotulo": "Outras despesas correntes",
+   "nivel": 1,
+   "valores": [
+    7988813665,
+    9458413685,
+    10486502968,
+    10159799673,
+    11542460795,
+    10854836251
+   ]
+  },
+  {
+   "chave": "despesas_capital",
+   "rotulo": "Despesas de capital",
+   "nivel": 0,
+   "valores": [
+    5737387988,
+    6380009177,
+    7010235674,
+    6175299558,
+    6357876207,
+    7404889450
+   ]
+  },
+  {
+   "chave": "investimento",
+   "rotulo": "Investimentos",
+   "nivel": 1,
+   "valores": [
+    4218697944,
+    4498945438,
+    5187327637,
+    4353353071,
+    4285047508,
+    5439017142
+   ]
+  },
+  {
+   "chave": "inversoes",
+   "rotulo": "Inversões financeiras",
+   "nivel": 1,
+   "valores": [
+    1078118391,
+    1391036562,
+    1303227182,
+    1268940800,
+    1560750299,
+    1347796699
+   ]
+  },
+  {
+   "chave": "amortizacao",
+   "rotulo": "Amortização da dívida pública",
+   "nivel": 1,
+   "valores": [
+    440571653,
+    490027177,
+    519680855,
+    553005687,
+    512078400,
+    618075609
+   ]
+  },
+  {
+   "chave": "reserva_rpps",
+   "rotulo": "Reserva do RPPS",
+   "nivel": 0,
+   "valores": [
+    0,
+    0,
+    0,
+    813977240,
+    0,
+    745810715
+   ]
+  },
+  {
+   "chave": "reserva_contingencia",
+   "rotulo": "Reserva de contingência",
+   "nivel": 0,
+   "valores": [
+    0,
+    0,
+    0,
+    691929846,
+    0,
+    728822016
+   ]
+  },
+  {
+   "chave": "total",
+   "rotulo": "Total",
+   "nivel": 0,
+   "valores": [
+    25098719259,
+    28340615872,
+    31095180621,
+    32030806668,
+    32719405270,
+    35426564064
+   ]
+  }
+ ]
+}

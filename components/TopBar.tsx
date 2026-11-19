@@ -1,7 +1,9 @@
 'use client'
 
 import { useEffect, useState } from 'react'
+import { usePathname } from 'next/navigation'
 import { IconAccess, IconContrast } from './Icons'
+import { IDENTIDADE } from '@/lib/identidade-painel'
 
 type Tam = 'sm' | 'md' | 'lg' | 'xl'
 const ORDEM: Tam[] = ['sm', 'md', 'lg', 'xl']
@@ -11,6 +13,7 @@ function guardar(chave: string, valor: string) {
 }
 
 export function TopBar() {
+  const painel = usePathname().startsWith('/painel')
   const [tam, setTam] = useState<Tam>('md')
   const [alto, setAlto] = useState(false)
 
@@ -45,8 +48,11 @@ export function TopBar() {
     'inline-flex h-9 min-w-9 items-center justify-center rounded px-2 text-small font-semibold text-on-navy hover:bg-white/15 focus-visible:outline-white'
 
   return (
-    <div role="region" aria-label="Governo do Estado do Espírito Santo" className="on-dark bg-navy-deep text-on-navy">
+    <div role="region" aria-label={painel ? IDENTIDADE.faixa : 'Governo do Estado do Espírito Santo'} className="on-dark bg-navy-deep text-on-navy print:hidden">
       <div className="mx-auto flex min-h-11 max-w-page items-center justify-center gap-4 px-5 text-small md:justify-between md:px-8">
+        {painel ? (
+          <p className="py-2 font-semibold">{IDENTIDADE.faixa}</p>
+        ) : (
         <p className="flex flex-wrap items-center justify-center gap-x-3 py-2">
           <span>Governo do Estado do Espírito Santo</span>
           <span aria-hidden="true" className="hidden h-4 w-px bg-current opacity-60 sm:block" />
@@ -54,6 +60,7 @@ export function TopBar() {
             <span className="hidden md:inline">Secretaria da Fazenda (</span>SEFAZ<span className="hidden md:inline">)</span>
           </a>
         </p>
+        )}
 
         <div className="hidden items-center gap-1 md:flex" role="group" aria-label="Recursos de acessibilidade">
           <button type="button" className={`${btn} disabled:opacity-40`} onClick={alternarContraste} aria-pressed={alto}>

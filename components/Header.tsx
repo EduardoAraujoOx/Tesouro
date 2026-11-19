@@ -6,6 +6,7 @@ import { usePathname } from 'next/navigation'
 import { useEffect, useId, useRef, useState } from 'react'
 import { IconChevron, IconClose, IconExternal, IconMenu, IconSearch } from './Icons'
 import { menu, type ItemMenu, type Link as L } from '@/lib/links'
+import { IDENTIDADE } from '@/lib/identidade-painel'
 
 function ItemLink({ l, className, onClick }: { l: L; className?: string; onClick?: () => void }) {
   if (l.externo) {
@@ -64,6 +65,22 @@ export function Header() {
       </button>
     </form>
   )
+
+  // O painel de dados tem identidade própria (transição de governo): sem logomarca do Tesouro, menu nem busca do portal.
+  if (pathname.startsWith('/painel')) {
+    return (
+      <header className="border-b border-line bg-paper">
+        <div className="mx-auto flex max-w-[1600px] items-center justify-between gap-4 px-5 py-3 md:px-8">
+          <Link href="/painel" className="block">
+            <span className="block text-lead font-semibold leading-tight text-navy md:text-title">{IDENTIDADE.nome}</span>
+            <span className="block text-small text-ink-soft">{IDENTIDADE.apoio}</span>
+            <span className="accent-bar" aria-hidden="true" />
+          </Link>
+          <span className="text-right text-small font-semibold text-ink md:text-body">{IDENTIDADE.painel}</span>
+        </div>
+      </header>
+    )
+  }
 
   return (
     <header className="border-b border-line bg-paper">

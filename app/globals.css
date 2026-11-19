@@ -53,6 +53,8 @@
 html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; }
 body { @apply bg-paper font-sans text-ink antialiased; font-size: 1rem; line-height: 1.6; }
 h1, h2, h3 { @apply font-serif font-semibold text-navy; font-optical-sizing: auto; }
+/* O painel de dados é analítico, não editorial: títulos em sans, na cor do texto */
+.painel h1, .painel h2, .painel h3 { @apply font-sans text-ink; }
 
 :focus-visible { outline: 3px solid rgb(var(--navy)); outline-offset: 3px; border-radius: 4px; }
 :root[data-contrast='alto'] :focus-visible { outline-color: #fff; }
@@ -117,3 +119,14 @@ h1, h2, h3 { @apply font-serif font-semibold text-navy; font-optical-sizing: aut
 /* Faixa do painel fiscal: a imagem some e a sombra vira cor sólida no alto contraste */
 .banner-sombra { background: linear-gradient(90deg, rgb(var(--navy-deep)) 0%, rgb(var(--navy-deep)) 36%, rgb(var(--navy-deep) / 0.55) 62%, rgb(var(--navy-deep) / 0) 100%); }
 :root[data-contrast='alto'] .banner-img { display: none; }
+
+/* Impressão e PDF do painel: A4 paisagem, sem controles; tabelas com rolagem viram páginas inteiras */
+@media print {
+  @page { size: A4 landscape; margin: 10mm; }
+  body { background: #fff; }
+  .painel .overflow-auto, .painel .overflow-x-auto { overflow: visible !important; max-height: none !important; }
+  .painel section { break-inside: avoid; margin-bottom: 4mm; }
+  .painel .lg\:grid-cols-12 { display: block !important; }
+  .painel .lg\:grid-cols-12 > section { width: 100%; }
+  .painel thead { position: static !important; }
+}
