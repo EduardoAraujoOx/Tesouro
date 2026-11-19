@@ -18,6 +18,8 @@ fontes públicas, lidas por scripts e guardadas em `data/`:
 | `data/rreo.json` | API do Siconfi (RREO do Poder Executivo, Anexos 01, 03 e 06, 2019 em diante) | painel fiscal: receita, despesa e investimentos contra previsão e dotação, receita corrente líquida, despesas por função, previdência, caixa dos recursos livres, arrecadação mensal de ICMS, FPE e royalties e IPCA; gera também os CSV `rreo-es`, `caixa-es` e `arrecadacao-es` em `public/dados` |
 | `data/minimos.json` | RREO do 6º bimestre publicado pela SEFAZ-ES (PDF, lido com `pdftotext`) | painel fiscal: percentual aplicado em educação (mínimo de 25%) e em saúde (mínimo de 12%); gera `public/dados/minimos-es.csv` |
 | `data/indicadores.json` | API do Siconfi (RGF do Poder Executivo, 2019 em diante) e dados abertos da CAPAG (Tesouro Transparente) | painel fiscal: limites da LRF por quadrimestre e notas da CAPAG; gera também `public/dados/*.csv` |
+| `data/orcamento.json` | Portal de Dados Abertos do ES (`OrcamentosDespesa-AAAA.csv`) | Painel do orçamento: dotação inicial, atualizada, empenhado, liquidado e pago de 2025 e 2026, por unidade orçamentária, programa, ação, GND e fonte; conferido contra o consolidado por unidade gestora (a dotação precisa bater ao centavo) |
+| `data/ploa2027.json` | PLOA 2027, Programa de Trabalho (Mensagem nº 189/2026, PDF digitalizado) | Painel do orçamento: dotação proposta para 2027 por unidade, programa, ação, GND e fonte, lida por OCR e conferida por soma contra os totais impressos (ver `scripts/ploa/README.md`); `data/ploa2027-auditoria.json` lista as correções automáticas |
 | `data/curadoria-noticias.json` | edição manual | notícias fixadas no início do carrossel (`destaques`, lista de endereços; vazia = as três mais recentes) e correções do tipo de imagem (`foto` ou `arte`) |
 
 Os **PDFs não são copiados**: o portal aponta para o arquivo oficial na SEFAZ, que continua sendo a fonte única
@@ -28,6 +30,7 @@ da verdade (evita versões desatualizadas de documentos fiscais e um repositóri
 | `/` | Página inicial: abertura com foto de Vitória, indicadores em destaque (CAPAG e limites da LRF, com gráfico e explicação), sete acessos rápidos, publicações recentes, notícias e Tesouro Cidadão |
 | `/tesouro/[área]` | Uma página para cada área do Tesouro (35), com o texto original e os documentos |
 | `/publicacoes` | Busca em todo o acervo, com filtro por tipo e por ano (`?tipo=` e `?q=` na URL) |
+| `/painel` | Painel do orçamento: PLOA 2027 comparada à dotação e à execução de 2026 por unidade orçamentária e ação (com detalhe por ação), recortes automáticos do que pede atenção (ações abaixo do empenhado de 2026, ações novas, ações sem dotação), grupo de despesa e fonte de recursos, e nota de fontes e método |
 | `/indicadores` | Indicadores fiscais: sete categorias (orçamento, arrecadação, limites da LRF, caixa, CAPAG, previdência e despesas por função), gráfico grande, definições ao lado, correção pelo IPCA, comparação de até 3 indicadores, CSV e link da escolha; metodologia recolhida abaixo |
 | `/noticias`, `/noticias/[slug]` | Lista e página de cada notícia do Tesouro, com o texto completo (a fonte original é citada no fim) |
 | `/cidadao` | Tesouro Cidadão: números do Balanço Cidadão, perguntas e respostas ligadas aos dados do painel, documentos cidadãos, glossário e ferramentas do Tesouro Nacional |
