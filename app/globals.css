@@ -137,7 +137,7 @@ html:has(.painel) { scroll-padding-top: 3.75rem; }
   @page {
     size: A4 landscape;
     margin: 12mm 10mm 14mm;
-    @bottom-left { content: "Transição de Governo · Painel orçamentário 2027"; font: 8pt sans-serif; color: #5b6573; }
+    @bottom-left { content: "Transição de Governo · Painel orçamentário 2027 · Material de trabalho com dados públicos; não é divulgação oficial do Governo do Estado"; font: 8pt sans-serif; color: #5b6573; }
     @bottom-right { content: "Página " counter(page) " de " counter(pages); font: 8pt sans-serif; color: #5b6573; }
   }
   html { font-size: 13px; }

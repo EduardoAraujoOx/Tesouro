@@ -6,7 +6,8 @@ import { IDENTIDADE } from '@/lib/identidade-painel'
 import { Cartao, TabelaDelta, TabelaItens } from './Graficos'
 import { fmtPct } from './GraficosMacro'
 import { Faixa } from './Faixa'
-import { Receita, VisaoGeral } from './Macro'
+import { Receita } from './Macro'
+import { VisaoGeral } from './Agregado'
 import { CoberturaFontes, ReceitaMensal, type DadosReceita } from './ReceitaMensal'
 import type { LinhaMacro } from '@/lib/macro'
 import { ATU, EMP, INI, PLOA, agrupa, execucaoPct, titulo, total, variacaoPct, type Item, type Linha, type Soma } from './dados'
@@ -14,12 +15,13 @@ import { ATU, EMP, INI, PLOA, agrupa, execucaoPct, titulo, total, variacaoPct, t
 type Nomes = { uo: Record<string, string>; programa: Record<string, string>; acao: Record<string, string>; gnd: Record<string, string>; fonte: Record<string, string> }
 type Escopo = 'executivo' | 'outros' | 'todos'
 type Alerta = 'abaixo' | 'novas' | 'extintas'
-type Aba = 'visao' | 'receita' | 'despesa' | 'fontes'
-const ABAS: { id: Aba; rotulo: string; curto: string; nota: string }[] = [
-  { id: 'visao', rotulo: 'Visão geral', curto: 'Visão geral', nota: 'Receita e despesa: PLOA 2027 contra 2026' },
-  { id: 'receita', rotulo: 'Receita', curto: 'Receita', nota: 'Arrecadação, projeção de 2026 e perfil mensal de 2027' },
-  { id: 'despesa', rotulo: 'Despesa por unidade', curto: 'Despesa', nota: 'PLOA 2027 contra dotação e empenho de 2026, por unidade' },
-  { id: 'fontes', rotulo: 'Fontes e grupos', curto: 'Fontes', nota: 'Grupos de despesa, fontes de recursos e cobertura' },
+type Aba = 'visao' | 'receita' | 'despesa' | 'fontes' | 'atencao'
+const ABAS: { id: Aba; rotulo: string; nota: string }[] = [
+  { id: 'visao', rotulo: 'Visão geral', nota: 'Receita, despesa e resultado: a proposta de 2027 contra a história e a projeção de 2026' },
+  { id: 'receita', rotulo: 'Receita', nota: 'Arrecadação de 2026, perfil mensal proposto para 2027 e quadro oficial detalhado' },
+  { id: 'despesa', rotulo: 'Despesa', nota: 'PLOA 2027 contra a dotação e o empenho de 2026, por unidade orçamentária' },
+  { id: 'fontes', rotulo: 'Fontes e grupos', nota: 'Grupos de despesa, fontes de recursos e cobertura da despesa pela receita' },
+  { id: 'atencao', rotulo: 'Atenção', nota: 'Ações que merecem leitura cuidadosa antes da programação do exercício' },
 ]
 
 const cap = titulo
@@ -48,6 +50,13 @@ export function Painel({ linhas, nomes, coleta, outrosPoderes, macro, receitaMes
   const [alerta, setAlerta] = useState<Alerta>('abaixo')
   const [ordem, setOrdem] = useState<{ col: number; desc: boolean }>({ col: 0, desc: true })
   const [aberta, setAberta] = useState<string | null>(null)
+  const [menuAberto, setMenuAberto] = useState(false)
+  useEffect(() => {
+    if (!menuAberto) return
+    const fecha = (e: KeyboardEvent) => { if (e.key === 'Escape') setMenuAberto(false) }
+    window.addEventListener('keydown', fecha)
+    return () => window.removeEventListener('keydown', fecha)
+  }, [menuAberto])
 
   const doEscopo = useMemo(
     () => linhas.filter((l) => (escopo === 'todos' ? true : escopo === 'outros' ? outros.has(l[0].slice(0, 2)) : !outros.has(l[0].slice(0, 2)))),
@@ -148,7 +157,7 @@ export function Painel({ linhas, nomes, coleta, outrosPoderes, macro, receitaMes
     <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-end sm:gap-x-6">
       <fieldset>
         <legend className="text-small text-ink-soft">Recorte</legend>
-        <div className="mt-1 grid grid-cols-3 gap-1.5 sm:flex">
+        <div className="mt-1 grid grid-cols-[1fr_1.6fr_1fr] gap-1.5 sm:flex">
           {([['executivo', 'Executivo'], ['outros', 'Outros Poderes'], ['todos', 'Todos']] as [Escopo, string][]).map(([v, r]) => (
             <label key={v} className={`cursor-pointer rounded-brand border px-2 py-1.5 text-center text-small sm:px-3 ${escopo === v ? 'border-navy bg-navy font-semibold text-on-navy' : 'border-line bg-paper'}`}>
               <input type="radio" name="recorte" value={v} checked={escopo === v} onChange={() => { setEscopo(v); setUoSel(''); setAberta(null) }} className="sr-only" />{r}
@@ -169,34 +178,53 @@ export function Painel({ linhas, nomes, coleta, outrosPoderes, macro, receitaMes
   const abaAtual = ABAS.find((a) => a.id === aba)!
   return (
     <div className="painel mx-auto max-w-[1600px] px-4 pb-8 sm:px-5 md:px-8">
-      {/* barra fixa: seções do painel (no celular, quatro abas de largura igual) */}
+      {/* barra fixa: no computador, abas; no celular, um menu discreto com a seção atual */}
       <div className="print:hidden sticky top-0 z-30 -mx-4 border-b border-line bg-paper px-4 sm:-mx-5 sm:px-5 md:-mx-8 md:px-8">
-        <div role="tablist" aria-label="Seções do painel" className="flex">
-          {ABAS.map((a) => (
-            <button key={a.id} type="button" role="tab" id={`aba-${a.id}`} aria-selected={aba === a.id} aria-controls={`painel-${a.id}`} tabIndex={aba === a.id ? 0 : -1}
-              onClick={() => escolheAba(a.id)}
-              onKeyDown={(e) => {
-                const i = ABAS.findIndex((x) => x.id === aba)
-                if (e.key === 'ArrowRight') { e.preventDefault(); escolheAba(ABAS[(i + 1) % ABAS.length].id) }
-                if (e.key === 'ArrowLeft') { e.preventDefault(); escolheAba(ABAS[(i + ABAS.length - 1) % ABAS.length].id) }
-              }}
-              className={`-mb-px flex-1 whitespace-nowrap border-b-[3px] px-1 py-3 text-center text-small font-semibold md:flex-none md:px-5 md:text-body ${aba === a.id ? 'border-navy text-navy' : 'border-transparent text-ink-soft hover:text-ink'}`}>
-              <span className="md:hidden">{a.curto}</span><span className="hidden md:inline">{a.rotulo}</span>
+        <div className="flex items-center justify-between gap-2">
+          <div role="tablist" aria-label="Seções do painel" className="hidden md:flex">
+            {ABAS.map((a) => (
+              <button key={a.id} type="button" role="tab" id={`aba-${a.id}`} aria-selected={aba === a.id} aria-controls={`painel-${a.id}`} tabIndex={aba === a.id ? 0 : -1}
+                onClick={() => escolheAba(a.id)}
+                onKeyDown={(e) => {
+                  const i = ABAS.findIndex((x) => x.id === aba)
+                  if (e.key === 'ArrowRight') { e.preventDefault(); escolheAba(ABAS[(i + 1) % ABAS.length].id) }
+                  if (e.key === 'ArrowLeft') { e.preventDefault(); escolheAba(ABAS[(i + ABAS.length - 1) % ABAS.length].id) }
+                }}
+                className={`-mb-px whitespace-nowrap border-b-[3px] px-4 py-2.5 text-small font-semibold lg:px-5 ${aba === a.id ? 'border-navy text-navy' : 'border-transparent text-ink-soft hover:text-ink'}`}>
+                {a.rotulo}
+              </button>
+            ))}
+          </div>
+          <div className="relative md:hidden">
+            <button type="button" aria-expanded={menuAberto} aria-controls="menu-secoes" onClick={() => setMenuAberto((v) => !v)}
+              className="-ml-2 inline-flex items-center gap-2 px-2 py-2.5 text-body font-semibold text-navy">
+              <svg aria-hidden="true" viewBox="0 0 20 20" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"><path d="M3 5h14M3 10h14M3 15h14" /></svg>
+              {abaAtual.rotulo}
+              <svg aria-hidden="true" viewBox="0 0 20 20" className={`h-3.5 w-3.5 transition-transform ${menuAberto ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="m5 8 5 5 5-5" /></svg>
             </button>
-          ))}
+            {menuAberto && (
+              <ul id="menu-secoes" className="absolute left-0 top-full z-40 mt-px w-64 overflow-hidden rounded-b-brand border border-line bg-paper shadow-lg">
+                {ABAS.map((a) => (
+                  <li key={a.id} className="border-t border-line first:border-t-0">
+                    <button type="button" aria-current={aba === a.id ? 'page' : undefined} onClick={() => { escolheAba(a.id); setMenuAberto(false); window.scrollTo({ top: 0 }) }}
+                      className={`flex w-full items-center justify-between px-4 py-3 text-left text-body ${aba === a.id ? 'bg-surface font-semibold text-navy' : 'text-ink'}`}>
+                      {a.rotulo}{aba === a.id && <span aria-hidden="true">✓</span>}
+                    </button>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </div>
+          <button type="button" onClick={() => window.print()} title="Abre a impressão: escolha “Salvar como PDF”" className="inline-flex items-center gap-1.5 rounded-brand px-2.5 py-1.5 text-small font-semibold text-ink-soft hover:bg-surface hover:text-ink">
+            <svg aria-hidden="true" viewBox="0 0 20 20" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"><path d="M10 3v9m0 0-3.5-3.5M10 12l3.5-3.5M4 14v2h12v-2" /></svg>
+            PDF<span className="sr-only"> (exportar esta seção)</span>
+          </button>
         </div>
       </div>
 
-      {/* título da seção e exportação */}
-      <div className="mt-4 flex items-start justify-between gap-3 print:hidden">
-        <div className="min-w-0">
-          <h1 className="text-title font-semibold leading-tight md:text-section">{abaAtual.rotulo}</h1>
-          <p className="mt-0.5 text-small text-ink-soft">{abaAtual.nota}</p>
-        </div>
-        <button type="button" onClick={() => window.print()} title="Abre a impressão: escolha “Salvar como PDF”" className="inline-flex shrink-0 items-center gap-1.5 rounded-brand border border-line bg-paper px-3 py-1.5 text-small font-semibold text-ink hover:bg-surface">
-          <svg aria-hidden="true" viewBox="0 0 20 20" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"><path d="M10 3v9m0 0-3.5-3.5M10 12l3.5-3.5M4 14v2h12v-2" /></svg>
-          PDF<span className="sr-only"> (exportar esta seção)</span>
-        </button>
+      <div className="mt-4 print:hidden">
+        <h1 className="text-title font-semibold leading-tight md:text-section">{abaAtual.rotulo}</h1>
+        <p className="mt-0.5 text-small text-ink-soft">{abaAtual.nota}</p>
       </div>
       <div className="hidden print:block">
         <p className="text-label normal-case tracking-normal text-ink-soft">{IDENTIDADE.nome} · {IDENTIDADE.apoio}</p>
@@ -205,7 +233,7 @@ export function Painel({ linhas, nomes, coleta, outrosPoderes, macro, receitaMes
       </div>
 
       <div role="tabpanel" id={`painel-${aba}`} aria-labelledby={`aba-${aba}`} className="mt-4">
-        {aba === 'visao' && <VisaoGeral receita={macro.receita} despesa={macro.despesa} ipca={macro.ipca} fonteIpca={macro.fonteIpca} />}
+        {aba === 'visao' && <VisaoGeral receita={macro.receita} despesa={macro.despesa} ipca={macro.ipca} fonteIpca={macro.fonteIpca} dados={receitaMes} />}
         {aba === 'receita' && (
           <>
             <ReceitaMensal dados={receitaMes} macro={macro.receita} ipca={macro.ipca} />
@@ -277,8 +305,32 @@ export function Painel({ linhas, nomes, coleta, outrosPoderes, macro, receitaMes
         </div>
       </section>
 
+          </>
+        )}
+        {aba === 'fontes' && (
+          <>
+            <div className="print:hidden">{filtros}</div>
+            {/* totais do recorte, numa linha */}
+      <Faixa itens={resumo} nota="Tabelas em R$ milhões, arredondadas; valores correntes." />
+
+            <div className="mt-3 space-y-3">
+              <Cartao titulo="Grupo de despesa">
+                <TabelaDelta itens={porGnd} delta={(i) => i.v[PLOA] - i.v[ATU]} rotuloBarra="Grupo|PLOA 2027 menos atualizada 2026" primeira={nomeItem}
+                  legenda="Por grupo de natureza da despesa, em R$ milhões" colunas={colsDelta} />
+              </Cartao>
+              <Cartao titulo="Fontes de recursos: 12 maiores">
+                <TabelaDelta itens={porFonte} delta={(i) => i.v[PLOA] - i.v[ATU]} rotuloBarra="Fonte|PLOA 2027 menos atualizada 2026" primeira={nomeItem}
+                  legenda="Doze maiores fontes de recursos, em R$ milhões" colunas={colsDelta} />
+              </Cartao>
+            </div>
+            <div className="mt-6"><CoberturaFontes dados={receitaMes} linhas={linhas} nomesFonte={nomes.fonte} /></div>
+          </>
+        )}
+        {aba === 'atencao' && (
+          <>
+            <div className="print:hidden">{filtros}</div>
             {/* alertas */}
-      <section aria-label="Pontos de atenção" className="mt-3 min-w-0 rounded-brand border border-line bg-paper p-3 sm:p-4 md:p-5">
+      <section aria-label="Pontos de atenção" className="mt-4 min-w-0 rounded-brand border border-line bg-paper p-3 sm:p-4 md:p-5">
         <div className="flex flex-wrap items-center justify-between gap-3">
           <h2 className="text-body font-semibold md:text-lead">Pontos de atenção</h2>
           <div role="group" aria-label="Tipo de ponto de atenção" className="flex w-full flex-col divide-y divide-line overflow-hidden rounded-brand border border-line text-small sm:inline-flex sm:w-auto sm:flex-row sm:divide-x sm:divide-y-0">
@@ -306,30 +358,11 @@ export function Painel({ linhas, nomes, coleta, outrosPoderes, macro, receitaMes
 
           </>
         )}
-        {aba === 'fontes' && (
-          <>
-            <div className="print:hidden">{filtros}</div>
-            {/* totais do recorte, numa linha */}
-      <Faixa itens={resumo} nota="Tabelas em R$ milhões, arredondadas; valores correntes." />
-
-            <div className="mt-3 space-y-3">
-              <Cartao titulo="Grupo de despesa">
-                <TabelaDelta itens={porGnd} delta={(i) => i.v[PLOA] - i.v[ATU]} rotuloBarra="Grupo|PLOA 2027 menos atualizada 2026" primeira={nomeItem}
-                  legenda="Por grupo de natureza da despesa, em R$ milhões" colunas={colsDelta} />
-              </Cartao>
-              <Cartao titulo="Fontes de recursos: 12 maiores">
-                <TabelaDelta itens={porFonte} delta={(i) => i.v[PLOA] - i.v[ATU]} rotuloBarra="Fonte|PLOA 2027 menos atualizada 2026" primeira={nomeItem}
-                  legenda="Doze maiores fontes de recursos, em R$ milhões" colunas={colsDelta} />
-              </Cartao>
-            </div>
-            <div className="mt-6"><CoberturaFontes dados={receitaMes} linhas={linhas} nomesFonte={nomes.fonte} /></div>
-          </>
-        )}
       </div>
 
       <p className="mt-4 text-small text-ink-soft print:mt-2">
-        {aba === 'despesa' || aba === 'fontes' ? <>Fonte: Portal de Dados Abertos do ES (2025 e 2026, coleta em {coleta}); PLOA 2027: Mensagem nº 189/2026, proposta e não a LOA. Δ = PLOA 2027 menos atualizada 2026.<br /></> : null}
-        {IDENTIDADE.aviso}
+        {aba === 'despesa' || aba === 'fontes' || aba === 'atencao' ? <>Fonte: Portal de Dados Abertos do ES (2025 e 2026, coleta em {coleta}); PLOA 2027: Mensagem nº 189/2026, proposta e não a LOA. Δ = PLOA 2027 menos atualizada 2026.<br /></> : null}
+        <span className="print:hidden">{IDENTIDADE.aviso}</span>
       </p>
     </div>
   )

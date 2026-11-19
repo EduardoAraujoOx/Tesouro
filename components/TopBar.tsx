@@ -48,10 +48,10 @@ export function TopBar() {
     'inline-flex h-9 min-w-9 items-center justify-center rounded px-2 text-small font-semibold text-on-navy hover:bg-white/15 focus-visible:outline-white'
 
   return (
-    <div role="region" aria-label={painel ? IDENTIDADE.faixa : 'Governo do Estado do Espírito Santo'} className="on-dark bg-navy-deep text-on-navy print:hidden">
-      <div className="mx-auto flex min-h-11 max-w-page items-center justify-center gap-4 px-4 text-small sm:px-5 md:justify-between md:px-8">
+    <div role="region" aria-label={painel ? IDENTIDADE.faixa : 'Governo do Estado do Espírito Santo'} className={`on-dark bg-navy-deep text-on-navy print:hidden ${painel ? 'hidden md:block' : ''}`}>
+      <div className={`mx-auto flex items-center justify-center gap-4 px-4 text-small sm:px-5 md:justify-between md:px-8 ${painel ? 'min-h-9 max-w-[1600px]' : 'min-h-11 max-w-page'}`}>
         {painel ? (
-          <p className="py-2 font-semibold">{IDENTIDADE.faixa}</p>
+          <p className="py-1.5 text-label normal-case tracking-normal font-semibold">{IDENTIDADE.faixa}</p>
         ) : (
         <p className="flex flex-wrap items-center justify-center gap-x-3 py-2">
           <span>Governo do Estado do Espírito Santo</span>

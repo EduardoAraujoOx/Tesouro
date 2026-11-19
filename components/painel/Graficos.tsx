@@ -126,9 +126,9 @@ export type Coluna<T> = { rotulo: string; valor: (x: T) => ReactNode; alinha?: '
  * Tabela com cabeçalho fixo, primeira coluna fixa (no celular a rolagem horizontal deixa sempre à vista o que cada linha é)
  * e sombra nas bordas quando há mais conteúdo para rolar.
  */
-export function TabelaItens<T extends { chave: string }>({ itens, colunas, legenda }: { itens: T[]; colunas: Coluna<T>[]; legenda: string }) {
+export function TabelaItens<T extends { chave: string }>({ itens, colunas, legenda, altura = 'limitada' }: { itens: T[]; colunas: Coluna<T>[]; legenda: string; altura?: 'limitada' | 'livre' }) {
   return (
-    <div tabIndex={0} role="region" aria-label={legenda} className="rola max-h-[32rem] overflow-auto rounded-brand border border-line">
+    <div tabIndex={0} role="region" aria-label={legenda} className={`rola overflow-auto rounded-brand border border-line ${altura === 'livre' ? '' : 'max-h-[32rem]'}`}>
       <table className="w-full min-w-max text-left text-small">
         <caption className="sr-only">{legenda}</caption>
         <thead>
