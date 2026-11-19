@@ -3,21 +3,16 @@
 import { useMemo, useState } from 'react'
 import { bilhoes, milhoes, numero } from '@/lib/formato'
 import type { LinhaMacro } from '@/lib/macro'
-import { Cartao, COR, Legenda, TabelaItens } from './Graficos'
-import { BarrasSeries, ColunasMeses, ColunasReceitaDespesa, fmtPct, variacoes, type ItemSerie, type Serie } from './GraficosMacro'
+import { Cartao, COR, Legenda, TabelaDelta, TabelaItens } from './Graficos'
+import { ColunasMeses, fmtPct, variacoes, type ItemSerie } from './GraficosMacro'
 import { Faixa } from './Faixa'
 
 type Mensal = Record<'icms' | 'fpe' | 'royalties', Record<string, number>>
 type Props = { receita: LinhaMacro[]; despesa: LinhaMacro[]; ipca: Record<string, number>; mensal: Mensal; fonteIpca: string }
 
-const SERIES3: Serie[] = [
-  { rotulo: 'Orçamento 2026', cor: COR.atualizada, contorno: COR.contornoAtualizada },
-  { rotulo: 'Provável 2026', cor: COR.empenhado },
-  { rotulo: '2027', cor: COR.ploa },
-]
-const LEG3 = SERIES3.map((s) => ({ cor: s.cor, contorno: s.contorno, rotulo: s.rotulo }))
 const sinal = (x: number) => (x > 0 ? '+' : x < 0 ? '−' : '')
-const dMi = (x: number) => `${sinal(x)}${milhoes(Math.abs(x))}`
+const mi = (x: number) => milhoes(x, 0)
+const dMi = (x: number) => `${sinal(x)}${milhoes(Math.abs(x), 0)}`
 
 function tabelas(receita: LinhaMacro[], despesa: LinhaMacro[]) {
   const R = Object.fromEntries(receita.map((x) => [x.chave, x.valores])) as Record<string, number[]>
@@ -87,14 +82,21 @@ export function VisaoGeral({ receita, despesa, ipca, fonteIpca }: Omit<Props, 'm
   const vd = variacoes(D.total[4], D.total[5], i27)
   const reservas = D.reserva_rpps[5] + D.reserva_contingencia[5]
 
-  const colsSerie = (primeira: string) => [
-    { rotulo: primeira, valor: (i: ItemSerie) => i.rotulo },
-    { rotulo: 'Orç. 26', valor: (i: ItemSerie) => milhoes(i.v[0]) },
-    { rotulo: 'Prov. 26', valor: (i: ItemSerie) => milhoes(i.v[1]) },
-    { rotulo: '2027', valor: (i: ItemSerie) => milhoes(i.v[2]) },
+  /* receita e despesa por ano: variação de cada ano sobre o anterior (o provável de 2026 e a proposta de 2027 comparam com 2025 e com o provável) */
+  const anterior = [null, 0, 1, 2, 2, 4]
+  const porAno = grupos.map((g, k) => {
+    const ant = anterior[k] === null ? null : grupos[anterior[k] as number]
+    return { chave: g.rotulo, ...g, dr: ant ? variacoes(ant.receita, g.receita, i27).nominal : undefined, dd: ant ? variacoes(ant.despesa, g.despesa, i27).nominal : undefined }
+  })
+  const colsDelta = (rotuloBase: string, rotuloAlvo: string) => [
+    { rotulo: 'Orç. 26', valor: (i: ItemSerie) => mi(i.v[0]) },
+    { rotulo: rotuloBase, valor: (i: ItemSerie) => mi(i.v[1]) },
+    { rotulo: rotuloAlvo, valor: (i: ItemSerie) => mi(i.v[2]), forte: true },
+    { rotulo: 'Δ R$ mi', valor: (i: ItemSerie) => dMi(i.v[2] - i.v[1]) },
     { rotulo: 'Δ%', valor: (i: ItemSerie) => fmtPct(variacoes(i.v[1], i.v[2], i27).nominal) },
     { rotulo: 'Real', valor: (i: ItemSerie) => fmtPct(variacoes(i.v[1], i.v[2], i27).real) },
   ]
+  const nomeLinha = (i: ItemSerie) => <><span className="line-clamp-3 font-medium text-ink md:line-clamp-none">{i.rotulo}</span>{i.sub && <span className="block text-label normal-case tracking-normal text-ink-soft">{i.sub}</span>}</>
 
   return (
     <div>
@@ -105,24 +107,33 @@ export function VisaoGeral({ receita, despesa, ipca, fonteIpca }: Omit<Props, 'm
           { r: 'Superávit corrente 2027', v: bilhoes(resultado[2].sup), s: `2026 provável ${bilhoes(resultado[1].sup)}` },
           { r: 'Reservas na proposta', v: bilhoes(reservas), s: `${numero((reservas / D.total[5]) * 100, 1)}% da despesa` },
         ]}
-        nota={`Real: deflacionado pelo IPCA 2027 de ${numero(i27 * 100, 2)}% (Focus). R$ milhões nas tabelas e barras.`}
+        nota={`Real: deflacionado pelo IPCA 2027 de ${numero(i27 * 100, 2)}% (Focus). Tabelas em R$ milhões, arredondadas.`}
       />
-      <div className="par-impressao mt-3 grid grid-cols-1 gap-3 xl:grid-cols-12">
-        <Cartao className="xl:col-span-7" titulo="Receita líquida e despesa: 2023 a 2027"
-          legenda={<Legenda itens={[{ cor: COR.ploa, rotulo: 'Receita (líquida das deduções)' }, { cor: COR.empenhado, rotulo: 'Despesa' }]} />}
-          grafico={<ColunasReceitaDespesa grupos={grupos} />}
-          tabela={<TabelaItens itens={grupos.map((g) => ({ chave: g.rotulo, ...g }))} legenda="Receita e despesa por ano, em R$ milhões"
-            colunas={[{ rotulo: 'Ano', valor: (g) => g.rotulo }, { rotulo: 'Receita', valor: (g) => milhoes(g.receita) }, { rotulo: 'Despesa', valor: (g) => milhoes(g.despesa) }, { rotulo: 'Resultado', valor: (g) => dMi(g.receita - g.despesa) }]} />} />
-        <Cartao className="xl:col-span-5" titulo="Resultado orçamentário"
-          grafico={<ResultadoTabela linhas={linhasRes} />} />
+      <div className="par-impressao mt-3 grid grid-cols-1 items-start gap-3 xl:grid-cols-12">
+        <Cartao className="xl:col-span-7" titulo="Receita líquida e despesa, ano a ano">
+          <TabelaItens itens={porAno} legenda="Receita líquida e despesa por ano, em R$ milhões" colunas={[
+            { rotulo: 'Ano', valor: (g) => g.rotulo },
+            { rotulo: 'Receita líquida', valor: (g) => mi(g.receita) },
+            { rotulo: 'Δ%', valor: (g) => fmtPct(g.dr) },
+            { rotulo: 'Despesa', valor: (g) => mi(g.despesa) },
+            { rotulo: 'Δ%', valor: (g) => fmtPct(g.dd) },
+            { rotulo: 'Resultado', valor: (g) => (Math.abs(g.receita - g.despesa) < 1e6 ? 'equilíbrio' : dMi(g.receita - g.despesa)) },
+          ]} />
+          <p className="mt-2 text-label normal-case tracking-normal text-ink-soft">Δ% sobre o ano anterior; orçamento e provável de 2026 sobre 2025; 2027 sobre o provável de 2026.</p>
+        </Cartao>
+        <Cartao className="xl:col-span-5" titulo="Resultado orçamentário">
+          <ResultadoTabela linhas={linhasRes} />
+        </Cartao>
       </div>
-      <div className="mt-3 grid grid-cols-1 gap-3 2xl:grid-cols-12">
-        <Cartao className="2xl:col-span-7" titulo="Receita por origem" legenda={<Legenda itens={LEG3} />}
-          grafico={<BarrasSeries itens={itensR} series={SERIES3} base={1} alvo={2} ipca={i27} rotuloBase="Prov. 26" rotuloAlvo="2027" />}
-          tabela={<TabelaItens itens={itensR} colunas={colsSerie('Origem')} legenda="Receita por origem, em R$ milhões" />} />
-        <Cartao className="2xl:col-span-5" titulo="Despesa por grupo" legenda={<Legenda itens={LEG3.map((l) => (l.rotulo === '2027' ? { ...l, rotulo: 'Proposta 2027' } : l.rotulo === 'Provável 2026' ? { ...l, rotulo: 'Execução provável 2026' } : l))} />}
-          grafico={<BarrasSeries itens={itensD} series={SERIES3} base={1} alvo={2} ipca={i27} rotuloBase="Prov. 26" rotuloAlvo="2027" />}
-          tabela={<TabelaItens itens={itensD} colunas={colsSerie('Grupo')} legenda="Despesa por grupo, em R$ milhões" />} />
+      <div className="mt-3 space-y-3">
+        <Cartao titulo="Receita por origem: o que muda em 2027">
+          <TabelaDelta itens={itensR} delta={(i) => i.v[2] - i.v[1]} rotuloBarra="Origem|2027 menos provável 2026" primeira={nomeLinha}
+            legenda="Receita por origem, em R$ milhões" colunas={colsDelta('Prov. 26', '2027')} />
+        </Cartao>
+        <Cartao titulo="Despesa por grupo: o que muda em 2027">
+          <TabelaDelta itens={itensD} delta={(i) => i.v[2] - i.v[1]} rotuloBarra="Grupo|2027 menos provável 2026" primeira={nomeLinha}
+            legenda="Despesa por grupo, em R$ milhões" colunas={colsDelta('Prov. 26', '2027')} />
+        </Cartao>
       </div>
       <p className="mt-3 text-small text-ink-soft">Fonte: PLOA 2027, Mensagem nº 189/2026, quadros Evolução da Receita (p. 97) e Evolução da Despesa (p. 130); provável 2026 é a estimativa do próprio documento. IPCA: {fonteIpca}</p>
     </div>
@@ -134,14 +145,14 @@ function ResultadoTabela({ linhas }: { linhas: { chave: string; rotulo: string; 
     <div tabIndex={0} role="region" aria-label="Resultado orçamentário, em R$ milhões" className="rola overflow-x-auto rounded-brand border border-line">
       <table className="w-full text-left text-small">
         <caption className="sr-only">Resultado orçamentário em R$ milhões: 2025, provável 2026 e 2027</caption>
-        <thead className="bg-surface"><tr><th scope="col" className="sticky left-0 bg-surface px-3 py-2">R$ milhões</th><th scope="col" className="px-2 py-2 text-right sm:px-3">2025</th><th scope="col" className="px-2 py-2 text-right sm:px-3">Prov. 26</th><th scope="col" className="px-2 py-2 text-right sm:px-3">2027</th></tr></thead>
+        <thead className="bg-surface"><tr><th scope="col" className="sticky left-0 bg-surface px-3 py-2">R$ milhões</th><th scope="col" className="hidden px-2 py-2 text-right sm:table-cell sm:px-3">2025</th><th scope="col" className="px-2 py-2 text-right sm:px-3">Prov. 26</th><th scope="col" className="px-2 py-2 text-right sm:px-3">2027</th></tr></thead>
         <tbody>
           {linhas.map((l) => {
             const total = l.rotulo.startsWith('=')
             return (
               <tr key={l.chave} className={`border-t border-line ${total ? 'bg-surface font-semibold' : ''}`}>
                 <th scope="row" className={`sticky left-0 z-[1] min-w-[6.5rem] whitespace-normal px-3 py-1.5 shadow-[1px_0_0_rgb(var(--line))] ${total ? 'bg-surface font-semibold' : 'bg-paper font-normal'}`}>{l.rotulo}</th>
-                {l.v.map((x, j) => <td key={j} className="whitespace-nowrap px-2 py-1.5 text-right tabular-nums sm:px-3">{milhoes(x === 0 ? 0 : x)}</td>)}
+                {l.v.map((x, j) => <td key={j} className={`whitespace-nowrap px-2 py-1.5 text-right tabular-nums sm:px-3 ${j === 0 ? 'hidden sm:table-cell' : ''}`}>{milhoes(x === 0 ? 0 : x, 0)}</td>)}
               </tr>
             )
           })}
@@ -188,12 +199,11 @@ export function Receita({ receita, ipca, mensal }: Omit<Props, 'despesa' | 'font
   }, [mensal])
 
   const cenarios = [
-    { rotulo: 'Orçamento 2026 (LOA)', v: R.icms[3], cor: COR.atualizada, ct: COR.contornoAtualizada },
-    { rotulo: 'Arrecadação provável 2026 (PLOA)', v: R.icms[4], cor: COR.empenhado },
-    { rotulo: 'Projeção simples 2026', v: icmsInfo.projecao, cor: COR.empenhado },
-    { rotulo: 'Estimativa 2027 (PLOA)', v: R.icms[5], cor: COR.ploa },
+    { chave: 'loa', rotulo: 'Orçamento 2026 (LOA)', v: R.icms[3] },
+    { chave: 'prov', rotulo: 'Arrecadação provável 2026 (PLOA)', v: R.icms[4] },
+    { chave: 'proj', rotulo: 'Projeção simples 2026', v: icmsInfo.projecao },
+    { chave: '27', rotulo: 'Estimativa 2027 (PLOA)', v: R.icms[5] },
   ]
-  const maxC = Math.max(...cenarios.map((c) => c.v))
 
   // quadro oficial da receita, completo
   const itensQuadro = receita.map((l) => ({ chave: l.chave, rotulo: l.rotulo, nivel: l.nivel, v: l.valores }))
@@ -209,8 +219,8 @@ export function Receita({ receita, ipca, mensal }: Omit<Props, 'despesa' | 'font
         ]}
         nota="Projeção simples: ICMS de 2025 vezes a variação acumulada de 2026 no mesmo período."
       />
-      <div className="mt-3 grid grid-cols-1 gap-3 2xl:grid-cols-12">
-        <Cartao className="2xl:col-span-7" titulo={`Arrecadação mensal: ${NOMES[qual]}`}
+      <div className="mt-3 space-y-3">
+        <Cartao titulo={`Arrecadação mensal: ${NOMES[qual]}`}
           direita={
             <div role="group" aria-label="Série" className="inline-flex overflow-hidden rounded-brand border border-line text-small">
               {(['icms', 'fpe', 'royalties'] as const).map((k) => (
@@ -221,21 +231,15 @@ export function Receita({ receita, ipca, mensal }: Omit<Props, 'despesa' | 'font
           legenda={<Legenda itens={[{ cor: COR.atualizada, contorno: COR.contornoAtualizada, rotulo: String(info.ant) }, { cor: COR.ploa, rotulo: `${info.corr}${info.completo ? '' : ` (até ${mesNome[info.ate]})`}` }]} />}
           grafico={<ColunasMeses anterior={info.a} corrente={info.c} rotuloAnterior={String(info.ant)} rotuloCorrente={String(info.corr)} />}
           tabela={<TabelaItens itens={mesNome.map((m, i) => ({ chave: m, mes: m, a: info.a[i], c: info.c[i] }))} legenda={`${NOMES[qual]} por mês, em R$ milhões`}
-            colunas={[{ rotulo: 'Mês', valor: (x) => x.mes }, { rotulo: String(info.ant), valor: (x) => (x.a === null ? '–' : milhoes(x.a)) }, { rotulo: String(info.corr), valor: (x) => (x.c === null ? '–' : milhoes(x.c)) }, { rotulo: 'Δ%', valor: (x) => (x.a && x.c !== null ? fmtPct((x.c / x.a - 1) * 100) : '–') }]} />} />
-        <Cartao className="2xl:col-span-5" titulo="ICMS: do realizado de 2026 à estimativa de 2027"
-          grafico={
-            <ul className="space-y-3 pt-1">
-              {cenarios.map((c) => (
-                <li key={c.rotulo}>
-                  <div className="flex items-baseline justify-between gap-3 text-small"><span className="font-semibold text-ink">{c.rotulo}</span><span className="tabular-nums">{milhoes(c.v, 0)}<span className="ml-2 text-ink-soft">{c === cenarios[1] ? '' : fmtPct((c.v / cenarios[1].v - 1) * 100)}</span></span></div>
-                  <div className="relative mt-1 h-2" aria-hidden="true"><span className="absolute inset-y-0 left-0 rounded-r" style={{ width: `${(c.v / maxC) * 100}%`, background: c.cor, outline: c.ct ? `1px solid ${c.ct}` : undefined, outlineOffset: -1 }} /></div>
-                </li>
-              ))}
-              <li className="text-label text-ink-soft">Variação sobre a arrecadação provável de 2026. R$ milhões.</li>
-            </ul>
-          }
-          tabela={<TabelaItens itens={cenarios.map((c) => ({ chave: c.rotulo, ...c }))} legenda="ICMS por cenário, em R$ milhões" colunas={[{ rotulo: 'Cenário', valor: (x) => x.rotulo }, { rotulo: 'R$ mi', valor: (x) => milhoes(x.v) }, { rotulo: 'Δ% prov.', valor: (x) => fmtPct((x.v / cenarios[1].v - 1) * 100) }]} />} />
-        <Cartao className="2xl:col-span-12" titulo="Evolução da receita: quadro oficial da PLOA"
+            colunas={[{ rotulo: 'Mês', valor: (x) => x.mes }, { rotulo: String(info.ant), valor: (x) => (x.a === null ? '–' : milhoes(x.a, 0)) }, { rotulo: String(info.corr), valor: (x) => (x.c === null ? '–' : milhoes(x.c, 0)) }, { rotulo: 'Δ%', valor: (x) => (x.a && x.c !== null ? fmtPct((x.c / x.a - 1) * 100) : '–') }]} />} />
+        <Cartao titulo="ICMS: do realizado de 2026 à estimativa de 2027">
+          <TabelaItens itens={cenarios} legenda="ICMS por cenário, em R$ milhões" colunas={[
+            { rotulo: 'Cenário', valor: (x) => x.rotulo },
+            { rotulo: 'R$ milhões', valor: (x) => milhoes(x.v, 0) },
+            { rotulo: 'Δ% sobre o provável 2026', valor: (x) => (x.chave === 'prov' ? '–' : fmtPct((x.v / cenarios[1].v - 1) * 100)) },
+          ]} />
+        </Cartao>
+        <Cartao titulo="Evolução da receita: quadro oficial da PLOA"
           grafico={<TabelaItens itens={itensQuadro} legenda="Evolução da receita, em R$ milhões" colunas={[
             { rotulo: 'R$ milhões', valor: (x) => <span className={x.nivel === 0 ? 'font-semibold' : ''} style={{ paddingLeft: `${x.nivel * 0.75}rem` }}>{x.rotulo}</span> },
             ...(['2023', '2024', '2025', 'Orç. 2026', 'Prov. 2026', '2027'] as const).map((r, j) => ({ rotulo: r, valor: (x: (typeof itensQuadro)[number]) => milhoes(x.v[j], 0) })),
