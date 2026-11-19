@@ -34,8 +34,7 @@ const dPct = (x: number | null) => fmtPct(x)
 const topN = (itens: Item[], n: number) => [...itens].sort((a, b) => Math.max(b.v[PLOA], b.v[ATU]) - Math.max(a.v[PLOA], a.v[ATU])).slice(0, n)
 
 type MacroProps = {
-  receita: LinhaMacro[]; despesa: LinhaMacro[]; ipca: Record<string, number>; fonteIpca: string
-  mensal: Record<'icms' | 'fpe' | 'royalties', Record<string, number>>
+  receita: LinhaMacro[]; despesa: LinhaMacro[]; ipca: Record<string, number>; pib: Record<string, number>; fonteIpca: string
 }
 
 export function Painel({ linhas, nomes, coleta, outrosPoderes, macro, receitaMes }: { linhas: Linha[]; nomes: Nomes; coleta: string; outrosPoderes: string[]; macro: MacroProps; receitaMes: DadosReceita }) {
@@ -239,9 +238,9 @@ export function Painel({ linhas, nomes, coleta, outrosPoderes, macro, receitaMes
         {aba === 'metodo' && <Metodo receita={macro.receita} dados={receitaMes} />}
         {aba === 'receita' && (
           <>
-            <ReceitaMensal dados={receitaMes} macro={macro.receita} ipca={macro.ipca} />
-            <h2 className="mt-8 border-b border-line pb-1.5 text-lead font-semibold">ICMS e transferências</h2>
-            <div className="mt-1"><Receita receita={macro.receita} ipca={macro.ipca} mensal={macro.mensal} /></div>
+            <ReceitaMensal dados={receitaMes} macro={macro.receita} ipca={macro.ipca} pib={macro.pib} />
+            <h2 className="mt-8 border-b border-line pb-1.5 text-lead font-semibold">Detalhe: arrecadação mensal por fonte e quadro oficial</h2>
+            <div className="mt-1"><Receita receita={macro.receita} ipca={macro.ipca} dados={receitaMes} /></div>
           </>
         )}
         {aba === 'despesa' && (
