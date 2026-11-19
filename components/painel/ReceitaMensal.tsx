@@ -7,7 +7,8 @@ import { Cartao, COR, Legenda, TabelaDelta, TabelaItens } from './Graficos'
 import { ColunasMeses, fmtPct, type ItemSerie } from './GraficosMacro'
 import { Faixa } from './Faixa'
 import { titulo, type Linha } from './dados'
-import { porMes, soma, type DadosReceita } from './projecao'
+import { porMes, projetaReceita2026, soma, type DadosReceita } from './projecao'
+import { RitmoReceita } from './Ritmo'
 
 export type { DadosReceita }
 
@@ -27,9 +28,8 @@ export function ReceitaMensal({ dados, macro, ipca }: { dados: DadosReceita; mac
   const mesesCom26 = liq26.map((x, i) => (i < ultimo ? x : null))
   const ytd26 = soma(liq26, ultimo)
   const ytd25 = soma(liq25, ultimo)
-  const total25 = soma(liq25)
-  const cumShare = ytd25 / total25
-  const projecao = ytd26 / cumShare
+  const proj = useMemo(() => projetaReceita2026(dados), [dados])
+  const projecao = proj.central
   const provavel = R.total[4]
 
   /* perfil mensal 2027: valor anual do quadro da PLOA x participação de cada mês na arrecadação bruta de 2025, por componente */
@@ -81,11 +81,12 @@ export function ReceitaMensal({ dados, macro, ipca }: { dados: DadosReceita; mac
       <Faixa
         itens={[
           { r: `Receita líquida jan a ${MESES[ultimo - 1]} 2026`, v: bilhoes(ytd26), s: `${fmtPct(varYtd)} sobre 2025`, destaque: true },
-          { r: 'Projeção de fechamento 2026', v: bilhoes(projecao), s: `provável (PLOA): ${bilhoes(provavel)}; ${fmtPct((projecao / provavel - 1) * 100)}` },
+          { r: 'Projeção de fechamento 2026', v: bilhoes(projecao), s: `faixa ${(proj.min / 1e9).toFixed(1).replace('.', ',')} a ${(proj.max / 1e9).toFixed(1).replace('.', ',')} bi; provável da PLOA: ${bilhoes(provavel)}` },
           { r: 'Receita líquida 2027', v: bilhoes(R.total[5]), s: `${fmtPct((R.total[5] / projecao - 1) * 100)} sobre a projeção` },
         ]}
-        nota={`Líquida = arrecadação bruta menos deduções. Projeção: arrecadação até ${NOMES_MES[ultimo - 1]} dividida pela participação desses meses em 2025.`}
+        nota={`Líquida = arrecadação bruta menos deduções. Projeção: arrecadação até ${NOMES_MES[ultimo - 1]} dividida pela participação média desse período no ano em 2022–2025 (detalhe na tabela de ritmo, abaixo).`}
       />
+      <div className="mt-3"><RitmoReceita dados={dados} /></div>
       <div className="mt-3 grid grid-cols-1 gap-3 2xl:grid-cols-12">
         <Cartao className="2xl:col-span-12" titulo="Receita líquida por mês: 2026 e 2025"
           legenda={<Legenda itens={[{ cor: COR.atualizada, contorno: COR.contornoAtualizada, rotulo: '2025' }, { cor: COR.ploa, rotulo: `2026 (até ${NOMES_MES[ultimo - 1]})` }]} />}
