@@ -269,3 +269,173 @@ export function conciliacao(dados: DadosReceita, quadro: Record<string, number[]
   out.push({ chave: 'total', cod: '', rotulo: 'Receita líquida total', ploa: quadro.total?.[col] ?? 0, portalBruto: totalLinhas + linhas.reduce((s, l) => s + Number(l[4]), 0), rreo: rreo(TOTAL_RREO), portalLiquido: totalLinhas + linhas.reduce((s, l) => s + Number(l[4]), 0) })
   return out
 }
+
+/* ---------- principais fontes: ICMS, cota-parte do FPE e compensação pela produção de petróleo ---------- */
+
+export type IdFonte = 'icms' | 'fpe' | 'petroleo'
+export const FONTES: { id: IdFonte; rotulo: string; cod: string; prefixo: string }[] = [
+  { id: 'icms', rotulo: 'ICMS', cod: '1.1.1.4', prefixo: '1114' },
+  { id: 'fpe', rotulo: 'Cota-parte do FPE', cod: '1.7.1.1', prefixo: '171150' },
+  { id: 'petroleo', rotulo: 'Petróleo (compensação financeira)', cod: '1.7.1.2', prefixo: '171252' },
+]
+type SerieMensal = Record<string, number>
+const chaveMes = (a: number, m: number) => `${a}-${String(m).padStart(2, '0')}`
+
+/** Série mensal bruta da fonte: histórico do RREO (Anexo 03) para ICMS e FPE, completado e conferido pelo Portal; só o Portal para o petróleo (2025 em diante). */
+export function serieFonte(dados: DadosReceita, id: IdFonte): SerieMensal {
+  const def = FONTES.find((f) => f.id === id)!
+  const { ultimo } = mesesCorte(dados)
+  const s: SerieMensal = {}
+  if (id !== 'petroleo') Object.assign(s, (rreoRaw as unknown as { mensal: Record<string, SerieMensal> }).mensal[id])
+  // o Portal é a referência de 2025 e 2026 (coincide com o RREO): reconstrói esses meses somando as linhas
+  const somaPortal: SerieMensal = {}
+  for (const ano of [2025, 2026]) {
+    for (const l of dados.anos[String(ano)]?.linhas ?? []) {
+      const m = Number(l[0])
+      if (ano === 2026 && m > ultimo) continue
+      if (String(l[1]).startsWith(def.prefixo)) somaPortal[chaveMes(ano, m)] = (somaPortal[chaveMes(ano, m)] ?? 0) + Number(l[3])
+    }
+  }
+  Object.assign(s, somaPortal)
+  return s
+}
+
+const val = (s: SerieMensal, a: number, m: number) => s[chaveMes(a, m)] ?? 0
+const acum = (s: SerieMensal, a: number, ate: number) => Array.from({ length: ate }, (_, i) => val(s, a, i + 1)).reduce((x, y) => x + y, 0)
+const totalAno = (s: SerieMensal, a: number) => acum(s, a, 12)
+/** soma dos doze meses que terminam em (a, n) */
+const ult12 = (s: SerieMensal, a: number, n: number) => {
+  let t = 0
+  for (let k = 0; k < 12; k++) { let mm = n - k, aa = a; if (mm <= 0) { mm += 12; aa -= 1 }; t += val(s, aa, mm) }
+  return t
+}
+
+export type ResultadoMetodos = {
+  sazonal?: number
+  ritmo3m?: number
+  ritmoAno?: number
+  ritmo12m?: number
+  g3m?: number
+  gAno?: number
+  g12m?: number
+}
+
+/**
+ * Quatro projeções de fechamento do ano `a` com os meses até `n` conhecidos:
+ *  - sazonal: acumulado ÷ participação média do mesmo período nos até quatro anos anteriores;
+ *  - ritmo3m: acumulado + meses restantes do ano anterior × (1 + crescimento dos três últimos meses sobre o mesmo trimestre do ano anterior);
+ *  - ritmoAno: igual, com o crescimento do acumulado do ano;
+ *  - ritmo12m: igual, com o crescimento dos doze últimos meses sobre os doze anteriores.
+ * O ritmo recente capta desaceleração ou aceleração dentro do ano, que a sazonalidade, por construção, não vê.
+ */
+export function projetaMetodos(s: SerieMensal, a: number, n: number, primeiroAno = 2019): ResultadoMetodos {
+  const prev = a - 1
+  const restoPrev = Array.from({ length: 12 - n }, (_, i) => val(s, prev, n + 1 + i)).reduce((x, y) => x + y, 0)
+  const ytd = acum(s, a, n)
+  const trimAtual = [n - 2, n - 1, n].reduce((t, m) => t + val(s, a, m), 0)
+  const trimPrev = [n - 2, n - 1, n].reduce((t, m) => t + val(s, prev, m), 0)
+  const out: ResultadoMetodos = {}
+  const anosPrev = Array.from({ length: 4 }, (_, i) => a - 4 + i).filter((y) => y >= primeiroAno && totalAno(s, y) > 0)
+  if (anosPrev.length >= 2) {
+    const sh = anosPrev.map((y) => acum(s, y, n) / totalAno(s, y))
+    out.sazonal = ytd / (sh.reduce((x, y) => x + y, 0) / sh.length)
+  }
+  if (trimPrev > 0 && acum(s, prev, n) > 0) {
+    out.g3m = trimAtual / trimPrev - 1
+    out.gAno = ytd / acum(s, prev, n) - 1
+    out.ritmo3m = ytd + restoPrev * (1 + out.g3m)
+    out.ritmoAno = ytd + restoPrev * (1 + out.gAno)
+  }
+  if (ult12(s, prev, n) > 0 && a - 2 >= primeiroAno) {
+    out.g12m = ult12(s, a, n) / ult12(s, prev, n) - 1
+    out.ritmo12m = ytd + restoPrev * (1 + out.g12m)
+  }
+  return out
+}
+
+export const NOMES_METODO: Record<'sazonal' | 'ritmo3m' | 'ritmoAno' | 'ritmo12m', string> = {
+  sazonal: 'Sazonalidade (média de 4 anos)',
+  ritmo3m: 'Ritmo dos 3 últimos meses',
+  ritmoAno: 'Ritmo do acumulado do ano',
+  ritmo12m: 'Ritmo dos 12 últimos meses',
+}
+type IdMetodo = keyof typeof NOMES_METODO
+const METODOS: IdMetodo[] = ['sazonal', 'ritmo3m', 'ritmoAno', 'ritmo12m']
+
+/** Teste retroativo dos quatro métodos para ICMS e FPE (séries com história): projeção feita com os dados até outubro de cada ano de 2021 a 2025. */
+export function retrotesteFonte(dados: DadosReceita, id: 'icms' | 'fpe', n = 10): { metodo: IdMetodo; erros: { ano: number; erro: number }[]; mae: number }[] {
+  const s = serieFonte(dados, id)
+  return METODOS.map((m) => {
+    const erros = [2021, 2022, 2023, 2024, 2025].map((ano) => {
+      const p = projetaMetodos(s, ano, n)[m]
+      return { ano, erro: p === undefined ? NaN : (p / totalAno(s, ano) - 1) * 100 }
+    }).filter((e) => Number.isFinite(e.erro))
+    return { metodo: m, erros, mae: erros.reduce((t, e) => t + Math.abs(e.erro), 0) / (erros.length || 1) }
+  })
+}
+
+export type AnaliseFonte = {
+  id: IdFonte
+  rotulo: string
+  cod: string
+  /** participação na receita bruta de 2025 */
+  participacao: number
+  acum25: number
+  acum26: number
+  /** crescimento mês a mês sobre o mesmo mês de 2025, de janeiro ao mês de corte (%) */
+  yoy: (number | null)[]
+  g3m: number | undefined
+  gAno: number | undefined
+  metodos: ResultadoMetodos
+  /** método escolhido (o de menor erro no teste retroativo, quando há história) e o fechamento por ele */
+  escolhido: IdMetodo
+  central: number
+  min: number
+  max: number
+  fechou2025: number
+  retro?: { metodo: IdMetodo; mae: number }[]
+}
+
+export function analisaFontes(dados: DadosReceita): AnaliseFonte[] {
+  const { ultimo } = mesesCorte(dados)
+  const brutoTotal25 = (dados.anos['2025']?.linhas ?? []).reduce((t, l) => t + Number(l[3]), 0)
+  return FONTES.map((f) => {
+    const s = serieFonte(dados, f.id)
+    const metodos = projetaMetodos(s, 2026, ultimo)
+    const retro = f.id === 'petroleo' ? undefined : retrotesteFonte(dados, f.id, ultimo).map((r) => ({ metodo: r.metodo, mae: r.mae }))
+    const disponiveis = METODOS.filter((m) => metodos[m] !== undefined)
+    const melhor = retro ? [...retro].filter((r) => metodos[r.metodo] !== undefined).sort((a, b) => a.mae - b.mae)[0]?.metodo : undefined
+    const escolhido: IdMetodo = melhor ?? 'ritmo3m'
+    const valores = disponiveis.map((m) => metodos[m] as number)
+    return {
+      id: f.id, rotulo: f.rotulo, cod: f.cod,
+      participacao: (acum(s, 2025, 12) / brutoTotal25), acum25: acum(s, 2025, ultimo), acum26: acum(s, 2026, ultimo),
+      yoy: Array.from({ length: ultimo }, (_, i) => (val(s, 2025, i + 1) > 0 ? (val(s, 2026, i + 1) / val(s, 2025, i + 1) - 1) * 100 : null)),
+      g3m: metodos.g3m, gAno: metodos.gAno, metodos, escolhido, central: metodos[escolhido] as number,
+      min: Math.min(...valores), max: Math.max(...valores), fechou2025: totalAno(s, 2025), retro,
+    }
+  })
+}
+
+/** Transferências da União: o que a PLOA precisa supor para o petróleo, dado o FPE e as demais transferências da União crescendo com o parâmetro informado. */
+export function implicitoPetroleo(dados: DadosReceita, analise: AnaliseFonte[], tUniao2027: number, crescimento: number) {
+  const { ultimo } = mesesCorte(dados)
+  const linhas = (ano: number) => dados.anos[String(ano)]?.linhas ?? []
+  const mensalOutras = (ano: number) => {
+    const s: SerieMensal = {}
+    for (const l of linhas(ano)) {
+      const m = Number(l[0]); const nat = String(l[1])
+      if (ano === 2026 && m > ultimo) continue
+      if (nat.startsWith('171') && !nat.startsWith('171150') && !nat.startsWith('171252')) s[chaveMes(ano, m)] = (s[chaveMes(ano, m)] ?? 0) + Number(l[3])
+    }
+    return s
+  }
+  const outras = { ...mensalOutras(2025), ...mensalOutras(2026) }
+  const mo = projetaMetodos(outras, 2026, ultimo)
+  const outras26 = mo.ritmo3m ?? mo.ritmoAno ?? NaN
+  const fpe = analise.find((a) => a.id === 'fpe')!, pet = analise.find((a) => a.id === 'petroleo')!
+  const fpe27 = fpe.central * (1 + crescimento)
+  const outras27 = outras26 * (1 + crescimento)
+  const implicito = tUniao2027 - fpe27 - outras27
+  return { fpe27, outras26, outras27, implicito, petroleo26: pet.central, petroleo25: pet.fechou2025 }
+}

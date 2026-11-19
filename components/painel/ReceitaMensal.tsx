@@ -9,13 +9,14 @@ import { Faixa } from './Faixa'
 import { titulo, type Linha } from './dados'
 import { porMes, projetaReceita2026, soma, type DadosReceita } from './projecao'
 import { RitmoReceita } from './Ritmo'
+import { PrincipaisFontes } from './Fontes'
 
 export type { DadosReceita }
 
 const MESES = ['jan', 'fev', 'mar', 'abr', 'mai', 'jun', 'jul', 'ago', 'set', 'out', 'nov', 'dez']
 const NOMES_MES = ['janeiro', 'fevereiro', 'março', 'abril', 'maio', 'junho', 'julho', 'agosto', 'setembro', 'outubro', 'novembro', 'dezembro']
 
-export function ReceitaMensal({ dados, macro, ipca }: { dados: DadosReceita; macro: LinhaMacro[]; ipca: Record<string, number> }) {
+export function ReceitaMensal({ dados, macro, ipca, pib }: { dados: DadosReceita; macro: LinhaMacro[]; ipca: Record<string, number>; pib: Record<string, number> }) {
   const R = useMemo(() => Object.fromEntries(macro.map((x) => [x.chave, x.valores])) as Record<string, number[]>, [macro])
   const a25 = dados.anos['2025']?.linhas ?? []
   const a26 = dados.anos['2026']?.linhas ?? []
@@ -87,6 +88,7 @@ export function ReceitaMensal({ dados, macro, ipca }: { dados: DadosReceita; mac
         nota={`Líquida = arrecadação bruta menos deduções. Projeção: arrecadação até ${NOMES_MES[ultimo - 1]} dividida pela participação média desse período no ano em 2022–2025 (detalhe na tabela de ritmo, abaixo).`}
       />
       <div className="mt-3"><RitmoReceita dados={dados} /></div>
+      <div className="mt-3"><PrincipaisFontes dados={dados} receita={macro} ipca={ipca} pib={pib} /></div>
       <div className="mt-3 grid grid-cols-1 gap-3 2xl:grid-cols-12">
         <Cartao className="2xl:col-span-12" titulo="Receita líquida por mês: 2026 e 2025"
           legenda={<Legenda itens={[{ cor: COR.atualizada, contorno: COR.contornoAtualizada, rotulo: '2025' }, { cor: COR.ploa, rotulo: `2026 (até ${NOMES_MES[ultimo - 1]})` }]} />}

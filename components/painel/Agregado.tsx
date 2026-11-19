@@ -152,11 +152,22 @@ export function VisaoGeral({ receita, despesa, ipca: ipcaParams, fonteIpca, dado
 
   /* ---------- tabelas ---------- */
   const codigoDe = (l: Linha) => (vista === 'receita' ? COD_GRUPO[l.chave] : vista === 'despesa' ? COD_DESPESA[l.chave] : '') ?? ''
-  const celulaLinha = (l: Linha): ReactNode => (
-    <span className={l.negrito ? 'font-semibold' : l.nivel ? 'text-ink-soft' : ''} style={{ paddingLeft: `${l.nivel * 0.9}rem` }}>
-      {codigoDe(l) && <span className="block text-label normal-case tracking-normal tabular-nums text-ink-soft md:mr-1.5 md:inline-block md:min-w-[6.5rem] md:text-small">{codigoDe(l)}</span>}{l.rotulo}
-    </span>
-  )
+  /* só os grupos principais levam o código na vista; os itens abaixo aparecem recuados, com um filete à esquerda, e o código fica no texto para leitores de tela e na dica */
+  const celulaLinha = (l: Linha): ReactNode => {
+    const c = codigoDe(l)
+    if (l.nivel === 0) {
+      return (
+        <span className={l.negrito ? 'font-semibold' : ''}>
+          {c && <span className="block text-label normal-case tracking-normal tabular-nums text-ink-soft md:mr-1.5 md:inline-block md:min-w-[6.5rem] md:text-small">{c}</span>}{l.rotulo}
+        </span>
+      )
+    }
+    return (
+      <span title={c ? `Código ${c}` : undefined} className="ml-1 block border-l-2 border-line pl-2.5 text-ink-soft" style={{ marginLeft: `${0.25 + (l.nivel - 1) * 0.9}rem` }}>
+        {c && <span className="sr-only">{c} </span>}{l.rotulo}
+      </span>
+    )
+  }
   const itensTabela = lista.map((l) => ({ ...l, chave: l.chave }))
   const colunasTabela = [
     { rotulo: vista === 'receita' ? 'R$ milhões · natureza' : 'R$ milhões · GND', valor: celulaLinha },

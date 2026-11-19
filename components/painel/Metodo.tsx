@@ -5,7 +5,7 @@ import { bilhoes, milhoes, numero } from '@/lib/formato'
 import type { LinhaMacro } from '@/lib/macro'
 import { Cartao, TabelaItens } from './Graficos'
 import { fmtPct } from './GraficosMacro'
-import { ANOS_RITMO, conciliacao, projetaReceita2026, retroteste, type DadosReceita } from './projecao'
+import { ANOS_RITMO, conciliacao, NOMES_METODO, projetaReceita2026, retroteste, retrotesteFonte, type DadosReceita } from './projecao'
 
 const NOMES_MES = ['janeiro', 'fevereiro', 'março', 'abril', 'maio', 'junho', 'julho', 'agosto', 'setembro', 'outubro', 'novembro', 'dezembro']
 const mi = (x: number | null) => (x === null ? '–' : milhoes(x === 0 ? 0 : x, 0))
@@ -22,6 +22,7 @@ export function Metodo({ receita, dados }: { receita: LinhaMacro[]; dados: Dados
   }), [dados, quadro])
   const retro = useMemo(() => retroteste(), [])
   const proj = useMemo(() => projetaReceita2026(dados), [dados])
+  const retroFontes = useMemo(() => [{ id: 'icms', rotulo: 'ICMS', r: retrotesteFonte(dados, 'icms') }, { id: 'fpe', rotulo: 'Cota-parte do FPE', r: retrotesteFonte(dados, 'fpe') }], [dados])
   const mes = NOMES_MES[proj.meses - 1]
   const total25 = linhas[linhas.length - 1]
   const dedLinha = linhas.find((l) => l.chave === 'ded')
@@ -83,7 +84,24 @@ export function Metodo({ receita, dados }: { receita: LinhaMacro[]; dados: Dados
         </div>
       </Cartao>
 
-      <Cartao titulo="3. Definições usadas nas telas">
+      <Cartao titulo="3. ICMS e FPE: qual método de projeção erra menos?">
+        <div className="max-w-3xl space-y-2 text-small text-ink-soft">
+          <p>Para as duas maiores fontes há série mensal longa (RREO, Anexo 03, desde 2019), o que permite comparar quatro métodos: a sazonalidade média de quatro anos e três variações do ritmo recente (últimos 3 meses, acumulado do ano e últimos 12 meses sobre o mesmo período do ano anterior). O ritmo recente capta aceleração ou desaceleração durante o ano, que a sazonalidade não vê.</p>
+          <p>Cada método foi aplicado, como se fosse outubro, a cada ano de 2021 a 2025; a tabela mostra o erro (projeção menos realizado, em % do realizado) e a média dos erros em módulo. A diferença entre os métodos é pequena (a pior média fica em 2%) e baseada em cinco anos, por isso a projeção por fonte mostra também a faixa entre os métodos.</p>
+        </div>
+        <div className="mt-3 space-y-3">
+          {retroFontes.map((f) => (
+            <TabelaItens key={f.id} altura="livre" itens={f.r.map((x) => ({ ...x, chave: x.metodo }))} legenda={`Teste dos métodos de projeção, ${f.rotulo}, erro em %`} colunas={[
+              { rotulo: `${f.rotulo}: erro da projeção feita em outubro`, valor: (x) => NOMES_METODO[x.metodo] },
+              ...[2021, 2022, 2023, 2024, 2025].map((a) => ({ rotulo: String(a), valor: (x: (typeof f.r)[number]) => fmtPct(x.erros.find((e) => e.ano === a)?.erro) })),
+              { rotulo: 'Erro médio', valor: (x) => <span className={x.mae === Math.min(...f.r.map((y) => y.mae)) ? 'font-semibold text-navy' : 'font-semibold'}>{numero(x.mae, 1)}%{x.mae === Math.min(...f.r.map((y) => y.mae)) ? ' ✓' : ''}</span> },
+            ]} />
+          ))}
+          <p className="text-label normal-case tracking-normal text-ink-soft">✓ marca o método de menor erro médio, usado na projeção da aba Receita. O petróleo (compensação financeira pela produção) não tem história mensal no Portal antes de 2025 e chega em parcelas trimestrais: nele o ritmo recente é a única referência, com faixa indicativa.</p>
+        </div>
+      </Cartao>
+
+      <Cartao titulo="4. Definições usadas nas telas">
         <dl className="max-w-3xl space-y-2 text-small">
           {[
             ['Receita líquida', 'Arrecadação bruta menos as deduções (transferências constitucionais aos municípios, Fundeb e outras). É o valor que o RREO apresenta.'],
