@@ -128,7 +128,11 @@ export type AcaoPainel = {
   antiga?: string
 }
 
+/** Ações renumeradas de 2026 para 2027: chave antiga (unidade|programa|ação) para a nova. */
+export const renumeracao = new Map<string, string>()
+
 export function acoesPainel(): AcaoPainel[] {
+  renumeracao.clear()
   const m = new Map<string, AcaoPainel>()
   for (const l of linhas) {
     const k = `${l.uo}|${l.programa}|${l.acao}`
@@ -157,6 +161,7 @@ export function acoesPainel(): AcaoPainel[] {
       n.em2026 = true
       n.antiga = c[0].acao
       remover.add(c[0])
+      renumeracao.set(`${c[0].uo}|${c[0].programa}|${c[0].acao}`, `${n.uo}|${n.programa}|${n.acao}`)
     }
   }
   return res.filter((a) => !remover.has(a))
@@ -165,3 +170,32 @@ export function acoesPainel(): AcaoPainel[] {
 /** Composição por GND e por fonte (PLOA 2027 contra 2026). */
 export function porGnd() { return agrega((l) => l.gnd, nomeGnd) }
 export function porFonte() { return agrega((l) => l.fonte, nomeFonte) }
+
+/**
+ * Linha enxuta para o navegador: [uo, programa, ação, gnd, fonte, ploa2027, inicial26, atualizada26, empenhado26, liquidado26, pago26, empenhado25, atualizada25].
+ * As ações renumeradas de 2026 para 2027 já vêm unificadas na chave nova.
+ */
+export type LinhaCompacta = [string, string, string, string, string, number, number, number, number, number, number, number, number]
+
+export function linhasCompactas(): LinhaCompacta[] {
+  acoesPainel() // preenche a renumeração
+  return linhas.map((l) => {
+    const novo = renumeracao.get(`${l.uo}|${l.programa}|${l.acao}`)
+    const [uo, programa, acao] = novo ? novo.split('|') : [l.uo, l.programa, l.acao]
+    const a = l.y2026
+    const b = l.y2025
+    return [uo, programa, acao, l.gnd, l.fonte, l.ploa2027 ?? 0, a?.inicial ?? 0, a?.atualizada ?? 0, a?.empenhado ?? 0, a?.liquidado ?? 0, a?.pago ?? 0, b?.empenhado ?? 0, b?.atualizada ?? 0] as LinhaCompacta
+  }).filter((r) => r.slice(5).some((x) => x !== 0))
+}
+
+/** Nomes só dos códigos que aparecem nas linhas. */
+export function nomesPainel(ls: LinhaCompacta[]) {
+  const pega = (dic: Record<string, string>, codigos: Set<string>) => Object.fromEntries([...codigos].map((c) => [c, dic[c] ?? '']))
+  return {
+    uo: pega(nomes.uo, new Set(ls.map((r) => r[0]))),
+    programa: pega(nomes.programa, new Set(ls.map((r) => r[1]))),
+    acao: pega(nomes.acao, new Set(ls.map((r) => r[2]))),
+    gnd: pega(nomes.gnd, new Set(ls.map((r) => r[3]))),
+    fonte: pega(nomes.fonte, new Set(ls.map((r) => r[4]))),
+  }
+}

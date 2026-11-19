@@ -20,7 +20,6 @@ export type ItemMenu = { rotulo: string; href?: string; filhos?: Link[]; prefixo
 export const menu: ItemMenu[] = [
   { rotulo: 'Início', href: '/', prefixos: ['/'] },
   { rotulo: 'Indicadores', href: '/indicadores', prefixos: ['/indicadores'] },
-  { rotulo: 'Painel do orçamento', href: '/painel', prefixos: ['/painel'] },
   {
     rotulo: 'Publicações',
     prefixos: ['/publicacoes', '/tesouro/'],

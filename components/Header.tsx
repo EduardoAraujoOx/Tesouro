@@ -65,6 +65,20 @@ export function Header() {
     </form>
   )
 
+  // O painel de dados usa só a logomarca: sem menu, busca nem navegação do portal.
+  if (pathname.startsWith('/painel')) {
+    return (
+      <header className="border-b border-line bg-paper">
+        <div className="mx-auto flex max-w-[1600px] items-center justify-between gap-4 px-5 py-3 md:px-8">
+          <Link href="/painel" className="shrink-0" aria-label="Tesouro Estadual do Espírito Santo, painel do orçamento">
+            <Image src="/img/logo-tesouro-horizontal.png" alt="Tesouro Estadual do Espírito Santo" width={1100} height={197} priority className="invert-hc h-9 w-auto sm:h-11" />
+          </Link>
+          <span className="text-small font-semibold text-ink-soft">Painel do orçamento</span>
+        </div>
+      </header>
+    )
+  }
+
   return (
     <header className="border-b border-line bg-paper">
       <div className="mx-auto max-w-page px-5 md:px-8">

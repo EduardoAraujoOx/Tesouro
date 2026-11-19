@@ -4,6 +4,7 @@ import './globals.css'
 import { TopBar } from '@/components/TopBar'
 import { Header } from '@/components/Header'
 import { Footer } from '@/components/Footer'
+import { SoForaDoPainel } from '@/components/SoForaDoPainel'
 
 const site = process.env.VERCEL_PROJECT_PRODUCTION_URL
   ? `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}`
@@ -33,7 +34,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <TopBar />
         <Header />
         <main id="conteudo" tabIndex={-1} className="outline-none">{children}</main>
-        <Footer />
+        <SoForaDoPainel><Footer /></SoForaDoPainel>
         <Analytics />
       </body>
     </html>
