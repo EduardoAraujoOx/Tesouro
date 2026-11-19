@@ -6,6 +6,7 @@ import { IDENTIDADE } from '@/lib/identidade-painel'
 import { Cartao, BarrasPares, BarrasVariacao, COR, Legenda, LEGENDA_PARES, TabelaItens } from './Graficos'
 import { Faixa } from './Faixa'
 import { Receita, VisaoGeral } from './Macro'
+import { CoberturaFontes, ReceitaMensal, type DadosReceita } from './ReceitaMensal'
 import type { LinhaMacro } from '@/lib/macro'
 import { ATU, EMP, INI, PLOA, agrupa, execucaoPct, titulo, total, variacaoPct, type Item, type Linha, type Soma } from './dados'
 
@@ -31,7 +32,7 @@ type MacroProps = {
   mensal: Record<'icms' | 'fpe' | 'royalties', Record<string, number>>
 }
 
-export function Painel({ linhas, nomes, coleta, outrosPoderes, macro }: { linhas: Linha[]; nomes: Nomes; coleta: string; outrosPoderes: string[]; macro: MacroProps }) {
+export function Painel({ linhas, nomes, coleta, outrosPoderes, macro, receitaMes }: { linhas: Linha[]; nomes: Nomes; coleta: string; outrosPoderes: string[]; macro: MacroProps; receitaMes: DadosReceita }) {
   const [aba, setAba] = useState<Aba>('visao')
   useEffect(() => {
     const h = window.location.hash.slice(1)
@@ -189,7 +190,12 @@ export function Painel({ linhas, nomes, coleta, outrosPoderes, macro }: { linhas
 
       <div role="tabpanel" id={`painel-${aba}`} aria-labelledby={`aba-${aba}`} className="mt-3">
         {aba === 'visao' && <VisaoGeral receita={macro.receita} despesa={macro.despesa} ipca={macro.ipca} fonteIpca={macro.fonteIpca} />}
-        {aba === 'receita' && <Receita receita={macro.receita} ipca={macro.ipca} mensal={macro.mensal} />}
+        {aba === 'receita' && (
+          <>
+            <ReceitaMensal dados={receitaMes} macro={macro.receita} ipca={macro.ipca} />
+            <div className="mt-6"><Receita receita={macro.receita} ipca={macro.ipca} mensal={macro.mensal} /></div>
+          </>
+        )}
         {aba === 'despesa' && (
           <>
             <div className="print:hidden">{filtros}</div>
@@ -299,6 +305,7 @@ export function Painel({ linhas, nomes, coleta, outrosPoderes, macro }: { linhas
           grafico={<BarrasPares itens={porFonte} />}
           tabela={<TabelaItens itens={porFonte} colunas={colsPares('Fonte')} legenda="Doze maiores fontes de recursos" />} />
             </div>
+            <div className="mt-6"><CoberturaFontes dados={receitaMes} linhas={linhas} nomesFonte={nomes.fonte} /></div>
           </>
         )}
       </div>

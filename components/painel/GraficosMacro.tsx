@@ -31,8 +31,8 @@ function useDica() {
 }
 
 /** Linhas com até quatro barras finas (uma por série) e colunas de valor e variação (nominal e real) entre duas séries. */
-export function BarrasSeries({ itens, series, base, alvo, ipca, rotuloBase, rotuloAlvo }: {
-  itens: ItemSerie[]; series: Serie[]; base: number; alvo: number; ipca: number; rotuloBase: string; rotuloAlvo: string
+export function BarrasSeries({ itens, series, base, alvo, ipca, rotuloBase, rotuloAlvo, semReal = false, rotuloDelta = 'Δ%' }: {
+  itens: ItemSerie[]; series: Serie[]; base: number; alvo: number; ipca: number; rotuloBase: string; rotuloAlvo: string; semReal?: boolean; rotuloDelta?: string
 }) {
   const { caixa, d, setD, posiciona } = useDica()
   const escala = Math.max(1, ...itens.flatMap((i) => i.v.map((x) => Math.abs(x))))
@@ -40,7 +40,7 @@ export function BarrasSeries({ itens, series, base, alvo, ipca, rotuloBase, rotu
   return (
     <div ref={caixa} className="relative" onMouseLeave={() => setD(null)}>
       <div className="hidden items-center justify-end gap-3 pb-1 text-label text-ink-soft md:flex" aria-hidden="true">
-        <span className="w-[4.5rem] text-right">{rotuloBase}</span><span className="w-[4.5rem] text-right">{rotuloAlvo}</span><span className="w-14 text-right">Δ%</span><span className="w-14 text-right">Real</span>
+        <span className="w-[4.5rem] text-right">{rotuloBase}</span><span className="w-[4.5rem] text-right">{rotuloAlvo}</span><span className="w-14 text-right">{rotuloDelta}</span>{!semReal && <span className="w-14 text-right">Real</span>}
       </div>
       <ul className="border-t border-line">
         {itens.map((i, k) => {
@@ -53,7 +53,7 @@ export function BarrasSeries({ itens, series, base, alvo, ipca, rotuloBase, rotu
                 onFocus={(e) => { const r = e.currentTarget.getBoundingClientRect(); posiciona(k, r.left + 40, r.top) }}
                 onBlur={() => setD(null)}
                 aria-label={`${i.rotulo}: ${series.map((s, j) => `${s.rotulo} ${milhoes(i.v[j])} milhões`).join('; ')}`}
-                className="grid items-center gap-x-3 gap-y-1 py-2 md:grid-cols-[auto_1fr_4.5rem_4.5rem_3.5rem_3.5rem]"
+                className={`grid items-center gap-x-3 gap-y-1 py-2 ${semReal ? 'md:grid-cols-[auto_1fr_4.5rem_4.5rem_3.5rem]' : 'md:grid-cols-[auto_1fr_4.5rem_4.5rem_3.5rem_3.5rem]'}`}
               >
                 <div className="min-w-0 md:w-56">
                   <span className="block truncate text-small font-semibold text-ink">{i.rotulo}</span>
@@ -69,7 +69,7 @@ export function BarrasSeries({ itens, series, base, alvo, ipca, rotuloBase, rotu
                 <span className="hidden text-right text-small tabular-nums text-ink-soft md:block">{milhoes(i.v[base], 0)}</span>
                 <span className="hidden text-right text-small font-semibold tabular-nums md:block">{milhoes(i.v[alvo], 0)}</span>
                 <span className="hidden text-right text-small tabular-nums md:block">{fmtPct(vr.nominal)}</span>
-                <span className="hidden text-right text-small tabular-nums text-ink-soft md:block">{fmtPct(vr.real)}</span>
+                {!semReal && <span className="hidden text-right text-small tabular-nums text-ink-soft md:block">{fmtPct(vr.real)}</span>}
               </div>
             </li>
           )
