@@ -72,7 +72,7 @@ export function Header() {
       <header className="border-b border-line bg-paper">
         <div className="mx-auto flex max-w-[1600px] items-center justify-between gap-4 px-5 py-3 md:px-8">
           <Link href="/painel" className="block">
-            <span className="block font-serif text-title font-semibold leading-tight text-navy md:text-section">{IDENTIDADE.nome}</span>
+            <span className="block text-lead font-semibold leading-tight text-navy md:text-title">{IDENTIDADE.nome}</span>
             <span className="block text-small text-ink-soft">{IDENTIDADE.apoio}</span>
             <span className="accent-bar" aria-hidden="true" />
           </Link>

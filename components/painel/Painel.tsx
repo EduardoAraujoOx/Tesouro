@@ -104,12 +104,11 @@ export function Painel({ linhas, nomes, coleta, outrosPoderes }: { linhas: Linha
   }), [nivel, ordem])
   const filhos = (uo: string) => acoes.filter((a) => a.uo === uo).sort((a, b) => b.v[PLOA] - a.v[PLOA])
 
-  const kpis = [
-    { r: 'PLOA 2027', v: bilhoes(tot[PLOA]), s: `${dMi(tot[PLOA] - tot[INI])} mi sobre a inicial 26 (${dPct(tot[INI] > 0 ? ((tot[PLOA] - tot[INI]) / tot[INI]) * 100 : null)})`, destaque: true },
-    { r: 'Atualizada 2026', v: bilhoes(tot[ATU]), s: `Inicial 26: ${bilhoes(tot[INI])}` },
-    { r: 'Empenhado 2026', v: bilhoes(tot[EMP]), s: `${numero(execucaoPct(tot) ?? 0, 0)}% da atualizada, até ${coleta}` },
-    { r: 'PLOA − atualizada 26', v: `${sinal(tot[PLOA] - tot[ATU])}${bilhoes(Math.abs(tot[PLOA] - tot[ATU]))}`, s: dPct(variacaoPct(tot)) },
-    { r: 'PLOA − empenhado 26', v: `${sinal(tot[PLOA] - tot[EMP])}${bilhoes(Math.abs(tot[PLOA] - tot[EMP]))}`, s: dPct(tot[EMP] > 0 ? ((tot[PLOA] - tot[EMP]) / tot[EMP]) * 100 : null) },
+  const resumo = [
+    { r: 'PLOA 2027', v: milhoes(tot[PLOA]), s: '', destaque: true },
+    { r: 'Atualizada 2026', v: milhoes(tot[ATU]), s: '' },
+    { r: 'Empenhado 2026', v: milhoes(tot[EMP]), s: `${numero(execucaoPct(tot) ?? 0, 0)}% da atualizada` },
+    { r: 'PLOA − atualizada', v: dMi(tot[PLOA] - tot[ATU]), s: dPct(variacaoPct(tot)) },
   ]
 
   const colsPares = (primeira: string) => [
@@ -123,11 +122,11 @@ export function Painel({ linhas, nomes, coleta, outrosPoderes }: { linhas: Linha
   const tituloNivel = uoAtiva ? 'Ações da unidade' : 'Unidades orçamentárias'
 
   return (
-    <div className="mx-auto max-w-[1600px] px-5 py-5 md:px-8">
+    <div className="painel mx-auto max-w-[1600px] px-5 py-4 md:px-8">
       {/* filtros */}
       <div className="flex flex-wrap items-end gap-x-6 gap-y-3">
         <fieldset>
-          <legend className="text-label uppercase text-ink-soft">Recorte</legend>
+          <legend className="text-small text-ink-soft">Recorte</legend>
           <div className="mt-1 flex flex-wrap gap-2">
             {([['executivo', 'Executivo'], ['outros', 'Outros Poderes'], ['todos', 'Todos']] as [Escopo, string][]).map(([v, r]) => (
               <label key={v} className={`cursor-pointer rounded-brand border px-3 py-1.5 text-small ${escopo === v ? 'border-navy bg-navy font-semibold text-on-navy' : 'border-line bg-paper'}`}>
@@ -137,28 +136,29 @@ export function Painel({ linhas, nomes, coleta, outrosPoderes }: { linhas: Linha
           </div>
         </fieldset>
         <div className="min-w-[16rem] max-w-md flex-1">
-          <label htmlFor={idUo} className="text-label uppercase text-ink-soft">Unidade</label>
+          <label htmlFor={idUo} className="text-small text-ink-soft">Unidade</label>
           <select id={idUo} value={uoAtiva} onChange={(e) => { setUoSel(e.target.value); setAberta(null) }} className="mt-1 block w-full rounded-brand border border-line bg-paper px-3 py-1.5 text-small">
             <option value="">Todas ({unidades.length})</option>
             {unidades.map((u) => <option key={u} value={u}>{u} {cap(nomes.uo[u] ?? '')}</option>)}
           </select>
         </div>
-        <span className="pb-2 text-small text-ink-soft">R$ milhões, valores correntes</span>
+              </div>
+
+      {/* totais do recorte, numa linha (o detalhe está nos gráficos e na tabela) */}
+      <div className="mt-3 flex flex-wrap items-baseline gap-x-8 gap-y-1 rounded-brand border border-line bg-surface px-4 py-2 text-small tabular-nums">
+        <dl className="contents">
+          {resumo.map((k) => (
+            <div key={k.r} className="flex items-baseline gap-2">
+              <dt className="text-ink-soft">{k.r}</dt>
+              <dd className={`font-semibold ${k.destaque ? 'text-navy' : 'text-ink'}`}>{k.v}{k.s && <span className="ml-1.5 font-normal text-ink-soft">{k.s}</span>}</dd>
+            </div>
+          ))}
+        </dl>
+        <p className="text-ink-soft">R$ milhões, valores correntes</p>
       </div>
 
-      {/* indicadores */}
-      <ul className="mt-4 grid grid-cols-2 gap-3 md:grid-cols-3 xl:grid-cols-5">
-        {kpis.map((k) => (
-          <li key={k.r} className="rounded-brand border border-line bg-paper p-3">
-            <span className="block text-label uppercase text-ink-soft">{k.r}</span>
-            <span className={`mt-0.5 block font-serif text-section font-semibold tabular-nums ${k.destaque ? 'text-navy' : 'text-ink'}`}>{k.v}</span>
-            <span className="block text-small tabular-nums text-ink-soft">{k.s}</span>
-          </li>
-        ))}
-      </ul>
-
       {/* gráficos */}
-      <div className="mt-4 grid gap-4 lg:grid-cols-12">
+      <div className="mt-3 grid gap-3 lg:grid-cols-12">
         <Cartao className="lg:col-span-7" titulo={`${tituloNivel}: 15 maiores`} legenda={<Legenda itens={LEGENDA_PARES} />}
           grafico={<BarrasPares itens={principal} onEscolhe={uoAtiva ? undefined : (c) => { setUoSel(c); setAberta(null) }} />}
           tabela={<TabelaItens itens={principal} colunas={colsPares(tituloNivel)} legenda={`${tituloNivel}, 15 maiores`} />} />
@@ -175,7 +175,7 @@ export function Painel({ linhas, nomes, coleta, outrosPoderes }: { linhas: Linha
 
       {/* tabela */}
       <section aria-label={tituloNivel} className="mt-4 rounded-brand border border-line bg-paper p-4">
-        <h2 className="text-title">{tituloNivel}</h2>
+        <h2 className="text-lead font-semibold">{tituloNivel}</h2>
         <div tabIndex={0} role="region" aria-label={`Tabela: ${tituloNivel}`} className="mt-3 max-h-[36rem] overflow-auto rounded-brand border border-line">
           <table className="w-full min-w-[56rem] text-left text-small">
             <caption className="sr-only">{tituloNivel}, em R$ milhões</caption>
@@ -228,7 +228,7 @@ export function Painel({ linhas, nomes, coleta, outrosPoderes }: { linhas: Linha
       {/* alertas */}
       <section aria-label="Pontos de atenção" className="mt-4 rounded-brand border border-line bg-paper p-4">
         <div className="flex flex-wrap items-center justify-between gap-3">
-          <h2 className="text-title">Pontos de atenção</h2>
+          <h2 className="text-lead font-semibold">Pontos de atenção</h2>
           <div role="group" aria-label="Tipo de ponto de atenção" className="inline-flex flex-wrap overflow-hidden rounded-brand border border-line text-small">
             {([['abaixo', 'PLOA abaixo do empenhado 26'], ['novas', 'Ações novas'], ['extintas', 'Sem dotação na PLOA']] as [Alerta, string][]).map(([v, r]) => (
               <button key={v} type="button" aria-pressed={alerta === v} onClick={() => setAlerta(v)} className={`px-3 py-1.5 ${alerta === v ? 'bg-navy font-semibold text-on-navy' : 'bg-paper text-ink'}`}>

@@ -41,7 +41,7 @@ export function Cartao({ titulo, legenda, grafico, tabela, direita, className = 
   return (
     <section aria-label={titulo} className={`rounded-brand border border-line bg-paper p-4 ${className}`}>
       <div className="flex flex-wrap items-center justify-between gap-x-4 gap-y-2">
-        <h2 className="text-title">{titulo}</h2>
+        <h2 className="text-lead font-semibold">{titulo}</h2>
         <div className="flex items-center gap-2">
           {direita}
           <div role="group" aria-label={`Forma de ver: ${titulo}`} className="inline-flex overflow-hidden rounded-brand border border-line text-small">
@@ -99,7 +99,7 @@ export function BarrasPares({ itens, onEscolhe }: { itens: Item[]; onEscolhe?: (
   const w = (x: number) => `${Math.max(0, Math.min(100, (x / escala) * 100))}%`
   return (
     <div ref={caixa} className="relative" onMouseLeave={() => setD(null)}>
-      <div className="hidden items-center justify-end gap-3 pb-1 text-label uppercase text-ink-soft md:flex" aria-hidden="true">
+      <div className="hidden items-center justify-end gap-3 pb-1 text-label text-ink-soft md:flex" aria-hidden="true">
         <span className="w-[4.5rem] text-right">Atual. 26</span><span className="w-[4.5rem] text-right">PLOA 27</span><span className="w-16 text-right">Δ%</span>
       </div>
       <ul className="border-t border-line">

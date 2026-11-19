@@ -10,6 +10,6 @@ export const IDENTIDADE = {
   apoio: 'Governador eleito Lorenzo Pazolini',
   /** Faixa superior escura */
   faixa: 'Equipe de Transição · Espírito Santo',
-  painel: 'Painel do orçamento 2027',
+  painel: 'Painel orçamentário 2027',
   aviso: 'Material de trabalho da equipe de transição, elaborado com dados públicos. Não é divulgação oficial do Governo do Estado.',
 } as const
