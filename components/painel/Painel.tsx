@@ -3,7 +3,8 @@
 import { Fragment, useEffect, useId, useMemo, useState } from 'react'
 import { bilhoes, milhoes, numero, pct } from '@/lib/formato'
 import { IDENTIDADE } from '@/lib/identidade-painel'
-import { Cartao, BarrasPares, BarrasVariacao, COR, Legenda, LEGENDA_PARES, TabelaItens } from './Graficos'
+import { Cartao, TabelaDelta, TabelaItens } from './Graficos'
+import { fmtPct } from './GraficosMacro'
 import { Faixa } from './Faixa'
 import { Receita, VisaoGeral } from './Macro'
 import { CoberturaFontes, ReceitaMensal, type DadosReceita } from './ReceitaMensal'
@@ -23,8 +24,9 @@ const ABAS: { id: Aba; rotulo: string; curto: string; nota: string }[] = [
 
 const cap = titulo
 const sinal = (x: number) => (x > 0 ? '+' : x < 0 ? '−' : '')
-const dMi = (x: number) => `${sinal(x)}${milhoes(Math.abs(x))}`
-const dPct = (x: number | null) => (x === null ? 'novo' : `${sinal(x)}${numero(Math.abs(x), 1)}%`)
+const mi = (x: number) => milhoes(x, 0)
+const dMi = (x: number) => `${sinal(x)}${milhoes(Math.abs(x), 0)}`
+const dPct = (x: number | null) => fmtPct(x)
 const topN = (itens: Item[], n: number) => [...itens].sort((a, b) => Math.max(b.v[PLOA], b.v[ATU]) - Math.max(a.v[PLOA], a.v[ATU])).slice(0, n)
 
 type MacroProps = {
@@ -127,19 +129,18 @@ export function Painel({ linhas, nomes, coleta, outrosPoderes, macro, receitaMes
   const filhos = (uo: string) => acoes.filter((a) => a.uo === uo).sort((a, b) => b.v[PLOA] - a.v[PLOA])
 
   const resumo = [
-    { r: 'PLOA 2027', v: milhoes(tot[PLOA]), s: '', destaque: true },
-    { r: 'Atualizada 2026', v: milhoes(tot[ATU]), s: '' },
-    { r: 'Empenhado 2026', v: milhoes(tot[EMP]), s: `${numero(execucaoPct(tot) ?? 0, 0)}% da atualizada` },
-    { r: 'PLOA − atualizada', v: dMi(tot[PLOA] - tot[ATU]), s: dPct(variacaoPct(tot)) },
+    { r: 'PLOA 2027', v: bilhoes(tot[PLOA]), s: '', destaque: true },
+    { r: 'Atualizada 2026', v: bilhoes(tot[ATU]), s: '' },
+    { r: 'Empenhado 2026', v: bilhoes(tot[EMP]), s: `${numero(execucaoPct(tot) ?? 0, 0)}% da atualizada` },
+    { r: 'PLOA − atualizada', v: `${sinal(tot[PLOA] - tot[ATU])}${bilhoes(Math.abs(tot[PLOA] - tot[ATU]))}`, s: dPct(variacaoPct(tot)) },
   ]
 
-  const colsPares = (primeira: string) => [
-    { rotulo: primeira, valor: (i: Item) => i.rotulo },
-    { rotulo: 'PLOA 27', valor: (i: Item) => milhoes(i.v[PLOA]) },
-    { rotulo: 'Atual. 26', valor: (i: Item) => milhoes(i.v[ATU]) },
-    { rotulo: 'Emp. 26', valor: (i: Item) => milhoes(i.v[EMP]) },
+  const nomeItem = (i: Item) => <><span className="line-clamp-3 font-medium text-ink md:line-clamp-none">{i.rotulo}</span>{i.sub && <span className="block text-label normal-case tracking-normal text-ink-soft">{i.sub}</span>}</>
+  const colsDelta = [
+    { rotulo: 'Atual. 26', valor: (i: Item) => mi(i.v[ATU]) },
+    { rotulo: 'PLOA 27', valor: (i: Item) => mi(i.v[PLOA]), forte: true },
     { rotulo: 'Δ R$ mi', valor: (i: Item) => dMi(i.v[PLOA] - i.v[ATU]) },
-    { rotulo: 'Δ %', valor: (i: Item) => dPct(variacaoPct(i.v)) },
+    { rotulo: 'Δ%', valor: (i: Item) => dPct(variacaoPct(i.v)) },
   ]
   const tituloNivel = uoAtiva ? 'Ações da unidade' : 'Unidades orçamentárias'
 
@@ -208,22 +209,21 @@ export function Painel({ linhas, nomes, coleta, outrosPoderes, macro, receitaMes
         {aba === 'receita' && (
           <>
             <ReceitaMensal dados={receitaMes} macro={macro.receita} ipca={macro.ipca} />
-            <div className="mt-6"><Receita receita={macro.receita} ipca={macro.ipca} mensal={macro.mensal} /></div>
+            <h2 className="mt-8 border-b border-line pb-1.5 text-lead font-semibold">ICMS e transferências</h2>
+            <div className="mt-1"><Receita receita={macro.receita} ipca={macro.ipca} mensal={macro.mensal} /></div>
           </>
         )}
         {aba === 'despesa' && (
           <>
             <div className="print:hidden">{filtros}</div>
             {/* totais do recorte, numa linha */}
-      <Faixa itens={resumo} nota="R$ milhões, valores correntes" />
+      <Faixa itens={resumo} nota="Tabelas em R$ milhões, arredondadas; valores correntes." />
 
-            <div className="mt-3 grid grid-cols-1 gap-3 2xl:grid-cols-12">
-        <Cartao className="2xl:col-span-7" titulo={`${tituloNivel}: 15 maiores`} legenda={<Legenda itens={LEGENDA_PARES} />}
-          grafico={<BarrasPares itens={principal} onEscolhe={uoAtiva ? undefined : (c) => { setUoSel(c); setAberta(null) }} />}
-          tabela={<TabelaItens itens={principal} colunas={colsPares(tituloNivel)} legenda={`${tituloNivel}, 15 maiores`} />} />
-        <Cartao className="2xl:col-span-5" titulo="PLOA 2027 menos atualizada 2026" legenda={<Legenda itens={[{ cor: COR.alta, rotulo: 'Aumento' }, { cor: COR.baixa, rotulo: 'Redução' }]} />}
-          grafico={<BarrasVariacao itens={variacao} />}
-          tabela={<TabelaItens itens={variacao} colunas={colsPares(tituloNivel)} legenda="Maiores aumentos e reduções da PLOA sobre a atualizada de 2026" />} />
+            <div className="mt-3">
+              <Cartao titulo={uoAtiva ? 'Ações da unidade: maiores aumentos e reduções' : 'Unidades: maiores aumentos e reduções da PLOA sobre a atualizada de 2026'}>
+                <TabelaDelta itens={variacao} delta={(i) => i.v[PLOA] - i.v[ATU]} rotuloBarra={`${tituloNivel}|PLOA 2027 menos atualizada 2026`} primeira={nomeItem}
+                  legenda="Maiores aumentos e reduções da PLOA 2027 sobre a dotação atualizada de 2026, em R$ milhões" colunas={colsDelta} />
+              </Cartao>
             </div>
             {/* tabela */}
       <section aria-label={tituloNivel} data-longa className="mt-3 min-w-0 rounded-brand border border-line bg-paper p-3 sm:p-4 md:p-5">
@@ -294,11 +294,11 @@ export function Painel({ linhas, nomes, coleta, outrosPoderes, macro, receitaMes
             itens={listas[alerta]}
             legenda={alerta === 'abaixo' ? 'Ações em que a PLOA 2027 é menor que o empenhado de 2026' : alerta === 'novas' ? 'Ações novas na PLOA 2027' : 'Ações com empenho em 2026 e sem dotação na PLOA 2027'}
             colunas={[
-              { rotulo: 'Ação', valor: (i) => <><span className="block font-medium text-ink">{i.rotulo}</span><span className="block text-label normal-case tracking-normal text-ink-soft">{i.sub}</span></> },
-              { rotulo: 'PLOA 27', valor: (i) => milhoes(i.v[PLOA]) },
-              { rotulo: 'Atual. 26', valor: (i) => milhoes(i.v[ATU]) },
-              { rotulo: 'Emp. 26', valor: (i) => milhoes(i.v[EMP]) },
-              { rotulo: alerta === 'abaixo' ? 'Emp. − PLOA' : 'Δ R$ mi', valor: (i) => (alerta === 'abaixo' ? milhoes(i.v[EMP] - i.v[PLOA]) : dMi(i.v[PLOA] - i.v[ATU])) },
+              { rotulo: 'Ação', valor: (i) => <><span className="line-clamp-3 font-medium text-ink md:line-clamp-none">{i.rotulo}</span><span className="block text-label normal-case tracking-normal text-ink-soft">{i.sub}</span></> },
+              { rotulo: 'PLOA 27', valor: (i) => mi(i.v[PLOA]) },
+              { rotulo: 'Atual. 26', valor: (i) => mi(i.v[ATU]) },
+              { rotulo: 'Emp. 26', valor: (i) => mi(i.v[EMP]) },
+              { rotulo: alerta === 'abaixo' ? 'Emp. − PLOA' : 'Δ R$ mi', valor: (i) => (alerta === 'abaixo' ? mi(i.v[EMP] - i.v[PLOA]) : dMi(i.v[PLOA] - i.v[ATU])) },
             ]}
           />
         </div>
@@ -310,15 +310,17 @@ export function Painel({ linhas, nomes, coleta, outrosPoderes, macro, receitaMes
           <>
             <div className="print:hidden">{filtros}</div>
             {/* totais do recorte, numa linha */}
-      <Faixa itens={resumo} nota="R$ milhões, valores correntes" />
+      <Faixa itens={resumo} nota="Tabelas em R$ milhões, arredondadas; valores correntes." />
 
-            <div className="mt-3 grid grid-cols-1 gap-3 2xl:grid-cols-12">
-        <Cartao className="2xl:col-span-5" titulo="Grupo de despesa" legenda={<Legenda itens={LEGENDA_PARES} />}
-          grafico={<BarrasPares itens={porGnd} />}
-          tabela={<TabelaItens itens={porGnd} colunas={colsPares('Grupo')} legenda="Por grupo de natureza da despesa" />} />
-        <Cartao className="2xl:col-span-7" titulo="Fontes de recursos: 12 maiores" legenda={<Legenda itens={LEGENDA_PARES} />}
-          grafico={<BarrasPares itens={porFonte} />}
-          tabela={<TabelaItens itens={porFonte} colunas={colsPares('Fonte')} legenda="Doze maiores fontes de recursos" />} />
+            <div className="mt-3 space-y-3">
+              <Cartao titulo="Grupo de despesa">
+                <TabelaDelta itens={porGnd} delta={(i) => i.v[PLOA] - i.v[ATU]} rotuloBarra="Grupo|PLOA 2027 menos atualizada 2026" primeira={nomeItem}
+                  legenda="Por grupo de natureza da despesa, em R$ milhões" colunas={colsDelta} />
+              </Cartao>
+              <Cartao titulo="Fontes de recursos: 12 maiores">
+                <TabelaDelta itens={porFonte} delta={(i) => i.v[PLOA] - i.v[ATU]} rotuloBarra="Fonte|PLOA 2027 menos atualizada 2026" primeira={nomeItem}
+                  legenda="Doze maiores fontes de recursos, em R$ milhões" colunas={colsDelta} />
+              </Cartao>
             </div>
             <div className="mt-6"><CoberturaFontes dados={receitaMes} linhas={linhas} nomesFonte={nomes.fonte} /></div>
           </>
@@ -337,10 +339,10 @@ export function Painel({ linhas, nomes, coleta, outrosPoderes, macro, receitaMes
     const dv = variacaoPct(v)
     return (
       <>
-        <td className="whitespace-nowrap px-3 py-1.5 text-right font-semibold tabular-nums">{milhoes(v[PLOA])}</td>
-        <td className="whitespace-nowrap px-3 py-1.5 text-right tabular-nums">{milhoes(v[INI])}</td>
-        <td className="whitespace-nowrap px-3 py-1.5 text-right tabular-nums">{milhoes(v[ATU])}</td>
-        <td className="whitespace-nowrap px-3 py-1.5 text-right tabular-nums">{milhoes(v[EMP])}</td>
+        <td className="whitespace-nowrap px-3 py-1.5 text-right font-semibold tabular-nums">{mi(v[PLOA])}</td>
+        <td className="whitespace-nowrap px-3 py-1.5 text-right tabular-nums">{mi(v[INI])}</td>
+        <td className="whitespace-nowrap px-3 py-1.5 text-right tabular-nums">{mi(v[ATU])}</td>
+        <td className="whitespace-nowrap px-3 py-1.5 text-right tabular-nums">{mi(v[EMP])}</td>
         <td className="whitespace-nowrap px-3 py-1.5 text-right tabular-nums">{ex === null ? '–' : `${numero(ex, 0)}%`}</td>
         <td className="whitespace-nowrap px-3 py-1.5 text-right tabular-nums">{dMi(v[PLOA] - v[ATU])}</td>
         <td className="whitespace-nowrap px-3 py-1.5 text-right tabular-nums">{dPct(dv)}</td>

@@ -3,8 +3,8 @@
 import { useMemo } from 'react'
 import { bilhoes, milhoes } from '@/lib/formato'
 import type { LinhaMacro } from '@/lib/macro'
-import { Cartao, COR, Legenda, TabelaItens } from './Graficos'
-import { BarrasSeries, ColunasMeses, fmtPct, type ItemSerie } from './GraficosMacro'
+import { Cartao, COR, Legenda, TabelaDelta, TabelaItens } from './Graficos'
+import { ColunasMeses, fmtPct, type ItemSerie } from './GraficosMacro'
 import { Faixa } from './Faixa'
 import { titulo, type Linha } from './dados'
 
@@ -109,7 +109,7 @@ export function ReceitaMensal({ dados, macro, ipca }: { dados: DadosReceita; mac
           legenda={<Legenda itens={[{ cor: COR.atualizada, contorno: COR.contornoAtualizada, rotulo: '2025' }, { cor: COR.ploa, rotulo: `2026 (até ${NOMES_MES[ultimo - 1]})` }]} />}
           grafico={<ColunasMeses anterior={liq25} corrente={mesesCom26} rotuloAnterior="2025" rotuloCorrente="2026" />}
           tabela={<TabelaItens itens={MESES.map((m, i) => ({ chave: m, mes: m, a: liq25[i], c: mesesCom26[i] }))} legenda="Receita líquida por mês, em R$ milhões"
-            colunas={[{ rotulo: 'Mês', valor: (x) => x.mes }, { rotulo: '2025', valor: (x) => milhoes(x.a) }, { rotulo: '2026', valor: (x) => (x.c === null ? '–' : milhoes(x.c)) }, { rotulo: 'Δ%', valor: (x) => (x.c !== null && x.a ? fmtPct((x.c / x.a - 1) * 100) : '–') }]} />} />
+            colunas={[{ rotulo: 'Mês', valor: (x) => x.mes }, { rotulo: '2025', valor: (x) => milhoes(x.a, 0) }, { rotulo: '2026', valor: (x) => (x.c === null ? '–' : milhoes(x.c, 0)) }, { rotulo: 'Δ%', valor: (x) => (x.c !== null && x.a ? fmtPct((x.c / x.a - 1) * 100) : '–') }]} />} />
         <Cartao className="2xl:col-span-12" titulo="Perfil mensal proposto para 2027 (ensaio das metas de arrecadação)"
           grafico={<TabelaItens itens={itensPerfil} colunas={colsPerfil} legenda="Perfil mensal proposto da receita de 2027, em R$ milhões" />} />
       </div>
@@ -141,7 +141,6 @@ export function CoberturaFontes({ dados, linhas, nomesFonte }: { dados: DadosRec
   }, [a26, linhas, nomesFonte, dados.nomes.fonte])
   const top = itens.slice(0, 14)
   const totR = itens.reduce((s, x) => s + x.receita, 0), totE = itens.reduce((s, x) => s + x.emp, 0)
-  const SERIES = [{ rotulo: 'Receita arrecadada 2026', cor: COR.alta }, { rotulo: 'Empenhado 2026', cor: COR.empenhado }]
   return (
     <div className="mt-3">
       <Faixa
@@ -153,15 +152,15 @@ export function CoberturaFontes({ dados, linhas, nomesFonte }: { dados: DadosRec
         nota="Receita até a data da coleta contra empenhos do ano inteiro: ainda faltam semanas de arrecadação, e o saldo negativo pode estar coberto por superávit financeiro de anos anteriores. A conferência fina é por fonte e detalhamento."
       />
       <div className="mt-3">
-        <Cartao titulo="Cobertura por fonte de recursos: 14 maiores" legenda={<Legenda itens={SERIES.map((s) => ({ cor: s.cor, rotulo: s.rotulo }))} />}
-          grafico={<BarrasSeries itens={top} series={SERIES} base={1} alvo={0} ipca={0} rotuloBase="Empenh." rotuloAlvo="Receita" rotuloDelta="Rec./Emp." semReal />}
-          tabela={<TabelaItens itens={itens} legenda="Cobertura por fonte, em R$ milhões" colunas={[
-            { rotulo: 'Fonte', valor: (x) => x.rotulo },
-            { rotulo: 'Receita 26', valor: (x) => milhoes(x.receita) },
-            { rotulo: 'Empenhado 26', valor: (x) => milhoes(x.emp) },
-            { rotulo: 'Saldo', valor: (x) => `${x.receita - x.emp >= 0 ? '+' : '−'}${milhoes(Math.abs(x.receita - x.emp))}` },
-            { rotulo: 'PLOA 27 (despesa)', valor: (x) => milhoes(x.ploa) },
-          ]} />} />
+        <Cartao titulo="Cobertura por fonte de recursos: 14 maiores">
+          <TabelaDelta itens={top} delta={(x) => x.receita - x.emp} rotuloBarra="Fonte|Receita menos empenhado" primeira={(x) => x.rotulo}
+            legenda="Cobertura por fonte, em R$ milhões" colunas={[
+              { rotulo: 'Receita 26', valor: (x) => milhoes(x.receita, 0) },
+              { rotulo: 'Empenhado 26', valor: (x) => milhoes(x.emp, 0) },
+              { rotulo: 'Saldo', valor: (x) => `${x.receita - x.emp >= 0 ? '+' : '−'}${milhoes(Math.abs(x.receita - x.emp), 0)}`, forte: true },
+              { rotulo: 'PLOA 27 (despesa)', valor: (x) => milhoes(x.ploa, 0) },
+            ]} />
+        </Cartao>
       </div>
     </div>
   )
