@@ -8,7 +8,7 @@ import { ColunasAnuais, fmtPct, type ColunaAnual } from './GraficosMacro'
 import { Faixa } from './Faixa'
 import { Nota } from './Estrutura'
 import { COD_DESPESA, COD_GRUPO } from './codigos'
-import { fatorPrecos, ipcaAnual, pibArrecadacao, projecaoItens, projetaDespesa2026, projetaReceita2026, type DadosReceita, type ItemProjetado } from './projecao'
+import { analisaFontes, fatorPrecos, ipcaAnual, pibArrecadacao, PETROLEO_LDO_2027, projecaoItens, projetaDespesa2026, projetaReceita2026, type DadosReceita, type ItemProjetado } from './projecao'
 
 type Vista = 'receita' | 'despesa' | 'resultado'
 const VISTAS: { id: Vista; rotulo: string }[] = [
@@ -47,7 +47,9 @@ export function VisaoGeral({ receita, despesa, ipca: ipcaParams, pib, fonteIpca,
   const proj = useMemo(() => projetaReceita2026(dados), [dados])
   const itensProj = useMemo(() => projecaoItens(dados), [dados])
   const projD = useMemo(() => projetaDespesa2026(), [])
+  const petroleo26 = useMemo(() => analisaFontes(dados).find((a) => a.id === 'petroleo')!.central, [dados])
   const pibA = useMemo(() => pibArrecadacao(), [])
+  const [cenario, setCenario] = useState<'ritmo' | 'prudente'>('ritmo')
   const pick = (m: Record<string, number[]>, ...ch: string[]) => COL.map((c) => ch.reduce((s, k) => s + m[k][c], 0))
   const soma = (...a: number[][]) => COL.map((_, j) => a.reduce((s, x) => s + x[j], 0))
 
@@ -94,7 +96,19 @@ export function VisaoGeral({ receita, despesa, ipca: ipcaParams, pib, fonteIpca,
     : linhasDespesa.map((l) => ({ ...l, proj: projDe(l.chave) }))
 
   /* referência de 2027, independente da PLOA: o fechamento projetado de 2026 corrigido pela inflação e pelo PIB real (receita) ou só pela inflação (despesa) */
-  const refReceita = (l: Linha) => (l.proj ? (l.proj.central - (l.proj.pontual ?? 0)) * (SEM_CRESCIMENTO.has(l.chave) ? 1 : 1 + g27) : null)
+  /* cenários de receita: 'ritmo' mantém o patamar de petróleo e de crédito de 2026; 'prudente' põe o petróleo na base da LDO (Brent a US$ 60) e o crédito no valor da PLOA */
+  const oleoRitmo = petroleo26 * (1 + g27)
+  const reducaoOleo = Math.max(0, oleoRitmo - PETROLEO_LDO_2027)
+  const refReceitaC = (l: Linha, c: 'ritmo' | 'prudente'): number | null => {
+    if (!l.proj) return null
+    const base = (l.proj.central - (l.proj.pontual ?? 0)) * (SEM_CRESCIMENTO.has(l.chave) ? 1 : 1 + g27)
+    if (c === 'ritmo') return base
+    if (l.chave === 'tuniao' || l.chave === 'transf') return base - reducaoOleo
+    if (l.chave === 'cred') return R.operacoes_credito[5]
+    if (l.chave === 'cap') return R.operacoes_credito[5] + (itensProj.capout.central)
+    return base
+  }
+  const refReceita = (l: Linha) => refReceitaC(l, cenario)
   const refDe = (l: Linha): number | null => {
     if (vista === 'receita') {
       if (l.chave === 'liq') return comProj.filter((x) => x.nivel === 0 && x.chave !== 'liq').reduce((s, x) => s + (refReceita(x) ?? 0), 0)
@@ -109,10 +123,15 @@ export function VisaoGeral({ receita, despesa, ipca: ipcaParams, pib, fonteIpca,
 
   /* ---------- totais de referência para a faixa de números ---------- */
   const reservas27 = reservas[4]
-  const refReceitaTotal = linhasReceita.filter((x) => x.nivel === 0 && x.chave !== 'liq').reduce((s, x) => s + (refReceita({ ...x, proj: itensProj[x.chave] }) ?? 0), 0)
+  const totalRef = (c: 'ritmo' | 'prudente') => linhasReceita.filter((x) => x.nivel === 0 && x.chave !== 'liq').reduce((s, x) => s + (refReceitaC({ ...x, proj: itensProj[x.chave] }, c) ?? 0), 0)
+  const refRitmo = totalRef('ritmo')
+  const refPrudente = totalRef('prudente')
+  const refReceitaTotal = cenario === 'ritmo' ? refRitmo : refPrudente
+  const refOutro = cenario === 'ritmo' ? refPrudente : refRitmo
+  const nomeCenario = { ritmo: 'ritmo atual', prudente: 'prudente' } as const
   const refDespesa = projD.itens.tot.central * (1 + i27)
-  /* faixa da referência: na receita, a dispersão histórica da arrecadação em torno do PIB nominal; na despesa, a faixa sazonal da projeção corrigida pela inflação */
-  const faixaRefReceita: [number, number] = [refReceitaTotal - (pibA.difDesvio / 100) * proj.central, refReceitaTotal + (pibA.difDesvio / 100) * proj.central]
+  /* faixa da referência: na receita, entre os dois cenários (petróleo e crédito); na despesa, a faixa sazonal da projeção corrigida pela inflação */
+  const faixaRefReceita: [number, number] = [Math.min(refRitmo, refPrudente), Math.max(refRitmo, refPrudente)]
   const faixaRefDespesa: [number, number] = [(projD.itens.tot.min as number) * (1 + i27), (projD.itens.tot.max as number) * (1 + i27)]
 
   /* ---------- gráfico anual ---------- */
@@ -150,9 +169,9 @@ export function VisaoGeral({ receita, despesa, ipca: ipcaParams, pib, fonteIpca,
   let faixa: { r: string; v: string; s?: string; destaque?: boolean }[] = []
   if (vista === 'receita') {
     faixa = [
-      { r: 'Projeção de fechamento de 2026', v: bilhoes(proj.central), s: `faixa ${numero(proj.min / 1e9, 1)} a ${numero(proj.max / 1e9, 1)} bi`, destaque: true },
-      { r: 'PLOA 2027 sobre a referência', v: fmtPct((v27 / refReceitaTotal - 1) * 100), s: `PLOA ${bilhoes(v27)}; referência ${bilhoes(refReceitaTotal)} (faixa ${numero(faixaRefReceita[0] / 1e9, 1)} a ${numero(faixaRefReceita[1] / 1e9, 1)})` },
-      { r: `Arrecadado de janeiro a ${nomeCorte} de 2026`, v: bilhoes(proj.acumulado), s: `${fmtPct((proj.acumulado / proj.acumulado25 - 1) * 100)} sobre o mesmo período de 2025` },
+      { r: 'Projeção de fechamento de 2026', v: bilhoes(proj.central), s: `faixa ${numero(proj.min / 1e9, 1)} a ${numero(proj.max / 1e9, 1)} bi; arrecadado até ${nomeCorte} ${bilhoes(proj.acumulado)} (${fmtPct((proj.acumulado / proj.acumulado25 - 1) * 100)})`, destaque: true },
+      { r: `PLOA 2027 sobre a referência (${nomeCenario[cenario]})`, v: fmtPct((v27 / refReceitaTotal - 1) * 100), s: `PLOA ${bilhoes(v27)}; referência ${bilhoes(refReceitaTotal)}` },
+      { r: `No cenário ${nomeCenario[cenario === 'ritmo' ? 'prudente' : 'ritmo']}`, v: fmtPct((v27 / refOutro - 1) * 100), s: `referência ${bilhoes(refOutro)}; PLOA ${bilhoes(v27)}` },
     ]
   } else if (vista === 'despesa') {
     faixa = [
@@ -218,14 +237,14 @@ export function VisaoGeral({ receita, despesa, ipca: ipcaParams, pib, fonteIpca,
   const tituloGrafico = vista === 'despesa' ? 'Despesa total, ano a ano' : 'Receita líquida, ano a ano'
   const legendaGrafico = vista === 'despesa'
     ? [{ cor: COR.empenhado, rotulo: 'Executado (PLOA, quadro de evolução)' }, { cor: COR.atualizada, contorno: COR.contornoAtualizada, rotulo: 'Projeção de 2026 (linha preta: faixa)' }, { cor: COR.referencia, rotulo: 'Nossa projeção de 2027 (linha preta: faixa)' }, { cor: COR.ploa, rotulo: 'Proposta 2027' }]
-    : [{ cor: COR.empenhado, rotulo: 'Arrecadado' }, { cor: COR.atualizada, contorno: COR.contornoAtualizada, rotulo: 'Projeção de 2026 (linha preta: faixa)' }, { cor: COR.referencia, rotulo: 'Nossa projeção de 2027 (linha preta: faixa)' }, { cor: COR.ploa, rotulo: 'PLOA 2027' }]
+    : [{ cor: COR.empenhado, rotulo: 'Arrecadado' }, { cor: COR.atualizada, contorno: COR.contornoAtualizada, rotulo: 'Projeção de 2026 (linha preta: faixa)' }, { cor: COR.referencia, rotulo: 'Nossa projeção de 2027 (linha preta: entre os dois cenários)' }, { cor: COR.ploa, rotulo: 'PLOA 2027' }]
   const notaReferencia = (
     <Nota titulo="O que é a referência de 2027">
       <p>
         A referência é a nossa projeção independente para 2027, feita sem usar a PLOA: parte do fechamento de 2026 projetado pelo ritmo de arrecadação (até {nomeCorte}) e de execução da despesa (até {nomeCorteDesp}) e o corrige para 2027. As receitas crescem com a inflação e o PIB real do Focus (+{numero(g27 * 100, 1)}%); as despesas, só com a inflação (+{numero(i27 * 100, 1)}%), isto é, mantêm o volume real de 2026. Operações de crédito e demais receitas de capital ficam no nível de 2026, porque dependem de contratação.
       </p>
       <p>
-        Faixa da referência: na receita, a dispersão histórica da arrecadação em torno do PIB nominal (desde {pibA.linhas[0].ano}, os impostos do ES cresceram em média {numero(pibA.difMedia, 1)} ponto(s) percentual(is) acima do PIB nominal, com desvio de {numero(pibA.difDesvio, 1)}); na despesa, a faixa sazonal da projeção de execução. Detalhes na aba Método e fontes.
+        Cenários da receita: no <strong>ritmo atual</strong>, o petróleo segue o patamar de 2026 (R$ {numero(oleoRitmo / 1e9, 1)} bi, corrigido) e as operações de crédito ficam no nível de 2026; no <strong>prudente</strong>, o petróleo vai à base da LDO 2027 (R$ {numero(PETROLEO_LDO_2027 / 1e9, 2)} bi, Brent a US$ 60) e o crédito é o valor da própria PLOA. A faixa do gráfico vai de um cenário ao outro. Para ter uma medida de dispersão: desde {pibA.linhas[0].ano}, os impostos do ES se afastaram do PIB nominal em {numero(pibA.difDesvio, 1)} ponto(s) percentual(is), em média, de um ano para o outro (aba Método e fontes). Na despesa, a faixa é a sazonal da projeção de execução.
       </p>
       <p>
         É uma régua de comparação, não uma previsão: não supõe mudança de preço do petróleo (o Brent de 2026 é mantido), de alíquota, de crédito contratado nem aumento real de despesa. Quando a PLOA se afasta da referência, a pergunta a fazer é qual decisão ou premissa explica a diferença. Dif. = PLOA menos referência; em azul, a PLOA está acima (a partir de {DIF_MIN}%) e, em rosa, abaixo. Em despesa, as reservas não entram na referência porque não são executadas. IPCA: {fonteIpca}
@@ -235,11 +254,23 @@ export function VisaoGeral({ receita, despesa, ipca: ipcaParams, pib, fonteIpca,
 
   return (
     <div>
-      <div role="group" aria-label="O que ver" className="inline-flex max-w-full flex-wrap overflow-hidden rounded-brand border border-line text-small print:hidden">
-        {VISTAS.map((v) => (
-          <button key={v.id} type="button" aria-pressed={vista === v.id} onClick={() => setVista(v.id)}
-            className={`px-4 py-1.5 ${vista === v.id ? 'bg-navy font-semibold text-on-navy' : 'bg-paper text-ink hover:bg-surface'}`}>{v.rotulo}</button>
-        ))}
+      <div className="flex flex-wrap items-center gap-x-4 gap-y-2 print:hidden">
+        <div role="group" aria-label="O que ver" className="inline-flex max-w-full flex-wrap overflow-hidden rounded-brand border border-line text-small print:hidden">
+          {VISTAS.map((v) => (
+            <button key={v.id} type="button" aria-pressed={vista === v.id} onClick={() => setVista(v.id)}
+              className={`px-4 py-1.5 ${vista === v.id ? 'bg-navy font-semibold text-on-navy' : 'bg-paper text-ink hover:bg-surface'}`}>{v.rotulo}</button>
+          ))}
+        </div>
+        {vista === 'receita' && (
+          <div className="flex items-center gap-2 text-small text-ink-soft">
+            <span>Referência de 2027:</span>
+            <div role="group" aria-label="Cenário da referência de 2027" className="inline-flex overflow-hidden rounded-brand border border-line">
+              {([['ritmo', 'Ritmo atual'], ['prudente', 'Prudente']] as const).map(([k, r]) => (
+                <button key={k} type="button" aria-pressed={cenario === k} onClick={() => setCenario(k)} className={`px-3 py-1.5 ${cenario === k ? 'bg-navy font-semibold text-on-navy' : 'bg-paper text-ink hover:bg-surface'}`}>{r}</button>
+              ))}
+            </div>
+          </div>
+        )}
       </div>
 
       <Faixa itens={faixa} nota="Valores correntes. Tabelas em R$ milhões, arredondadas." />
@@ -264,7 +295,7 @@ export function VisaoGeral({ receita, despesa, ipca: ipcaParams, pib, fonteIpca,
           <Cartao titulo={vista === 'receita' ? 'Receita por grupo: PLOA 2027 contra a referência' : 'Despesa por grupo: PLOA 2027 contra a referência'}>
             <TabelaItens altura="livre" compacta itens={visiveis.map((l) => ({ ...l, chave: l.chave }))} colunas={colunasTabela} legenda={`${vista === 'receita' ? 'Receita' : 'Despesa'} por grupo, em R$ milhões`} />
             <p className="mt-2 text-label normal-case tracking-normal text-ink-soft">
-              2026 proj.: fechamento projetado pelo ritmo de {vista === 'receita' ? `arrecadação até ${nomeCorte}` : `execução até ${nomeCorteDesp}`}{vista === 'receita' ? '' : ' (despesa empenhada)'}. Ref. 27: referência independente{vista === 'receita' ? `; † sem a receita pontual de 2026 em demais receitas correntes (indenizações, restituições e ressarcimentos, R$ ${mi(comProj.find((x) => x.chave === 'demais')?.proj?.pontual ?? 0)} mi até ${nomeCorte})` : ''}. Toque num grupo para ver o detalhe.
+              2026 proj.: fechamento projetado pelo ritmo de {vista === 'receita' ? `arrecadação até ${nomeCorte}` : `execução até ${nomeCorteDesp}`}{vista === 'receita' ? '' : ' (despesa empenhada)'}. Ref. 27: referência independente{vista === 'receita' ? ` (cenário ${nomeCenario[cenario]})` : ''}{vista === 'receita' ? `; † sem a receita pontual de 2026 em demais receitas correntes (indenizações, restituições e ressarcimentos, R$ ${mi(comProj.find((x) => x.chave === 'demais')?.proj?.pontual ?? 0)} mi até ${nomeCorte})` : ''}. Toque num grupo para ver o detalhe.
             </p>
             {notaReferencia}
           </Cartao>
