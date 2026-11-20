@@ -93,7 +93,7 @@ export function VisaoGeral({ receita, despesa, ipca: ipcaParams, pib, fonteIpca,
     : linhasDespesa.map((l) => ({ ...l, proj: projDe(l.chave) }))
 
   /* referência de 2027, independente da PLOA: o fechamento projetado de 2026 corrigido pela inflação e pelo PIB real (receita) ou só pela inflação (despesa) */
-  const refReceita = (l: Linha) => (l.proj ? l.proj.central * (SEM_CRESCIMENTO.has(l.chave) ? 1 : 1 + g27) : null)
+  const refReceita = (l: Linha) => (l.proj ? (l.proj.central - (l.proj.pontual ?? 0)) * (SEM_CRESCIMENTO.has(l.chave) ? 1 : 1 + g27) : null)
   const refDe = (l: Linha): number | null => {
     if (vista === 'receita') {
       if (l.chave === 'liq') return comProj.filter((x) => x.nivel === 0 && x.chave !== 'liq').reduce((s, x) => s + (refReceita(x) ?? 0), 0)
@@ -182,9 +182,9 @@ export function VisaoGeral({ receita, despesa, ipca: ipcaParams, pib, fonteIpca,
   const colunasTabela = [
     { rotulo: 'R$ milhões', valor: celulaGrupo },
     { rotulo: '2025', secundaria: true, valor: (l: Linha) => (l.chave === 'res' && l.v[2] === 0 ? '–' : mi(l.v[2])) },
-    { rotulo: '2026 proj.', secundaria: true, valor: (l: Linha) => (l.proj && l.chave !== 'res' ? <span title={l.proj.base === 'resíduo' ? 'Resultado: receita líquida projetada menos a soma das linhas' : l.proj.base === '2025' ? 'Sazonalidade só de 2025' : undefined}>{mi(l.proj.central)}{l.proj.base === '2025' ? '*' : ''}</span> : '–') },
+    { rotulo: '2026 proj.', secundaria: true, valor: (l: Linha) => (l.proj && l.chave !== 'res' ? <span title={l.proj.base === 'resíduo' ? 'Resultado: receita líquida projetada menos a soma das linhas' : undefined}>{mi(l.proj.central)}</span> : '–') },
     { rotulo: 'PLOA 27', valor: (l: Linha) => <span className="font-semibold">{mi(l.v[4])}</span> },
-    { rotulo: 'Ref. 27', valor: (l: Linha) => { const r = refDe(l); return r === null ? '–' : mi(r) } },
+    { rotulo: 'Ref. 27', valor: (l: Linha) => { const r = refDe(l); return r === null ? '–' : <span title={l.proj?.pontual ? 'Sem a receita pontual de 2026 (indenizações, restituições e ressarcimentos), que não se repete' : undefined}>{mi(r)}{l.proj?.pontual ? '†' : ''}</span> } },
     { rotulo: 'Dif. R$ mi', secundaria: true, valor: (l: Linha) => { const r = refDe(l); return r === null ? '–' : dMi(l.v[4] - r) } },
     { rotulo: 'Dif. %', valor: (l: Linha) => { const d = difPct(l); return d === null ? '–' : <span className={`font-semibold ${corDif(d)}`}>{fmtPct(d)}</span> } },
   ]
@@ -254,7 +254,7 @@ export function VisaoGeral({ receita, despesa, ipca: ipcaParams, pib, fonteIpca,
           <Cartao titulo={vista === 'receita' ? 'Receita por grupo: PLOA 2027 contra a referência' : 'Despesa por grupo: PLOA 2027 contra a referência'}>
             <TabelaItens altura="livre" compacta itens={visiveis.map((l) => ({ ...l, chave: l.chave }))} colunas={colunasTabela} legenda={`${vista === 'receita' ? 'Receita' : 'Despesa'} por grupo, em R$ milhões`} />
             <p className="mt-2 text-label normal-case tracking-normal text-ink-soft">
-              2026 proj.: fechamento projetado pelo ritmo de {vista === 'receita' ? `arrecadação até ${nomeCorte}` : `execução até ${nomeCorteDesp}`}{vista === 'receita' ? '; * só há mês a mês de 2025 para essa linha' : ' (despesa empenhada)'}. Ref. 2027: referência independente. Toque num grupo para ver o detalhe.
+              2026 proj.: fechamento projetado pelo ritmo de {vista === 'receita' ? `arrecadação até ${nomeCorte}` : `execução até ${nomeCorteDesp}`}{vista === 'receita' ? '' : ' (despesa empenhada)'}. Ref. 27: referência independente{vista === 'receita' ? `; † sem a receita pontual de 2026 em demais receitas correntes (indenizações, restituições e ressarcimentos, R$ ${mi(comProj.find((x) => x.chave === 'demais')?.proj?.pontual ?? 0)} mi até ${nomeCorte})` : ''}. Toque num grupo para ver o detalhe.
             </p>
             {notaReferencia}
           </Cartao>

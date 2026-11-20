@@ -1,6 +1,7 @@
 import rreoRaw from '@/data/rreo.json'
 import ritmoRaw from '@/data/ritmo-receita.json'
 import ritmoDespRaw from '@/data/ritmo-despesa.json'
+import sefazRaw from '@/data/receita-sefaz.json'
 import despesaMacroRaw from '@/data/ploa2027-macro.json'
 
 /** Linhas do arquivo de receita: [mes, alinea, fonte, bruta, deducao, liquida_tipo] (R$). */
@@ -164,13 +165,33 @@ export function retroteste(): { grupos: RetroGrupo[]; total: RetroGrupo; bimestr
   return { grupos: feitos.slice(0, -1), total: feitos[feitos.length - 1], bimestre }
 }
 
-export type ItemProjetado = { central: number; min?: number; max?: number; base: 'bimestres' | 'icms' | '2025' | 'resíduo' }
+export type ItemProjetado = {
+  central: number; min?: number; max?: number
+  base: 'bimestres' | 'icms' | 'mensal' | '2025' | 'resíduo'
+  /** parte do fechamento que é receita pontual (não recorrente) já realizada; a referência de 2027 não a repete */
+  pontual?: number
+}
+
+/* Receita bruta acumulada no ano por natureza e mês, 2023 em diante (demonstrativo mensal da SEFAZ): três anos fechados de sazonalidade. */
+const sefaz = (sefazRaw as unknown as { meses: Record<string, Record<string, number>> }).meses
+const ANOS_SEFAZ = [2023, 2024, 2025]
+const acumSefaz = (ano: number, mes: number, cod: string) => sefaz[`${ano}-${String(mes).padStart(2, '0')}`]?.[cod] ?? 0
+/** Fração do ano já arrecadada até o mês, em cada ano fechado, para a soma de `somar` menos a soma de `menos` (códigos de natureza). */
+function sazonalSefaz(mes: number, somar: string[], menos: string[] = []): number[] {
+  const at = (a: number, m: number) => somar.reduce((s, c) => s + acumSefaz(a, m, c), 0) - menos.reduce((s, c) => s + acumSefaz(a, m, c), 0)
+  return ANOS_SEFAZ.map((a) => (at(a, 12) > 0 ? at(a, mes) / at(a, 12) : NaN)).filter((x) => Number.isFinite(x) && x > 0)
+}
+function projetaPorSazonal(ytd: number, sh: number[]): { central: number; min: number; max: number } {
+  const media = sh.reduce((x, y) => x + y, 0) / sh.length
+  return { central: ytd / media, min: ytd / Math.max(...sh), max: ytd / Math.min(...sh) }
+}
 
 /**
  * Projeção bruta de fechamento de 2026 para as linhas do quadro da PLOA (que é bruto das deduções), pela mesma regra.
  *  - grupos do RREO: sazonalidade líquida de 2022 a 2025 aplicada ao acumulado bruto;
  *  - ICMS: sazonalidade mensal de 2022 a 2025 (RREO, Anexo 03), aplicada à arrecadação bruta de ICMS do Portal;
- *  - IPVA, IRRF e ITCD: só há mês a mês de 2025 no Portal, e a sazonalidade desse ano é a única base (sem faixa);
+ *  - IPVA, IRRF e ITCD: sazonalidade de 2023 a 2025 do demonstrativo mensal da SEFAZ (o Portal só tem mês a mês de 2025 em diante);
+ *  - demais receitas correntes: a parte recorrente pela sazonalidade da SEFAZ; indenizações, restituições e ressarcimentos (espécie 192, pontuais) entram como realizados;
  *  - deduções: resíduo entre a receita líquida total projetada e a soma das linhas brutas.
  */
 export function projecaoItens(dados: DadosReceita): Record<string, ItemProjetado> {
@@ -183,7 +204,6 @@ export function projecaoItens(dados: DadosReceita): Record<string, ItemProjetado
     return { central: bruto / g.participacaoMedia, min: bruto / Math.max(...sh), max: bruto / Math.min(...sh), base: 'bimestres' }
   }
   const linhas26 = dados.anos['2026']?.linhas ?? []
-  const linhas25 = dados.anos['2025']?.linhas ?? []
   const bruto = (linhas: (string | number)[][], ate: number, pref: string[], exclui: string[] = []) =>
     linhas.filter((l) => Number(l[0]) <= ate && pref.some((p) => naturezaDe(l).startsWith(p)) && !exclui.some((p) => naturezaDe(l).startsWith(p))).reduce((s, l) => s + Number(l[3]), 0)
 
@@ -200,11 +220,15 @@ export function projecaoItens(dados: DadosReceita): Record<string, ItemProjetado
   const mediaIcms = shIcms.reduce((s, x) => s + x, 0) / shIcms.length
   out.icms = { central: icmsYtd / mediaIcms, min: icmsYtd / Math.max(...shIcms), max: icmsYtd / Math.min(...shIcms), base: 'icms' }
 
-  // IPVA, IRRF, ITCD: sazonalidade de 2025 (única disponível mês a mês)
+  // IPVA, IRRF, ITCD: sazonalidade de 2023 a 2025 (demonstrativo mensal da SEFAZ), com faixa pelas frações extremas
   for (const [id, pref] of [['ipva', '111251'], ['irrf', '111303'], ['itcd', '111252']] as const) {
-    const sh = bruto(linhas25, r.meses, [pref]) / bruto(linhas25, 12, [pref])
-    out[id] = { central: bruto(linhas26, r.meses, [pref]) / sh, base: '2025' }
+    out[id] = { ...projetaPorSazonal(bruto(linhas26, r.meses, [pref]), sazonalSefaz(r.meses, [pref])), base: 'mensal' }
   }
+  // demais receitas correntes: parte recorrente pela sazonalidade; espécie 192 (indenizações, restituições e ressarcimentos) é pontual
+  const ytdDemais = bruto(linhas26, r.meses, ['14', '15', '16', '19'])
+  const pontual = bruto(linhas26, r.meses, ['192'])
+  const demaisRec = projetaPorSazonal(ytdDemais - pontual, sazonalSefaz(r.meses, ['19', '16', '15', '14'], ['192']))
+  out.demais = { central: demaisRec.central + pontual, min: demaisRec.min + pontual, max: demaisRec.max + pontual, base: 'mensal', pontual }
   // impostos: grupo do RREO (já em out.impostos); deduções: resíduo
   out.imp = out.impostos
   const somaBruta = ['imp', 'taxas', 'contrib', 'patrim', 'transf', 'demais', 'intra', 'cap'].reduce((s, k) => s + out[k].central, 0)
@@ -501,5 +525,26 @@ export function retrotesteDespesa(): RetroDespesa[] {
     })
     const v = erros.filter((e) => e.erro !== null).map((e) => Math.abs(e.erro as number))
     return { id, rotulo, erros, erroMedio: v.length ? v.reduce((x, y) => x + y, 0) / v.length : null }
+  })
+}
+
+export type RetroSefaz = { id: string; rotulo: string; erros: { ano: number; erro: number | null }[]; erroMedio: number | null }
+/** Teste retroativo das linhas projetadas pela sazonalidade do demonstrativo da SEFAZ: projeção feita em outubro com as frações dos anos anteriores disponíveis (2023 em diante). */
+export function retrotesteSefaz(): RetroSefaz[] {
+  const linhas: { id: string; rotulo: string; somar: string[]; menos: string[] }[] = [
+    { id: 'ipva', rotulo: 'IPVA', somar: ['111251'], menos: [] },
+    { id: 'irrf', rotulo: 'IRRF', somar: ['111303'], menos: [] },
+    { id: 'itcd', rotulo: 'ITCD', somar: ['111252'], menos: [] },
+    { id: 'demais', rotulo: 'Demais receitas correntes, parte recorrente', somar: ['19', '16', '15', '14'], menos: ['192'] },
+  ]
+  const at = (a: number, m: number, l: (typeof linhas)[number]) => l.somar.reduce((s, c) => s + acumSefaz(a, m, c), 0) - l.menos.reduce((s, c) => s + acumSefaz(a, m, c), 0)
+  return linhas.map((l) => {
+    const erros = [2024, 2025].map((ano) => {
+      const fr = ANOS_SEFAZ.filter((p) => p < ano).map((p) => at(p, 10, l) / at(p, 12, l))
+      if (!fr.length) return { ano, erro: null }
+      return { ano, erro: (at(ano, 10, l) / (fr.reduce((x, y) => x + y, 0) / fr.length) / at(ano, 12, l) - 1) * 100 }
+    })
+    const v = erros.filter((e) => e.erro !== null).map((e) => Math.abs(e.erro as number))
+    return { id: l.id, rotulo: l.rotulo, erros, erroMedio: v.length ? v.reduce((x, y) => x + y, 0) / v.length : null }
   })
 }

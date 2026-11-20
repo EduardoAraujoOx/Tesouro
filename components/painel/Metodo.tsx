@@ -6,7 +6,7 @@ import type { LinhaMacro } from '@/lib/macro'
 import { Cartao, TabelaItens } from './Graficos'
 import { fmtPct } from './GraficosMacro'
 import { Nota, Subvisoes } from './Estrutura'
-import { ANOS_RITMO, conciliacao, NOMES_METODO, projetaReceita2026, retroteste, retrotesteDespesa, retrotesteFonte, type DadosReceita, type RetroDespesa } from './projecao'
+import { ANOS_RITMO, conciliacao, NOMES_METODO, projetaReceita2026, retroteste, retrotesteDespesa, retrotesteFonte, retrotesteSefaz, type DadosReceita, type RetroDespesa, type RetroSefaz } from './projecao'
 
 const NOMES_MES = ['janeiro', 'fevereiro', 'março', 'abril', 'maio', 'junho', 'julho', 'agosto', 'setembro', 'outubro', 'novembro', 'dezembro']
 const mi = (x: number | null) => (x === null ? '–' : milhoes(x === 0 ? 0 : x, 0))
@@ -23,6 +23,7 @@ export function Metodo({ receita, dados }: { receita: LinhaMacro[]; dados: Dados
   }), [dados, quadro])
   const retro = useMemo(() => retroteste(), [])
   const retroDesp = useMemo(() => retrotesteDespesa(), [])
+  const retroSefaz = useMemo(() => retrotesteSefaz(), [])
   const proj = useMemo(() => projetaReceita2026(dados), [dados])
   const retroFontes = useMemo(() => [{ id: 'icms', rotulo: 'ICMS', r: retrotesteFonte(dados, 'icms') }, { id: 'fpe', rotulo: 'Cota-parte do FPE', r: retrotesteFonte(dados, 'fpe') }], [dados])
   const mes = NOMES_MES[proj.meses - 1]
@@ -73,7 +74,7 @@ export function Metodo({ receita, dados }: { receita: LinhaMacro[]; dados: Dados
               </p>
               <Nota titulo="Como foi feito, limites e leitura">
               <p>
-                Só entra arrecadação realizada (Siconfi, RREO, Anexo 01, até 2025; Portal de Dados Abertos para 2026, que coincide com o RREO). Não se usa orçamento nem previsão de nenhum ano. Para o ICMS a fração é mês a mês (RREO, Anexo 03); IPVA, IRRF e ITCD só têm sazonalidade de 2025 no Portal; as deduções são o resíduo entre a receita líquida projetada e a soma das linhas brutas.
+                Só entra arrecadação realizada (Siconfi, RREO, Anexo 01, até 2025; Portal de Dados Abertos para 2026, que coincide com o RREO). Não se usa orçamento nem previsão de nenhum ano. Para o ICMS a fração é mês a mês (RREO, Anexo 03); IPVA, IRRF e ITCD usam a sazonalidade de 2023 a 2025 do demonstrativo mensal da SEFAZ (o Portal só tem mês a mês a partir de 2025); em demais receitas correntes, indenizações, restituições e ressarcimentos (espécie 192) são tratados como pontuais e entram só pelo que já foi realizado; as deduções são o resíduo entre a receita líquida projetada e a soma das linhas brutas.
               </p>
               <p>O método supõe que o resto do ano se comporta como nos anos anteriores: não enxerga receita extraordinária, operação de crédito que ainda não entrou nem mudança de alíquota. A tabela abaixo mostra o quanto ele erraria se tivesse sido usado em cada ano passado.</p>
               </Nota>
@@ -90,7 +91,21 @@ export function Metodo({ receita, dados }: { receita: LinhaMacro[]; dados: Dados
               </p>
             </div>
           </Cartao>
-          <Cartao titulo="Despesa: como projetamos o fechamento de 2026">
+          <Cartao titulo="IPVA, IRRF, ITCD e demais receitas: quão boa é a projeção?">
+        <p className="max-w-3xl text-small text-ink-soft">Essas linhas usam a sazonalidade de 2023 a 2025 do demonstrativo mensal da SEFAZ. O teste refaz a projeção de outubro de 2024 e de 2025 com os anos anteriores disponíveis.</p>
+        <div className="mt-3">
+          <TabelaItens altura="livre" itens={retroSefaz.map((g) => ({ ...g, chave: g.id }))} legenda="Teste retroativo da projeção de IPVA, IRRF, ITCD e demais receitas correntes, erro em %" colunas={[
+            { rotulo: 'Erro da projeção feita em outubro', valor: (g) => g.rotulo },
+            ...[2024, 2025].map((a) => ({ rotulo: String(a), valor: (g: RetroSefaz) => fmtPct(g.erros.find((e) => e.ano === a)?.erro ?? undefined) })),
+            { rotulo: 'Erro médio', valor: (g) => <span className="font-semibold">{g.erroMedio === null ? '–' : `${numero(g.erroMedio, 1)}%`}</span> },
+          ]} />
+        </div>
+        <Nota titulo="Limites">
+          <p>Só há um ou dois anos de teste, por isso a leitura é indicativa. IPVA e IRRF erram pouco; o ITCD tende a ser subestimado (a fração arrecadada até outubro vem caindo), e a parte recorrente de demais receitas oscila com o calendário de multas e compensações. Indenizações, restituições e ressarcimentos (espécie 192) foram de R$ 149 mi em 2023, R$ 1,3 bi em 2024 e R$ 638 mi em 2025: por serem pontuais, entram na projeção de 2026 só pelo realizado e a referência de 2027 não os repete.</p>
+        </Nota>
+      </Cartao>
+
+      <Cartao titulo="Despesa: como projetamos o fechamento de 2026">
             <p className="max-w-3xl text-small text-ink-soft">
                 Mesma lógica da receita, aplicada à despesa empenhada de cada grupo: divide-se o que já foi empenhado até agosto (4º bimestre do RREO) pela fração que o mesmo período costuma representar no ano (média de 2022 a 2025). O RREO traz a despesa exceto intraorçamentária; para ficar na base dos quadros da PLOA, cada grupo é multiplicado pela razão entre o valor de 2025 no quadro da PLOA e o de 2025 no RREO. Reservas não são executadas e entram com zero.
               </p>
