@@ -9,14 +9,13 @@ import { Faixa } from './Faixa'
 import { titulo, type Linha } from './dados'
 import { porMes, projetaReceita2026, soma, type DadosReceita } from './projecao'
 import { RitmoReceita } from './Ritmo'
-import { PrincipaisFontes } from './Fontes'
 
 export type { DadosReceita }
 
 const MESES = ['jan', 'fev', 'mar', 'abr', 'mai', 'jun', 'jul', 'ago', 'set', 'out', 'nov', 'dez']
 const NOMES_MES = ['janeiro', 'fevereiro', 'março', 'abril', 'maio', 'junho', 'julho', 'agosto', 'setembro', 'outubro', 'novembro', 'dezembro']
 
-export function ReceitaMensal({ dados, macro, ipca, pib }: { dados: DadosReceita; macro: LinhaMacro[]; ipca: Record<string, number>; pib: Record<string, number> }) {
+export function ReceitaMensal({ dados, macro, parte }: { dados: DadosReceita; macro: LinhaMacro[]; parte: 'fechamento' | 'perfil' }) {
   const R = useMemo(() => Object.fromEntries(macro.map((x) => [x.chave, x.valores])) as Record<string, number[]>, [macro])
   const a25 = dados.anos['2025']?.linhas ?? []
   const a26 = dados.anos['2026']?.linhas ?? []
@@ -77,31 +76,36 @@ export function ReceitaMensal({ dados, macro, ipca, pib }: { dados: DadosReceita
   ]
 
   const varYtd = (ytd26 / ytd25 - 1) * 100
+  if (parte === 'perfil') {
+    return (
+      <div className="space-y-3">
+        <Cartao titulo="Perfil mensal proposto para 2027 (ensaio das metas de arrecadação)"
+          grafico={<TabelaItens itens={itensPerfil} colunas={colsPerfil} legenda="Perfil mensal proposto da receita de 2027, em R$ milhões" />} />
+        <p className="text-small text-ink-soft">
+          Valor anual de cada componente no quadro da PLOA distribuído pela participação de cada mês na arrecadação bruta de 2025; deduções pela participação de 2025. É um ponto de partida para as metas mensais do decreto de início de exercício, e não a meta oficial.
+        </p>
+      </div>
+    )
+  }
   return (
-    <div className="mt-3">
+    <div>
       <Faixa
         itens={[
           { r: `Receita líquida jan a ${MESES[ultimo - 1]} 2026`, v: bilhoes(ytd26), s: `${fmtPct(varYtd)} sobre 2025`, destaque: true },
           { r: 'Projeção de fechamento 2026', v: bilhoes(projecao), s: `faixa ${(proj.min / 1e9).toFixed(1).replace('.', ',')} a ${(proj.max / 1e9).toFixed(1).replace('.', ',')} bi; provável da PLOA: ${bilhoes(provavel)}` },
           { r: 'Receita líquida 2027', v: bilhoes(R.total[5]), s: `${fmtPct((R.total[5] / projecao - 1) * 100)} sobre a projeção` },
         ]}
-        nota={`Líquida = arrecadação bruta menos deduções. Projeção: arrecadação até ${NOMES_MES[ultimo - 1]} dividida pela participação média desse período no ano em 2022–2025 (detalhe na tabela de ritmo, abaixo).`}
+        nota={`Líquida = arrecadação bruta menos deduções. Projeção: acumulado até ${NOMES_MES[ultimo - 1]} ÷ participação média desse período no ano em 2022–2025.`}
       />
       <div className="mt-3"><RitmoReceita dados={dados} /></div>
-      <div className="mt-3"><PrincipaisFontes dados={dados} receita={macro} ipca={ipca} pib={pib} /></div>
-      <div className="mt-3 grid grid-cols-1 gap-3 2xl:grid-cols-12">
-        <Cartao className="2xl:col-span-12" titulo="Receita líquida por mês: 2026 e 2025"
+      <div className="mt-3">
+        <Cartao titulo="Receita líquida por mês: 2026 e 2025"
           legenda={<Legenda itens={[{ cor: COR.atualizada, contorno: COR.contornoAtualizada, rotulo: '2025' }, { cor: COR.ploa, rotulo: `2026 (até ${NOMES_MES[ultimo - 1]})` }]} />}
           grafico={<ColunasMeses anterior={liq25} corrente={mesesCom26} rotuloAnterior="2025" rotuloCorrente="2026" />}
           tabela={<TabelaItens itens={MESES.map((m, i) => ({ chave: m, mes: m, a: liq25[i], c: mesesCom26[i] }))} legenda="Receita líquida por mês, em R$ milhões"
             colunas={[{ rotulo: 'Mês', valor: (x) => x.mes }, { rotulo: '2025', valor: (x) => milhoes(x.a, 0) }, { rotulo: '2026', valor: (x) => (x.c === null ? '–' : milhoes(x.c, 0)) }, { rotulo: 'Δ%', valor: (x) => (x.c !== null && x.a ? fmtPct((x.c / x.a - 1) * 100) : '–') }]} />} />
-        <Cartao className="2xl:col-span-12" titulo="Perfil mensal proposto para 2027 (ensaio das metas de arrecadação)"
-          grafico={<TabelaItens itens={itensPerfil} colunas={colsPerfil} legenda="Perfil mensal proposto da receita de 2027, em R$ milhões" />} />
       </div>
-      <p className="mt-3 text-small text-ink-soft">
-        Perfil de 2027: valor anual de cada componente no quadro da PLOA distribuído pela participação de cada mês na arrecadação bruta de 2025; deduções pela participação de 2025. É um ponto de partida para o quadro de metas mensais do decreto de início de exercício, e não a meta oficial.
-        Fonte: Portal de Dados Abertos do ES (receitas, coleta em {coleta.toLocaleDateString('pt-BR', { timeZone: 'America/Sao_Paulo' })}).
-      </p>
+      <p className="mt-3 text-small text-ink-soft">Fonte: Portal de Dados Abertos do ES (receitas, coleta em {coleta.toLocaleDateString('pt-BR', { timeZone: 'America/Sao_Paulo' })}).</p>
     </div>
   )
 }

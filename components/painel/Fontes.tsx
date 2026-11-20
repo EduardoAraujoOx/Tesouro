@@ -4,6 +4,7 @@ import { useMemo } from 'react'
 import { bilhoes, milhoes, numero } from '@/lib/formato'
 import type { LinhaMacro } from '@/lib/macro'
 import { Cartao, TabelaItens } from './Graficos'
+import { Nota } from './Estrutura'
 import { fmtPct } from './GraficosMacro'
 import { analisaFontes, implicitoPetroleo, mesesCorte, projecaoItens, type AnaliseFonte, type DadosReceita } from './projecao'
 
@@ -45,9 +46,8 @@ export function PrincipaisFontes({ dados, receita, ipca, pib }: { dados: DadosRe
   return (
     <div className="space-y-3">
       <Cartao titulo="ICMS, FPE e petróleo: o ritmo de 2026 mês a mês">
-        <p className="max-w-3xl text-small text-ink-soft">
-          As três fontes somam {numero(soma * 100, 0)}% da receita bruta de 2025. Cada célula mostra o quanto a arrecadação do mês cresceu sobre o mesmo mês de 2025: a leitura mês a mês separa tendência de sazonalidade e deixa ver se o crescimento está acelerando ou perdendo fôlego.
-        </p>
+        <p className="max-w-3xl text-small text-ink-soft">As três fontes somam {numero(soma * 100, 0)}% da receita bruta de 2025. Cada célula: crescimento da arrecadação do mês sobre o mesmo mês de 2025.</p>
+        <Nota titulo="Como ler"><p>A leitura mês a mês separa tendência de sazonalidade e deixa ver se o crescimento está acelerando ou perdendo fôlego. Azul: acima do mesmo mês de 2025; rosa: abaixo (intensidade até ±30%). O petróleo chega em parcelas trimestrais (fevereiro, maio, agosto e novembro concentram a participação especial), por isso oscila muito. Fonte: Portal de Dados Abertos do ES; ICMS e FPE conferem com o RREO (Anexo 03).</p></Nota>
         <div className="mt-3">
           <TabelaItens altura="livre" itens={analise.map(linhaFonte)} legenda="Crescimento da arrecadação de cada mês sobre o mesmo mês de 2025, em %" colunas={[
             { rotulo: 'Fonte', valor: (a) => <span className="font-semibold">{a.rotulo}</span> },
@@ -59,16 +59,14 @@ export function PrincipaisFontes({ dados, receita, ipca, pib }: { dados: DadosRe
             { rotulo: '3 últ. meses', valor: (a) => <span className="font-semibold">{fmtPct(a.g3m === undefined ? undefined : a.g3m * 100)}</span> },
             { rotulo: `Jan–${MESES[ultimo - 1]}`, valor: (a) => <span className="font-semibold">{fmtPct(a.gAno === undefined ? undefined : a.gAno * 100)}</span> },
           ]} />
-          <p className="mt-2 text-label normal-case tracking-normal text-ink-soft">
-            Azul: acima do mesmo mês de 2025; rosa: abaixo (intensidade até ±30%). O petróleo chega em parcelas trimestrais (fevereiro, maio, agosto e novembro concentram a participação especial), por isso oscila muito. Fonte: Portal de Dados Abertos do ES; ICMS e FPE conferem com o RREO (Anexo 03).
-          </p>
         </div>
       </Cartao>
 
       <Cartao titulo="Fechamento de 2026 por fonte">
-        <div className="max-w-3xl space-y-2 text-small text-ink-soft">
+        <p className="max-w-3xl text-small text-ink-soft">Pelo método de menor erro no teste retroativo (ICMS: ritmo dos 3 últimos meses; FPE: dos 12 últimos); a faixa vai do menor ao maior resultado entre os métodos.</p>
+        <Nota titulo="Método e faixa">
           <p>Para cada fonte, a projeção usa o método que menos errou quando aplicado aos anos passados (ver o teste em Método e fontes): ICMS pelo ritmo dos três últimos meses, FPE pelo ritmo dos doze últimos. A faixa vai do menor ao maior resultado entre os métodos. No petróleo não há história mensal longa para testar; o ritmo recente é a melhor referência, e a faixa é só indicativa.</p>
-        </div>
+        </Nota>
         <div className="mt-3">
           <TabelaItens altura="livre" itens={analise.map(linhaFonte)} legenda="Fechamento de 2026 por fonte, em R$ milhões" colunas={[
             { rotulo: 'R$ milhões', valor: (a) => <><span className="block text-label normal-case tracking-normal tabular-nums text-ink-soft md:mr-1.5 md:inline-block md:min-w-[3.5rem] md:text-small">{a.cod}</span><span className="font-semibold">{a.rotulo}</span></> },
@@ -112,21 +110,22 @@ export function PrincipaisFontes({ dados, receita, ipca, pib }: { dados: DadosRe
             { rotulo: 'R$ milhões', valor: (x) => <span className={x.forte ? 'font-semibold' : ''}>{x.rotulo}</span> },
             { rotulo: 'Valor', valor: (x) => <span className={x.forte ? 'font-semibold' : ''}>{x.v < 0 ? `−${mi(-x.v)}` : mi(x.v)}</span> },
           ]} />
-          <p className="mt-2 text-label normal-case tracking-normal text-ink-soft">
+          <Nota titulo="Como ler">          <p>
             O resultado indica que a PLOA supõe petróleo em {bilhoes(impl.implicito)}, {fmtPct((impl.implicito / impl.petroleo26 - 1) * 100)} sobre o fechamento projetado de 2026 e {fmtPct((impl.implicito / impl.petroleo25 - 1) * 100)} sobre 2025. É uma dedução, não um número publicado: a PLOA não detalha a linha. Para comparar com a leitura pela sazonalidade do grupo, a projeção top-down das transferências da União é {bilhoes(topDownUniao)} em 2026, contra {bilhoes(impl.fpe27 / (1 + g27) + impl.outras26 + impl.petroleo26)} somando as três partes pelo ritmo recente.
-          </p>
+          </p></Nota>
         </div>
       </Cartao>
 
       <Cartao titulo="Petróleo: as premissas da própria LDO 2027">
-        <div className="max-w-3xl space-y-2 text-small text-ink-soft">
+        <p className="max-w-3xl text-small text-ink-soft">Cenário base da LDO para 2027: Brent a US$ 60, câmbio de R$ 5,40 e 224,5 mil barris por dia, o que dá R$ 1,24 bi, cerca de 60% abaixo do ritmo de 2026 ({bilhoes(impl.petroleo26)}).</p>
+        <Nota titulo="Comparação com 2026 e limites da leitura">
           <p>
             O Anexo de Riscos Fiscais da LDO 2027 (Lei nº 12.967/2026, p. 52, fonte Nupetro/Subser/Sefaz) traz o cenário base do Estado para as receitas de petróleo e gás em 2027: produção de 224,5 mil barris por dia, Brent a US$ 60 e câmbio de R$ 5,40, o que dá R$ 1.240,8 milhões (royalties R$ 693,8 mi, participação especial R$ 527,2 mi e Fundo do Petróleo R$ 19,8 mi). A dedução feita acima a partir da PLOA (cerca de {bilhoes(impl.implicito)}) é da mesma ordem de grandeza dessa base, o que sugere que a proposta usa o cenário de Brent a US$ 60 para 2027; a PLOA não detalha a linha, então isso continua sendo indício.
           </p>
           <p>
             Compare com 2026: a compensação pela produção de petróleo (R$ {numero(impl.petroleo25 / 1e9, 2)} bi em 2025) caminha para cerca de {bilhoes(impl.petroleo26)} em 2026. O cenário de 2027 supõe, portanto, uma queda de cerca de 60% sobre o ritmo atual. Se a diferença vier de preço e câmbio, ela é um risco conhecido, e a LDO a reconhece no sentido contrário (frustração de R$ 623,4 mi: Brent a US$ 54, câmbio a R$ 5,20 e produção de 162,3 mil barris). Para saber se a base de 2027 é prudente ou apenas baixa, falta comparar com o Brent, o câmbio e a produção realizados em 2026, que ainda não estão no painel.
           </p>
-        </div>
+        </Nota>
         <div className="mt-3">
           <TabelaItens altura="livre" itens={[
             { chave: 'base', rotulo: 'Cenário base 2027', prod: '224,5', brent: '60,0', cambio: '5,40', roy: 693.8, pe: 527.2, fundo: 19.8, total: 1240.8 },

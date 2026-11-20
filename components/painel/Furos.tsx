@@ -4,6 +4,7 @@ import { useMemo } from 'react'
 import { bilhoes, milhoes, numero } from '@/lib/formato'
 import type { LinhaMacro } from '@/lib/macro'
 import { Cartao, TabelaItens } from './Graficos'
+import { Nota } from './Estrutura'
 import { fmtPct } from './GraficosMacro'
 import { ATU, EMP, EMP25, PLOA, agrupa, titulo, type Linha } from './dados'
 import { projecaoItens, type DadosReceita } from './projecao'
@@ -91,7 +92,10 @@ export function Furos({ linhas, nomes, dados, receita, ipca, pib }: { linhas: Li
   return (
     <div className="space-y-3">
       <Cartao titulo="Possíveis furos: receita esticada, despesa apertada">
-        <div className="max-w-3xl space-y-2 text-small text-ink-soft">
+        <p className="max-w-3xl text-small text-ink-soft">
+          Despesa recorrente R$ {numero(totalCortes / 1e9, 1)} bi abaixo do que já foi empenhado em 2026 (saúde R$ {mi(cortes.filter((a) => a.unidade.toLowerCase().includes('saúde')).reduce((t, a) => t + a.gap, 0))} milhões); aumentos de R$ {numero(totalAumentos / 1e9, 1)} bi acima do executado (reservas R$ {numero((porTipo.find(([t]) => t === 'Reserva')?.[1] ?? 0) / 1e9, 1)} bi); receita esticada em R$ {numero(receitaEsticada / 1e9, 1)} bi (crédito e ICMS) contra R$ {numero(Math.abs(receitaConservadora) / 1e9, 1)} bi conservadores (petróleo).
+        </p>
+        <Nota titulo="Como ler e regras usadas">
           <p>
             O orçamento fecha com receita igual à despesa. Se a receita total está perto do que o ritmo de 2026 indica (a projeção está na aba Receita), então um corte abaixo do que a despesa já executa só se sustenta se outro lugar aumentar ou se a receita estiver esticada. Como a receita não parece inflada no total, a pergunta se desloca para a despesa: o que foi apertado, e o que cresceu. A leitura abaixo põe os dois lados à vista: onde a proposta parece apertada, onde cresce e quais linhas de receita ficam acima do que o ritmo daria. Não conclui qual aumento é menos necessário: isso é julgamento de quem decide.
           </p>
@@ -101,7 +105,7 @@ export function Furos({ linhas, nomes, dados, receita, ipca, pib }: { linhas: Li
           <p>
             <span className="font-semibold text-ink">Aumentos acima do executado.</span> {aumentos.length} ações crescem R$ {numero(totalAumentos / 1e9, 1)} bi acima do maior valor entre o empenhado e a dotação atualizada de 2026: {porTipo.map(([t, v]) => `${t.toLowerCase()} R$ ${numero(v / 1e9, 1)} bi`).join('; ')}. As reservas são o ponto central: são dotação sem destino, que a LDO e as emendas tendem a mobilizar.
           </p>
-        </div>
+        </Nota>
 
         <h3 className="mt-5 text-body font-semibold">Despesa recorrente com PLOA abaixo do empenhado de 2026</h3>
         <div className="mt-2">
