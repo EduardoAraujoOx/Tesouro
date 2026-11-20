@@ -5,7 +5,7 @@ import { bilhoes, milhoes, numero } from '@/lib/formato'
 import type { LinhaMacro } from '@/lib/macro'
 import { Cartao, TabelaItens } from './Graficos'
 import { fmtPct } from './GraficosMacro'
-import { Nota, Subvisoes } from './Estrutura'
+import { Nota, Subvisoes, NOTA_DISCRETA } from './Estrutura'
 import { ANOS_RITMO, conciliacao, NOMES_METODO, projetaReceita2026, retroteste, pibArrecadacao, projecaoItens, retrotesteDespesa, retrotesteFonte, retrotesteSefaz, type DadosReceita, type RetroDespesa, type RetroSefaz } from './projecao'
 
 const NOMES_MES = ['janeiro', 'fevereiro', 'março', 'abril', 'maio', 'junho', 'julho', 'agosto', 'setembro', 'outubro', 'novembro', 'dezembro']
@@ -60,7 +60,7 @@ export function Metodo({ receita, dados, pib27 }: { receita: LinhaMacro[]; dados
                 { rotulo: 'Portal líq.', valor: (l) => (l.chave === 'ded' ? '–' : l.rreo === null ? '–' : mi(l.portalLiquido)) },
                 { rotulo: 'Dif.', valor: (l) => (l.rreo === null || l.chave === 'ded' ? '–' : dif(l.portalLiquido, l.rreo)) },
               ]} />
-              <p className="mt-2 text-label normal-case tracking-normal text-ink-soft">
+              <p className={`mt-2 ${NOTA_DISCRETA}`}>
                 PLOA e Portal: valores brutos, antes das deduções (na linha de deduções, os próprios valores negativos; no total, a receita líquida). RREO e Portal líquido: valores líquidos das deduções, linha a linha. “Dif.”: Portal menos PLOA, e Portal líquido menos RREO. Os códigos são os da natureza da receita (categoria econômica, origem e espécie); GND é o grupo de natureza da despesa.
               </p>
             </div>
@@ -94,7 +94,7 @@ export function Metodo({ receita, dados, pib27 }: { receita: LinhaMacro[]; dados
                 { rotulo: 'Erro médio', valor: (g) => <span className="font-semibold">{g.erroMedio === null ? '–' : `${numero(g.erroMedio, 1)}%`}</span> },
                 { rotulo: 'Leitura', valor: (g) => (g.erroMedio === null ? '–' : g.erroMedio <= 3 ? 'confiável' : g.erroMedio <= 8 ? 'razoável' : 'pouco confiável') },
               ]} />
-              <p className="mt-2 text-label normal-case tracking-normal text-ink-soft">
+              <p className={`mt-2 ${NOTA_DISCRETA}`}>
                 Erro = projeção feita com o acumulado até outubro e as frações dos até quatro anos anteriores, menos o realizado do ano, em % do realizado. “Erro médio”: média dos erros em módulo. Confiável: até 3%; razoável: até 8%; pouco confiável: acima disso.
                 A projeção de 2026 usa 2022–2025, a mesma janela dos testes.
               </p>
@@ -165,7 +165,7 @@ export function Metodo({ receita, dados, pib27 }: { receita: LinhaMacro[]; dados
                   { rotulo: 'Erro médio', valor: (x) => <span className={x.mae === Math.min(...f.r.map((y) => y.mae)) ? 'font-semibold text-navy' : 'font-semibold'}>{numero(x.mae, 1)}%{x.mae === Math.min(...f.r.map((y) => y.mae)) ? ' ✓' : ''}</span> },
                 ]} />
               ))}
-              <p className="text-label normal-case tracking-normal text-ink-soft">✓ marca o método de menor erro médio, usado na projeção da aba Receita. O petróleo (compensação financeira pela produção) não tem história mensal no Portal antes de 2025 e chega em parcelas trimestrais: nele o ritmo recente é a única referência, com faixa indicativa.</p>
+              <p className={`${NOTA_DISCRETA}`}>✓ marca o método de menor erro médio, usado na projeção da aba Receita. O petróleo (compensação financeira pela produção) não tem história mensal no Portal antes de 2025 e chega em parcelas trimestrais: nele o ritmo recente é a única referência, com faixa indicativa.</p>
             </div>
           </Cartao>
         </div>

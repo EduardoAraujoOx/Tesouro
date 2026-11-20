@@ -1,5 +1,6 @@
 'use client'
 
+import { NOTA_DISCRETA } from './Estrutura'
 import { useMemo } from 'react'
 import { bilhoes, milhoes } from '@/lib/formato'
 import type { LinhaMacro } from '@/lib/macro'
@@ -89,15 +90,7 @@ export function ReceitaMensal({ dados, macro, parte }: { dados: DadosReceita; ma
   }
   return (
     <div>
-      <Faixa
-        itens={[
-          { r: `Receita líquida jan a ${MESES[ultimo - 1]} 2026`, v: bilhoes(ytd26), s: `${fmtPct(varYtd)} sobre 2025`, destaque: true },
-          { r: 'Projeção de fechamento 2026', v: bilhoes(projecao), s: `faixa ${(proj.min / 1e9).toFixed(1).replace('.', ',')} a ${(proj.max / 1e9).toFixed(1).replace('.', ',')} bi; provável da PLOA: ${bilhoes(provavel)}` },
-          { r: 'Receita líquida 2027', v: bilhoes(R.total[5]), s: `${fmtPct((R.total[5] / projecao - 1) * 100)} sobre a projeção` },
-        ]}
-        nota={`Líquida = arrecadação bruta menos deduções. Projeção: acumulado até ${NOMES_MES[ultimo - 1]} ÷ participação média desse período no ano em 2022–2025.`}
-      />
-      <div className="mt-3"><RitmoReceita dados={dados} /></div>
+      <div><RitmoReceita dados={dados} /></div>
       <div className="mt-3">
         <Cartao titulo="Receita líquida por mês: 2026 e 2025"
           legenda={<Legenda itens={[{ cor: COR.atualizada, contorno: COR.contornoAtualizada, rotulo: '2025' }, { cor: COR.ploa, rotulo: `2026 (até ${NOMES_MES[ultimo - 1]})` }]} />}
@@ -105,7 +98,7 @@ export function ReceitaMensal({ dados, macro, parte }: { dados: DadosReceita; ma
           tabela={<TabelaItens itens={MESES.map((m, i) => ({ chave: m, mes: m, a: liq25[i], c: mesesCom26[i] }))} legenda="Receita líquida por mês, em R$ milhões"
             colunas={[{ rotulo: 'Mês', valor: (x) => x.mes }, { rotulo: '2025', valor: (x) => milhoes(x.a, 0) }, { rotulo: '2026', valor: (x) => (x.c === null ? '–' : milhoes(x.c, 0)) }, { rotulo: 'Δ%', valor: (x) => (x.c !== null && x.a ? fmtPct((x.c / x.a - 1) * 100) : '–') }]} />} />
       </div>
-      <p className="mt-3 text-small text-ink-soft">Fonte: Portal de Dados Abertos do ES (receitas, coleta em {coleta.toLocaleDateString('pt-BR', { timeZone: 'America/Sao_Paulo' })}).</p>
+      <p className={`mt-3 ${NOTA_DISCRETA}`}>Fonte: Portal de Dados Abertos do ES (receitas, coleta em {coleta.toLocaleDateString('pt-BR', { timeZone: 'America/Sao_Paulo' })}).</p>
     </div>
   )
 }
@@ -132,14 +125,6 @@ export function CoberturaFontes({ dados, linhas, nomesFonte }: { dados: DadosRec
   const totR = itens.reduce((s, x) => s + x.receita, 0), totE = itens.reduce((s, x) => s + x.emp, 0)
   return (
     <div className="mt-3">
-      <Faixa
-        itens={[
-          { r: 'Receita líquida arrecadada 2026', v: bilhoes(totR), s: `até ${coleta.toLocaleDateString('pt-BR', { timeZone: 'America/Sao_Paulo' })}`, destaque: true },
-          { r: 'Empenhado 2026', v: bilhoes(totE) },
-          { r: 'Receita menos empenhado', v: `${totR - totE >= 0 ? '+' : '−'}${bilhoes(Math.abs(totR - totE))}` },
-        ]}
-        nota="Receita até a data da coleta contra empenhos do ano inteiro: ainda faltam semanas de arrecadação, e o saldo negativo pode estar coberto por superávit financeiro de anos anteriores. A conferência fina é por fonte e detalhamento."
-      />
       <div className="mt-3">
         <Cartao titulo="Cobertura por fonte de recursos: 14 maiores">
           <TabelaDelta itens={top} delta={(x) => x.receita - x.emp} rotuloBarra="Fonte|Receita menos empenhado" primeira={(x) => x.rotulo}
@@ -151,6 +136,7 @@ export function CoberturaFontes({ dados, linhas, nomesFonte }: { dados: DadosRec
             ]} />
         </Cartao>
       </div>
+      <p className={`mt-2 ${NOTA_DISCRETA}`}>Receita até a data da coleta contra empenhos do ano inteiro: ainda faltam semanas de arrecadação, e o saldo negativo pode estar coberto por superávit financeiro de anos anteriores. A conferência fina é por fonte e detalhamento.</p>
     </div>
   )
 }

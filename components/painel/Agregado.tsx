@@ -5,7 +5,7 @@ import { bilhoes, milhoes, numero } from '@/lib/formato'
 import type { LinhaMacro } from '@/lib/macro'
 import { Cartao, Legenda, COR, TabelaItens } from './Graficos'
 import { ColunasAnuais, fmtPct, type ColunaAnual } from './GraficosMacro'
-import { Nota } from './Estrutura'
+import { Nota, NOTA_DISCRETA } from './Estrutura'
 import { COD_DESPESA, COD_GRUPO } from './codigos'
 import { analisaFontes, fatorPrecos, implicitoPetroleo, ipcaAnual, pibArrecadacao, PETROLEO_LDO_2027, projecaoItens, projetaDespesa2026, projetaReceita2026, type DadosReceita, type ItemProjetado } from './projecao'
 
@@ -135,22 +135,24 @@ export function VisaoGeral({ receita, despesa, ipca: ipcaParams, pib, fonteIpca,
   /* ---------- gráfico anual ---------- */
   const serieTotal = vista === 'despesa' ? D.total : R.total
   const anosNum = [2023, 2024, 2025, 2026, 2027, 2027]
+  /* na despesa, a barra da PLOA é a executável (sem reservas), como as demais: as reservas não são executadas */
+  const ploa27 = vista === 'despesa' ? D.total[5] - reservas27 : serieTotal[5]
   const colunasBrutas: ColunaAnual[] = [
     { rotulo: '2023', v: serieTotal[0], tipo: 'real' },
     { rotulo: '2024', v: serieTotal[1], tipo: 'real' },
     { rotulo: '2025', v: serieTotal[2], tipo: 'real' },
     vista === 'despesa'
-      ? { rotulo: '2026 projeção', v: projD.itens.tot.central, tipo: 'estim', faixa: [projD.itens.tot.min as number, projD.itens.tot.max as number], marca: { v: D.total[4], rotulo: 'Provável 2026 na PLOA' } }
-      : { rotulo: '2026 projeção', v: proj.central, tipo: 'estim', faixa: [proj.min, proj.max], marca: { v: R.total[4], rotulo: 'Provável 2026 na PLOA' } },
+      ? { rotulo: '2026', sub: 'projeção', v: projD.itens.tot.central, tipo: 'estim', faixa: [projD.itens.tot.min as number, projD.itens.tot.max as number], marca: { v: D.total[4], rotulo: 'Provável 2026 na PLOA' } }
+      : { rotulo: '2026', sub: 'projeção', v: proj.central, tipo: 'estim', faixa: [proj.min, proj.max], marca: { v: R.total[4], rotulo: 'Provável 2026 na PLOA' } },
+    { rotulo: '2027', sub: 'PLOA', v: ploa27, tipo: 'ploa' },
     vista === 'despesa'
-      ? { rotulo: '2027 nossa proj.', v: refDespesa, tipo: 'ref', faixa: faixaRefDespesa, contra: 3 }
-      : { rotulo: '2027 nossa proj.', v: refReceitaTotal, tipo: 'ref', faixa: faixaRefReceita, contra: 3 },
-    { rotulo: '2027 PLOA', v: serieTotal[5], tipo: 'ploa', contra: 3 },
+      ? { rotulo: '2027', sub: 'nossa', v: refDespesa, tipo: 'ref', faixa: faixaRefDespesa, compara: { v: ploa27, rotulo: 'PLOA 2027' } }
+      : { rotulo: '2027', sub: 'nossa', v: refReceitaTotal, tipo: 'ref', faixa: faixaRefReceita, compara: { v: ploa27, rotulo: 'PLOA 2027' } },
   ]
   const colunas = colunasBrutas.map((c, k) => {
     if (base === 'nominal') return c
     const f = fatorPrecos(ipca, anosNum[k], 2027)
-    return { ...c, v: c.v * f, faixa: c.faixa && ([c.faixa[0] * f, c.faixa[1] * f] as [number, number]), marca: c.marca && { ...c.marca, v: c.marca.v * f } }
+    return { ...c, v: c.v * f, faixa: c.faixa && ([c.faixa[0] * f, c.faixa[1] * f] as [number, number]), marca: c.marca && { ...c.marca, v: c.marca.v * f }, compara: c.compara && { ...c.compara, v: c.compara.v * f } }
   })
   const proj26 = colunasBrutas[3].v
   const nomeCorteDesp = MESES_NOME[projD.bimestre * 2 - 1]
@@ -211,9 +213,12 @@ export function VisaoGeral({ receita, despesa, ipca: ipcaParams, pib, fonteIpca,
   ]
 
   const tituloGrafico = vista === 'despesa' ? 'Despesa total, ano a ano' : 'Receita líquida, ano a ano'
-  const legendaGrafico = vista === 'despesa'
-    ? [{ cor: COR.empenhado, rotulo: 'Executado (PLOA, quadro de evolução)' }, { cor: COR.atualizada, contorno: COR.contornoAtualizada, rotulo: 'Projeção de 2026 (linha preta: faixa)' }, { cor: COR.referencia, rotulo: 'Nossa projeção de 2027 (linha preta: faixa)' }, { cor: COR.ploa, rotulo: 'Proposta 2027' }]
-    : [{ cor: COR.empenhado, rotulo: 'Arrecadado' }, { cor: COR.atualizada, contorno: COR.contornoAtualizada, rotulo: 'Projeção de 2026 (linha preta: faixa)' }, { cor: COR.referencia, rotulo: 'Nossa projeção de 2027 (linha preta: faixa)' }, { cor: COR.ploa, rotulo: 'PLOA 2027' }]
+  const legendaGrafico = [
+    { cor: COR.empenhado, rotulo: vista === 'despesa' ? 'Executado' : 'Arrecadado' },
+    { cor: COR.atualizada, contorno: COR.contornoAtualizada, rotulo: 'Projeção 2026' },
+    { cor: COR.ploa, rotulo: 'PLOA 2027' },
+    { cor: COR.referencia, rotulo: 'Nossa projeção 2027' },
+  ]
   const notaReferencia = (
     <Nota titulo="O que é a referência de 2027">
       <p>
@@ -250,10 +255,9 @@ export function VisaoGeral({ receita, despesa, ipca: ipcaParams, pib, fonteIpca,
                 ))}
               </div>
             }>
-            <ColunasAnuais colunas={colunas} descricao={`${tituloGrafico}, em R$ bilhões, ${base === 'real' ? 'a preços de 2027' : 'valores correntes'}: ${colunas.map((c) => `${c.rotulo} ${numero(c.v / 1e9, 1)}`).join('; ')}`} />
-            <p className="mt-2 text-label normal-case tracking-normal text-ink-soft">
-              Valores correntes, em R$ bilhões; sob cada ano, a variação sobre a coluna anterior{base === 'real' ? ' em termos reais' : ''}; nas colunas de 2027, a variação sobre a projeção de 2026.
-              {vista === 'receita' ? ' Traço rosa: arrecadação provável de 2026 informada na PLOA.' : ' Traço rosa: despesa provável de 2026 informada na PLOA.'}
+            <ColunasAnuais colunas={colunas} descricao={`${tituloGrafico}, em R$ bilhões, ${base === 'real' ? 'a preços de 2027' : 'valores correntes'}: ${colunas.map((c) => `${c.rotulo}${c.sub ? ' ' + c.sub : ''} ${numero(c.v / 1e9, 1)}`).join('; ')}`} />
+            <p className={`mt-2 ${NOTA_DISCRETA}`}>
+              R$ bilhões, valores correntes{base === 'real' ? ' (reais de 2027)' : ''}. Linha preta: faixa da projeção; traço rosa: provável de 2026 na PLOA; traço tracejado: nível da PLOA sobre a nossa projeção{vista === 'despesa' ? '; PLOA sem as reservas' : ''}.
             </p>
           </Cartao>
 
@@ -268,7 +272,7 @@ export function VisaoGeral({ receita, despesa, ipca: ipcaParams, pib, fonteIpca,
 
           <Cartao titulo={vista === 'receita' ? 'Receita por grupo: PLOA 2027 contra a referência' : 'Despesa por grupo: PLOA 2027 contra a referência'}>
             <TabelaItens altura="livre" compacta itens={visiveis.map((l) => ({ ...l, chave: l.chave }))} colunas={colunasTabela} legenda={`${vista === 'receita' ? 'Receita' : 'Despesa'} por grupo, em R$ milhões`} />
-            <p className="mt-2 text-label normal-case tracking-normal text-ink-soft">
+            <p className={`mt-2 ${NOTA_DISCRETA}`}>
               2026 proj.: fechamento projetado pelo ritmo de {vista === 'receita' ? `arrecadação até ${nomeCorte}` : `execução até ${nomeCorteDesp}`}{vista === 'receita' ? '' : ' (despesa empenhada)'}. Ref. 27: referência independente{vista === 'receita' ? `; † sem a receita pontual de 2026 em demais receitas correntes (indenizações, restituições e ressarcimentos, R$ ${mi(comProj.find((x) => x.chave === 'demais')?.proj?.pontual ?? 0)} mi até ${nomeCorte})` : ''}. Toque num grupo para ver o detalhe.
             </p>
             {notaReferencia}
@@ -293,11 +297,11 @@ export function VisaoGeral({ receita, despesa, ipca: ipcaParams, pib, fonteIpca,
               { rotulo: 'Indicador', valor: (x) => x.rotulo },
               ...ANOS.map((a, j) => ({ rotulo: a, valor: (x: (typeof indicadores)[number]) => `${numero(x.v[j], 1)}%` })),
             ]} />
-            <p className="mt-2 text-label normal-case tracking-normal text-ink-soft">Receita corrente líquida aproximada = receitas correntes + intraorçamentárias − deduções do quadro da PLOA; não é a RCL da LRF, que tem regras próprias de apuração. Provável 26: estimativa de 2026 informada na própria PLOA.</p>
+            <p className={`mt-2 ${NOTA_DISCRETA}`}>Receita corrente líquida aproximada = receitas correntes + intraorçamentárias − deduções do quadro da PLOA; não é a RCL da LRF, que tem regras próprias de apuração. Provável 26: estimativa de 2026 informada na própria PLOA.</p>
           </Cartao>
         </div>
       )}
-      <p className="mt-3 text-small text-ink-soft">Fonte: PLOA 2027, Mensagem nº 189/2026, quadros Evolução da Receita (p. 97) e Evolução da Despesa (p. 130); arrecadação mensal do Portal de Dados Abertos do ES; despesa empenhada: Siconfi, RREO; IPCA: {fonteIpca}</p>
+      <p className={`mt-3 ${NOTA_DISCRETA}`}>Fonte: PLOA 2027, Mensagem nº 189/2026, quadros Evolução da Receita (p. 97) e Evolução da Despesa (p. 130); arrecadação mensal do Portal de Dados Abertos do ES; despesa empenhada: Siconfi, RREO; IPCA: {fonteIpca}</p>
     </div>
   )
 }
