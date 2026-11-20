@@ -79,6 +79,8 @@ export type ColunaAnual = {
   marca?: { v: number; rotulo: string }
   /** traço de comparação: um valor (R$) marcado sobre a barra, com a diferença da barra para ele (usado para pôr a PLOA sobre a nossa projeção) */
   compara?: { v: number; rotulo: string }
+  /** o que é a barra e como foi calculada, em poucas palavras: aparece ao passar o mouse, tocar ou focar na coluna */
+  explicacao?: string
 }
 
 /** Colunas por ano, com o valor em bilhões em cima. Faixa, traço de referência e traço de comparação opcionais. */
@@ -88,13 +90,22 @@ export function ColunasAnuais({ colunas, descricao }: { colunas: ColunaAnual[]; 
   const h = (x: number) => `${(x / topo) * 100}%`
   const bi = (x: number) => numero(x / 1e9, 1)
   return (
-    <div role="img" aria-label={descricao}>
+    <div role="group" aria-label={descricao}>
       <div className="flex gap-1.5 sm:gap-4">
-        {colunas.map((c) => {
+        {colunas.map((c, k) => {
+          /* a dica abre alinhada à esquerda nas primeiras colunas, à direita nas últimas e centrada nas do meio, para não sair do cartão */
+          const lado = k < colunas.length / 3 ? 'left-0' : k >= (colunas.length * 2) / 3 ? 'right-0' : 'left-1/2 -translate-x-1/2'
           const dif = c.compara ? (c.compara.v / c.v - 1) * 100 : null
           const dentro = c.compara ? c.compara.v < c.v : false
           return (
-            <div key={c.rotulo + (c.sub ?? '')} className="flex min-w-0 flex-1 flex-col items-center">
+            <div key={c.rotulo + (c.sub ?? '')} className={`group relative flex min-w-0 flex-1 flex-col items-center ${c.explicacao ? 'cursor-help rounded-brand focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-navy' : ''}`}
+              {...(c.explicacao ? { tabIndex: 0, role: 'img', 'aria-label': `${c.rotulo}${c.sub ? ' ' + c.sub : ''}: ${bi(c.v)} bilhões. ${c.explicacao}` } : {})}>
+              {c.explicacao && (
+                <span aria-hidden="true" className={`pointer-events-none absolute top-0 z-30 hidden w-60 max-w-[70vw] rounded-brand border border-line bg-paper p-2.5 text-left text-small normal-case leading-snug tracking-normal text-ink shadow-lg group-hover:block group-focus:block ${lado}`}>
+                  <span className="mb-1 block font-semibold">{c.rotulo}{c.sub ? ` · ${c.sub}` : ''}</span>
+                  {c.explicacao}
+                </span>
+              )}
               <div className="relative h-52 w-full">
                 <div className="absolute inset-x-0 bottom-0 mx-auto w-full max-w-[4.5rem]" style={{ height: h(c.v) }}>
                   <span className="block h-full w-full" style={{
