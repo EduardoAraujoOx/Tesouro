@@ -66,6 +66,11 @@ jobs:
       - name: Instalar leitor de PDF
         run: sudo apt-get update -qq && sudo apt-get install -y -qq poppler-utils
 
+      - name: Coletar petróleo por natureza (demonstrativo mensal da SEFAZ)
+        id: petroleo
+        continue-on-error: true
+        run: python3 scripts/atualizar_petroleo_sefaz.py
+
       - name: Coletar mínimos de educação e saúde (RREO)
         id: minimos
         continue-on-error: true
@@ -107,6 +112,7 @@ jobs:
           RESULTADO_ORCAMENTO: ${{ steps.orcamento.outcome }}
           RESULTADO_RECEITA: ${{ steps.receita.outcome }}
           RESULTADO_RITMO: ${{ steps.ritmo.outcome }}
+          RESULTADO_PETROLEO: ${{ steps.petroleo.outcome }}
           RESULTADO_MINIMOS: ${{ steps.minimos.outcome }}
           RESULTADO_NOTICIAS: ${{ steps.noticias.outcome }}
           RESULTADO_CONTEUDO: ${{ steps.conteudo.outcome }}
@@ -121,7 +127,7 @@ jobs:
           cat > corpo.md <<CORPO
           Atualização automática dos dados, gerada pela rotina semanal.
 
-          Resultado de cada coleta: indicadores (Siconfi e CAPAG): $RESULTADO_INDICADORES; orçamento e arrecadação (RREO, RGF, ANP): $RESULTADO_RREO; dotação e execução por unidade e ação (Painel do orçamento): $RESULTADO_ORCAMENTO; receita mensal por alínea e fonte: $RESULTADO_RECEITA; ritmo da arrecadação (RREO, Anexo 01): $RESULTADO_RITMO; mínimos de educação e saúde: $RESULTADO_MINIMOS; notícias: $RESULTADO_NOTICIAS; acervo da SEFAZ: $RESULTADO_CONTEUDO.
+          Resultado de cada coleta: indicadores (Siconfi e CAPAG): $RESULTADO_INDICADORES; orçamento e arrecadação (RREO, RGF, ANP): $RESULTADO_RREO; dotação e execução por unidade e ação (Painel do orçamento): $RESULTADO_ORCAMENTO; receita mensal por alínea e fonte: $RESULTADO_RECEITA; ritmo da arrecadação (RREO, Anexo 01): $RESULTADO_RITMO; petróleo por natureza (SEFAZ): $RESULTADO_PETROLEO; mínimos de educação e saúde: $RESULTADO_MINIMOS; notícias: $RESULTADO_NOTICIAS; acervo da SEFAZ: $RESULTADO_CONTEUDO.
 
           O site foi construído com sucesso usando estes dados. Conferir o painel fiscal na prévia da Vercel antes de mesclar.
           CORPO
