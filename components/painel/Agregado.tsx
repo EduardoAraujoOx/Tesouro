@@ -3,19 +3,21 @@
 import { useMemo, useState, type ReactNode } from 'react'
 import { bilhoes, milhoes, numero } from '@/lib/formato'
 import type { LinhaMacro } from '@/lib/macro'
-import { Cartao, Legenda, COR, TabelaItens } from './Graficos'
-import { ColunasAnuais, fmtPct, variacoes, type ColunaAnual } from './GraficosMacro'
+import { Cartao, Legenda, COR, TabelaDelta, TabelaItens } from './Graficos'
+import { ColunasAnuais, fmtPct, type ColunaAnual } from './GraficosMacro'
 import { Faixa } from './Faixa'
+import { Nota } from './Estrutura'
 import { COD_DESPESA, COD_GRUPO } from './codigos'
 import { analisaFontes, fatorPrecos, implicitoPetroleo, ipcaAnual, projecaoItens, projetaDespesa2026, projetaReceita2026, type DadosReceita, type ItemProjetado } from './projecao'
 
-type Vista = 'receita' | 'despesa' | 'resultado'
+type Vista = 'resumo' | 'receita' | 'despesa' | 'resultado'
 const VISTAS: { id: Vista; rotulo: string }[] = [
+  { id: 'resumo', rotulo: 'Resumo' },
   { id: 'receita', rotulo: 'Receita' },
   { id: 'despesa', rotulo: 'Despesa' },
   { id: 'resultado', rotulo: 'Resultado' },
 ]
-const ANOS = ['2023', '2024', '2025', 'Prov. 26', '2027'] as const
+const ANOS = ['2023', '2024', '2025', 'Provável 26 (PLOA)', '2027'] as const
 /** posição de cada coluna acima nos seis valores dos quadros da PLOA: 2023, 2024, 2025, orçamento 2026, provável 2026, 2027 */
 const COL = [0, 1, 2, 4, 5]
 
@@ -23,93 +25,102 @@ const sinal = (x: number) => (x > 0 ? '+' : x < 0 ? '−' : '')
 const mi = (x: number) => milhoes(x === 0 ? 0 : x, 0)
 const neg = (x: number) => (x === 0 ? 0 : -x)
 const dMi = (x: number) => `${sinal(x)}${milhoes(Math.abs(x), 0)}`
-/** crescimento médio anual composto entre duas colunas distantes `n` anos */
-const aa = (de: number, para: number, n: number) => (de > 0 && para > 0 ? (Math.pow(para / de, 1 / n) - 1) * 100 : undefined)
 
-type Linha = { chave: string; rotulo: string; nivel: number; negrito?: boolean; v: number[]; proj?: ItemProjetado }
+type Linha = { chave: string; rotulo: string; nivel: number; negrito?: boolean; v: number[]; proj?: ItemProjetado; pai?: string }
+/** linhas cuja referência de 2027 não cresce com a economia: dependem de contratação e de decisões pontuais */
+const SEM_CRESCIMENTO = new Set(['cap', 'cred', 'capout'])
+/** diferença (em %) a partir da qual a PLOA é dita acima ou abaixo da referência */
+const DIF_MIN = 3
 const MESES_NOME = ['janeiro', 'fevereiro', 'março', 'abril', 'maio', 'junho', 'julho', 'agosto', 'setembro', 'outubro', 'novembro', 'dezembro']
+const corDif = (d: number) => (Math.abs(d) < DIF_MIN ? '' : d > 0 ? 'text-serie3' : 'text-serie2')
 
 export function VisaoGeral({ receita, despesa, ipca: ipcaParams, pib, fonteIpca, dados, irParaMetodo }: {
   receita: LinhaMacro[]; despesa: LinhaMacro[]; ipca: Record<string, number>; pib: Record<string, number>; fonteIpca: string; dados: DadosReceita; irParaMetodo: () => void
 }) {
-  const [vista, setVista] = useState<Vista>('receita')
+  const [vista, setVista] = useState<Vista>('resumo')
+  const [abertos, setAbertos] = useState<Set<string>>(new Set(['corr', 'capd']))
   const [base, setBase] = useState<'nominal' | 'real'>('nominal')
   const R = useMemo(() => Object.fromEntries(receita.map((x) => [x.chave, x.valores])) as Record<string, number[]>, [receita])
   const D = useMemo(() => Object.fromEntries(despesa.map((x) => [x.chave, x.valores])) as Record<string, number[]>, [despesa])
   const ipca = useMemo(() => ipcaAnual(Object.fromEntries(Object.entries(ipcaParams).map(([a, v]) => [a, v]))), [ipcaParams])
   const i27 = ipca[2027]
+  const g27 = (1 + i27) * (1 + (pib['2027'] ?? 0)) - 1
   const proj = useMemo(() => projetaReceita2026(dados), [dados])
   const itensProj = useMemo(() => projecaoItens(dados), [dados])
   const projD = useMemo(() => projetaDespesa2026(), [])
+  const analiseFontes = useMemo(() => analisaFontes(dados), [dados])
+  const petr = useMemo(() => implicitoPetroleo(dados, analiseFontes, R.transf_corr_uniao[5], g27), [dados, analiseFontes, R, g27])
   const pick = (m: Record<string, number[]>, ...ch: string[]) => COL.map((c) => ch.reduce((s, k) => s + m[k][c], 0))
   const soma = (...a: number[][]) => COL.map((_, j) => a.reduce((s, x) => s + x[j], 0))
 
   /* receita corrente líquida aproximada (correntes + intra − deduções), base dos indicadores */
   const rcl = soma(pick(R, 'receitas_correntes'), pick(R, 'intra'), pick(R, 'deducoes'))
+  const reservas = pick(D, 'reserva_rpps', 'reserva_contingencia')
 
-  /* ---------- quadro de grandes grupos ---------- */
+  /* ---------- quadro de grandes grupos: poucos grupos, detalhe sob demanda ---------- */
   const linhasReceita: Linha[] = [
     { chave: 'imp', rotulo: 'Impostos', nivel: 0, v: pick(R, 'impostos') },
-    { chave: 'icms', rotulo: 'ICMS', nivel: 1, v: pick(R, 'icms') },
-    { chave: 'ipva', rotulo: 'IPVA', nivel: 1, v: pick(R, 'ipva') },
-    { chave: 'irrf', rotulo: 'IRRF', nivel: 1, v: pick(R, 'irrf') },
-    { chave: 'itcd', rotulo: 'ITCD', nivel: 1, v: pick(R, 'itcd') },
+    { chave: 'icms', rotulo: 'ICMS', nivel: 1, pai: 'imp', v: pick(R, 'icms') },
+    { chave: 'ipva', rotulo: 'IPVA', nivel: 1, pai: 'imp', v: pick(R, 'ipva') },
+    { chave: 'irrf', rotulo: 'IRRF', nivel: 1, pai: 'imp', v: pick(R, 'irrf') },
+    { chave: 'itcd', rotulo: 'ITCD', nivel: 1, pai: 'imp', v: pick(R, 'itcd') },
     { chave: 'taxas', rotulo: 'Taxas', nivel: 0, v: pick(R, 'taxas', 'contrib_melhoria') },
     { chave: 'contrib', rotulo: 'Contribuições', nivel: 0, v: pick(R, 'contribuicoes') },
     { chave: 'patrim', rotulo: 'Receita patrimonial', nivel: 0, v: pick(R, 'patrimonial') },
     { chave: 'transf', rotulo: 'Transferências correntes', nivel: 0, v: pick(R, 'transf_correntes') },
-    { chave: 'tuniao', rotulo: 'da União', nivel: 1, v: pick(R, 'transf_corr_uniao') },
-    { chave: 'toutras', rotulo: 'de outras origens', nivel: 1, v: pick(R, 'transf_corr_outras') },
+    { chave: 'tuniao', rotulo: 'da União', nivel: 1, pai: 'transf', v: pick(R, 'transf_corr_uniao') },
+    { chave: 'toutras', rotulo: 'de outras origens', nivel: 1, pai: 'transf', v: pick(R, 'transf_corr_outras') },
     { chave: 'demais', rotulo: 'Demais receitas correntes', nivel: 0, v: pick(R, 'agropecuaria', 'industrial', 'servicos', 'outras_correntes') },
-    { chave: 'intra', rotulo: 'Correntes intraorçamentárias', nivel: 0, v: pick(R, 'intra') },
+    { chave: 'intra', rotulo: 'Correntes intra­orçamentárias', nivel: 0, v: pick(R, 'intra') },
     { chave: 'cap', rotulo: 'Receitas de capital', nivel: 0, v: pick(R, 'receitas_capital') },
-    { chave: 'cred', rotulo: 'Operações de crédito', nivel: 1, v: pick(R, 'operacoes_credito') },
-    { chave: 'capout', rotulo: 'Demais de capital', nivel: 1, v: pick(R, 'alienacao', 'amortizacao_emprestimos', 'transf_capital', 'outras_capital') },
+    { chave: 'cred', rotulo: 'Operações de crédito', nivel: 1, pai: 'cap', v: pick(R, 'operacoes_credito') },
+    { chave: 'capout', rotulo: 'Demais de capital', nivel: 1, pai: 'cap', v: pick(R, 'alienacao', 'amortizacao_emprestimos', 'transf_capital', 'outras_capital') },
     { chave: 'ded', rotulo: '(−) Deduções (municípios e Fundeb)', nivel: 0, v: pick(R, 'deducoes') },
-    { chave: 'liq', rotulo: '= Receita líquida', nivel: 0, negrito: true, v: pick(R, 'total') },
+    { chave: 'liq', rotulo: 'Receita líquida', nivel: 0, negrito: true, v: pick(R, 'total') },
   ]
   const linhasDespesa: Linha[] = [
-    { chave: 'pessoal', rotulo: 'Pessoal e encargos sociais', nivel: 0, v: pick(D, 'pessoal') },
-    { chave: 'juros', rotulo: 'Juros e encargos da dívida', nivel: 0, v: pick(D, 'juros') },
-    { chave: 'outras', rotulo: 'Outras despesas correntes', nivel: 0, v: pick(D, 'outras_correntes') },
-    { chave: 'corr', rotulo: '= Despesas correntes', nivel: 0, negrito: true, v: pick(D, 'despesas_correntes') },
-    { chave: 'inv', rotulo: 'Investimentos', nivel: 0, v: pick(D, 'investimento') },
-    { chave: 'invf', rotulo: 'Inversões financeiras', nivel: 0, v: pick(D, 'inversoes') },
-    { chave: 'amort', rotulo: 'Amortização da dívida', nivel: 0, v: pick(D, 'amortizacao') },
-    { chave: 'capd', rotulo: '= Despesas de capital', nivel: 0, negrito: true, v: pick(D, 'despesas_capital') },
-    { chave: 'res', rotulo: 'Reservas (RPPS e contingência)', nivel: 0, v: pick(D, 'reserva_rpps', 'reserva_contingencia') },
-    { chave: 'tot', rotulo: '= Despesa total', nivel: 0, negrito: true, v: pick(D, 'total') },
+    { chave: 'corr', rotulo: 'Despesas correntes', nivel: 0, v: pick(D, 'despesas_correntes') },
+    { chave: 'pessoal', rotulo: 'Pessoal e encargos sociais', nivel: 1, pai: 'corr', v: pick(D, 'pessoal') },
+    { chave: 'juros', rotulo: 'Juros e encargos da dívida', nivel: 1, pai: 'corr', v: pick(D, 'juros') },
+    { chave: 'outras', rotulo: 'Outras despesas correntes', nivel: 1, pai: 'corr', v: pick(D, 'outras_correntes') },
+    { chave: 'capd', rotulo: 'Despesas de capital', nivel: 0, v: pick(D, 'despesas_capital') },
+    { chave: 'inv', rotulo: 'Investimentos', nivel: 1, pai: 'capd', v: pick(D, 'investimento') },
+    { chave: 'invf', rotulo: 'Inversões financeiras', nivel: 1, pai: 'capd', v: pick(D, 'inversoes') },
+    { chave: 'amort', rotulo: 'Amortização da dívida', nivel: 1, pai: 'capd', v: pick(D, 'amortizacao') },
+    { chave: 'exec', rotulo: 'Despesa executável (sem reservas)', nivel: 0, negrito: true, v: pick(D, 'total').map((x, j) => x - reservas[j]) },
+    { chave: 'res', rotulo: 'Reservas (RPPS e contingência)', nivel: 0, v: reservas },
   ]
-  const lista = vista === 'receita' ? linhasReceita.map((l) => ({ ...l, proj: itensProj[l.chave] })) : linhasDespesa.map((l) => ({ ...l, proj: projD.itens[l.chave] }))
-  const total = lista[lista.length - 1]
-  const comProj = true
-  /* base de 2026 para medir o quanto 2027 se afasta: no ritmo (projeção) quando há, no provável da PLOA nos demais casos */
-  const base26 = (l: Linha) => (comProj && l.proj ? l.proj.central : l.v[3])
-  const dTotal = variacoes(base26(total), total.v[4], i27).nominal as number
-  /* o que destoa: variação 2027 sobre o provável de 2026 ao menos 5 pontos percentuais distante da do total, em item de pelo menos R$ 100 milhões de variação */
-  const destoa = (l: Linha) => {
-    if (l === total || l.negrito) return 0
-    const d = variacoes(base26(l), l.v[4], i27).nominal
-    const valor = Math.abs(l.v[4] - base26(l))
-    if (d === undefined || d === null || valor < 1e8) return 0
-    return d - dTotal >= 5 ? 1 : dTotal - d >= 5 ? -1 : 0
-  }
+  const projDe = (chave: string) => (chave === 'exec' ? projD.itens.tot : projD.itens[chave])
+  const comProj: Linha[] = vista === 'receita'
+    ? linhasReceita.map((l) => ({ ...l, proj: itensProj[l.chave] }))
+    : linhasDespesa.map((l) => ({ ...l, proj: projDe(l.chave) }))
 
-  /* ---------- em resumo: onde a proposta de 2027 se afasta do ritmo de 2026 ---------- */
-  const analiseFontes = useMemo(() => analisaFontes(dados), [dados])
-  const g27 = (1 + ipca[2027]) * (1 + (pib['2027'] ?? 0)) - 1
-  const petr = useMemo(() => implicitoPetroleo(dados, analiseFontes, R.transf_corr_uniao[5], g27), [dados, analiseFontes, R, g27])
-  const reservas27 = D.reserva_rpps[5] + D.reserva_contingencia[5]
-  const leitura = (d: number, tipo: 'receita' | 'despesa') =>
-    Math.abs(d) < 3 ? 'em linha com o ritmo' : d > 0 ? (tipo === 'receita' ? 'acima do ritmo: pede mais do que o realizado' : 'acima do ritmo de execução') : (tipo === 'receita' ? 'abaixo do ritmo: conservadora' : 'abaixo do ritmo: aperto')
-  const resumo = [
-    { chave: 'rec', rotulo: 'Receita líquida total', tipo: 'receita' as const, p: R.total[5], a: proj.central },
-    { chave: 'icms', rotulo: 'ICMS', tipo: 'receita' as const, p: R.icms[5], a: itensProj.icms.central },
-    { chave: 'pet', rotulo: 'Petróleo (implícito na PLOA, dedução)', tipo: 'receita' as const, p: petr.implicito, a: petr.petroleo26 },
-    { chave: 'des', rotulo: 'Despesa executável (sem reservas)', tipo: 'despesa' as const, p: D.total[5] - reservas27, a: projD.itens.tot.central },
-    { chave: 'pes', rotulo: 'Pessoal e encargos', tipo: 'despesa' as const, p: D.pessoal[5], a: projD.itens.pessoal.central },
-    { chave: 'out', rotulo: 'Outras despesas correntes', tipo: 'despesa' as const, p: D.outras_correntes[5], a: projD.itens.outras.central },
-  ].map((l) => ({ ...l, d: (l.p / l.a - 1) * 100 }))
+  /* referência de 2027, independente da PLOA: o fechamento projetado de 2026 corrigido pela inflação e pelo PIB real (receita) ou só pela inflação (despesa) */
+  const refReceita = (l: Linha) => (l.proj ? l.proj.central * (SEM_CRESCIMENTO.has(l.chave) ? 1 : 1 + g27) : null)
+  const refDe = (l: Linha): number | null => {
+    if (vista === 'receita') {
+      if (l.chave === 'liq') return comProj.filter((x) => x.nivel === 0 && x.chave !== 'liq').reduce((s, x) => s + (refReceita(x) ?? 0), 0)
+      return refReceita(l)
+    }
+    if (vista === 'despesa') return l.proj && l.chave !== 'res' ? l.proj.central * (1 + i27) : null
+    return null
+  }
+  const difPct = (l: Linha) => { const r = refDe(l); return r === null || Math.abs(r) < 1e6 ? null : (l.v[4] / r - 1) * 100 }
+  const visiveis = comProj.filter((l) => !l.pai || abertos.has(l.pai))
+  const alterna = (c: string) => setAbertos((a) => { const n = new Set(a); if (n.has(c)) n.delete(c); else n.add(c); return n })
+
+  /* ---------- resumo: onde a PLOA se afasta da referência independente ---------- */
+  const reservas27 = reservas[4]
+  const refReceitaTotal = linhasReceita.filter((x) => x.nivel === 0 && x.chave !== 'liq').reduce((s, x) => s + (refReceita({ ...x, proj: itensProj[x.chave] }) ?? 0), 0)
+  const refDespesa = projD.itens.tot.central * (1 + i27)
+  const itensResumo = [
+    { chave: 'rec', rotulo: 'Receita líquida total', tag: 'Receita', p: R.total[5], ref: refReceitaTotal },
+    { chave: 'icms', rotulo: 'ICMS', tag: 'Receita', p: R.icms[5], ref: itensProj.icms.central * (1 + g27) },
+    { chave: 'pet', rotulo: 'Petróleo (valor implícito na PLOA)', tag: 'Receita', p: petr.implicito, ref: petr.petroleo26 * (1 + g27) },
+    { chave: 'des', rotulo: 'Despesa executável (sem reservas)', tag: 'Despesa', p: D.total[5] - reservas27, ref: refDespesa },
+    { chave: 'pes', rotulo: 'Pessoal e encargos', tag: 'Despesa', p: D.pessoal[5], ref: projD.itens.pessoal.central * (1 + i27) },
+    { chave: 'out', rotulo: 'Outras despesas correntes', tag: 'Despesa', p: D.outras_correntes[5], ref: projD.itens.outras.central * (1 + i27) },
+  ].map((l) => ({ ...l, d: l.p - l.ref, pct: (l.p / l.ref - 1) * 100 }))
 
   /* ---------- gráfico anual ---------- */
   const serieTotal = vista === 'despesa' ? D.total : R.total
@@ -134,31 +145,26 @@ export function VisaoGeral({ receita, despesa, ipca: ipcaParams, pib, fonteIpca,
 
   /* ---------- faixa de números ---------- */
   const v27 = serieTotal[5]
-  const sobreProj = variacoes(proj26, v27, i27)
-  const ritmo1 = aa(serieTotal[0], serieTotal[2], 2)
-  const ritmo2 = aa(serieTotal[2], v27, 2)
   const pessoalRcl = pick(D, 'pessoal').map((x, j) => (x / rcl[j]) * 100)
   const correntesRcl = pick(D, 'despesas_correntes').map((x, j) => (x / rcl[j]) * 100)
   const supCorrente = rcl.map((x, j) => x - pick(D, 'despesas_correntes')[j])
   const resultadoOrc = COL.map((_, j) => R.total[COL[j]] - D.total[COL[j]])
-  const reservas = pick(D, 'reserva_rpps', 'reserva_contingencia')
+  const execPloa = D.total[5] - reservas27
 
-  let faixa: { r: string; v: string; s?: string; destaque?: boolean }[]
+  let faixa: { r: string; v: string; s?: string; destaque?: boolean }[] = []
   if (vista === 'receita') {
     faixa = [
-      { r: 'Projeção de fechamento de 2026', v: bilhoes(proj.central), s: `faixa ${numero(proj.min / 1e9, 1)} a ${numero(proj.max / 1e9, 1)} bi; a PLOA estima ${bilhoes(R.total[4])}`, destaque: true },
-      { r: 'PLOA 2027 sobre a projeção de 2026', v: fmtPct(sobreProj.nominal), s: `real ${fmtPct(sobreProj.real)}; receita de ${bilhoes(v27)}` },
+      { r: 'Projeção de fechamento de 2026', v: bilhoes(proj.central), s: `faixa ${numero(proj.min / 1e9, 1)} a ${numero(proj.max / 1e9, 1)} bi`, destaque: true },
+      { r: 'PLOA 2027 sobre a referência', v: fmtPct((v27 / refReceitaTotal - 1) * 100), s: `PLOA ${bilhoes(v27)}; referência ${bilhoes(refReceitaTotal)}` },
       { r: `Arrecadado de janeiro a ${nomeCorte} de 2026`, v: bilhoes(proj.acumulado), s: `${fmtPct((proj.acumulado / proj.acumulado25 - 1) * 100)} sobre o mesmo período de 2025` },
-      { r: 'Ritmo de crescimento ao ano', v: `${fmtPct(ritmo2)}`, s: `2025 a 2027; de 2023 a 2025 foi ${fmtPct(ritmo1)}` },
     ]
   } else if (vista === 'despesa') {
     faixa = [
-      { r: 'Projeção de fechamento de 2026', v: bilhoes(proj26), s: `faixa ${numero((projD.itens.tot.min as number) / 1e9, 1)} a ${numero((projD.itens.tot.max as number) / 1e9, 1)} bi; a PLOA estima ${bilhoes(serieTotal[4])}`, destaque: true },
-      { r: 'PLOA 2027 sobre a projeção de 2026', v: fmtPct(sobreProj.nominal), s: `real ${fmtPct(sobreProj.real)}; despesa de ${bilhoes(v27)}` },
-      { r: 'Despesa executável 2027 (sem reservas)', v: bilhoes(v27 - reservas[4]), s: `${fmtPct(((v27 - reservas[4]) / proj26 - 1) * 100)} sobre a projeção de 2026; reservas de ${bilhoes(reservas[4])}` },
-      { r: 'Pessoal sobre a receita corrente líquida', v: `${numero(pessoalRcl[4], 1)}%`, s: `2025: ${numero(pessoalRcl[2], 1)}%; indicador aproximado` },
+      { r: 'Projeção de fechamento de 2026', v: bilhoes(proj26), s: `faixa ${numero((projD.itens.tot.min as number) / 1e9, 1)} a ${numero((projD.itens.tot.max as number) / 1e9, 1)} bi`, destaque: true },
+      { r: 'PLOA 2027 sobre a referência', v: fmtPct((execPloa / refDespesa - 1) * 100), s: `executável ${bilhoes(execPloa)}; referência ${bilhoes(refDespesa)}` },
+      { r: 'Reservas na proposta', v: bilhoes(reservas27), s: `${numero((reservas27 / D.total[5]) * 100, 1)}% da despesa; não são executadas` },
     ]
-  } else {
+  } else if (vista === 'resultado') {
     faixa = [
       { r: 'Superávit corrente 2027', v: bilhoes(supCorrente[4]), s: `provável 2026: ${bilhoes(supCorrente[3])}`, destaque: true },
       { r: 'Despesa corrente sobre a receita corrente líquida', v: `${numero(correntesRcl[4], 1)}%`, s: `2025: ${numero(correntesRcl[2], 1)}%` },
@@ -169,36 +175,29 @@ export function VisaoGeral({ receita, despesa, ipca: ipcaParams, pib, fonteIpca,
 
   /* ---------- tabelas ---------- */
   const codigoDe = (l: Linha) => (vista === 'receita' ? COD_GRUPO[l.chave] : vista === 'despesa' ? COD_DESPESA[l.chave] : '') ?? ''
-  /* só os grupos principais levam o código na vista; os itens abaixo aparecem recuados, com um filete à esquerda, e o código fica no texto para leitores de tela e na dica */
-  const celulaLinha = (l: Linha): ReactNode => {
+  /* sem coluna de códigos: o código fica na dica e no texto para leitores de tela; os grupos abrem o detalhe sob demanda */
+  const celulaGrupo = (l: Linha): ReactNode => {
     const c = codigoDe(l)
-    if (l.nivel === 0) {
-      return (
-        <span className={l.negrito ? 'font-semibold' : ''}>
-          {c && <span className="block text-label normal-case tracking-normal tabular-nums text-ink-soft md:mr-1.5 md:inline-block md:min-w-[6.5rem] md:text-small">{c}</span>}{l.rotulo}
-        </span>
-      )
-    }
+    const filhos = comProj.some((x) => x.pai === l.chave)
+    const aberto = abertos.has(l.chave)
+    if (l.nivel === 1) return <span title={c ? `Código ${c}` : undefined} className="block pl-5 text-ink-soft">{c && <span className="sr-only">{c} </span>}{l.rotulo}</span>
+    if (!filhos) return <span title={c ? `Código ${c}` : undefined} className={`block pl-5 ${l.negrito ? 'font-semibold' : 'font-medium'}`}>{c && <span className="sr-only">{c} </span>}{l.rotulo}</span>
     return (
-      <span title={c ? `Código ${c}` : undefined} className="ml-1 block border-l-2 border-line pl-2.5 text-ink-soft" style={{ marginLeft: `${0.25 + (l.nivel - 1) * 0.9}rem` }}>
-        {c && <span className="sr-only">{c} </span>}{l.rotulo}
-      </span>
+      <button type="button" aria-expanded={aberto} onClick={() => alterna(l.chave)} title={c ? `Código ${c}` : undefined} className="inline-flex items-center gap-1.5 text-left font-medium text-ink">
+        <span aria-hidden="true" className="inline-block w-3.5 text-ink-soft">{aberto ? '▾' : '▸'}</span>{l.rotulo}
+        <span className="sr-only">{c ? ` (código ${c}); ` : ' '}{aberto ? 'recolher detalhe' : 'mostrar detalhe'}</span>
+      </button>
     )
   }
-  const itensTabela = lista.map((l) => ({ ...l, chave: l.chave }))
+  const celulaLinha = (l: Linha): ReactNode => <span className={l.negrito ? 'font-semibold' : ''}>{l.rotulo}</span>
   const colunasTabela = [
-    { rotulo: vista === 'receita' ? 'R$ milhões · natureza' : 'R$ milhões · GND', valor: celulaLinha },
-    { rotulo: 'Destaque', valor: (l: Linha) => { const d = destoa(l); return d === 0 ? '' : <span title={d > 0 ? 'Cresce bem mais que o total' : 'Cresce bem menos que o total'} className={d > 0 ? 'text-serie3' : 'text-serie2'}>{d > 0 ? '▲' : '▼'}<span className="sr-only">{d > 0 ? ' cresce bem mais que o total' : ' cresce bem menos que o total'}</span></span> } },
-    ...ANOS.flatMap((a, j) => {
-      const col = { rotulo: a, valor: (l: Linha) => <span className={l.negrito || j === 4 ? 'font-semibold' : ''}>{mi(l.v[j])}</span> }
-      return j === 3 && comProj
-        ? [col, { rotulo: `Proj. 26`, valor: (l: Linha) => (l.proj ? <span title={l.proj.base === 'resíduo' ? 'Resultado: receita líquida projetada menos a soma das linhas' : l.proj.base === '2025' ? 'Sazonalidade só de 2025' : undefined}>{mi(l.proj.central)}{l.proj.base === '2025' ? '*' : ''}</span> : '–') }]
-        : [col]
-    }),
-    { rotulo: comProj ? 'Δ% 27/proj.' : 'Δ% 27/26', valor: (l: Linha) => fmtPct(variacoes(base26(l), l.v[4], i27).nominal) },
-    { rotulo: 'Real', valor: (l: Linha) => fmtPct(variacoes(base26(l), l.v[4], i27).real) },
-    { rotulo: 'a.a. 23–25', valor: (l: Linha) => fmtPct(aa(l.v[0], l.v[2], 2)) },
-    { rotulo: 'a.a. 25–27', valor: (l: Linha) => fmtPct(aa(l.v[2], l.v[4], 2)) },
+    { rotulo: 'R$ milhões', valor: celulaGrupo },
+    { rotulo: '2025', secundaria: true, valor: (l: Linha) => (l.chave === 'res' && l.v[2] === 0 ? '–' : mi(l.v[2])) },
+    { rotulo: '2026 proj.', secundaria: true, valor: (l: Linha) => (l.proj && l.chave !== 'res' ? <span title={l.proj.base === 'resíduo' ? 'Resultado: receita líquida projetada menos a soma das linhas' : l.proj.base === '2025' ? 'Sazonalidade só de 2025' : undefined}>{mi(l.proj.central)}{l.proj.base === '2025' ? '*' : ''}</span> : '–') },
+    { rotulo: 'PLOA 27', valor: (l: Linha) => <span className="font-semibold">{mi(l.v[4])}</span> },
+    { rotulo: 'Ref. 27', valor: (l: Linha) => { const r = refDe(l); return r === null ? '–' : mi(r) } },
+    { rotulo: 'Dif. R$ mi', secundaria: true, valor: (l: Linha) => { const r = refDe(l); return r === null ? '–' : dMi(l.v[4] - r) } },
+    { rotulo: 'Dif. %', valor: (l: Linha) => { const d = difPct(l); return d === null ? '–' : <span className={`font-semibold ${corDif(d)}`}>{fmtPct(d)}</span> } },
   ]
 
   const indicadores = [
@@ -224,30 +223,48 @@ export function VisaoGeral({ receita, despesa, ipca: ipcaParams, pib, fonteIpca,
   const legendaGrafico = vista === 'despesa'
     ? [{ cor: COR.empenhado, rotulo: 'Executado (PLOA, quadro de evolução)' }, { cor: COR.atualizada, contorno: COR.contornoAtualizada, rotulo: 'Projeção de 2026 (linha preta: faixa)' }, { cor: COR.ploa, rotulo: 'Proposta 2027' }]
     : [{ cor: COR.empenhado, rotulo: 'Arrecadado' }, { cor: COR.atualizada, contorno: COR.contornoAtualizada, rotulo: 'Projeção de 2026 (linha preta: faixa)' }, { cor: COR.ploa, rotulo: 'PLOA 2027' }]
+  const notaReferencia = (
+    <Nota titulo="O que é a referência de 2027">
+      <p>
+        A referência é a nossa projeção independente para 2027, feita sem usar a PLOA: parte do fechamento de 2026 projetado pelo ritmo de arrecadação (até {nomeCorte}) e de execução da despesa (até {nomeCorteDesp}) e o corrige para 2027. As receitas crescem com a inflação e o PIB real do Focus (+{numero(g27 * 100, 1)}%); as despesas, só com a inflação (+{numero(i27 * 100, 1)}%), isto é, mantêm o volume real de 2026. Operações de crédito e demais receitas de capital ficam no nível de 2026, porque dependem de contratação.
+      </p>
+      <p>
+        É uma régua de comparação, não uma previsão: não supõe mudança de preço do petróleo (o Brent de 2026 é mantido), de alíquota, de crédito contratado nem aumento real de despesa. Quando a PLOA se afasta da referência, a pergunta a fazer é qual decisão ou premissa explica a diferença. Dif. = PLOA menos referência; em azul, a PLOA está acima (a partir de {DIF_MIN}%) e, em rosa, abaixo. Em despesa, as reservas não entram na referência porque não são executadas. IPCA: {fonteIpca}
+      </p>
+    </Nota>
+  )
 
   return (
     <div>
-      <Cartao titulo="Em resumo: onde a proposta de 2027 se afasta do ritmo de 2026" className="mb-3">
-        <TabelaItens altura="livre" itens={resumo} legenda="PLOA 2027 contra o fechamento projetado de 2026, em R$ milhões" colunas={[
-          { rotulo: 'R$ milhões', valor: (l) => <span className="font-semibold">{l.rotulo}</span> },
-          { rotulo: 'PLOA 2027', valor: (l) => <span className="font-semibold">{mi(l.p)}</span> },
-          { rotulo: 'Projeção 2026', secundaria: true, valor: (l) => mi(l.a) },
-          { rotulo: 'Diferença', valor: (l) => <span className={`font-semibold ${Math.abs(l.d) < 3 ? '' : l.d > 0 ? 'text-serie3' : 'text-serie2'}`}>{fmtPct(l.d)}</span> },
-          { rotulo: 'Leitura', secundaria: true, valor: (l) => <span className={`font-normal ${Math.abs(l.d) < 3 ? 'text-ink-soft' : l.d > 0 ? 'text-serie3' : 'text-serie2'}`}>{leitura(l.d, l.tipo)}</span> },
-        ]} />
-        <p className="mt-2 text-label normal-case tracking-normal text-ink-soft">
-          Projeção de 2026 pelo ritmo de arrecadação e de execução até o último dado publicado; despesa de 2026 na base empenhada. Diferença em valores correntes, sem deflacionar. Detalhes, faixas e testes na aba Método e fontes.
-        </p>
-      </Cartao>
-      <div role="group" aria-label="O que ver" className="inline-flex overflow-hidden rounded-brand border border-line text-small print:hidden">
+      <div role="group" aria-label="O que ver" className="inline-flex max-w-full flex-wrap overflow-hidden rounded-brand border border-line text-small print:hidden">
         {VISTAS.map((v) => (
           <button key={v.id} type="button" aria-pressed={vista === v.id} onClick={() => setVista(v.id)}
             className={`px-4 py-1.5 ${vista === v.id ? 'bg-navy font-semibold text-on-navy' : 'bg-paper text-ink hover:bg-surface'}`}>{v.rotulo}</button>
         ))}
       </div>
-      <Faixa itens={faixa} nota={`Valores correntes; real = deflacionado pelo IPCA (2027: ${numero(i27 * 100, 2)}%, Focus). Tabelas em R$ milhões, arredondadas.`} />
 
-      {vista !== 'resultado' && (
+      {vista === 'resumo' && (
+        <div className="mt-3">
+          <Cartao titulo="PLOA 2027 contra a nossa referência independente">
+            <p className="max-w-3xl text-small text-ink-soft">Onde a proposta supõe mais ou menos do que o ritmo de 2026, corrigido, indicaria. Azul: PLOA acima da referência; rosa: abaixo.</p>
+            <div className="mt-3">
+              <TabelaDelta itens={itensResumo} delta={(i) => i.d} rotuloBarra="R$ milhões|PLOA 2027 menos referência" legenda="PLOA 2027 contra a referência de 2027, em R$ milhões"
+                primeira={(i) => <><span className="font-medium text-ink">{i.rotulo}</span><span className="block text-label normal-case tracking-normal text-ink-soft">{i.tag}</span></>}
+                colunas={[
+                  { rotulo: 'Ref. 2027', valor: (i) => mi(i.ref) },
+                  { rotulo: 'PLOA 2027', valor: (i) => mi(i.p), forte: true },
+                  { rotulo: 'Dif. R$ mi', valor: (i) => dMi(i.d) },
+                  { rotulo: 'Dif. %', valor: (i) => <span className={corDif(i.pct)}>{fmtPct(i.pct)}</span> },
+                ]} />
+            </div>
+            {notaReferencia}
+          </Cartao>
+        </div>
+      )}
+
+      {vista !== 'resumo' && <Faixa itens={faixa} nota="Valores correntes. Tabelas em R$ milhões, arredondadas." />}
+
+      {(vista === 'receita' || vista === 'despesa') && (
         <div className="mt-3 space-y-3">
           <Cartao titulo={tituloGrafico} legenda={<Legenda itens={legendaGrafico} />}
             direita={
@@ -264,11 +281,12 @@ export function VisaoGeral({ receita, despesa, ipca: ipcaParams, pib, fonteIpca,
             </p>
           </Cartao>
 
-          <Cartao titulo={vista === 'receita' ? 'Receita por grupo: o que o orçamento de 2027 supõe' : 'Despesa por grupo: o que o orçamento de 2027 supõe'}>
-            <TabelaItens altura="livre" itens={itensTabela} colunas={colunasTabela} legenda={`${vista === 'receita' ? 'Receita' : 'Despesa'} por grupo, em R$ milhões`} />
+          <Cartao titulo={vista === 'receita' ? 'Receita por grupo: PLOA 2027 contra a referência' : 'Despesa por grupo: PLOA 2027 contra a referência'}>
+            <TabelaItens altura="livre" compacta itens={visiveis.map((l) => ({ ...l, chave: l.chave }))} colunas={colunasTabela} legenda={`${vista === 'receita' ? 'Receita' : 'Despesa'} por grupo, em R$ milhões`} />
             <p className="mt-2 text-label normal-case tracking-normal text-ink-soft">
-              {vista === 'despesa' ? `Proj. 26: despesa empenhada projetada pelo ritmo de execução até ${nomeCorteDesp} (RREO), na base dos quadros da PLOA; Δ% e Real: 2027 sobre essa projeção. ` : comProj ? 'Proj. 26: fechamento projetado pelo ritmo de arrecadação (ver o método abaixo); Δ% e Real: 2027 sobre essa projeção. * só há mês a mês de 2025 para essa linha. ' : 'Δ% e Real: 2027 sobre o provável de 2026. '}a.a.: crescimento médio anual composto. ▲ ▼ marcam itens cuja variação difere em 5 pontos percentuais ou mais da do total (e de ao menos R$ 100 milhões), para indicar onde olhar primeiro.
+              2026 proj.: fechamento projetado pelo ritmo de {vista === 'receita' ? `arrecadação até ${nomeCorte}` : `execução até ${nomeCorteDesp}`}{vista === 'receita' ? '; * só há mês a mês de 2025 para essa linha' : ' (despesa empenhada)'}. Ref. 2027: referência independente. Toque num grupo para ver o detalhe.
             </p>
+            {notaReferencia}
           </Cartao>
 
           <p className="text-small text-ink-soft print:hidden">
@@ -290,11 +308,11 @@ export function VisaoGeral({ receita, despesa, ipca: ipcaParams, pib, fonteIpca,
               { rotulo: 'Indicador', valor: (x) => x.rotulo },
               ...ANOS.map((a, j) => ({ rotulo: a, valor: (x: (typeof indicadores)[number]) => `${numero(x.v[j], 1)}%` })),
             ]} />
-            <p className="mt-2 text-label normal-case tracking-normal text-ink-soft">Receita corrente líquida aproximada = receitas correntes + intraorçamentárias − deduções do quadro da PLOA; não é a RCL da LRF, que tem regras próprias de apuração.</p>
+            <p className="mt-2 text-label normal-case tracking-normal text-ink-soft">Receita corrente líquida aproximada = receitas correntes + intraorçamentárias − deduções do quadro da PLOA; não é a RCL da LRF, que tem regras próprias de apuração. Provável 26: estimativa de 2026 informada na própria PLOA.</p>
           </Cartao>
         </div>
       )}
-      <p className="mt-3 text-small text-ink-soft">Fonte: PLOA 2027, Mensagem nº 189/2026, quadros Evolução da Receita (p. 97) e Evolução da Despesa (p. 130); arrecadação mensal do Portal de Dados Abertos do ES; IPCA: {fonteIpca}</p>
+      <p className="mt-3 text-small text-ink-soft">Fonte: PLOA 2027, Mensagem nº 189/2026, quadros Evolução da Receita (p. 97) e Evolução da Despesa (p. 130); arrecadação mensal do Portal de Dados Abertos do ES; despesa empenhada: Siconfi, RREO; IPCA: {fonteIpca}</p>
     </div>
   )
 }

@@ -126,22 +126,25 @@ export type Coluna<T> = { rotulo: string; valor: (x: T) => ReactNode; alinha?: '
  * Tabela com cabeçalho fixo, primeira coluna fixa (no celular a rolagem horizontal deixa sempre à vista o que cada linha é)
  * e sombra nas bordas quando há mais conteúdo para rolar.
  */
-export function TabelaItens<T extends { chave: string }>({ itens, colunas, legenda, altura = 'limitada' }: { itens: T[]; colunas: Coluna<T>[]; legenda: string; altura?: 'limitada' | 'livre' }) {
+export function TabelaItens<T extends { chave: string }>({ itens, colunas, legenda, altura = 'limitada', compacta = false }: { itens: T[]; colunas: Coluna<T>[]; legenda: string; altura?: 'limitada' | 'livre'; /** no celular, células mais justas para caber mais colunas sem rolar */ compacta?: boolean }) {
+  const px = compacta ? 'px-2 md:px-3' : 'px-3'
+  const larg = compacta ? 'min-w-[6.5rem] max-w-[7.25rem] md:min-w-[8.5rem] md:max-w-[11rem]' : 'min-w-[8.5rem] max-w-[11rem]'
+  const largTh = compacta ? 'min-w-[6.5rem] md:min-w-[8.5rem]' : 'min-w-[8.5rem]'
   return (
     <div tabIndex={0} role="region" aria-label={legenda} className={`rola overflow-auto rounded-brand border border-line ${altura === 'livre' ? '' : 'max-h-[32rem]'}`}>
       <table className="w-full min-w-max text-left text-small">
         <caption className="sr-only">{legenda}</caption>
         <thead>
           <tr>{colunas.map((c, j) => (
-            <th key={c.rotulo} scope="col" className={`sticky top-0 bg-surface px-3 py-2 font-semibold ${j === 0 ? 'left-0 z-20 min-w-[8.5rem]' : 'z-10 whitespace-nowrap text-right'} ${c.secundaria ? 'hidden md:table-cell' : ''}`}>{c.rotulo}</th>
+            <th key={c.rotulo} scope="col" className={`sticky top-0 bg-surface ${px} py-2 font-semibold ${j === 0 ? `left-0 z-20 ${largTh}` : 'z-10 whitespace-nowrap text-right'} ${c.secundaria ? 'hidden md:table-cell' : ''}`}>{c.rotulo}</th>
           ))}</tr>
         </thead>
         <tbody>
           {itens.map((it) => (
             <tr key={it.chave} className="border-t border-line">
               {colunas.map((c, j) => j === 0
-                ? <th key={c.rotulo} scope="row" className="sticky left-0 z-[1] min-w-[8.5rem] max-w-[11rem] whitespace-normal bg-paper px-3 py-1.5 align-top font-normal shadow-[1px_0_0_rgb(var(--line))] md:max-w-[30rem]">{c.valor(it)}</th>
-                : <td key={c.rotulo} className={`whitespace-nowrap px-3 py-1.5 text-right tabular-nums ${c.secundaria ? 'hidden md:table-cell' : ''}`}>{c.valor(it)}</td>)}
+                ? <th key={c.rotulo} scope="row" className={`sticky left-0 z-[1] ${larg} whitespace-normal bg-paper ${px} py-1.5 align-top font-normal shadow-[1px_0_0_rgb(var(--line))] md:max-w-[30rem]`}>{c.valor(it)}</th>
+                : <td key={c.rotulo} className={`whitespace-nowrap ${px} py-1.5 text-right tabular-nums ${c.secundaria ? 'hidden md:table-cell' : ''}`}>{c.valor(it)}</td>)}
             </tr>
           ))}
         </tbody>
