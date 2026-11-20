@@ -7,9 +7,10 @@ import { Cartao, Legenda, COR, TabelaItens } from './Graficos'
 import { ColunasAnuais, fmtPct, type ColunaAnual } from './GraficosMacro'
 import { Nota, NOTA_DISCRETA } from './Estrutura'
 import minimosRaw from '@/data/minimos.json'
+import { titulo } from './dados'
 import { COD_DESPESA, COD_GRUPO } from './codigos'
 import { BRENT_CENTRAL, CAMBIO_CENTRAL, EDICAO_EIA, PRODUCAO_CENTRAL, receitaPetroleo } from './petroleo'
-import { analisaFontes, fatorPrecos, ipcaAnual, pibArrecadacao, projecaoItens, projetaDespesa2026, projetaReceita2026, tendenciaPessoal, type DadosReceita, type ItemProjetado } from './projecao'
+import { analisaFontes, elementosDespesa, fatorPrecos, ipcaAnual, pibArrecadacao, projecaoItens, projetaDespesa2026, projetaReceita2026, tendenciaPessoal, type DadosReceita, type ItemProjetado } from './projecao'
 
 type Vista = 'receita' | 'despesa' | 'resultado'
 const VISTAS: { id: Vista; rotulo: string }[] = [
@@ -26,7 +27,7 @@ const mi = (x: number) => milhoes(x === 0 ? 0 : x, 0)
 const neg = (x: number) => (x === 0 ? 0 : -x)
 const dMi = (x: number) => `${sinal(x)}${milhoes(Math.abs(x), 0)}`
 
-type Linha = { chave: string; rotulo: string; nivel: number; negrito?: boolean; v: number[]; proj?: ItemProjetado; pai?: string }
+type Linha = { chave: string; rotulo: string; nivel: number; negrito?: boolean; v: number[]; proj?: ItemProjetado; pai?: string; semPloa?: boolean }
 /** linhas cuja referência de 2027 não cresce com a economia: dependem de contratação e de decisões pontuais */
 const SEM_CRESCIMENTO = new Set(['cap', 'cred', 'capout'])
 /** diferença (em %) a partir da qual a PLOA é dita acima ou abaixo da referência */
@@ -90,9 +91,18 @@ export function VisaoGeral({ funcoes, contingencia, receita, despesa, ipca: ipca
     { chave: 'res', rotulo: 'Reservas (RPPS e contingência)', nivel: 0, v: reservas },
   ]
   const projDe = (chave: string) => (chave === 'exec' ? projD.itens.tot : projD.itens[chave])
+  /* elementos de despesa sob cada grupo de natureza: nível a mais, aberto ao clicar no grupo */
+  const elementos = useMemo(() => elementosDespesa(), [])
+  const linhasDespesaDetalhe: Linha[] = linhasDespesa.flatMap((l) => [
+    l,
+    ...(elementos[l.chave] ?? []).map((e): Linha => ({
+      chave: `${l.chave}-${e.cod}`, rotulo: `${titulo(e.nome)}`, nivel: 2, pai: l.chave, semPloa: true,
+      v: [0, 0, e.v25, 0, 0], proj: { central: e.p26, base: 'mensal' },
+    })),
+  ])
   const comProj: Linha[] = vista === 'receita'
     ? linhasReceita.map((l) => ({ ...l, proj: itensProj[l.chave] }))
-    : linhasDespesa.map((l) => ({ ...l, proj: projDe(l.chave) }))
+    : linhasDespesaDetalhe.map((l) => ({ ...l, proj: l.proj ?? projDe(l.chave) }))
 
   /* referência de 2027, independente da PLOA: o fechamento projetado de 2026 corrigido pela inflação e pelo PIB real (receita) ou só pela inflação (despesa) */
   /* petróleo: em vez de manter o patamar de 2026 corrigido, a receita de 2027 vem da relação com a cotação (Brent da EIA, câmbio do Focus, produção de 2026) */
@@ -111,8 +121,10 @@ export function VisaoGeral({ funcoes, contingencia, receita, despesa, ipca: ipca
     if (vista === 'despesa') return l.proj && l.chave !== 'res' ? l.proj.central * (1 + i27) : null
     return null
   }
-  const difPct = (l: Linha) => { const r = refDe(l); return r === null || Math.abs(r) < 1e6 ? null : (l.v[4] / r - 1) * 100 }
-  const visiveis = comProj.filter((l) => !l.pai || abertos.has(l.pai))
+  const difPct = (l: Linha) => { const r = refDe(l); return l.semPloa || r === null || Math.abs(r) < 1e6 ? null : (l.v[4] / r - 1) * 100 }
+  const porChave = new Map(comProj.map((l) => [l.chave, l]))
+  const visivel = (l: Linha): boolean => !l.pai || (abertos.has(l.pai) && visivel(porChave.get(l.pai)!))
+  const visiveis = comProj.filter(visivel)
   const alterna = (c: string) => setAbertos((a) => { const n = new Set(a); if (n.has(c)) n.delete(c); else n.add(c); return n })
 
   /* ---------- totais de referência para a faixa de números ---------- */
@@ -178,10 +190,11 @@ export function VisaoGeral({ funcoes, contingencia, receita, despesa, ipca: ipca
     const c = codigoDe(l)
     const filhos = comProj.some((x) => x.pai === l.chave)
     const aberto = abertos.has(l.chave)
-    if (l.nivel === 1) return <span title={c ? `Código ${c}` : undefined} className="block pl-5 text-ink-soft">{c && <span className="sr-only">{c} </span>}{l.rotulo}</span>
+    if (l.nivel === 2) return <span className="block pl-10 text-ink-soft">{l.rotulo}</span>
+    if (l.nivel === 1 && !filhos) return <span title={c ? `Código ${c}` : undefined} className="block pl-5 text-ink-soft">{c && <span className="sr-only">{c} </span>}{l.rotulo}</span>
     if (!filhos) return <span title={c ? `Código ${c}` : undefined} className={`block pl-5 ${l.negrito ? 'font-semibold' : 'font-medium'}`}>{c && <span className="sr-only">{c} </span>}{l.rotulo}</span>
     return (
-      <button type="button" aria-expanded={aberto} onClick={() => alterna(l.chave)} title={c ? `Código ${c}` : undefined} className="inline-flex items-center gap-1.5 text-left font-medium text-ink">
+      <button type="button" aria-expanded={aberto} onClick={() => alterna(l.chave)} title={c ? `Código ${c}` : undefined} className={`inline-flex items-center gap-1.5 text-left ${l.nivel === 1 ? 'ml-5 text-ink-soft' : 'font-medium text-ink'}`}>
         <span aria-hidden="true" className="inline-block w-3.5 text-ink-soft">{aberto ? '▾' : '▸'}</span>{l.rotulo}
         <span className="sr-only">{c ? ` (código ${c}); ` : ' '}{aberto ? 'recolher detalhe' : 'mostrar detalhe'}</span>
       </button>
@@ -192,9 +205,9 @@ export function VisaoGeral({ funcoes, contingencia, receita, despesa, ipca: ipca
     { rotulo: 'R$ milhões', valor: celulaGrupo },
     { rotulo: '2025', secundaria: true, valor: (l: Linha) => (l.chave === 'res' && l.v[2] === 0 ? '–' : mi(l.v[2])) },
     { rotulo: 'Proj. 26', secundaria: true, valor: (l: Linha) => (l.proj && l.chave !== 'res' ? <span title={l.proj.base === 'resíduo' ? 'Resultado: receita líquida projetada menos a soma das linhas' : undefined}>{mi(l.proj.central)}</span> : '–') },
-    { rotulo: 'PLOA 27', valor: (l: Linha) => <span className="font-semibold">{mi(l.v[4])}</span> },
+    { rotulo: 'PLOA 27', valor: (l: Linha) => (l.semPloa ? '–' : <span className="font-semibold">{mi(l.v[4])}</span>) },
     { rotulo: 'Proj. 27', valor: (l: Linha) => { const r = refDe(l); return r === null ? '–' : <span title={l.proj?.pontual ? 'Sem a receita pontual de 2026 (indenizações, restituições e ressarcimentos), que não se repete' : undefined}>{mi(r)}{l.proj?.pontual ? '†' : ''}</span> } },
-    { rotulo: 'Dif. R$ mi', secundaria: true, valor: (l: Linha) => { const r = refDe(l); return r === null ? '–' : dMi(l.v[4] - r) } },
+    { rotulo: 'Dif. R$ mi', secundaria: true, valor: (l: Linha) => { const r = refDe(l); return l.semPloa || r === null ? '–' : dMi(l.v[4] - r) } },
     { rotulo: 'Dif. %', valor: (l: Linha) => { const d = difPct(l); return d === null ? '–' : <span className={`font-semibold ${corDif(d)}`}>{fmtPct(d)}</span> } },
   ]
 
@@ -303,7 +316,7 @@ export function VisaoGeral({ funcoes, contingencia, receita, despesa, ipca: ipca
           <Cartao longa titulo={vista === 'receita' ? 'Receita por categoria: PLOA 2027 e projeção' : 'Despesa por grupo de natureza: PLOA 2027 e projeção'}>
             <TabelaItens altura="livre" compacta itens={visiveis.map((l) => ({ ...l, chave: l.chave }))} colunas={colunasTabela} legenda={`${vista === 'receita' ? 'Receita por categoria' : 'Despesa por grupo de natureza'}, em R$ milhões`} />
             <p className={`mt-2 ${NOTA_DISCRETA}`}>
-              Proj. 26: fechamento projetado ({vista === 'receita' ? `arrecadação até ${nomeCorte}` : `despesa empenhada até ${nomeCorteDesp}`}). Dif.: PLOA 2027 menos Proj. 27.{vista === 'receita' ? ` † Exclui receita pontual de 2026 (indenizações, restituições e ressarcimentos: R$ ${mi(comProj.find((x) => x.chave === 'demais')?.proj?.pontual ?? 0)} mi até ${nomeCorte}).` : ''}
+              Proj. 26: fechamento projetado ({vista === 'receita' ? `arrecadação até ${nomeCorte}` : `despesa empenhada até ${nomeCorteDesp}`}). Dif.: PLOA 2027 menos Proj. 27.{vista === 'despesa' ? ` Elementos de despesa (clique no grupo): empenhado do Portal; a Proj. 26 de cada elemento distribui a do grupo na proporção do empenhado até ${nomeCorteDesp}; a PLOA 2027 só traz o detalhe por elemento em meio magnético, fora do PDF, e por isso aparece apenas nos grupos.` : ''}{vista === 'receita' ? ` † Exclui receita pontual de 2026 (indenizações, restituições e ressarcimentos: R$ ${mi(comProj.find((x) => x.chave === 'demais')?.proj?.pontual ?? 0)} mi até ${nomeCorte}).` : ''}
             </p>
             {notaReferencia}
           </Cartao>
