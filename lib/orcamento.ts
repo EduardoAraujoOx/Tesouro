@@ -199,3 +199,18 @@ export function nomesPainel(ls: LinhaCompacta[]) {
     fonte: pega(nomes.fonte, new Set(ls.map((r) => r[4]))),
   }
 }
+
+/** Totais por função (código de dois dígitos): empenhado de 2025, dotação inicial, atualizada e empenhado de 2026 e PLOA 2027, em reais. */
+export type TotaisFuncao = { emp25: number; ini26: number; atu26: number; emp26: number; ploa27: number }
+export function totaisPorFuncao(): Record<string, TotaisFuncao> {
+  const out: Record<string, TotaisFuncao> = {}
+  for (const l of linhas) {
+    const f = (out[l.funcao || '--'] ??= { emp25: 0, ini26: 0, atu26: 0, emp26: 0, ploa27: 0 })
+    f.emp25 += l.y2025?.empenhado ?? 0
+    f.ini26 += l.y2026?.inicial ?? 0
+    f.atu26 += l.y2026?.atualizada ?? 0
+    f.emp26 += l.y2026?.empenhado ?? 0
+    f.ploa27 += l.ploa2027 ?? 0
+  }
+  return out
+}
