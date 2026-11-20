@@ -25,12 +25,12 @@ from pathlib import Path
 
 RAIZ = Path(__file__).resolve().parent.parent
 SAIDA = RAIZ / "data" / "petroleo-mercado.json"
-PRIMEIRO = "2024-01"
+PRIMEIRO = "2019-01"
 UA = {"User-Agent": "Mozilla/5.0 (tesouro-portal-petroleo-mercado/1.0)"}
 BBL_POR_M3 = 6.28981
 MESES = ["JAN", "FEV", "MAR", "ABR", "MAI", "JUN", "JUL", "AGO", "SET", "OUT", "NOV", "DEZ"]
 URL_BRENT = "http://www.ipeadata.gov.br/api/odata4/ValoresSerie(SERCODIGO='EIA366_PBRENT366')"
-URL_PTAX = "https://api.bcb.gov.br/dados/serie/bcdata.sgs.1/dados?formato=json&dataInicial=01/01/2024&dataFinal={fim}"
+URL_PTAX = "https://api.bcb.gov.br/dados/serie/bcdata.sgs.1/dados?formato=json&dataInicial=01/01/2019&dataFinal={fim}"
 URL_ANP = "https://www.gov.br/anp/pt-br/centrais-de-conteudo/dados-abertos/arquivos/ppgn-el/producao-petroleo-m3.csv"
 
 

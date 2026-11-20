@@ -1,12 +1,13 @@
 'use client'
 
-import { useMemo } from 'react'
+import { useMemo, useState } from 'react'
 import { bilhoes, milhoes, numero } from '@/lib/formato'
 import type { LinhaMacro } from '@/lib/macro'
 import { Cartao, TabelaItens } from './Graficos'
 import { Nota, NOTA_DISCRETA } from './Estrutura'
 import { fmtPct } from './GraficosMacro'
 import cafRaw from '@/data/icms-caf.json'
+import sensRaw from '@/data/petroleo-sensibilidade.json'
 import { analisaFontes, implicitoPetroleo, mesesCorte, projecaoItens, type AnaliseFonte, type DadosReceita } from './projecao'
 
 export type PetroleoSefaz = {
@@ -190,6 +191,105 @@ function IcmsPorSegmento() {
   )
 }
 
+/* Sensibilidade da receita do petróleo à cotação: relações estimadas em scripts/analisar_petroleo.py sobre a história mensal. */
+type Sens = {
+  royalties: { defasagem_meses: number; k: number; n: number; amostra: { n: number; de: string; ate: string }; por_defasagem: { defasagem: number; r2: number; elast_preco: number; elast_producao: number }[]; fora_da_amostra: { previsto: number; realizado: number } }
+  participacao_especial: { a: number; elasticidade: number; erro_padrao_elasticidade: number; r2: number; n: number; elasticidade_ate_2025: number; fora_da_amostra: { mes: string; previsto: number; realizado: number }[] }
+  icms_petroleo: { a: number; elasticidade_preco: number; r2: number; n: number }
+  base_2025: { brent: number; cambio: number; producao: number; roy_exc: number; pe: number; icms_petroleo: number }
+  base_2026: { brent: number; cambio: number; producao: number }
+  fator_alinea_171252: number
+}
+const sens = sensRaw as unknown as Sens
+const NOMES_MES_CURTO = ['jan', 'fev', 'mar', 'abr', 'mai', 'jun', 'jul', 'ago', 'set', 'out', 'nov', 'dez']
+
+/** Receita anual de petróleo do Estado (R$) para uma cotação (US$/bbl), um câmbio (R$/US$) e uma produção (mil bbl/d) médios. */
+export function receitaPetroleo(brent: number, cambio: number, producao: number) {
+  const preco = brent * cambio
+  const pq = preco * producao
+  const royExc = sens.royalties.k * 12 * pq
+  const pe = 4 * Math.exp(sens.participacao_especial.a) * Math.pow(pq, sens.participacao_especial.elasticidade)
+  const icms = sens.base_2025.icms_petroleo * Math.pow(preco / (sens.base_2025.brent * sens.base_2025.cambio), sens.icms_petroleo.elasticidade_preco)
+  return { royExc, pe, transferencias: (royExc + pe) * sens.fator_alinea_171252, icms }
+}
+
+function SensibilidadePetroleo({ implicito }: { implicito: number }) {
+  const [cambio, setCambio] = useState(5.4)
+  const [producao, setProducao] = useState(Math.round(sens.base_2026.producao))
+  const [brent, setBrent] = useState(70)
+  const lin = (b: number, rotulo: string, destaque = false) => ({ chave: rotulo, rotulo, b, destaque, ...receitaPetroleo(b, cambio, producao) })
+  const grade = [60, 70, 80, 90, 100].map((b) => lin(b, `US$ ${b}`))
+  const escolhida = lin(brent, `US$ ${numero(brent, 0)} (escolhido)`, true)
+  const media26 = lin(sens.base_2026.brent, `US$ ${numero(sens.base_2026.brent, 0)} (média 2026)`)
+  let lo = 10, hi = 300
+  for (let i = 0; i < 60; i++) { const mid = (lo + hi) / 2; if (receitaPetroleo(mid, cambio, producao).transferencias < implicito) lo = mid; else hi = mid }
+  const equivalente = (lo + hi) / 2
+  const itens = [...grade.filter((g) => g.b !== brent), escolhida, media26].sort((x, y) => x.b - y.b)
+  const campo = 'w-24 rounded-brand border border-line bg-paper px-2 py-1 text-small tabular-nums'
+  return (
+    <Cartao titulo="Petróleo: receita do Estado por cotação média do Brent em 2027">
+      <div className="flex flex-wrap items-end gap-x-5 gap-y-2 text-small text-ink-soft">
+        <label className="flex flex-col gap-1">Brent (US$/barril)<input type="number" inputMode="decimal" min={20} max={200} step={5} value={brent} onChange={(e) => setBrent(Number(e.target.value) || 0)} className={campo} /></label>
+        <label className="flex flex-col gap-1">Câmbio (R$/US$)<input type="number" inputMode="decimal" min={3} max={8} step={0.1} value={cambio} onChange={(e) => setCambio(Number(e.target.value) || 0)} className={campo} /></label>
+        <label className="flex flex-col gap-1">Produção do ES (mil bbl/d)<input type="number" inputMode="decimal" min={100} max={500} step={10} value={producao} onChange={(e) => setProducao(Number(e.target.value) || 0)} className={campo} /></label>
+        <span className="flex gap-2 pb-1">
+          <button type="button" onClick={() => setProducao(Math.round(sens.base_2026.producao))} className="text-label underline underline-offset-4">média de 2026</button>
+          <button type="button" onClick={() => setProducao(224.5)} className="text-label underline underline-offset-4">base da LDO</button>
+        </span>
+      </div>
+      <div className="mt-3">
+        <TabelaItens altura="livre" compacta itens={[...itens, { chave: 'ploa', rotulo: `PLOA 2027 (implícito): US$ ${numero(equivalente, 0)}`, b: equivalente, destaque: false, royExc: NaN, pe: NaN, transferencias: implicito, icms: NaN }]} legenda="Receita de petróleo do Estado em 2027 por cotação do Brent, em R$ milhões" colunas={[
+          { rotulo: 'Brent', valor: (l) => <span className={l.destaque ? 'font-semibold' : ''}>{l.rotulo}</span> },
+          { rotulo: 'Royalties + excedente', secundaria: true, valor: (l) => (Number.isFinite(l.royExc) ? mi(l.royExc) : '–') },
+          { rotulo: 'Part. especial', secundaria: true, valor: (l) => (Number.isFinite(l.pe) ? mi(l.pe) : '–') },
+          { rotulo: 'Transferências', valor: (l) => <span className="font-semibold">{mi(l.transferencias)}</span> },
+          { rotulo: 'ICMS petróleo', valor: (l) => (Number.isFinite(l.icms) ? mi(l.icms) : '–') },
+        ]} />
+      </div>
+      <Nota titulo="Metodologia e fontes">
+        <p>
+          Transferências (alínea 171252): royalties + excedente (proporcionais a preço em reais × produção, defasagem de {sens.royalties.defasagem_meses} meses) e participação especial (elasticidade {numero(sens.participacao_especial.elasticidade, 1)} à média trimestral de preço × produção), vezes {numero(sens.fator_alinea_171252, 3)} (multas, juros e FEP, que completam a alínea 171252). ICMS da indústria do petróleo (CAF): elasticidade {numero(sens.icms_petroleo.elasticidade_preco, 2)} ao preço em reais (R² {numero(sens.icms_petroleo.r2, 2)}), a partir da arrecadação de 2025 (R$ {mi(sens.base_2025.icms_petroleo)} mi). O ICMS não entra no total das transferências. Valores anuais, brutos de deduções.
+        </p>
+        <p>
+          PLOA 2027 (implícito): petróleo deduzido das transferências da União da PLOA (aba Fontes e grupos), comparado com as transferências do modelo no câmbio e na produção informados. Brent de 2026: média até {NOMES_MES_CURTO[10]}; produção de 2026: média até setembro (ANP).
+        </p>
+      </Nota>
+    </Cartao>
+  )
+}
+
+function RelacoesPetroleo() {
+  const r = sens.royalties, pe = sens.participacao_especial, ic = sens.icms_petroleo
+  const melhor = r.por_defasagem.find((l) => l.defasagem === r.defasagem_meses)!
+  const itens = [
+    { chave: 'roy', rotulo: 'Royalties + excedente', espec: `preço em reais e produção, defasagem de ${r.defasagem_meses} meses`, ep: numero(melhor.elast_preco, 2), eq: numero(melhor.elast_producao, 2), r2: numero(melhor.r2, 2), n: `${r.amostra.n} meses`, oos: `jan–jul/2026: previsto ${mi(r.fora_da_amostra.previsto)}, realizado ${mi(r.fora_da_amostra.realizado)}` },
+    { chave: 'pe', rotulo: 'Participação especial', espec: 'preço × produção, média dos 3 meses que terminam 2 meses antes do pagamento', ep: numero(pe.elasticidade, 2), eq: '–', r2: numero(pe.r2, 2), n: `${pe.n} pagamentos`, oos: `calibrada até 2025 (elasticidade ${numero(pe.elasticidade_ate_2025, 1)}), prevê ${mi(pe.fora_da_amostra[pe.fora_da_amostra.length - 1].previsto)} para ${pe.fora_da_amostra[pe.fora_da_amostra.length - 1].mes.slice(5, 7)}/${pe.fora_da_amostra[pe.fora_da_amostra.length - 1].mes.slice(0, 4)}; realizado estimado ${mi(pe.fora_da_amostra[pe.fora_da_amostra.length - 1].realizado)}` },
+    { chave: 'icms', rotulo: 'ICMS da indústria do petróleo', espec: 'preço em reais, defasagem de 1 mês', ep: numero(ic.elasticidade_preco, 2), eq: '–', r2: numero(ic.r2, 2), n: `${ic.n} meses`, oos: '–' },
+  ]
+  return (
+    <Cartao titulo="Relações estimadas entre receita e cotação (2019–2026)">
+      <TabelaItens altura="livre" itens={itens} legenda="Relações estimadas entre a receita de petróleo e a cotação" colunas={[
+        { rotulo: 'Receita', valor: (l) => <span className="font-medium">{l.rotulo}</span> },
+        { rotulo: 'Elast. preço', valor: (l) => l.ep },
+        { rotulo: 'Elast. produção', secundaria: true, valor: (l) => l.eq },
+        { rotulo: 'R²', valor: (l) => l.r2 },
+        { rotulo: 'Amostra', secundaria: true, valor: (l) => l.n },
+      ]} />
+      <Nota titulo="Especificação e validação">
+        <p>
+          Royalties + excedente: {itens[0].espec}; regressão log-log livre sobre a receita mensal (RREO até 2025, demonstrativo da SEFAZ em 2026); elasticidades próximas de 1 indicam receita proporcional a preço × volume; defasagem de 2 meses escolhida pelo R² ({r.por_defasagem.map((l) => `${l.defasagem}: ${numero(l.r2, 2)}`).join('; ')}). Para a projeção, a elasticidade é fixada em 1 e só se estima o fator k (estável entre 2019 e 2026). Fora da amostra: ajustado até 2025, o modelo prevê R$ {mi(r.fora_da_amostra.previsto)} mi para jan–jul/2026, contra R$ {mi(r.fora_da_amostra.realizado)} mi realizados.
+        </p>
+        <p>
+          Participação especial: {itens[1].espec}. {itens[1].oos}. O pagamento de agosto de 2026 é derivado do Portal (alínea 171252 menos royalties + excedente estimados). Relação convexa e instável: a elasticidade cai quando se incluem os pagamentos de 2026, e a incerteza é maior do que nas demais.
+        </p>
+        <p>
+          ICMS da indústria do petróleo: {itens[2].espec}; arrecadação mensal por CAF (planilhas da SEFAZ, 2019–2024). A relação é fraca: parte do segmento não depende do preço do barril.
+        </p>
+      </Nota>
+    </Cartao>
+  )
+}
+
 /**
  * Os três maiores motores da receita bruta: ICMS, cota-parte do FPE e compensação pela produção de petróleo.
  * Mostra o ritmo mês a mês contra o mesmo mês do ano anterior (para ver aceleração ou desaceleração), o fechamento de 2026 por fonte
@@ -290,6 +390,10 @@ export function PrincipaisFontes({ dados, receita, ipca, pib, petroleo, mercado 
       {petroleo && <PetroleoPorNatureza dados={petroleo} />}
 
       {mercado && <PetroleoMercadoCartao m={mercado} />}
+
+      <SensibilidadePetroleo implicito={impl.implicito} />
+
+      <RelacoesPetroleo />
 
       <Cartao titulo="Petróleo: premissas da LDO 2027">
         <Nota titulo="Notas"><p>Cenário base da LDO para 2027: Brent a US$ 60, câmbio de R$ 5,40 e 224,5 mil barris por dia, o que dá R$ 1,24 bi, cerca de 60% abaixo do ritmo de 2026 ({bilhoes(impl.petroleo26)}).</p>

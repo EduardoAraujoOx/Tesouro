@@ -19,6 +19,8 @@ import sys
 import tempfile
 import unicodedata
 import urllib.request
+import zipfile
+from io import BytesIO
 from datetime import datetime, timezone
 from pathlib import Path
 
@@ -31,6 +33,15 @@ EDICOES = [
     ("anual", BASE + "Receita%20em%20foco%20%284%29.pdf?v=1772538587000"),
     ("1T", BASE + "ReceitaemFoco/receita-em-foco-3-2026.pdf?v=1783529880000"),
 ]
+# planilhas mensais por CAF (arrecadação de ICMS por mês e segmento), de 2019 a 2024
+PLANILHAS = {
+    2019: "ReceitaemFoco/2019_Arrecada%C3%A7%C3%A3o%20por%20CAF.xlsx",
+    2020: "ReceitaemFoco/2020_Arrecada%C3%A7%C3%A3o%20por%20CAF.xlsx",
+    2021: "ReceitaemFoco/2021_Arrecada%C3%A7%C3%A3o%20por%20CAF.xlsx",
+    2022: "ReceitaemFoco/2022_Arrecada%C3%A7%C3%A3o%20por%20CAF.xlsx",
+    2023: "ReceitaemFoco/2023_Arrecada%C3%A7%C3%A3o%20por%20CAF.xlsx",
+    2024: "ReceitaemFoco/Arrecada%C3%A7%C3%A3o%20por%20CAF%20-%202024.xlsx",
+}
 NUM = r"-?\d{1,3}(?:\.\d{3})*(?:,\d+)?"
 LINHA = re.compile(rf"^\s*([A-Za-zÀ-ÿ][A-Za-zÀ-ÿ .()/-]*?)\s{{2,}}({NUM})\s+({NUM})\s+({NUM})\s+")
 
@@ -39,6 +50,35 @@ def normaliza(nome):
     s = unicodedata.normalize("NFKD", nome).encode("ascii", "ignore").decode().lower().strip()
     s = re.sub(r"\s+", " ", s)
     return s.replace("substituicao", "substituicao")
+
+
+def desescapa(txt):
+    """Os textos das planilhas trazem caracteres escapados como _x0032_ (o "2")."""
+    return re.sub(r"_x([0-9A-Fa-f]{4})_", lambda m: chr(int(m.group(1), 16)), txt)
+
+
+def planilha_mensal(conteudo):
+    """Lê a primeira planilha (DATA, COD_CAF, DSC_CAF, RECEITA) só com a biblioteca padrão: {mês: {segmento: reais}}."""
+    z = zipfile.ZipFile(BytesIO(conteudo))
+    textos = [desescapa(re.sub(r"<[^>]+>", "", si)) for si in re.findall(r"<si>(.*?)</si>", z.read("xl/sharedStrings.xml").decode("utf-8"), re.S)]
+    folha = z.read("xl/worksheets/sheet1.xml").decode("utf-8")
+    saida = {}
+    for linha in re.findall(r"<row[^>]*>(.*?)</row>", folha, re.S)[1:]:
+        cel = {}
+        for ref, attrs, corpo in re.findall(r'<c r="([A-Z]+)\d+"([^>]*)>(.*?)</c>', linha, re.S):
+            v = re.search(r"<v>(.*?)</v>", corpo)
+            if not v:
+                continue
+            cel[ref] = textos[int(v.group(1))] if 't="s"' in attrs else v.group(1)
+        if not {"A", "C", "D"} <= cel.keys():
+            continue
+        mes = cel["A"].replace("/", "-")
+        if not re.fullmatch(r"\d{4}-\d{2}", mes):
+            continue  # linha sem data (rótulo solto na planilha)
+        seg = normaliza(cel["C"])
+        saida.setdefault(mes, {})
+        saida[mes][seg] = saida[mes].get(seg, 0.0) + float(cel["D"])
+    return saida
 
 
 def numero(txt):
@@ -88,12 +128,17 @@ def main():
         destino = saida["anual"] if tipo == "anual" else saida["primeiro_trimestre"]
         for a, d in q.items():
             destino[str(a)] = d
+    mensal = {}
+    for ano, caminho in PLANILHAS.items():
+        print(f"planilha {ano}", file=sys.stderr)
+        mensal.update(planilha_mensal(baixar(BASE + caminho)))
+    saida["mensal"] = dict(sorted(mensal.items()))
     SAIDA.write_text(json.dumps({
-        "fonte": "SEFAZ-ES, Receita em Foco: ICMS por Código de Atividade Fiscal (CAF), em reais. Anual: 2023 a 2025; 1º trimestre: 2024 a 2026",
+        "fonte": "SEFAZ-ES, Receita em Foco: ICMS por Código de Atividade Fiscal (CAF), em reais. Anual: 2023 a 2025; 1º trimestre: 2024 a 2026; mensal (planilhas): 2019 a 2024",
         "pagina": "https://sefaz.es.gov.br/receita-em-foco",
         "coletado_em": datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
         **saida,
-    }, ensure_ascii=False, indent=1), encoding="utf-8")
+    }, ensure_ascii=False, separators=(",", ":")), encoding="utf-8")
     print(f"{SAIDA.relative_to(RAIZ)}", file=sys.stderr)
 
 
