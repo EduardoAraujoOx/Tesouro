@@ -70,9 +70,11 @@ export type ColunaAnual = {
   /** valor da barra, em R$ */
   v: number
   /** 'real' = realizado; 'estim' = estimativa ou projeção (barra clara tracejada); 'ploa' = proposta de 2027 (azul-marinho) */
-  tipo: 'real' | 'estim' | 'ploa'
+  tipo: 'real' | 'estim' | 'ploa' | 'ref'
   /** faixa de incerteza da projeção (R$) */
   faixa?: [number, number]
+  /** índice da coluna com que a variação mostrada embaixo é calculada (padrão: a coluna anterior) */
+  contra?: number
   /** traço de referência (R$) com o seu nome */
   marca?: { v: number; rotulo: string }
 }
@@ -87,7 +89,7 @@ export function ColunasAnuais({ colunas, descricao }: { colunas: ColunaAnual[]; 
     <div role="img" aria-label={descricao}>
       <div className="flex gap-1.5 sm:gap-4">
         {colunas.map((c, k) => {
-          const ant = k > 0 ? colunas[k - 1].v : null
+          const ant = c.contra !== undefined ? colunas[c.contra].v : k > 0 ? colunas[k - 1].v : null
           const d = ant ? (c.v / ant - 1) * 100 : null
           return (
             <div key={c.rotulo} className="flex min-w-0 flex-1 flex-col items-center">
@@ -95,7 +97,7 @@ export function ColunasAnuais({ colunas, descricao }: { colunas: ColunaAnual[]; 
                 <div className="absolute inset-x-0 bottom-0 mx-auto w-full max-w-[4.5rem]" style={{ height: h(c.v) }}>
                   <span className="absolute inset-x-0 -top-5 text-center text-small font-semibold tabular-nums text-ink">{bi(c.v)}</span>
                   <span className="block h-full w-full" style={{
-                    background: c.tipo === 'ploa' ? COR.ploa : c.tipo === 'real' ? COR.empenhado : COR.atualizada,
+                    background: c.tipo === 'ploa' ? COR.ploa : c.tipo === 'ref' ? COR.referencia : c.tipo === 'real' ? COR.empenhado : COR.atualizada,
                     outline: c.tipo === 'estim' ? `1.5px dashed ${COR.contornoAtualizada}` : undefined, outlineOffset: -1.5,
                     borderRadius: '4px 4px 0 0',
                   }} />

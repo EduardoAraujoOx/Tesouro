@@ -185,11 +185,11 @@ export function Painel({ linhas, nomes, coleta, outrosPoderes, macro, receitaMes
   return (
     <div className="painel mx-auto max-w-[1600px] px-4 pb-8 sm:px-5 md:px-8">
       {/* barra no topo da página, fixa ao rolar: identidade, seções (abas no computador, menu no celular) e exportação */}
-      <div className="print:hidden sticky top-0 z-30 -mx-4 border-b border-line bg-paper px-4 sm:-mx-5 sm:px-5 md:-mx-8 md:px-8">
+      <div className="print:hidden sticky top-0 z-30 -mx-4 border-b border-navy-deep bg-navy px-4 text-on-navy sm:-mx-5 sm:px-5 md:-mx-8 md:px-8 [&_:focus-visible]:outline-[rgb(var(--on-navy))]">
         <div className="flex items-center gap-2 lg:gap-6">
           <div className="hidden shrink-0 py-1.5 lg:block">
-            <span className="block text-body font-semibold leading-tight text-navy">{IDENTIDADE.nome}</span>
-            <span className="block text-label normal-case leading-tight tracking-normal text-ink-soft">{IDENTIDADE.apoio}</span>
+            <span className="block text-body font-semibold leading-tight text-on-navy">{IDENTIDADE.nome}</span>
+            <span className="block text-label normal-case leading-tight tracking-normal text-on-navy/75">{IDENTIDADE.apoio}</span>
           </div>
           <div role="tablist" aria-label="Seções do painel" className="hidden md:flex">
             {ABAS.map((a) => (
@@ -200,14 +200,14 @@ export function Painel({ linhas, nomes, coleta, outrosPoderes, macro, receitaMes
                   if (e.key === 'ArrowRight') { e.preventDefault(); escolheAba(ABAS[(i + 1) % ABAS.length].id) }
                   if (e.key === 'ArrowLeft') { e.preventDefault(); escolheAba(ABAS[(i + ABAS.length - 1) % ABAS.length].id) }
                 }}
-                className={`-mb-px whitespace-nowrap border-b-[3px] px-4 py-2.5 text-small font-semibold lg:px-5 ${aba === a.id ? 'border-navy text-navy' : 'border-transparent text-ink-soft hover:text-ink'}`}>
+                className={`-mb-px whitespace-nowrap border-b-[3px] px-4 py-2.5 text-small font-semibold lg:px-5 ${aba === a.id ? 'border-on-navy text-on-navy' : 'border-transparent text-on-navy/70 hover:text-on-navy'}`}>
                 {a.rotulo}
               </button>
             ))}
           </div>
           <div className="relative md:hidden">
             <button type="button" aria-expanded={menuAberto} aria-controls="menu-secoes" onClick={() => setMenuAberto((v) => !v)}
-              className="-ml-2 inline-flex items-center gap-2 px-2 py-2.5 text-body font-semibold text-navy">
+              className="-ml-2 inline-flex items-center gap-2 px-2 py-2.5 text-body font-semibold text-on-navy">
               <svg aria-hidden="true" viewBox="0 0 20 20" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"><path d="M3 5h14M3 10h14M3 15h14" /></svg>
               {abaAtual.rotulo}
               <svg aria-hidden="true" viewBox="0 0 20 20" className={`h-3.5 w-3.5 transition-transform ${menuAberto ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="m5 8 5 5 5-5" /></svg>
@@ -225,9 +225,9 @@ export function Painel({ linhas, nomes, coleta, outrosPoderes, macro, receitaMes
               </ul>
             )}
           </div>
-          <span className="ml-auto text-label font-semibold normal-case tracking-normal text-navy lg:hidden"><span className="md:hidden">{IDENTIDADE.nome}</span></span>
-          <ControlesAcessibilidade claro compacto className="ml-auto hidden xl:flex" />
-          <button type="button" onClick={() => window.print()} title="Abre a impressão: escolha “Salvar como PDF”" className="inline-flex items-center gap-1.5 rounded-brand px-2.5 py-1.5 text-small font-semibold text-ink-soft hover:bg-surface hover:text-ink md:ml-auto xl:ml-0">
+          <span className="ml-auto text-label font-semibold normal-case tracking-normal text-on-navy lg:hidden"><span className="md:hidden">{IDENTIDADE.nome}</span></span>
+          <ControlesAcessibilidade compacto className="ml-auto hidden xl:flex" />
+          <button type="button" onClick={() => window.print()} title="Abre a impressão: escolha “Salvar como PDF”" className="inline-flex items-center gap-1.5 rounded-brand px-2.5 py-1.5 text-small font-semibold text-on-navy/85 hover:bg-white/10 hover:text-on-navy md:ml-auto xl:ml-0">
             <svg aria-hidden="true" viewBox="0 0 20 20" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"><path d="M10 3v9m0 0-3.5-3.5M10 12l3.5-3.5M4 14v2h12v-2" /></svg>
             PDF<span className="sr-only"> (exportar esta seção)</span>
           </button>
@@ -246,7 +246,7 @@ export function Painel({ linhas, nomes, coleta, outrosPoderes, macro, receitaMes
 
       <div role="tabpanel" id={`painel-${aba}`} aria-labelledby={`aba-${aba}`} className="mt-4">
         {aba === 'visao' && <VisaoGeral receita={macro.receita} despesa={macro.despesa} ipca={macro.ipca} pib={macro.pib} fonteIpca={macro.fonteIpca} dados={receitaMes} irParaMetodo={() => { escolheAba('metodo'); window.scrollTo({ top: 0 }) }} />}
-        {aba === 'metodo' && <Metodo receita={macro.receita} dados={receitaMes} />}
+        {aba === 'metodo' && <Metodo receita={macro.receita} dados={receitaMes} pib27={(1 + (macro.ipca['2027'] ?? 0)) * (1 + (macro.pib['2027'] ?? 0)) - 1} />}
         {aba === 'receita' && (
           <Subvisoes rotulo="O que ver na receita" itens={[
             { id: 'fechamento', rotulo: 'Fechamento de 2026', conteudo: <ReceitaMensal dados={receitaMes} macro={macro.receita} parte="fechamento" /> },

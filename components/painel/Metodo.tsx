@@ -6,7 +6,7 @@ import type { LinhaMacro } from '@/lib/macro'
 import { Cartao, TabelaItens } from './Graficos'
 import { fmtPct } from './GraficosMacro'
 import { Nota, Subvisoes } from './Estrutura'
-import { ANOS_RITMO, conciliacao, NOMES_METODO, projetaReceita2026, retroteste, retrotesteDespesa, retrotesteFonte, retrotesteSefaz, type DadosReceita, type RetroDespesa, type RetroSefaz } from './projecao'
+import { ANOS_RITMO, conciliacao, NOMES_METODO, projetaReceita2026, retroteste, pibArrecadacao, projecaoItens, retrotesteDespesa, retrotesteFonte, retrotesteSefaz, type DadosReceita, type RetroDespesa, type RetroSefaz } from './projecao'
 
 const NOMES_MES = ['janeiro', 'fevereiro', 'março', 'abril', 'maio', 'junho', 'julho', 'agosto', 'setembro', 'outubro', 'novembro', 'dezembro']
 const mi = (x: number | null) => (x === null ? '–' : milhoes(x === 0 ? 0 : x, 0))
@@ -14,7 +14,7 @@ const dif = (a: number | null, b: number | null) => (a === null || b === null ? 
 const cod = (c: string) => <span className="block text-label normal-case tracking-normal tabular-nums text-ink-soft md:mr-1.5 md:inline-block md:min-w-[6.5rem] md:text-small md:normal-case">{c}</span>
 
 /** Seção de método e fontes: as fontes batem entre si, como a projeção é feita e quão boa ela é, e o que significam os números. */
-export function Metodo({ receita, dados }: { receita: LinhaMacro[]; dados: DadosReceita }) {
+export function Metodo({ receita, dados, pib27 }: { receita: LinhaMacro[]; dados: DadosReceita; /** crescimento nominal esperado do PIB em 2027 (inflação e PIB real do Focus) */ pib27: number }) {
   const quadro = useMemo(() => Object.fromEntries(receita.map((x) => [x.chave, x.valores])) as Record<string, number[]>, [receita])
   const linhas = useMemo(() => conciliacao(dados, quadro, 2025).map((l) => ({ ...l, chave: l.chave })), [dados, quadro])
   const totais = useMemo(() => ANOS_RITMO.map((a) => {
@@ -24,6 +24,15 @@ export function Metodo({ receita, dados }: { receita: LinhaMacro[]; dados: Dados
   const retro = useMemo(() => retroteste(), [])
   const retroDesp = useMemo(() => retrotesteDespesa(), [])
   const retroSefaz = useMemo(() => retrotesteSefaz(), [])
+  const pibA = useMemo(() => pibArrecadacao(), [])
+  const difMin = pibA.linhas.reduce((m, l) => (l.dif < m.dif ? l : m))
+  const difMax = pibA.linhas.reduce((m, l) => (l.dif > m.dif ? l : m))
+  const impostosPloa = quadro.impostos[5] / projecaoItens(dados).imp.central - 1
+  const impostosRegressao = Math.exp(pibA.intercepto + pibA.elasticidade * Math.log(1 + pib27)) - 1
+  const itensPib = [
+    ...pibA.linhas.map((l) => ({ chave: String(l.ano), rotulo: String(l.ano), pib: l.pib, imp: l.impostos, dif: l.dif, forte: false })),
+    { chave: 'media', rotulo: 'Média', pib: pibA.linhas.reduce((s, l) => s + l.pib, 0) / pibA.n, imp: pibA.linhas.reduce((s, l) => s + l.impostos, 0) / pibA.n, dif: pibA.difMedia, forte: true },
+  ]
   const proj = useMemo(() => projetaReceita2026(dados), [dados])
   const retroFontes = useMemo(() => [{ id: 'icms', rotulo: 'ICMS', r: retrotesteFonte(dados, 'icms') }, { id: 'fpe', rotulo: 'Cota-parte do FPE', r: retrotesteFonte(dados, 'fpe') }], [dados])
   const mes = NOMES_MES[proj.meses - 1]
@@ -121,6 +130,25 @@ export function Metodo({ receita, dados }: { receita: LinhaMacro[]; dados: Dados
             </div>
           </Cartao>
         </div>
+      ) },
+      { id: 'pib', rotulo: 'PIB e arrecadação', conteudo: (
+        <Cartao titulo="Arrecadação e PIB: a referência de 2027 é coerente com a história?">
+          <p className="max-w-3xl text-small text-ink-soft">
+            Desde {pibA.linhas[0].ano}, os impostos do ES cresceram em média {numero(pibA.difMedia, 1)} ponto(s) percentual(is) acima do PIB nominal do Brasil, mas com oscilação de {numero(pibA.difDesvio, 1)} pontos de um ano para o outro: o PIB explica {numero(pibA.r2 * 100, 0)}% da variação (R² {numero(pibA.r2, 2)}). A referência de 2027, que faz a receita crescer com o PIB nominal do Focus ({fmtPct(pib27 * 100)}), fica abaixo da média histórica, mas dentro da oscilação normal.
+          </p>
+          <div className="mt-3">
+            <TabelaItens altura="livre" itens={itensPib} legenda="Crescimento anual do PIB nominal e dos impostos do ES, em %" colunas={[
+              { rotulo: 'Ano', valor: (l) => <span className={l.forte ? 'font-semibold' : ''}>{l.rotulo}</span> },
+              { rotulo: 'PIB nominal', valor: (l) => fmtPct(l.pib) },
+              { rotulo: 'Impostos do ES', valor: (l) => fmtPct(l.imp) },
+              { rotulo: 'Diferença (p.p.)', valor: (l) => <span className={l.forte ? 'font-semibold' : ''}>{fmtPct(l.dif)}</span> },
+            ]} />
+          </div>
+          <Nota titulo="Como ler, o que entra no método e limites">
+            <p>A elasticidade estimada é {numero(pibA.elasticidade, 2)} (regressão dos log-crescimentos, {pibA.n} anos): em média, cada 1% de PIB nominal veio com {numero(pibA.elasticidade, 1)}% de impostos. Com o PIB nominal de {fmtPct(pib27 * 100)} em 2027, a regressão daria impostos {fmtPct(impostosRegressao * 100)}, contra {fmtPct(pib27 * 100)} na referência e {fmtPct(impostosPloa * 100)} na PLOA (sobre o fechamento projetado de 2026).</p>
+            <p>O PIB entra no método como faixa de plausibilidade, não como correção do número central: a diferença para o PIB oscila muito (de {fmtPct(difMin.dif)} em {difMin.ano} a {fmtPct(difMax.dif)} em {difMax.ano}, em pontos percentuais), o que pode refletir mudanças de alíquota, de preço de combustíveis e de petróleo ou de atividade que o PIB não captura; não separei essas causas. Por isso a faixa da referência na Visão geral usa o desvio de {numero(pibA.difDesvio, 1)} ponto(s) percentual(is) como medida de dispersão, e a PLOA dentro dela não é, por si só, sinal de erro. Fontes: PIB, Banco Central (SGS 1207); impostos, Siconfi (RREO, Anexo 01, 6º bimestre). São poucos anos e há quebras estruturais: a leitura é indicativa.</p>
+          </Nota>
+        </Cartao>
       ) },
       { id: 'metodos', rotulo: 'ICMS e FPE: métodos', conteudo: (
         <div className="space-y-3">

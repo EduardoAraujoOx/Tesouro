@@ -2,13 +2,15 @@
 
 import { useState, type ReactNode } from 'react'
 
-/* Cores por função (método de ênfase): 2027 em azul-marinho; 2026 em cinza, claro (autorizado) e escuro (empenhado).
+/* Cores por função (método de ênfase): tudo em tons do azul-marinho; PLOA 2027 em marinho pleno, a nossa referência em azul-celeste, 2026 em marinho claro (autorizado) e médio (empenhado).
    Variação: par divergente azul/rosa da logomarca (validado para daltonismo). Tudo por variáveis do tema, que trocam no alto contraste. */
 export const COR = {
   ploa: 'rgb(var(--navy))',
-  atualizada: 'rgb(var(--ink-soft) / 0.28)',
-  contornoAtualizada: 'rgb(var(--ink-soft) / 0.55)',
-  empenhado: 'rgb(var(--ink-soft) / 0.78)',
+  atualizada: 'rgb(var(--navy) / 0.16)',
+  contornoAtualizada: 'rgb(var(--navy) / 0.5)',
+  empenhado: 'rgb(var(--navy) / 0.58)',
+  /* nossa referência independente: o azul-celeste da logomarca, que se distingue do marinho da PLOA */
+  referencia: 'rgb(var(--serie3))',
   alta: 'rgb(var(--serie3))',
   baixa: 'rgb(var(--serie2))',
 }
