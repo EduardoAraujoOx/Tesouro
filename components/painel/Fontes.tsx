@@ -117,6 +117,34 @@ export function PrincipaisFontes({ dados, receita, ipca, pib }: { dados: DadosRe
           </p>
         </div>
       </Cartao>
+
+      <Cartao titulo="Petróleo: as premissas da própria LDO 2027">
+        <div className="max-w-3xl space-y-2 text-small text-ink-soft">
+          <p>
+            O Anexo de Riscos Fiscais da LDO 2027 (Lei nº 12.967/2026, p. 52, fonte Nupetro/Subser/Sefaz) traz o cenário base do Estado para as receitas de petróleo e gás em 2027: produção de 224,5 mil barris por dia, Brent a US$ 60 e câmbio de R$ 5,40, o que dá R$ 1.240,8 milhões (royalties R$ 693,8 mi, participação especial R$ 527,2 mi e Fundo do Petróleo R$ 19,8 mi). A dedução feita acima a partir da PLOA (cerca de {bilhoes(impl.implicito)}) é da mesma ordem de grandeza dessa base, o que sugere que a proposta usa o cenário de Brent a US$ 60 para 2027; a PLOA não detalha a linha, então isso continua sendo indício.
+          </p>
+          <p>
+            Compare com 2026: a compensação pela produção de petróleo (R$ {numero(impl.petroleo25 / 1e9, 2)} bi em 2025) caminha para cerca de {bilhoes(impl.petroleo26)} em 2026. O cenário de 2027 supõe, portanto, uma queda de cerca de 60% sobre o ritmo atual. Se a diferença vier de preço e câmbio, ela é um risco conhecido, e a LDO a reconhece no sentido contrário (frustração de R$ 623,4 mi: Brent a US$ 54, câmbio a R$ 5,20 e produção de 162,3 mil barris). Para saber se a base de 2027 é prudente ou apenas baixa, falta comparar com o Brent, o câmbio e a produção realizados em 2026, que ainda não estão no painel.
+          </p>
+        </div>
+        <div className="mt-3">
+          <TabelaItens altura="livre" itens={[
+            { chave: 'base', rotulo: 'Cenário base 2027', prod: '224,5', brent: '60,0', cambio: '5,40', roy: 693.8, pe: 527.2, fundo: 19.8, total: 1240.8 },
+            { chave: 'frust', rotulo: 'Cenário de frustração (risco fiscal)', prod: '162,3', brent: '54,0', cambio: '5,20', roy: 433.9, pe: 166.1, fundo: 17.4, total: 617.4 },
+            { chave: 'red', rotulo: 'Redistribuição dos royalties (Lei 12.734/2012, ADI): perda', prod: '–', brent: '–', cambio: '–', roy: -154.8, pe: -263.6, fundo: -19.8, total: -438.1 },
+          ]} legenda="Premissas e valores de petróleo e gás na LDO 2027, em R$ milhões" colunas={[
+            { rotulo: 'R$ milhões', valor: (x) => <span className={x.chave === 'base' ? 'font-semibold' : ''}>{x.rotulo}</span> },
+            { rotulo: 'Produção (mil bbl/d)', valor: (x) => x.prod },
+            { rotulo: 'Brent (US$)', valor: (x) => x.brent },
+            { rotulo: 'Câmbio (R$/US$)', valor: (x) => x.cambio },
+            { rotulo: 'Royalties', valor: (x) => (x.roy < 0 ? `−${numero(-x.roy, 1)}` : numero(x.roy, 1)) },
+            { rotulo: 'Particip. especial', valor: (x) => (x.pe < 0 ? `−${numero(-x.pe, 1)}` : numero(x.pe, 1)) },
+            { rotulo: 'Fundo do Petróleo', valor: (x) => (x.fundo < 0 ? `−${numero(-x.fundo, 1)}` : numero(x.fundo, 1)) },
+            { rotulo: 'Total', valor: (x) => <span className="font-semibold">{x.total < 0 ? `−${numero(-x.total, 1)}` : numero(x.total, 1)}</span> },
+          ]} />
+          <p className="mt-2 text-label normal-case tracking-normal text-ink-soft">Valores transcritos da LDO 2027 (texto guardado em painel-es/fontes/ldo). A frustração de R$ 623,4 mi do quadro de riscos fiscais é a diferença entre o cenário base e o de frustração (1.240,8 − 617,4). Câmbio: Relatório Focus de 06/02/2026. Os valores de Brent seguem estudos de agências de energia, fundos e contratos futuros, segundo a LDO.</p>
+        </div>
+      </Cartao>
     </div>
   )
 }
