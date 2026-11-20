@@ -9,9 +9,10 @@ import { Faixa } from './Faixa'
 import { Receita } from './Macro'
 import { VisaoGeral } from './Agregado'
 import { Metodo } from './Metodo'
+import { projetaDespesa2026, razoesFechamento2026 } from './projecao'
 import { PoderesEmendas } from './PoderesEmendas'
 import { Furos } from './Furos'
-import { Subvisoes, NOTA_DISCRETA } from './Estrutura'
+import { Nota, Subvisoes, NOTA_DISCRETA } from './Estrutura'
 import { PrincipaisFontes, type PetroleoMercado, type PetroleoSefaz } from './Fontes'
 import { ControlesAcessibilidade } from '@/components/TopBar'
 import { CoberturaFontes, ReceitaMensal, type DadosReceita } from './ReceitaMensal'
@@ -42,7 +43,7 @@ type MacroProps = {
   receita: LinhaMacro[]; despesa: LinhaMacro[]; ipca: Record<string, number>; pib: Record<string, number>; fonteIpca: string
 }
 
-export function Painel({ linhas, nomes, coleta, outrosPoderes, macro, receitaMes, petroleo, mercado, funcoes }: { linhas: Linha[]; nomes: Nomes; coleta: string; outrosPoderes: string[]; macro: MacroProps; receitaMes: DadosReceita; petroleo?: PetroleoSefaz; mercado?: PetroleoMercado; funcoes: Record<string, { emp25: number; ini26: number; atu26: number; emp26: number; ploa27: number }> }) {
+export function Painel({ linhas, nomes, coleta, outrosPoderes, macro, receitaMes, petroleo, mercado, funcoes, contingencia }: { linhas: Linha[]; nomes: Nomes; coleta: string; outrosPoderes: string[]; macro: MacroProps; receitaMes: DadosReceita; petroleo?: PetroleoSefaz; mercado?: PetroleoMercado; funcoes: Record<string, { emp25: number; ini26: number; atu26: number; emp26: number; ploa27: number }>; contingencia: number }) {
   const [aba, setAba] = useState<Aba>('visao')
   useEffect(() => {
     const h = window.location.hash.slice(1)
@@ -125,6 +126,26 @@ export function Painel({ linhas, nomes, coleta, outrosPoderes, macro, receitaMes
     novas: acoes.filter((a) => !em2026(a.v) && a.v[PLOA] > 0).length,
     extintas: acoes.filter((a) => a.v[PLOA] === 0 && a.v[EMP] > 0).length,
   }), [acoes])
+
+  /* PLOA 2027 contra o fechamento projetado de 2026: cada linha leva o seu empenhado até a data vezes a razão de fechamento do seu grupo de natureza */
+  const fechamento = useMemo(() => {
+    const razao = razoesFechamento2026()
+    const m = new Map<string, { emp: number; proj: number; ploa: number }>()
+    for (const l of L) {
+      const k = uoAtiva ? `${l[1]}|${l[2]}` : l[0]
+      const a = m.get(k) ?? { emp: 0, proj: 0, ploa: 0 }
+      const e = l[5 + EMP] as number
+      a.emp += e; a.proj += e * (razao[l[3]] ?? 1); a.ploa += l[5 + PLOA] as number
+      m.set(k, a)
+    }
+    return [...m].map(([k, v]) => {
+      const [prog, ac] = k.split('|')
+      return { chave: k, rotulo: uoAtiva ? nomeAcao(ac) : nomeUo(k), sub: uoAtiva ? `ação ${ac} · programa ${prog}` : k, ...v, d: v.ploa - v.proj, pct: v.proj > 0 ? (v.ploa / v.proj - 1) * 100 : null }
+    }).filter((x) => x.proj > 0 || x.ploa > 0).sort((a, b) => a.d - b.d)
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [L, uoAtiva])
+  const fechamentoTotal = useMemo(() => fechamento.reduce((t, x) => ({ emp: t.emp + x.emp, proj: t.proj + x.proj, ploa: t.ploa + x.ploa }), { emp: 0, proj: 0, ploa: 0 }), [fechamento])
+  const dataCorte = useMemo(() => { const u = projetaDespesa2026().ultimoDia; return `${u.slice(8, 10)}/${u.slice(5, 7)}` }, [])
 
   /* tabela principal (unidades, com as ações ao abrir; com unidade escolhida, só as ações) */
   const colunas: { rotulo: string; valor: (v: Soma) => number }[] = [
@@ -241,7 +262,7 @@ export function Painel({ linhas, nomes, coleta, outrosPoderes, macro, receitaMes
       </div>
 
       <div role="tabpanel" id={`painel-${aba}`} aria-labelledby={`aba-${aba}`} className="mt-3">
-        {aba === 'visao' && <VisaoGeral funcoes={funcoes} receita={macro.receita} despesa={macro.despesa} ipca={macro.ipca} pib={macro.pib} fonteIpca={macro.fonteIpca} dados={receitaMes} irParaMetodo={() => { escolheAba('metodo'); window.scrollTo({ top: 0 }) }} />}
+        {aba === 'visao' && <VisaoGeral funcoes={funcoes} contingencia={contingencia} receita={macro.receita} despesa={macro.despesa} ipca={macro.ipca} pib={macro.pib} fonteIpca={macro.fonteIpca} dados={receitaMes} irParaMetodo={() => { escolheAba('metodo'); window.scrollTo({ top: 0 }) }} />}
         {aba === 'metodo' && <Metodo receita={macro.receita} dados={receitaMes} pib27={(1 + (macro.ipca['2027'] ?? 0)) * (1 + (macro.pib['2027'] ?? 0)) - 1} />}
         {aba === 'receita' && (
           <Subvisoes rotulo="O que ver na receita" itens={[
@@ -261,6 +282,24 @@ export function Painel({ linhas, nomes, coleta, outrosPoderes, macro, receitaMes
 
             <div className="mt-3">
               <Subvisoes rotulo="O que ver na despesa" itens={[
+                { id: 'fechamento', rotulo: 'PLOA 2027 e fechamento de 2026', conteudo: (
+              <Cartao titulo={uoAtiva ? 'Ações: PLOA 2027 contra o fechamento projetado de 2026' : 'Unidades orçamentárias: PLOA 2027 contra o fechamento projetado de 2026'}>
+                <Nota titulo="Metodologia">
+                  <p>Fechamento projetado de 2026 (Proj. 26): empenhado de cada linha até {dataCorte} vezes a razão entre o fechamento projetado do seu grupo de natureza e o empenhado do grupo até a mesma data (Método e fontes, Projeção de 2026). Pressupõe que cada unidade segue o ritmo do seu grupo até dezembro; unidades com obras ou despesas concentradas no fim do ano podem fugir disso. Ordenado pela diferença entre a PLOA e a Proj. 26, da maior insuficiência à maior folga; despesas de 2026 que não se repetem em 2027 (obras concluídas, por exemplo) também aparecem como insuficiência.</p>
+                </Nota>
+                <div className="mt-3">
+                  <TabelaItens compacta itens={[...fechamento, { chave: 'total', rotulo: `Total (${fechamento.length})`, sub: '', emp: fechamentoTotal.emp, proj: fechamentoTotal.proj, ploa: fechamentoTotal.ploa, d: fechamentoTotal.ploa - fechamentoTotal.proj, pct: fechamentoTotal.proj > 0 ? (fechamentoTotal.ploa / fechamentoTotal.proj - 1) * 100 : null }]}
+                    legenda={`PLOA 2027 contra o fechamento projetado de 2026, em R$ milhões, ordenado pela diferença`} colunas={[
+                    { rotulo: 'R$ milhões', valor: (x) => x.chave === 'total' ? <span className="font-semibold">{x.rotulo}</span> : <><span className="line-clamp-3 font-medium text-ink md:line-clamp-none">{x.rotulo}</span><span className="block text-label normal-case tracking-normal text-ink-soft">{x.sub}</span></> },
+                    { rotulo: `Emp. 26 (${dataCorte})`, secundaria: true, valor: (x) => mi(x.emp) },
+                    { rotulo: 'Proj. 26', valor: (x) => mi(x.proj) },
+                    { rotulo: 'PLOA 27', valor: (x) => <span className="font-semibold">{mi(x.ploa)}</span> },
+                    { rotulo: 'Dif. R$ mi', valor: (x) => <span className={x.d < 0 ? 'font-semibold text-ink' : ''}>{dMi(x.d)}</span> },
+                    { rotulo: 'Dif. %', secundaria: true, valor: (x) => dPct(x.pct) },
+                  ]} />
+                </div>
+              </Cartao>
+                ) },
                 { id: 'variacoes', rotulo: 'Maiores variações', conteudo: (
               <Cartao titulo={uoAtiva ? 'Ações: variação da PLOA 2027 sobre a dotação atualizada de 2026' : 'Unidades orçamentárias: variação da PLOA 2027 sobre a dotação atualizada de 2026'}>
                 <TabelaDelta itens={variacao} delta={(i) => i.v[PLOA] - i.v[ATU]} rotuloBarra={`${tituloNivel}|PLOA 2027 menos atualizada 2026`} primeira={nomeItem}
@@ -381,7 +420,7 @@ export function Painel({ linhas, nomes, coleta, outrosPoderes, macro, receitaMes
       </div>
 
       <p className={`mt-4 ${NOTA_DISCRETA} print:mt-2`}>
-        {aba === 'despesa' || aba === 'fontes' || aba === 'atencao' ? <>Fonte: Portal de Dados Abertos do ES (2025 e 2026, coleta em {coleta}); PLOA 2027: Mensagem nº 189/2026, proposta e não a LOA. Δ = PLOA 2027 menos atualizada 2026.<br /></> : null}
+        {aba === 'despesa' || aba === 'fontes' || aba === 'atencao' ? <>Fonte: Portal de Dados Abertos do ES (2025 e 2026, coleta em {coleta}); PLOA 2027: Mensagem nº 189/2026, proposta e não a LOA. Δ nas demais vistas = PLOA 2027 menos atualizada 2026.<br /></> : null}
         <span className="print:hidden">{IDENTIDADE.aviso}</span>
       </p>
     </div>

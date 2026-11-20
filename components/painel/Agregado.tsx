@@ -34,8 +34,8 @@ const DIF_MIN = 3
 const MESES_NOME = ['janeiro', 'fevereiro', 'março', 'abril', 'maio', 'junho', 'julho', 'agosto', 'setembro', 'outubro', 'novembro', 'dezembro']
 const corDif = (d: number) => (Math.abs(d) < DIF_MIN ? '' : d > 0 ? 'text-serie3' : 'text-serie2')
 
-export function VisaoGeral({ funcoes, receita, despesa, ipca: ipcaParams, pib, fonteIpca, dados, irParaMetodo }: {
-  funcoes: Record<string, { emp25: number; ini26: number; atu26: number; emp26: number; ploa27: number }>; receita: LinhaMacro[]; despesa: LinhaMacro[]; ipca: Record<string, number>; pib: Record<string, number>; fonteIpca: string; dados: DadosReceita; irParaMetodo: () => void
+export function VisaoGeral({ funcoes, contingencia, receita, despesa, ipca: ipcaParams, pib, fonteIpca, dados, irParaMetodo }: {
+  funcoes: Record<string, { emp25: number; ini26: number; atu26: number; emp26: number; ploa27: number }>; contingencia: number; receita: LinhaMacro[]; despesa: LinhaMacro[]; ipca: Record<string, number>; pib: Record<string, number>; fonteIpca: string; dados: DadosReceita; irParaMetodo: () => void
 }) {
   const [vista, setVista] = useState<Vista>('receita')
   const [abertos, setAbertos] = useState<Set<string>>(new Set(['corr', 'capd']))
@@ -146,7 +146,7 @@ export function VisaoGeral({ funcoes, receita, despesa, ipca: ipcaParams, pib, f
     return { ...c, v: c.v * f, faixa: c.faixa && ([c.faixa[0] * f, c.faixa[1] * f] as [number, number]), marca: c.marca && { ...c.marca, v: c.marca.v * f }, compara: c.compara && { ...c.compara, v: c.compara.v * f } }
   })
   const proj26 = colunasBrutas[3].v
-  const nomeCorteDesp = MESES_NOME[projD.bimestre * 2 - 1]
+  const nomeCorteDesp = MESES_NOME[projD.mesCorte - 1]
   const nomeCorte = MESES_NOME[proj.meses - 1]
 
   /* ---------- faixa de números ---------- */
@@ -210,7 +210,7 @@ export function VisaoGeral({ funcoes, receita, despesa, ipca: ipcaParams, pib, f
   const pp = (x: number, c = 1) => `${x > 0 ? '+' : x < 0 ? '−' : ''}${numero(Math.abs(x), c)} p.p.`
   const limites = [
     { chave: 'pessoal', rotulo: 'Pessoal ÷ RCL', base: 'LRF art. 19: até 60% (prudencial 57%)', v25: pc(pessoalRcl[2]), v27: pc(pessoalRcl[4]), folga: pp(60 - pessoalRcl[4]) },
-    { chave: 'conting', rotulo: 'Contingência ÷ RCL', base: 'LDO art. 9º: mínimo de 2%', v25: '–', v27: pc(D.reserva_contingencia[5] / RCL_LDO * 100, 2), folga: `${dMi(D.reserva_contingencia[5] - 0.02 * RCL_LDO)} mi` },
+    { chave: 'conting', rotulo: 'Contingência ÷ RCL', base: 'LDO art. 9º: mínimo de 2%', v25: '–', v27: pc(contingencia / RCL_LDO * 100, 2), folga: `${dMi(contingencia - 0.02 * RCL_LDO)} mi` },
     { chave: 'ouro', rotulo: 'Crédito ÷ capital líquido', base: 'CF art. 167, III: até 100%', v25: pc((R.operacoes_credito[2] / (D.despesas_capital[2] - D.amortizacao[2])) * 100), v27: pc((R.operacoes_credito[5] / (D.despesas_capital[5] - D.amortizacao[5])) * 100), folga: `${mi(D.despesas_capital[5] - D.amortizacao[5] - R.operacoes_credito[5])} mi` },
     { chave: 'ensino', rotulo: 'Ensino (MDE)', base: 'CF art. 212: mínimo de 25%', v25: pc(m25.ensino, 2), v27: '–', folga: pp(m25.ensino - 25, 2) },
     { chave: 'saude', rotulo: 'Saúde (ASPS)', base: 'LC 141 art. 6º: mínimo de 12%', v25: pc(m25.saude, 2), v27: '–', folga: pp(m25.saude - 12, 2) },
@@ -232,7 +232,7 @@ export function VisaoGeral({ funcoes, receita, despesa, ipca: ipcaParams, pib, f
   const notaReferencia = (
     <Nota titulo="Metodologia">
       <p>
-        Proj. 26: acumulado até {nomeCorte} (receita) ou {nomeCorteDesp} (despesa empenhada) dividido pela participação média do período no ano em 2022–2025; faixa pelas participações extremas. Proj. 27: Proj. 26 corrigida pela variação nominal do PIB na receita (IPCA e PIB real, Focus: +{numero(g27 * 100, 1)}%) e pelo IPCA na despesa (+{numero(i27 * 100, 1)}%); operações de crédito e demais receitas de capital mantidas no nível de 2026; reservas excluídas da despesa. Petróleo: receita das transferências modelada pela cotação (Brent: média de 2027 da previsão da EIA de {EDICAO_EIA}, US$ {numero(BRENT_CENTRAL, 0)}; câmbio: mediana do Focus, R$ {numero(CAMBIO_CENTRAL, 2)}; produção: média de 2026). Não incorpora hipóteses sobre alíquotas, crédito a contratar ou ampliação real da despesa.
+        Proj. 26: acumulado até {nomeCorte} (receita) ou {nomeCorteDesp} (despesa) dividido pela fração média do ano já realizada na mesma data em 2022–2025; faixa pelas frações extremas. Proj. 27: Proj. 26 corrigida pela variação nominal do PIB na receita (IPCA e PIB real, Focus: +{numero(g27 * 100, 1)}%) e pelo IPCA na despesa (+{numero(i27 * 100, 1)}%); operações de crédito e demais receitas de capital mantidas no nível de 2026; reservas excluídas da despesa. Petróleo: receita das transferências modelada pela cotação (Brent: média de 2027 da previsão da EIA de {EDICAO_EIA}, US$ {numero(BRENT_CENTRAL, 0)}; câmbio: mediana do Focus, R$ {numero(CAMBIO_CENTRAL, 2)}; produção: média de 2026). Não incorpora hipóteses sobre alíquotas, crédito a contratar ou ampliação real da despesa.
       </p>
       <p>
         Faixa de Proj. 27: na receita, ± o desvio da diferença entre o crescimento dos impostos do ES e o do PIB nominal desde {pibA.linhas[0].ano} ({numero(pibA.difDesvio, 1)} p.p.); na despesa, as participações sazonais extremas. Dif.: PLOA menos Proj. 27; azul acima, rosa abaixo (≥ {DIF_MIN}%). IPCA: {fonteIpca}{' '}
@@ -303,7 +303,7 @@ export function VisaoGeral({ funcoes, receita, despesa, ipca: ipcaParams, pib, f
               { rotulo: 'PLOA 2027', valor: (l) => l.v27 },
               { rotulo: 'Folga', valor: (l) => <span className="font-semibold">{l.folga}</span> },
             ]} />
-            <p className={`mt-2 ${NOTA_DISCRETA}`}>Pessoal sobre a RCL aproximada do quadro da PLOA, sem as exclusões da LRF. Contingência contra 2% da RCL de julho de 2025 a junho de 2026 (R$ {numero(RCL_LDO / 1e9, 1)} bi). Crédito contra despesas de capital líquidas de amortizações. Ensino e saúde: percentual apurado no RREO de 2025, sobre a receita de impostos líquida de transferências constitucionais; a folga é a de 2025, pois o valor aplicado em 2027 só se conhece na execução.</p>
+            <p className={`mt-2 ${NOTA_DISCRETA}`}>Pessoal sobre a RCL aproximada do quadro da PLOA, sem as exclusões da LRF. Contingência: ação 9999 (sem as reservas do RPPS e do Fundo Soberano) contra 2% da RCL de julho de 2025 a junho de 2026 (R$ {numero(RCL_LDO / 1e9, 1)} bi). Crédito contra despesas de capital líquidas de amortizações. Ensino e saúde: percentual apurado no RREO de 2025, sobre a receita de impostos líquida de transferências constitucionais; a folga é a de 2025, pois o valor aplicado em 2027 só se conhece na execução.</p>
           </Cartao>
           <Cartao titulo="Funções com mínimo constitucional: dotação de 2026 e PLOA 2027">
             <TabelaItens altura="livre" compacta itens={funcoesMinimo} legenda="Despesa nas funções Educação e Saúde e receita de impostos, 2026 e PLOA 2027, em R$ milhões" colunas={[

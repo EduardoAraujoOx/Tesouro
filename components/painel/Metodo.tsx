@@ -6,7 +6,7 @@ import type { LinhaMacro } from '@/lib/macro'
 import { Cartao, TabelaItens } from './Graficos'
 import { fmtPct } from './GraficosMacro'
 import { Nota, Subvisoes, NOTA_DISCRETA } from './Estrutura'
-import { ANOS_RITMO, conciliacao, NOMES_METODO, projetaReceita2026, retroteste, pibArrecadacao, projecaoItens, retrotesteDespesa, retrotesteFonte, retrotesteSefaz, type DadosReceita, type RetroDespesa, type RetroSefaz } from './projecao'
+import { ANOS_RITMO, conciliacao, NOMES_METODO, projetaReceita2026, retroteste, pibArrecadacao, projecaoItens, projetaDespesa2026, retrotesteDespesa, retrotesteFonte, retrotesteSefaz, type DadosReceita, type RetroDespesa, type RetroSefaz } from './projecao'
 
 const NOMES_MES = ['janeiro', 'fevereiro', 'março', 'abril', 'maio', 'junho', 'julho', 'agosto', 'setembro', 'outubro', 'novembro', 'dezembro']
 const mi = (x: number | null) => (x === null ? '–' : milhoes(x === 0 ? 0 : x, 0))
@@ -23,6 +23,7 @@ export function Metodo({ receita, dados, pib27 }: { receita: LinhaMacro[]; dados
   }), [dados, quadro])
   const retro = useMemo(() => retroteste(), [])
   const retroDesp = useMemo(() => retrotesteDespesa(), [])
+  const nomeMesDesp = ['janeiro', 'fevereiro', 'março', 'abril', 'maio', 'junho', 'julho', 'agosto', 'setembro', 'outubro', 'novembro', 'dezembro'][projetaDespesa2026().mesCorte - 1]
   const retroSefaz = useMemo(() => retrotesteSefaz(), [])
   const pibA = useMemo(() => pibArrecadacao(), [])
   const difMin = pibA.linhas.reduce((m, l) => (l.dif < m.dif ? l : m))
@@ -114,14 +115,14 @@ export function Metodo({ receita, dados, pib27 }: { receita: LinhaMacro[]; dados
 
       <Cartao titulo="Projeção de fechamento de 2026: despesa empenhada">
             <p className="max-w-3xl text-small text-ink-soft">
-                Despesa empenhada por grupo de natureza até agosto (4º bimestre do RREO, Anexo 01) ÷ participação média do período no ano em 2022–2025. O RREO exclui a despesa intraorçamentária; para a base dos quadros da PLOA, cada grupo é multiplicado pela razão entre o valor de 2025 no quadro da PLOA e no RREO. Reservas não são executadas (zero).
+                Lançamentos diários do Portal de Dados Abertos, na mesma base dos quadros da PLOA (inclui a despesa intraorçamentária), por grupo de natureza. Para cada grupo, mede-se a execução acumulada até o último mês fechado ({nomeMesDesp}) e divide-se pela fração do ano que a mesma data representou em 2022–2025. Folha, juros e amortização, que seguem calendário de pagamento, usam a despesa liquidada (convertida em empenhada pela razão média entre as duas no fim do ano); as demais usam a média das projeções por despesa empenhada e liquidada. A faixa vem das frações extremas. Reservas não são executadas (zero).
               </p>
               <Nota titulo="Metodologia e limites">
-              <p>O erro é maior onde a execução se concentra no fim do exercício, como nos investimentos (teste retroativo).</p>
+              <p>O erro é maior onde a execução se concentra no fim do exercício, como nos investimentos (teste retroativo). Ao projetar só pelo empenho até agosto, o erro médio da despesa total era de 5%; a liquidação reduz o erro da folha de 7% para menos de 1%, porque o empenho de pessoal varia de ano a ano e a liquidação segue a folha.</p>
               </Nota>
             <div className="mt-3">
               <TabelaItens altura="livre" itens={retroDesp.map((g) => ({ ...g, chave: g.id }))} legenda="Teste retroativo da projeção da despesa, erro de cada ano em %" colunas={[
-                { rotulo: 'Erro da projeção feita em agosto', valor: (g) => <span className={g.id === 'total' ? 'font-semibold' : ''}>{g.rotulo}</span> },
+                { rotulo: `Erro da projeção feita em ${nomeMesDesp}`, valor: (g) => <span className={g.id === 'total' ? 'font-semibold' : ''}>{g.rotulo}</span> },
                 ...[2022, 2023, 2024, 2025].map((a) => ({ rotulo: String(a), valor: (g: RetroDespesa) => fmtPct(g.erros.find((e) => e.ano === a)?.erro ?? undefined) })),
                 { rotulo: 'Erro médio', valor: (g) => <span className="font-semibold">{g.erroMedio === null ? '–' : `${numero(g.erroMedio, 1)}%`}</span> },
               ]} />
