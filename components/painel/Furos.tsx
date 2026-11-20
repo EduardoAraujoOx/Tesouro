@@ -17,7 +17,7 @@ const LIMIAR = 20e6
 type Acao = { chave: string; uo: string; acao: string; nome: string; unidade: string; gnd: string; v: number[]; tipo: string }
 
 /**
- * "Furos" do orçamento: onde a proposta parece apertada demais (despesa abaixo do que já foi executado, receita acima do ritmo) e onde cresce.
+ * Consistência da PLOA: despesa abaixo do já executado, aumentos sobre o executado e receita contra a projeção.
  * O orçamento é equilibrado por construção: se a receita é realista no total, cada corte abaixo do ritmo coexiste com um aumento em outro lugar.
  * Aqui os dois lados são postos lado a lado para a leitura, sem concluir qual aumento é "menos necessário": isso é julgamento de quem decide.
  */
@@ -91,18 +91,15 @@ export function Furos({ linhas, nomes, dados, receita, ipca, pib }: { linhas: Li
 
   return (
     <div className="space-y-3">
-      <Cartao titulo="Possíveis furos: receita esticada, despesa apertada">
-        <Nota titulo="Como ler e regras usadas"><p>
-          Despesa recorrente R$ {numero(totalCortes / 1e9, 1)} bi abaixo do que já foi empenhado em 2026 (saúde R$ {mi(cortes.filter((a) => a.unidade.toLowerCase().includes('saúde')).reduce((t, a) => t + a.gap, 0))} milhões); aumentos de R$ {numero(totalAumentos / 1e9, 1)} bi acima do executado (reservas R$ {numero((porTipo.find(([t]) => t === 'Reserva')?.[1] ?? 0) / 1e9, 1)} bi); receita esticada em R$ {numero(receitaEsticada / 1e9, 1)} bi (crédito e ICMS) contra R$ {numero(Math.abs(receitaConservadora) / 1e9, 1)} bi conservadores (petróleo).
+      <Cartao titulo="Consistência da PLOA 2027: despesa e receita">
+        <Nota titulo="Notas"><p>
+          Despesa: {cortes.length} ações recorrentes (custeio, pessoal e operações financeiras, empenhadas em 2025 e em 2026) têm na PLOA 2027 R$ {numero(totalCortes / 1e9, 1)} bi a menos do que o empenhado em 2026 até a data da coleta (saúde R$ {mi(cortes.filter((a) => a.unidade.toLowerCase().includes('saúde')).reduce((t, a) => t + a.gap, 0))} milhões); investimentos (R$ {numero(gapInvest / 1e9, 1)} bi) ficam fora da lista por terminarem. A maior parte está em {porUnidade.map(([u, v]) => `${u} (R$ ${mi(v)} mi)`).join(', ')}. O empenho de 2026 não está fechado.
         </p>
           <p>
-            O orçamento fecha com receita igual à despesa. Se a receita total está perto do que o ritmo de 2026 indica (a projeção está na aba Receita), então um corte abaixo do que a despesa já executa só se sustenta se outro lugar aumentar ou se a receita estiver esticada. Como a receita não parece inflada no total, a pergunta se desloca para a despesa: o que foi apertado, e o que cresceu. A leitura abaixo põe os dois lados à vista: onde a proposta parece apertada, onde cresce e quais linhas de receita ficam acima do que o ritmo daria. Não conclui qual aumento é menos necessário: isso é julgamento de quem decide.
+            Aumentos: {aumentos.length} ações crescem R$ {numero(totalAumentos / 1e9, 1)} bi sobre o maior valor entre o empenhado e a dotação atualizada de 2026 ({porTipo.map(([t, v]) => `${t.toLowerCase()} R$ ${numero(v / 1e9, 1)} bi`).join('; ')}); as reservas (R$ {numero((porTipo.find(([t]) => t === 'Reserva')?.[1] ?? 0) / 1e9, 1)} bi) são dotação sem destino específico.
           </p>
           <p>
-            <span className="font-semibold text-ink">Despesa apertada.</span> {cortes.length} ações recorrentes (empenhadas em 2025 e em 2026) de custeio, pessoal e operações financeiras têm na PLOA menos do que já foi empenhado em 2026 até agora, uma diferença de R$ {numero(totalCortes / 1e9, 1)} bi (mais R$ {numero(gapInvest / 1e9, 1)} bi em investimentos, que por natureza terminam, e ficam fora da lista); a maior parte está em {porUnidade.map(([u, v]) => `${u} (R$ ${mi(v)} mi)`).join(', ')}. O empenho de 2026 ainda não fechou, então a diferença real tende a ser maior. Em 2025 e 2026 o orçamento inicial ficou abaixo do executado em custeio e investimentos e foi completado ao longo do ano por créditos, em boa parte com as reservas (contingência e pessoal), o que repete a lógica de uma proposta inicial apertada e de uma folga em reservas.
-          </p>
-          <p>
-            <span className="font-semibold text-ink">Aumentos acima do executado.</span> {aumentos.length} ações crescem R$ {numero(totalAumentos / 1e9, 1)} bi acima do maior valor entre o empenhado e a dotação atualizada de 2026: {porTipo.map(([t, v]) => `${t.toLowerCase()} R$ ${numero(v / 1e9, 1)} bi`).join('; ')}. As reservas são o ponto central: são dotação sem destino, que a LDO e as emendas tendem a mobilizar.
+            Receita: as linhas acima da projeção somam R$ {numero(receitaEsticada / 1e9, 1)} bi (operações de crédito e ICMS) e as abaixo, R$ {numero(Math.abs(receitaConservadora) / 1e9, 1)} bi (transferências da União, petróleo). Em 2025 e 2026 a dotação inicial ficou abaixo do executado em custeio e investimentos e foi complementada por créditos adicionais, em boa parte com as reservas (contingência e pessoal).
           </p>
         </Nota>
 
@@ -113,7 +110,7 @@ export function Furos({ linhas, nomes, dados, receita, ipca, pib }: { linhas: Li
             { rotulo: 'Empenhado 25', valor: (a) => mi(a.v[EMP25]) },
             { rotulo: 'Empenhado 26', valor: (a) => mi(a.v[EMP]) },
             { rotulo: 'PLOA 27', valor: (a) => <span className="font-semibold">{mi(a.v[PLOA])}</span> },
-            { rotulo: 'Falta', valor: (a) => <span className="font-semibold text-serie2">{mi(a.gap)}</span> },
+            { rotulo: 'Diferença', valor: (a) => <span className="font-semibold text-serie2">{mi(a.gap)}</span> },
             { rotulo: '% do empenhado', valor: (a) => fmtPct(((a.v[PLOA] / a.v[EMP]) - 1) * 100, 0) },
           ]} />
         </div>
@@ -126,23 +123,23 @@ export function Furos({ linhas, nomes, dados, receita, ipca, pib }: { linhas: Li
             { rotulo: 'Empenhado 26', valor: (a) => mi(a.v[EMP]) },
             { rotulo: 'Atualizada 26', valor: (a) => mi(a.v[ATU]) },
             { rotulo: 'PLOA 27', valor: (a) => <span className="font-semibold">{mi(a.v[PLOA])}</span> },
-            { rotulo: 'Acima', valor: (a) => <span className="font-semibold">{dMi(a.gap)}</span> },
+            { rotulo: 'Diferença', valor: (a) => <span className="font-semibold">{dMi(a.gap)}</span> },
           ]} />
         </div>
 
-        <h3 className="mt-5 text-body font-semibold">Receita: onde a PLOA fica acima ou abaixo do ritmo de 2026</h3>
-        <Nota titulo="Leitura"><p>
-          Para cada linha, compara-se a PLOA 2027 com o fechamento projetado de 2026 crescendo com inflação e PIB do Focus ({fmtPct(g27 * 100)}). As linhas acima do esperado somam R$ {numero(receitaEsticada / 1e9, 1)} bi de receita esticada (operações de crédito e ICMS à frente); as abaixo, R$ {numero(Math.abs(receitaConservadora) / 1e9, 1)} bi de receita conservadora (sobretudo transferências da União, ou seja, o petróleo). No saldo a PLOA fica R$ {numero(Math.abs(receitaEsticada + receitaConservadora) / 1e9, 1)} bi {receitaEsticada + receitaConservadora < 0 ? 'abaixo' : 'acima'} do que o ritmo de 2026 com o crescimento do Focus daria: o risco de receita inflada está concentrado em crédito e ICMS, e a folga está no petróleo.
+        <h3 className="mt-5 text-body font-semibold">Receita: PLOA 2027 e projeção por linha</h3>
+        <Nota titulo="Notas"><p>
+          Projeção 2027: fechamento projetado de 2026 corrigido por IPCA e PIB real (Focus, {fmtPct(g27 * 100)}). Positivo: PLOA acima da projeção; negativo: abaixo. Operações de crédito e receitas de capital dependem de contratação e de eventos pontuais. Detalhes na aba Método e fontes.
         </p></Nota>
         <div className="mt-2">
           <TabelaItens altura="livre" itens={linhasReceita} legenda="Receita da PLOA 2027 contra o ritmo de 2026 com crescimento do Focus, em R$ milhões" colunas={[
             { rotulo: 'R$ milhões (bruto)', valor: (l) => l.rotulo },
             { rotulo: 'Projeção 2026', valor: (l) => mi(l.proj26) },
-            { rotulo: 'Esperado 2027', valor: (l) => mi(l.esperado) },
+            { rotulo: 'Projeção 2027', valor: (l) => mi(l.esperado) },
             { rotulo: 'PLOA 2027', valor: (l) => <span className="font-semibold">{mi(l.ploa)}</span> },
-            { rotulo: 'PLOA menos esperado', valor: (l) => <span className={`font-semibold ${l.excesso > 0 ? 'text-ink' : 'text-ink-soft'}`}>{dMi(l.excesso)}</span> },
+            { rotulo: 'PLOA menos projeção', valor: (l) => <span className={`font-semibold ${l.excesso > 0 ? 'text-ink' : 'text-ink-soft'}`}>{dMi(l.excesso)}</span> },
           ]} />
-          <p className={`mt-2 ${NOTA_DISCRETA}`}>Positivo: a PLOA supõe mais do que o ritmo de 2026 daria (receita esticada). Negativo: supõe menos (conservadora). Operações de crédito e receitas de capital dependem de contratação e de eventos pontuais; IPVA, IRRF e ITCD têm só a sazonalidade de 2025 (ver Método e fontes). Bilhões: {bilhoes(receitaEsticada)} esticada; {bilhoes(Math.abs(receitaConservadora))} conservadora.</p>
+          
         </div>
       </Cartao>
     </div>

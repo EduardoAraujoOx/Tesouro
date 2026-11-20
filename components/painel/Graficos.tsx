@@ -28,12 +28,12 @@ export function Legenda({ itens }: { itens: { cor: string; rotulo: string; conto
   )
 }
 /** Cartão de painel com alternância entre gráfico e tabela (a tabela é a leitura exata e acessível do mesmo dado). */
-export function Cartao({ titulo, legenda, grafico, tabela, direita, className = '', children }: {
-  titulo: string; legenda?: ReactNode; grafico?: ReactNode; tabela?: ReactNode; direita?: ReactNode; className?: string; children?: ReactNode
+export function Cartao({ titulo, legenda, grafico, tabela, direita, className = '', longa = false, children }: {
+  titulo: string; legenda?: ReactNode; grafico?: ReactNode; tabela?: ReactNode; direita?: ReactNode; className?: string; /** cartão com tabela longa: pode quebrar entre páginas na impressão */ longa?: boolean; children?: ReactNode
 }) {
   const [vista, setVista] = useState<'grafico' | 'tabela'>('grafico')
   return (
-    <section aria-label={titulo} className={`min-w-0 rounded-brand border border-line bg-paper p-3 sm:p-4 md:p-5 ${className}`}>
+    <section aria-label={titulo} data-longa={longa ? '' : undefined} className={`min-w-0 rounded-brand border border-line bg-paper p-3 sm:p-4 md:p-5 ${className}`}>
       <div className="flex flex-wrap items-center justify-between gap-x-4 gap-y-2">
         <h2 className="text-body font-semibold md:text-lead">{titulo}</h2>
         <div className="flex items-center gap-2 print:hidden">

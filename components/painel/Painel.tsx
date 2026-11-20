@@ -27,7 +27,7 @@ const ABAS: { id: Aba; rotulo: string; nota: string }[] = [
   { id: 'receita', rotulo: 'Receita', nota: 'Arrecadação de 2026, perfil mensal proposto para 2027 e quadro oficial detalhado' },
   { id: 'despesa', rotulo: 'Despesa', nota: 'PLOA 2027 contra a dotação e o empenho de 2026, por unidade orçamentária' },
   { id: 'fontes', rotulo: 'Fontes e grupos', nota: 'Grupos de despesa, fontes de recursos e cobertura da despesa pela receita' },
-  { id: 'atencao', rotulo: 'Atenção', nota: 'Poderes e emendas impositivas na proposta, e ações que merecem leitura cuidadosa antes da programação do exercício' },
+  { id: 'atencao', rotulo: 'Observações', nota: 'Poderes e emendas impositivas na proposta, e ações que merecem leitura cuidadosa antes da programação do exercício' },
   { id: 'metodo', rotulo: 'Método e fontes', nota: 'Se as fontes batem entre si, como a receita e a despesa de 2026 são projetadas e quão boa é a projeção' },
 ]
 
@@ -238,7 +238,6 @@ export function Painel({ linhas, nomes, coleta, outrosPoderes, macro, receitaMes
       <div className="hidden print:block">
         <p className={`${NOTA_DISCRETA}`}>{IDENTIDADE.nome} · {IDENTIDADE.apoio}</p>
         <h1 className="text-title font-semibold">{IDENTIDADE.painel} · {abaAtual.rotulo}</h1>
-        <p className="text-small text-ink-soft">{abaAtual.nota}</p>
       </div>
 
       <div role="tabpanel" id={`painel-${aba}`} aria-labelledby={`aba-${aba}`} className="mt-3">
@@ -248,7 +247,7 @@ export function Painel({ linhas, nomes, coleta, outrosPoderes, macro, receitaMes
           <Subvisoes rotulo="O que ver na receita" itens={[
             { id: 'fechamento', rotulo: 'Fechamento de 2026', conteudo: <ReceitaMensal dados={receitaMes} macro={macro.receita} parte="fechamento" /> },
             { id: 'fontes', rotulo: 'ICMS, FPE e petróleo', conteudo: <PrincipaisFontes dados={receitaMes} receita={macro.receita} ipca={macro.ipca} pib={macro.pib} petroleo={petroleo} mercado={mercado} /> },
-            { id: 'detalhe', rotulo: 'Perfil de 2027 e quadro oficial', conteudo: (
+            { id: 'detalhe', rotulo: 'Perfil mensal e quadro da PLOA', conteudo: (
               <div className="space-y-3">
                 <ReceitaMensal dados={receitaMes} macro={macro.receita} parte="perfil" />
                 <Receita receita={macro.receita} ipca={macro.ipca} dados={receitaMes} />
@@ -263,7 +262,7 @@ export function Painel({ linhas, nomes, coleta, outrosPoderes, macro, receitaMes
             <div className="mt-3">
               <Subvisoes rotulo="O que ver na despesa" itens={[
                 { id: 'variacoes', rotulo: 'Maiores variações', conteudo: (
-              <Cartao titulo={uoAtiva ? 'Ações da unidade: maiores aumentos e reduções' : 'Unidades: maiores aumentos e reduções da PLOA sobre a atualizada de 2026'}>
+              <Cartao titulo={uoAtiva ? 'Ações: variação da PLOA 2027 sobre a dotação atualizada de 2026' : 'Unidades orçamentárias: variação da PLOA 2027 sobre a dotação atualizada de 2026'}>
                 <TabelaDelta itens={variacao} delta={(i) => i.v[PLOA] - i.v[ATU]} rotuloBarra={`${tituloNivel}|PLOA 2027 menos atualizada 2026`} primeira={nomeItem}
                   legenda="Maiores aumentos e reduções da PLOA 2027 sobre a dotação atualizada de 2026, em R$ milhões" colunas={colsDelta} />
               </Cartao>
@@ -330,11 +329,11 @@ export function Painel({ linhas, nomes, coleta, outrosPoderes, macro, receitaMes
             <div className="print:hidden">{filtros}</div>
 
             <div className="mt-3 space-y-3">
-              <Cartao titulo="Grupo de despesa">
+              <Cartao titulo="Despesa por grupo de natureza (GND)">
                 <TabelaDelta itens={porGnd} delta={(i) => i.v[PLOA] - i.v[ATU]} rotuloBarra="Grupo|PLOA 2027 menos atualizada 2026" primeira={nomeItem}
                   legenda="Por grupo de natureza da despesa, em R$ milhões" colunas={colsDelta} />
               </Cartao>
-              <Cartao titulo="Fontes de recursos: 12 maiores">
+              <Cartao titulo="Despesa por fonte de recursos (12 maiores)">
                 <TabelaDelta itens={porFonte} delta={(i) => i.v[PLOA] - i.v[ATU]} rotuloBarra="Fonte|PLOA 2027 menos atualizada 2026" primeira={nomeItem}
                   legenda="Doze maiores fontes de recursos, em R$ milhões" colunas={colsDelta} />
               </Cartao>
@@ -344,9 +343,9 @@ export function Painel({ linhas, nomes, coleta, outrosPoderes, macro, receitaMes
         )}
         {aba === 'atencao' && (
           <Subvisoes rotulo="O que ver em Atenção" itens={[
-            { id: 'ajustes', rotulo: 'Ajustes da LOA', conteudo: <PoderesEmendas linhas={linhas} /> },
-            { id: 'furos', rotulo: 'Possíveis furos', conteudo: <Furos linhas={linhas} nomes={nomes} dados={receitaMes} receita={macro.receita} ipca={macro.ipca} pib={macro.pib} /> },
-            { id: 'acoes', rotulo: 'Ações em atenção', conteudo: (
+            { id: 'ajustes', rotulo: 'Poderes e emendas', conteudo: <PoderesEmendas linhas={linhas} /> },
+            { id: 'furos', rotulo: 'Consistência da PLOA', conteudo: <Furos linhas={linhas} nomes={nomes} dados={receitaMes} receita={macro.receita} ipca={macro.ipca} pib={macro.pib} /> },
+            { id: 'acoes', rotulo: 'Ações selecionadas', conteudo: (
               <>
             <div className="print:hidden">{filtros}</div>
             {/* alertas */}

@@ -58,7 +58,7 @@ export function Receita({ receita, ipca, dados }: Omit<Props, 'despesa' | 'fonte
           grafico={<ColunasMeses anterior={info.a} corrente={info.c} rotuloAnterior={String(info.ant)} rotuloCorrente={String(info.corr)} />}
           tabela={<TabelaItens itens={mesNome.map((m, i) => ({ chave: m, mes: m, a: info.a[i], c: info.c[i] }))} legenda={`${NOMES[qual]} por mês, em R$ milhões`}
             colunas={[{ rotulo: 'Mês', valor: (x) => x.mes }, { rotulo: String(info.ant), valor: (x) => (x.a === null ? '–' : milhoes(x.a, 0)) }, { rotulo: String(info.corr), valor: (x) => (x.c === null ? '–' : milhoes(x.c, 0)) }, { rotulo: 'Δ%', valor: (x) => (x.a && x.c !== null ? fmtPct((x.c / x.a - 1) * 100) : '–') }]} />} />
-        <Cartao titulo="Evolução da receita: quadro oficial da PLOA"
+        <Cartao titulo="Evolução da Receita (quadro da PLOA 2027, p. 97)"
           grafico={<TabelaItens itens={itensQuadro} legenda="Evolução da receita, em R$ milhões" colunas={[
             { rotulo: 'R$ milhões · natureza', valor: (x) => (x.nivel === 0
               ? <span className="font-semibold">{COD_RECEITA[x.chave] && <span className="block text-label normal-case tracking-normal tabular-nums text-ink-soft md:mr-1.5 md:inline-block md:min-w-[2.5rem] md:text-small">{COD_RECEITA[x.chave]}</span>}{x.rotulo}</span>
