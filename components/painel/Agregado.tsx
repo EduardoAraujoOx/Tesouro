@@ -9,7 +9,7 @@ import { Nota, NOTA_DISCRETA } from './Estrutura'
 import minimosRaw from '@/data/minimos.json'
 import { COD_DESPESA, COD_GRUPO } from './codigos'
 import { BRENT_CENTRAL, CAMBIO_CENTRAL, EDICAO_EIA, PRODUCAO_CENTRAL, receitaPetroleo } from './petroleo'
-import { analisaFontes, fatorPrecos, ipcaAnual, pibArrecadacao, projecaoItens, projetaDespesa2026, projetaReceita2026, type DadosReceita, type ItemProjetado } from './projecao'
+import { analisaFontes, fatorPrecos, ipcaAnual, pibArrecadacao, projecaoItens, projetaDespesa2026, projetaReceita2026, tendenciaPessoal, type DadosReceita, type ItemProjetado } from './projecao'
 
 type Vista = 'receita' | 'despesa' | 'resultado'
 const VISTAS: { id: Vista; rotulo: string }[] = [
@@ -128,6 +128,20 @@ export function VisaoGeral({ funcoes, contingencia, receita, despesa, ipca: ipca
   const anosNum = [2023, 2024, 2025, 2026, 2027, 2027]
   /* na despesa, a barra da PLOA é a executável (sem reservas), como as demais: as reservas não são executadas */
   const ploa27 = vista === 'despesa' ? D.total[5] - reservas27 : serieTotal[5]
+
+  /* referências alternativas para a despesa de 2027: limite pela receita e pessoal pela tendência da folha */
+  const resultadoMedio = [0, 1, 2].reduce((t, c) => t + (R.total[c] - D.total[c]), 0) / 3
+  const limiteReceita = refReceitaTotal - resultadoMedio
+  const tendPessoal = useMemo(() => tendenciaPessoal(), [])
+  const pessoalInercial = projD.itens.pessoal.central * (1 + i27)
+  const pessoalTendencia = projD.itens.pessoal.central * (1 + tendPessoal.media)
+  const comPessoalTendencia = refDespesa - pessoalInercial + pessoalTendencia
+  const compressao = comPessoalTendencia - limiteReceita
+  const refsDespesa = [
+    { chave: 'inercial', rotulo: 'Inercial', sub: 'Proj. 26 corrigida pelo IPCA', v: refDespesa },
+    { chave: 'receita', rotulo: 'Limite pela receita', sub: `Referência de receita menos o resultado médio de 2023–25 (R$ ${numero(resultadoMedio / 1e9, 2)} bi)`, v: limiteReceita },
+    { chave: 'pessoal', rotulo: 'Pessoal pela tendência', sub: `Folha +${numero(tendPessoal.media * 100, 1)}% a.a. (média de 2024–26); demais despesas inerciais`, v: comPessoalTendencia },
+  ].map((x) => ({ ...x, d: ploa27 - x.v, pct: (ploa27 / x.v - 1) * 100 }))
   const colunasBrutas: ColunaAnual[] = [
     { rotulo: '2023', v: serieTotal[0], tipo: 'real' },
     { rotulo: '2024', v: serieTotal[1], tipo: 'real' },
@@ -276,6 +290,21 @@ export function VisaoGeral({ funcoes, contingencia, receita, despesa, ipca: ipca
             </p>
             {notaReferencia}
           </Cartao>
+
+          {vista === 'despesa' && (
+            <Cartao titulo="Despesa de 2027: referências alternativas">
+              <TabelaItens altura="livre" compacta itens={refsDespesa} legenda="Referências para a despesa executável de 2027 e a PLOA, em R$ milhões" colunas={[
+                { rotulo: 'R$ milhões', valor: (x) => <><span className="font-medium text-ink">{x.rotulo}</span><span className="block text-label font-normal normal-case tracking-normal text-ink-soft">{x.sub}</span></> },
+                { rotulo: 'Proj. 27', valor: (x) => mi(x.v) },
+                { rotulo: 'PLOA 27', valor: () => mi(ploa27) },
+                { rotulo: 'Dif. R$ mi', valor: (x) => <span className="font-semibold">{dMi(x.d)}</span> },
+                { rotulo: 'Dif. %', secundaria: true, valor: (x) => fmtPct(x.pct) },
+              ]} />
+              <p className={`mt-2 ${NOTA_DISCRETA}`}>
+                Despesa executável, sem reservas. O resultado orçamentário (receita líquida menos despesa empenhada) foi positivo em 2023, 2024 e 2025: a despesa ficou abaixo da receita, e o limite pela receita supõe que isso se repita. Com a folha na tendência recente e o total no limite da receita, as demais despesas teriam de ficar R$ {mi(compressao)} milhões ({numero((compressao / (refDespesa - pessoalInercial)) * 100, 1)}%) abaixo da trajetória inercial. A PLOA é o orçamento inicial, que historicamente fecha abaixo do executado e é complementado por créditos adicionais ao longo do ano.
+              </p>
+            </Cartao>
+          )}
 
         </div>
       )}
