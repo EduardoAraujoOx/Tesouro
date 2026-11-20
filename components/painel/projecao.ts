@@ -166,6 +166,9 @@ export function retroteste(): { grupos: RetroGrupo[]; total: RetroGrupo; bimestr
   return { grupos: feitos.slice(0, -1), total: feitos[feitos.length - 1], bimestre }
 }
 
+/** Receita de petróleo de 2027 no cenário base da LDO (Lei 12.967/2026, Anexo de Riscos Fiscais, p. 52): Brent a US$ 60, câmbio de R$ 5,40 e 224,5 mil barris por dia (royalties 693,8, participação especial 527,2 e Fundo do Petróleo 19,8, em R$ milhões). */
+export const PETROLEO_LDO_2027 = 1240.8e6
+
 export type ItemProjetado = {
   central: number; min?: number; max?: number
   base: 'bimestres' | 'icms' | 'mensal' | '2025' | 'resíduo'
