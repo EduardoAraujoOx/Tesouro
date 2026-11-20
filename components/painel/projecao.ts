@@ -2,6 +2,7 @@ import rreoRaw from '@/data/rreo.json'
 import ritmoRaw from '@/data/ritmo-receita.json'
 import ritmoDespRaw from '@/data/ritmo-despesa.json'
 import sefazRaw from '@/data/receita-sefaz.json'
+import pibRaw from '@/data/pib-receita.json'
 import despesaMacroRaw from '@/data/ploa2027-macro.json'
 
 /** Linhas do arquivo de receita: [mes, alinea, fonte, bruta, deducao, liquida_tipo] (R$). */
@@ -547,4 +548,34 @@ export function retrotesteSefaz(): RetroSefaz[] {
     const v = erros.filter((e) => e.erro !== null).map((e) => Math.abs(e.erro as number))
     return { id: l.id, rotulo: l.rotulo, erros, erroMedio: v.length ? v.reduce((x, y) => x + y, 0) / v.length : null }
   })
+}
+
+
+/* ---------- PIB e arrecadação: a referência de 2027 é coerente com a história? ---------- */
+export type LinhaPib = { ano: number; pib: number; impostos: number; dif: number }
+export type PibArrecadacao = { linhas: LinhaPib[]; elasticidade: number; intercepto: number; r2: number; difMedia: number; difDesvio: number; n: number }
+/**
+ * Crescimento anual dos impostos do ES (RREO, líquidos) contra o do PIB nominal do Brasil (Banco Central), desde 2016.
+ * Elasticidade: inclinação da regressão dos log-crescimentos (1 = a arrecadação cresce junto com o PIB nominal).
+ * Dif.: crescimento dos impostos menos o do PIB nominal, em pontos percentuais; o desvio mede o quanto a arrecadação se afasta do PIB de um ano para o outro.
+ */
+export function pibArrecadacao(): PibArrecadacao {
+  const d = pibRaw as unknown as { pib_nominal: Record<string, number>; impostos: Record<string, number> }
+  const anos = Object.keys(d.impostos).map(Number).sort((a, b) => a - b).filter((a) => d.impostos[String(a - 1)] && d.pib_nominal[String(a)] && d.pib_nominal[String(a - 1)])
+  const linhas = anos.map((a) => ({
+    ano: a,
+    pib: (d.pib_nominal[String(a)] / d.pib_nominal[String(a - 1)] - 1) * 100,
+    impostos: (d.impostos[String(a)] / d.impostos[String(a - 1)] - 1) * 100,
+    dif: 0,
+  }))
+  linhas.forEach((l) => { l.dif = l.impostos - l.pib })
+  const xs = linhas.map((l) => Math.log(1 + l.pib / 100)), ys = linhas.map((l) => Math.log(1 + l.impostos / 100))
+  const n = xs.length
+  const mx = xs.reduce((s, x) => s + x, 0) / n, my = ys.reduce((s, x) => s + x, 0) / n
+  const b = xs.reduce((s, x, i) => s + (x - mx) * (ys[i] - my), 0) / xs.reduce((s, x) => s + (x - mx) ** 2, 0)
+  const a0 = my - b * mx
+  const sst = ys.reduce((s, y) => s + (y - my) ** 2, 0), sse = ys.reduce((s, y, i) => s + (y - (a0 + b * xs[i])) ** 2, 0)
+  const difMedia = linhas.reduce((s, l) => s + l.dif, 0) / n
+  const difDesvio = Math.sqrt(linhas.reduce((s, l) => s + (l.dif - difMedia) ** 2, 0) / (n - 1))
+  return { linhas, elasticidade: b, intercepto: a0, r2: 1 - sse / sst, difMedia, difDesvio, n }
 }

@@ -54,7 +54,9 @@ html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; }
 body { @apply bg-paper font-sans text-ink antialiased; font-size: 1rem; line-height: 1.6; }
 h1, h2, h3 { @apply font-serif font-semibold text-navy; font-optical-sizing: auto; }
 /* O painel de dados é analítico, não editorial: títulos em sans, na cor do texto */
-.painel h1, .painel h2, .painel h3 { @apply font-sans text-ink; }
+.painel h1, .painel h2, .painel h3 { @apply font-sans text-navy; }
+/* Painel: superfícies, filetes e texto secundário puxados para o azul-marinho (no alto contraste valem os tokens do modo) */
+:root:not([data-contrast='alto']) .painel { --surface: 236 241 248; --line: 205 215 230; --ink-soft: 48 66 98; }
 
 :focus-visible { outline: 3px solid rgb(var(--navy)); outline-offset: 3px; border-radius: 4px; }
 :root[data-contrast='alto'] :focus-visible { outline-color: #fff; }
