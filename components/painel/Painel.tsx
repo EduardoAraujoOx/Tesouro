@@ -23,7 +23,7 @@ type Escopo = 'executivo' | 'outros' | 'todos'
 type Alerta = 'abaixo' | 'novas' | 'extintas'
 type Aba = 'visao' | 'receita' | 'despesa' | 'fontes' | 'atencao' | 'metodo'
 const ABAS: { id: Aba; rotulo: string; nota: string }[] = [
-  { id: 'visao', rotulo: 'Visão geral', nota: 'Receita, despesa e resultado: a proposta de 2027 contra a história e a projeção de 2026' },
+  { id: 'visao', rotulo: 'Visão geral', nota: 'A proposta de 2027 contra a nossa referência independente, a história e o fechamento projetado de 2026' },
   { id: 'receita', rotulo: 'Receita', nota: 'Arrecadação de 2026, perfil mensal proposto para 2027 e quadro oficial detalhado' },
   { id: 'despesa', rotulo: 'Despesa', nota: 'PLOA 2027 contra a dotação e o empenho de 2026, por unidade orçamentária' },
   { id: 'fontes', rotulo: 'Fontes e grupos', nota: 'Grupos de despesa, fontes de recursos e cobertura da despesa pela receita' },
