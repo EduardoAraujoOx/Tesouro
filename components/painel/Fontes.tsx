@@ -6,6 +6,7 @@ import type { LinhaMacro } from '@/lib/macro'
 import { Cartao, TabelaItens } from './Graficos'
 import { Nota, NOTA_DISCRETA } from './Estrutura'
 import { fmtPct } from './GraficosMacro'
+import cafRaw from '@/data/icms-caf.json'
 import { analisaFontes, implicitoPetroleo, mesesCorte, projecaoItens, type AnaliseFonte, type DadosReceita } from './projecao'
 
 export type PetroleoSefaz = {
@@ -144,6 +145,51 @@ function PetroleoMercadoCartao({ m }: { m: PetroleoMercado }) {
   )
 }
 
+/* ICMS por segmento econômico (CAF), do Receita em Foco da SEFAZ-ES: anual de 2023 a 2025 e 1º trimestre de 2024 a 2026. */
+type Caf = { fonte: string; anual: Record<string, Record<string, number>>; primeiro_trimestre: Record<string, Record<string, number>> }
+const caf = cafRaw as unknown as Caf
+const NOMES_CAF: Record<string, string> = {
+  'comercio atacadista': 'Comércio atacadista', 'industria do petroleo': 'Indústria do petróleo', 'substituicao tributaria': 'Substituição tributária',
+  'comercio varejista': 'Comércio varejista', industria: 'Indústria', 'comercio exterior': 'Comércio exterior', 'energia eletrica': 'Energia elétrica',
+  'comercio atacadista de cafe': 'Comércio atacadista de café', transporte: 'Transporte', 'simples nacional': 'Simples Nacional', comunicacao: 'Comunicação',
+}
+function IcmsPorSegmento() {
+  const t = (d: Record<string, number>) => Object.values(d).reduce((a, b) => a + b, 0)
+  const a24 = caf.anual['2024'], a25 = caf.anual['2025'], q25 = caf.primeiro_trimestre['2025'], q26 = caf.primeiro_trimestre['2026']
+  const T24 = t(a24), T25 = t(a25), Q25 = t(q25), Q26 = t(q26)
+  const chaves = Object.keys(a25).sort((x, y) => a25[y] - a25[x])
+  const principais = chaves.filter((c) => NOMES_CAF[c])
+  const demais = chaves.filter((c) => !NOMES_CAF[c])
+  const soma = (d: Record<string, number>, cs: string[]) => cs.reduce((a, c) => a + (d[c] ?? 0), 0)
+  const linha = (chave: string, rotulo: string, cs: string[], negrito = false) => {
+    const v24 = soma(a24, cs), v25 = soma(a25, cs), w25 = soma(q25, cs), w26 = soma(q26, cs)
+    return { chave, rotulo, negrito, v25, part: (v25 / T25) * 100, g25: v24 ? (v25 / v24 - 1) * 100 : null, c25: ((v25 - v24) / T24) * 100, g26: w25 ? (w26 / w25 - 1) * 100 : null, c26: ((w26 - w25) / Q25) * 100 }
+  }
+  const itens = [...principais.map((c) => linha(c, NOMES_CAF[c], [c])), linha('demais', 'Demais segmentos', demais), linha('total', 'ICMS total (CAF)', chaves, true)]
+  const pp = (x: number) => `${x > 0 ? '+' : x < 0 ? '−' : ''}${numero(Math.abs(x), 1)}`
+  return (
+    <Cartao titulo="ICMS por segmento econômico (CAF)">
+      <TabelaItens altura="livre" compacta itens={itens} legenda="ICMS por segmento econômico: arrecadação de 2025 e contribuição ao crescimento, em R$ milhões e pontos percentuais" colunas={[
+        { rotulo: 'R$ milhões', valor: (l) => <span className={l.negrito ? 'font-semibold' : 'font-medium'}>{l.rotulo}</span> },
+        { rotulo: '2025', valor: (l) => <span className={l.negrito ? 'font-semibold' : ''}>{mi(l.v25)}</span> },
+        { rotulo: 'Part. %', secundaria: true, valor: (l) => numero(l.part, 1) },
+        { rotulo: 'Δ% 2025', valor: (l) => fmtPct(l.g25 ?? undefined) },
+        { rotulo: 'Contrib. 2025 (p.p.)', secundaria: true, valor: (l) => pp(l.c25) },
+        { rotulo: 'Δ% 1T26', valor: (l) => fmtPct(l.g26 ?? undefined) },
+        { rotulo: 'Contrib. 1T26 (p.p.)', secundaria: true, valor: (l) => pp(l.c26) },
+      ]} />
+      <Nota titulo="Metodologia e fontes">
+        <p>
+          Arrecadação de ICMS por Código de Atividade Fiscal (CAF) do contribuinte, do relatório Receita em Foco da SEFAZ-ES (quadro anual de 2025 e quadro do 1º trimestre de 2026). Δ%: variação sobre 2024 e sobre o 1º trimestre de 2025. Contribuição: variação do segmento dividida pela arrecadação total do período anterior, em pontos percentuais (soma o crescimento do total: {fmtPct((T25 / T24 - 1) * 100)} em 2025 e {fmtPct((Q26 / Q25 - 1) * 100)} no 1º trimestre de 2026). “Demais segmentos”: combustíveis, rochas ornamentais, inexatas, agropecuária, MEI e demais atividades.
+        </p>
+        <p>
+          O total do relatório (R$ {numero(T25 / 1e9, 2)} bi em 2025) difere em cerca de 0,7% do ICMS do RREO e do Portal. O relatório trimestral não traz o detalhamento mensal por segmento depois de dezembro de 2024 (as planilhas mensais da SEFAZ vão até 2024) e os segmentos podem ser reclassificados entre edições.
+        </p>
+      </Nota>
+    </Cartao>
+  )
+}
+
 /**
  * Os três maiores motores da receita bruta: ICMS, cota-parte do FPE e compensação pela produção de petróleo.
  * Mostra o ritmo mês a mês contra o mesmo mês do ano anterior (para ver aceleração ou desaceleração), o fechamento de 2026 por fonte
@@ -185,6 +231,8 @@ export function PrincipaisFontes({ dados, receita, ipca, pib, petroleo, mercado 
           ]} />
         </div>
       </Cartao>
+
+      <IcmsPorSegmento />
 
       <Cartao titulo="Fechamento de 2026 por fonte">
         <Nota titulo="Metodologia"><p>Pelo método de menor erro no teste retroativo (ICMS: ritmo dos 3 últimos meses; FPE: dos 12 últimos); a faixa vai do menor ao maior resultado entre os métodos.</p>
