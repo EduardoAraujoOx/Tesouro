@@ -124,8 +124,8 @@ export function VisaoGeral({ receita, despesa, ipca: ipcaParams, pib, fonteIpca,
     { rotulo: '2024', v: serieTotal[1], tipo: 'real' },
     { rotulo: '2025', v: serieTotal[2], tipo: 'real' },
     vista === 'despesa'
-      ? { rotulo: '2026', sub: 'projeção', v: projD.itens.tot.central, tipo: 'estim', faixa: [projD.itens.tot.min as number, projD.itens.tot.max as number], marca: { v: D.total[4], rotulo: 'Provável 2026 na PLOA' } }
-      : { rotulo: '2026', sub: 'projeção', v: proj.central, tipo: 'estim', faixa: [proj.min, proj.max], marca: { v: R.total[4], rotulo: 'Provável 2026 na PLOA' } },
+      ? { rotulo: '2026', sub: 'projeção', v: projD.itens.tot.central, tipo: 'estim', faixa: [projD.itens.tot.min as number, projD.itens.tot.max as number] }
+      : { rotulo: '2026', sub: 'projeção', v: proj.central, tipo: 'estim', faixa: [proj.min, proj.max] },
     { rotulo: '2027', sub: 'PLOA', v: ploa27, tipo: 'ploa' },
     vista === 'despesa'
       ? { rotulo: '2027', sub: 'equipe', v: refDespesa, tipo: 'ref', faixa: faixaRefDespesa, compara: { v: ploa27, rotulo: 'PLOA 2027' } }
@@ -237,7 +237,7 @@ export function VisaoGeral({ receita, despesa, ipca: ipcaParams, pib, fonteIpca,
             }>
             <ColunasAnuais colunas={colunas} descricao={`${tituloGrafico}, em R$ bilhões, ${base === 'real' ? 'a preços de 2027' : 'valores correntes'}: ${colunas.map((c) => `${c.rotulo}${c.sub ? ' ' + c.sub : ''} ${numero(c.v / 1e9, 1)}`).join('; ')}`} />
             <p className={`mt-2 ${NOTA_DISCRETA}`}>
-              R$ bilhões, valores correntes{base === 'real' ? ' (reais de 2027)' : ''}. Linha preta: faixa; traço rosa: provável de 2026 na PLOA; traço tracejado: PLOA 2027{vista === 'despesa' ? ' (sem reservas)' : ''}.
+              R$ bilhões, valores correntes{base === 'real' ? ' (reais de 2027)' : ''}. Linha preta: faixa; traço tracejado: PLOA 2027{vista === 'despesa' ? ' (sem reservas)' : ''}.
             </p>
           </Cartao>
 
