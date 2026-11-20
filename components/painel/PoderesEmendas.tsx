@@ -7,13 +7,16 @@ import { Cartao, TabelaItens } from './Graficos'
 import { fmtPct, variacoes } from './GraficosMacro'
 import { ATU, INI, PLOA, agrupa, type Linha } from './dados'
 
-const PODERES: { chave: string; rotulo: string; uos: string[] }[] = [
-  { chave: 'ales', rotulo: 'Assembleia Legislativa', uos: ['01101'] },
-  { chave: 'tce', rotulo: 'Tribunal de Contas', uos: ['02101'] },
-  { chave: 'tj', rotulo: 'Tribunal de Justiça e fundo especial', uos: ['03101', '03901'] },
-  { chave: 'mp', rotulo: 'Ministério Público e fundo especial', uos: ['05101', '05902'] },
-  { chave: 'dpe', rotulo: 'Defensoria Pública e fundo', uos: ['06101', '06901'] },
+/** Limites percentuais da LDO 2027 (Lei nº 12.967/2026, art. 21, § 1º) sobre a receita corrente líquida de julho de 2025 a junho de 2026. */
+const PODERES: { chave: string; rotulo: string; uos: string[]; limite: number }[] = [
+  { chave: 'ales', rotulo: 'Assembleia Legislativa', uos: ['01101'], limite: 1.281 },
+  { chave: 'tce', rotulo: 'Tribunal de Contas', uos: ['02101'], limite: 1.017 },
+  { chave: 'tj', rotulo: 'Tribunal de Justiça e fundo especial', uos: ['03101', '03901'], limite: 6.131 },
+  { chave: 'mp', rotulo: 'Ministério Público e fundo especial', uos: ['05101', '05902'], limite: 2.456 },
+  { chave: 'dpe', rotulo: 'Defensoria Pública e fundo', uos: ['06101', '06901'], limite: 0.75 },
 ]
+/** RCL de julho de 2025 a junho de 2026 (RREO do 3º bimestre de 2026, Anexo 03, Siconfi): R$ 30.126,1 milhões. */
+const RCL_JUL25_JUN26 = 30126.1e6
 const mi = (x: number) => milhoes(x, 0)
 
 /**
@@ -36,6 +39,11 @@ export function PoderesEmendas({ linhas }: { linhas: Linha[] }) {
     const executivo = total.map((x, i) => x - soma[i])
     return [...base, { chave: 'soma', rotulo: 'Poderes e órgãos autônomos', v: soma }, { chave: 'exec', rotulo: 'Executivo (demais unidades)', v: executivo }]
   }, [porUo])
+  const limites = PODERES.map((p) => {
+    const it = itens.find((i) => i.chave === p.chave)!
+    return { chave: p.chave, rotulo: p.rotulo, pct: p.limite, limite: (p.limite / 100) * RCL_JUL25_JUN26, ploa: it.v[PLOA] }
+  })
+  const totalLimites = { chave: 'tot', rotulo: 'Total', pct: PODERES.reduce((t, p) => t + p.limite, 0), limite: limites.reduce((t, l) => t + l.limite, 0), ploa: limites.reduce((t, l) => t + l.ploa, 0) }
   const soma = itens.find((i) => i.chave === 'soma')!
   const exec = itens.find((i) => i.chave === 'exec')!
   const rcl25 = (rreoRaw as unknown as { serie: { ano: number; rcl12m: number }[] }).serie.find((s) => s.ano === 2025)?.rcl12m ?? 0
@@ -45,7 +53,7 @@ export function PoderesEmendas({ linhas }: { linhas: Linha[] }) {
     <div className="space-y-3">
       <Cartao titulo="Despesa dos Poderes e órgãos autônomos: PLOA 2027 contra 2026">
         <p className="max-w-3xl text-small text-ink-soft">
-          Nos cinco Poderes e órgãos autônomos a PLOA soma R$ {mi(soma.v[PLOA])} milhões, {fmtPct(variacoes(soma.v[INI], soma.v[PLOA], 0).nominal)} sobre o orçamento inicial de 2026, contra {fmtPct(variacoes(exec.v[INI], exec.v[PLOA], 0).nominal)} nas demais unidades (Executivo). Sobre a dotação atualizada de 2026, que já incorpora os créditos abertos no ano, o aumento é de {fmtPct(variacoes(soma.v[ATU], soma.v[PLOA], 0).nominal)}. Segundo a imprensa, uma emenda da LDO 2027 trocou a correção anual pelo IPCA por um percentual da receita corrente líquida entre julho de 2025 e junho de 2026, o que é compatível com esse crescimento acima do Executivo, mas o percentual aplicado não foi confirmado.
+          Nos cinco Poderes e órgãos autônomos a PLOA soma R$ {mi(soma.v[PLOA])} milhões, {fmtPct(variacoes(soma.v[INI], soma.v[PLOA], 0).nominal)} sobre o orçamento inicial de 2026, contra {fmtPct(variacoes(exec.v[INI], exec.v[PLOA], 0).nominal)} nas demais unidades (Executivo). Sobre a dotação atualizada de 2026, que já incorpora os créditos abertos no ano, o aumento é de {fmtPct(variacoes(soma.v[ATU], soma.v[PLOA], 0).nominal)}.
         </p>
         <div className="mt-3">
           <TabelaItens altura="livre" itens={itens} legenda="Despesa dos Poderes e órgãos autônomos, em R$ milhões" colunas={[
@@ -58,24 +66,45 @@ export function PoderesEmendas({ linhas }: { linhas: Linha[] }) {
           ]} />
           <p className="mt-2 text-label normal-case tracking-normal text-ink-soft">Programa de Trabalho da PLOA 2027 (Mensagem nº 189/2026) e Portal de Dados Abertos do ES. O repasse aos Poderes divulgado pelo Governo (R$ 3,9 bi, segundo a imprensa) inclui parcelas que não estão neste recorte por unidade orçamentária.</p>
         </div>
+        <div className="mt-4 max-w-3xl space-y-2 text-small text-ink-soft">
+          <p>
+            <span className="font-semibold text-ink">O que a LDO 2027 determina.</span> A Lei nº 12.967/2026, publicada em 27 de outubro, fixa para cada órgão um limite percentual da receita corrente líquida de julho de 2025 a junho de 2026 (R$ {numero(RCL_JUL25_JUN26 / 1e9, 2)} bi, RREO): Judiciário 6,131%, Assembleia 1,281%, Tribunal de Contas 1,017%, Ministério Público 2,456% e Defensoria 0,750%, o que soma {numero(totalLimites.pct, 3)}% (art. 21, § 1º). Os órgãos tinham dez dias úteis da publicação para ajustar suas propostas no SIGEFES aos limites, “para fins de consolidação ou atualização” da PLOA (art. 21, § 4º), e na apuração entram as despesas com a insuficiência do fundo financeiro de cada órgão (art. 21, § 2º, e art. 22).
+          </p>
+          <p>
+            A tabela compara cada limite com o que a PLOA, enviada em 29 de setembro, já traz. O Judiciário está acima do limite; os outros quatro órgãos estão abaixo, de R$ 60 a R$ 105 milhões cada. A comparação é aproximada, porque o limite é calculado com regras próprias (inclusive a cobertura do fundo financeiro) que o recorte por unidade não reproduz. Ainda assim indica o sentido: se Assembleia, Tribunal de Contas, Ministério Público e Defensoria ajustarem as propostas aos limites, a despesa desses órgãos aumenta em torno de R$ {mi(limites.filter((l) => l.ploa < l.limite).reduce((t, l) => t + (l.limite - l.ploa), 0))} milhões sobre a PLOA original.
+          </p>
+        </div>
+        <div className="mt-3">
+          <TabelaItens altura="livre" itens={[...limites, totalLimites]} legenda="Limite da LDO 2027 para cada órgão contra a PLOA, em R$ milhões" colunas={[
+            { rotulo: 'R$ milhões', valor: (x) => <span className={x.chave === 'tot' ? 'font-semibold' : ''}>{x.rotulo}</span> },
+            { rotulo: 'Limite (% da RCL)', valor: (x) => `${numero(x.pct, 3)}%` },
+            { rotulo: 'Limite em R$', valor: (x) => mi(x.limite) },
+            { rotulo: 'PLOA 2027', valor: (x) => <span className="font-semibold">{mi(x.ploa)}</span> },
+            { rotulo: 'PLOA menos limite', valor: (x) => `${x.ploa - x.limite > 0 ? '+' : x.ploa - x.limite < 0 ? '−' : ''}${mi(Math.abs(x.ploa - x.limite))}` },
+          ]} />
+          <p className="mt-2 text-label normal-case tracking-normal text-ink-soft">Fonte dos limites: Lei nº 12.967/2026 (LDO 2027), Diário Oficial dos Poderes de 27/10/2026, art. 21; texto guardado em painel-es/fontes/ldo. RCL: RREO do 3º bimestre de 2026 (Siconfi).</p>
+        </div>
       </Cartao>
 
-      <Cartao titulo="Emendas parlamentares impositivas: ainda não estão na proposta">
+      <Cartao titulo="Emendas parlamentares impositivas: o que a LDO determina e o que a PLOA traz">
         <div className="max-w-3xl space-y-2 text-small text-ink-soft">
           <p>
-            <span className="font-semibold text-ink">O que a PLOA traz.</span> Nenhuma das 353 ações do Programa de Trabalho da PLOA 2027 tem “emenda” no nome. A proposta foi enviada em 30 de setembro de 2026, e a Emenda Constitucional 120/2026 só foi aprovada pela Assembleia em 13 de outubro (imprensa): a proposta não podia conter as regras novas. Há, porém, uma ação nova, “Reserva técnica” (0995), de exatamente R$ 90,0 milhões, em investimentos (GND 4), fonte 500, na unidade 80104 (Administração Geral a cargo da Secretaria de Economia e Planejamento). O valor coincide com 30 deputados × R$ 3 milhões, o teto de 2026. O documento não descreve a finalidade, então isso é um indício, a confirmar com a Secretaria: se for o caso, a PLOA reserva o valor antigo das emendas e não cobre o aumento.
+            <span className="font-semibold text-ink">O que a LDO 2027 determina</span> (Lei nº 12.967/2026, arts. 9º e 23 a 27). As emendas individuais à LOA são aprovadas no limite de 1,55% da receita corrente líquida de 2025 (RGF do 3º quadrimestre de 2025, R$ {numero(rcl25 / 1e9, 1)} bi), o que dá cerca de R$ {mi(emendas27)} milhões, distribuídos por igual entre os 30 deputados (R$ 14,5 milhões cada). Metade do valor de cada deputado vai para ações e serviços de saúde, sem pagamento de pessoal. A execução é obrigatória e integral, salvo impedimento de ordem técnica, que segue um rito com prazos (60 dias para o Executivo justificar, mais 30 para o deputado sanear e 30 para o remanejamento); conveniência e oportunidade não são impedimento. Cada emenda tem marcador próprio na LOA e no SIGEFES, e o Executivo publica a execução todo mês. Em 2026 o valor era de R$ 3 milhões por deputado, ou R$ 90 milhões, segundo a imprensa: o aumento é de uns R$ {mi(emendas27 - 90e6)} milhões.
           </p>
           <p>
-            <span className="font-semibold text-ink">O que mudou (imprensa, a confirmar no texto oficial).</span> A execução das emendas individuais passa a ser obrigatória e integral a partir de 2027; o orçamento reserva 1,55% da receita corrente líquida, dividido por igual entre os 30 deputados, com metade em saúde. Com a RCL de 2025 (R$ {numero(rcl25 / 1e9, 1)} bi, RREO), 1,55% dá cerca de R$ {mi(emendas27)} milhões, o que coincide com os R$ 14,5 milhões por deputado (R$ 435 milhões) noticiados. Em 2026 eram R$ 3 milhões por deputado, ou R$ 90 milhões: o aumento é de uns R$ {mi(emendas27 - 90e6)} milhões.
+            <span className="font-semibold text-ink">De onde sai o recurso.</span> As emendas só podem ser financiadas por anulação de despesa, e não de pessoal, dívida, transferências constitucionais aos municípios, contrapartidas, recursos vinculados, precatórios, PPP e orçamento de investimento (art. 23). O art. 9º, § 2º, manda a PLOA conter uma reserva específica do tamanho desse limite, que não conta para o mínimo de 2% da RCL da reserva de contingência. E o § 3º prevê o caso em que a PLOA já enviada não traz a reserva ou traz menos: as emendas podem então indicar como fonte a anulação da reserva de contingência, e o mínimo de 2% deixa de valer na medida das anulações.
           </p>
           <p>
-            <span className="font-semibold text-ink">Como entram na LOA.</span> Pelo calendário aprovado pela comissão especial do PL 525/2026 (a LOA), os deputados apresentam emendas de 12 a 30 de novembro; a comissão analisa de 1º a 7 de dezembro, vota o parecer em 9 de dezembro e envia o projeto ao Plenário. A votação em Plenário ainda não tem data específica nas notícias. As emendas entram, portanto, na votação, e não por mensagem do Executivo. As notícias não dizem de onde viria o recurso adicional; a imprensa menciona que a LDO permite usar recursos reservados a calamidades. A reserva de contingência da PLOA (ação 9999, mesma unidade 80104) é de R$ 668,8 milhões, e na LOA de 2026 era de R$ 614,2 milhões no início do ano, quase toda usada para abrir créditos durante o exercício (R$ 5 milhões restantes na dotação atualizada); ela é a fonte natural de remanejamento, mas isso é uma hipótese, e não um fato dos documentos.
+            <span className="font-semibold text-ink">O que a PLOA traz.</span> Nenhuma das 353 ações do Programa de Trabalho tem “emenda” no nome. Há uma ação nova, “Reserva técnica” (0995), de exatamente R$ 90,0 milhões, em investimentos (GND 4), fonte 500, na unidade 80104 (Administração Geral a cargo da Secretaria de Economia e Planejamento), que coincide com 30 deputados × R$ 3 milhões. O documento não descreve a finalidade; se for a reserva do art. 9º, § 2º, está em R$ 90 milhões contra os cerca de R$ {mi(emendas27)} milhões exigidos, e vale o § 3º. A reserva de contingência (ação 9999, mesma unidade) é de R$ 668,8 milhões, contra R$ 614,2 milhões no início de 2026, quando quase toda foi usada para abrir créditos (R$ 5 milhões restantes na dotação atualizada). O mínimo da LDO é 2% da RCL, ou cerca de R$ {mi(0.02 * RCL_JUL25_JUN26)} milhões com a RCL de julho de 2025 a junho de 2026. Se as emendas anularem a diferença de R$ {mi(emendas27 - 90e6)} milhões, a contingência cairia para perto de R$ {mi(668.8e6 - (emendas27 - 90e6))} milhões, abaixo desse mínimo, o que o § 3º permite.
           </p>
           <p>
-            <span className="font-semibold text-ink">Para o painel.</span> O que está no painel é a proposta original, e não a LOA: quando a LOA for aprovada, o procedimento de leitura do programa de trabalho se repete. As emendas aprovadas tendem a realocar dotações já existentes (de reservas ou de outras ações), então o total da despesa pode mudar pouco, mas a composição por unidade e ação muda.
+            <span className="font-semibold text-ink">Calendário (imprensa).</span> A Emenda Constitucional 120/2026 foi aprovada em 13 de outubro, depois do envio da PLOA em 29 de setembro. Para o PL 525/2026 (a LOA), os deputados apresentam emendas de 12 a 30 de novembro; a comissão analisa de 1º a 7 de dezembro, vota o parecer em 9 de dezembro e envia ao Plenário; a data da votação em Plenário não aparece nas notícias. As emendas entram, portanto, na votação, e não por mensagem do Executivo.
+          </p>
+          <p>
+            <span className="font-semibold text-ink">Para o painel.</span> O que está no painel é a proposta original, e não a LOA. As emendas aprovadas realocam dotações existentes (da contingência e de outras ações), então o total da despesa muda pouco, mas a composição por unidade e ação muda. Quando a LOA for aprovada, o procedimento de leitura do programa de trabalho se repete.
           </p>
           <p className="text-label normal-case tracking-normal">
-            Fontes (imprensa, ES Hoje): <a className="underline underline-offset-4" href="https://eshoje.com.br/?p=902328">Ales aprova emendas impositivas</a> (13/10/2026); <a className="underline underline-offset-4" href="https://eshoje.com.br/?p=904073">LDO 2027 aprovada</a> (21/10/2026); <a className="underline underline-offset-4" href="https://eshoje.com.br/?p=908385">Orçamento entra na reta decisiva</a> (11/11/2026, cronograma); <a className="underline underline-offset-4" href="https://eshoje.com.br/?p=900794">PLOA chega à Assembleia</a> (06/10/2026). Valores a confirmar nos textos oficiais (EC 120/2026, LC 1.158/2026, LDO 2027 e Ato da comissão).
+            Fontes: Lei nº 12.967/2026 (LDO 2027), Diário Oficial dos Poderes de 27/10/2026 (texto guardado em painel-es/fontes/ldo). Imprensa, ES Hoje, para o calendário e a EC 120: <a className="underline underline-offset-4" href="https://eshoje.com.br/?p=902328">Ales aprova emendas impositivas</a> (13/10/2026); <a className="underline underline-offset-4" href="https://eshoje.com.br/?p=908385">Orçamento entra na reta decisiva</a> (11/11/2026). A EC 120/2026 e a LC 1.158/2026 ainda precisam ser conferidas nos textos oficiais.
           </p>
         </div>
       </Cartao>
