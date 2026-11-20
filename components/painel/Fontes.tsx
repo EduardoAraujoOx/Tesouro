@@ -13,6 +13,12 @@ export type PetroleoSefaz = {
   meses: { ano: number; mes: number; naturezas: Record<string, { prevista: number; mes: number; acumulado: number }> }[]
 }
 
+export type PetroleoMercado = {
+  coletado_em: string
+  fontes: Record<'brent' | 'cambio' | 'producao', string>
+  brent: Record<string, number>; cambio: Record<string, number>; producao: Record<string, number>
+}
+
 const MESES = ['jan', 'fev', 'mar', 'abr', 'mai', 'jun', 'jul', 'ago', 'set', 'out', 'nov', 'dez']
 const mi = (x: number | null | undefined) => (x === null || x === undefined || !Number.isFinite(x) ? '–' : milhoes(x === 0 ? 0 : x, 0))
 const dMi = (x: number) => `${x > 0 ? '+' : x < 0 ? '−' : ''}${milhoes(Math.abs(x), 0)}`
@@ -87,11 +93,63 @@ function PetroleoPorNatureza({ dados }: { dados: PetroleoSefaz }) {
 }
 
 /**
+ * As três premissas que movem a receita de petróleo (Brent, câmbio e produção do Estado), no realizado, contra as da LDO 2027.
+ * Responde se a base de 2027 é prudente ou apenas baixa: aqui se vê o que o mercado e a produção de fato fizeram em 2026.
+ */
+function PetroleoMercadoCartao({ m }: { m: PetroleoMercado }) {
+  const media = (serie: Record<string, number>, ano: number, ate?: number) => {
+    const v = Object.entries(serie).filter(([k]) => Number(k.slice(0, 4)) === ano && (ate === undefined || Number(k.slice(5)) <= ate)).map(([, x]) => x)
+    return v.length ? v.reduce((a, b) => a + b, 0) / v.length : NaN
+  }
+  const ultimos3 = (serie: Record<string, number>) => {
+    const ks = Object.keys(serie).sort().slice(-3)
+    return ks.reduce((a, k) => a + serie[k], 0) / ks.length
+  }
+  const ult = (serie: Record<string, number>) => Object.keys(serie).sort().at(-1)!
+  const rot = (serie: Record<string, number>) => { const k = ult(serie); return `${MESES[Number(k.slice(5)) - 1]}/${k.slice(2, 4)}` }
+  const linhas = [
+    { chave: 'brent', rotulo: 'Brent (US$ por barril)', serie: m.brent, casas: 0, base: 60, frust: 54 },
+    { chave: 'cambio', rotulo: 'Câmbio (R$ por US$)', serie: m.cambio, casas: 2, base: 5.4, frust: 5.2 },
+    { chave: 'prod', rotulo: 'Produção do ES (mil barris/dia)', serie: m.producao, casas: 0, base: 224.5, frust: 162.3 },
+  ].map((l) => {
+    const a25 = media(l.serie, 2025), a26 = media(l.serie, 2026), u3 = ultimos3(l.serie)
+    return { ...l, a25, a26, u3, ate: rot(l.serie), pct: (a26 / l.base - 1) * 100 }
+  })
+  const f = (x: number, c: number) => numero(x, c)
+  const brent = linhas[0], prod = linhas[2]
+  return (
+    <Cartao titulo="Petróleo: Brent, câmbio e produção realizados contra a LDO">
+      <p className="max-w-3xl text-small text-ink-soft">
+        Em 2026 o Brent médio foi US$ {f(brent.a26, 0)} e a produção do Espírito Santo {f(prod.a26, 0)} mil barris por dia: {f(brent.pct, 0)}% e {f(prod.pct, 0)}% acima do cenário base da LDO 2027 (US$ {f(brent.base, 0)} e {f(prod.base, 1)} mil), com o câmbio próximo do suposto.
+      </p>
+      <div className="mt-3">
+        <TabelaItens altura="livre" itens={linhas} legenda="Brent, câmbio e produção: realizado e premissas da LDO 2027" colunas={[
+          { rotulo: 'Premissa', valor: (l) => <span className="font-semibold">{l.rotulo}</span> },
+          { rotulo: '2025 (média)', secundaria: true, valor: (l) => f(l.a25, l.casas) },
+          { rotulo: '2026 (média)', valor: (l) => <span className="font-semibold">{f(l.a26, l.casas)}</span> },
+          { rotulo: '3 últimos meses', secundaria: true, valor: (l) => f(l.u3, l.casas) },
+          { rotulo: 'LDO 2027 base', valor: (l) => f(l.base, l.casas === 0 && l.chave === 'prod' ? 1 : l.casas) },
+          { rotulo: '2026 sobre a base', valor: (l) => fmtPct(l.pct) },
+        ]} />
+      </div>
+      <Nota titulo="Como ler e limites">
+        <p>
+          A receita de petróleo do Estado depende do preço do barril, do câmbio e da produção (a participação especial, ainda, da escala dos campos). A tabela compara a média de 2026 (até o último mês de cada série: Brent {linhas[0].ate}, câmbio {linhas[1].ate}, produção {linhas[2].ate}) com as premissas do cenário base de 2027 na LDO. Com o Brent no patamar de 2026, a base da LDO é de fato um cenário de preços bem mais baixos, não uma projeção do que vem sendo realizado: a diferença não vem do câmbio. O Brent oscila muito (média mensal de US$ {f(Math.min(...Object.entries(m.brent).filter(([k]) => k.startsWith('2026')).map(([, x]) => x)), 0)} a US$ {f(Math.max(...Object.entries(m.brent).filter(([k]) => k.startsWith('2026')).map(([, x]) => x)), 0)} em 2026), então o cenário prudente da LDO protege contra reversão, mas deixa de fora o que o preço atual já entrega.
+        </p>
+        <p>
+          Limites: a produção é a do Estado (terra e mar), e a receita depende também de campo, alíquota e do mês de pagamento, que defasa o preço da arrecadação em dois ou três meses. Brent: média mensal da série diária FOB do Ipeadata (EIA). Câmbio: PTAX de venda, Banco Central. Produção: ANP, dados abertos. Dados coletados em {new Date(m.coletado_em).toLocaleDateString('pt-BR', { timeZone: 'America/Sao_Paulo' })}.
+        </p>
+      </Nota>
+    </Cartao>
+  )
+}
+
+/**
  * Os três maiores motores da receita bruta: ICMS, cota-parte do FPE e compensação pela produção de petróleo.
  * Mostra o ritmo mês a mês contra o mesmo mês do ano anterior (para ver aceleração ou desaceleração), o fechamento de 2026 por fonte
  * e o que a PLOA precisa supor para 2027.
  */
-export function PrincipaisFontes({ dados, receita, ipca, pib, petroleo }: { dados: DadosReceita; receita: LinhaMacro[]; ipca: Record<string, number>; pib: Record<string, number>; petroleo?: PetroleoSefaz }) {
+export function PrincipaisFontes({ dados, receita, ipca, pib, petroleo, mercado }: { dados: DadosReceita; receita: LinhaMacro[]; ipca: Record<string, number>; pib: Record<string, number>; petroleo?: PetroleoSefaz; mercado?: PetroleoMercado }) {
   const analise = useMemo(() => analisaFontes(dados), [dados])
   const { ultimo } = useMemo(() => mesesCorte(dados), [dados])
   const R = useMemo(() => Object.fromEntries(receita.map((x) => [x.chave, x.valores])) as Record<string, number[]>, [receita])
@@ -185,6 +243,8 @@ export function PrincipaisFontes({ dados, receita, ipca, pib, petroleo }: { dado
 
       {petroleo && <PetroleoPorNatureza dados={petroleo} />}
 
+      {mercado && <PetroleoMercadoCartao m={mercado} />}
+
       <Cartao titulo="Petróleo: as premissas da própria LDO 2027">
         <p className="max-w-3xl text-small text-ink-soft">Cenário base da LDO para 2027: Brent a US$ 60, câmbio de R$ 5,40 e 224,5 mil barris por dia, o que dá R$ 1,24 bi, cerca de 60% abaixo do ritmo de 2026 ({bilhoes(impl.petroleo26)}).</p>
         <Nota titulo="Comparação com 2026 e limites da leitura">
@@ -192,7 +252,7 @@ export function PrincipaisFontes({ dados, receita, ipca, pib, petroleo }: { dado
             O Anexo de Riscos Fiscais da LDO 2027 (Lei nº 12.967/2026, p. 52, fonte Nupetro/Subser/Sefaz) traz o cenário base do Estado para as receitas de petróleo e gás em 2027: produção de 224,5 mil barris por dia, Brent a US$ 60 e câmbio de R$ 5,40, o que dá R$ 1.240,8 milhões (royalties R$ 693,8 mi, participação especial R$ 527,2 mi e Fundo do Petróleo R$ 19,8 mi). A dedução feita acima a partir da PLOA (cerca de {bilhoes(impl.implicito)}) é da mesma ordem de grandeza dessa base, o que sugere que a proposta usa o cenário de Brent a US$ 60 para 2027; a PLOA não detalha a linha, então isso continua sendo indício.
           </p>
           <p>
-            Compare com 2026: a compensação pela produção de petróleo (R$ {numero(impl.petroleo25 / 1e9, 2)} bi em 2025) caminha para cerca de {bilhoes(impl.petroleo26)} em 2026. O cenário de 2027 supõe, portanto, uma queda de cerca de 60% sobre o ritmo atual. Se a diferença vier de preço e câmbio, ela é um risco conhecido, e a LDO a reconhece no sentido contrário (frustração de R$ 623,4 mi: Brent a US$ 54, câmbio a R$ 5,20 e produção de 162,3 mil barris). Para saber se a base de 2027 é prudente ou apenas baixa, falta comparar com o Brent, o câmbio e a produção realizados em 2026, que ainda não estão no painel.
+            Compare com 2026: a compensação pela produção de petróleo (R$ {numero(impl.petroleo25 / 1e9, 2)} bi em 2025) caminha para cerca de {bilhoes(impl.petroleo26)} em 2026. O cenário de 2027 supõe, portanto, uma queda de cerca de 60% sobre o ritmo atual. Se a diferença vier de preço e câmbio, ela é um risco conhecido, e a LDO a reconhece no sentido contrário (frustração de R$ 623,4 mi: Brent a US$ 54, câmbio a R$ 5,20 e produção de 162,3 mil barris). A comparação com o Brent, o câmbio e a produção realizados em 2026 está no cartão acima.
           </p>
         </Nota>
         <div className="mt-3">

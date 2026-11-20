@@ -12,7 +12,7 @@ import { Metodo } from './Metodo'
 import { PoderesEmendas } from './PoderesEmendas'
 import { Furos } from './Furos'
 import { Subvisoes } from './Estrutura'
-import { PrincipaisFontes, type PetroleoSefaz } from './Fontes'
+import { PrincipaisFontes, type PetroleoMercado, type PetroleoSefaz } from './Fontes'
 import { ControlesAcessibilidade } from '@/components/TopBar'
 import { CoberturaFontes, ReceitaMensal, type DadosReceita } from './ReceitaMensal'
 import type { LinhaMacro } from '@/lib/macro'
@@ -42,7 +42,7 @@ type MacroProps = {
   receita: LinhaMacro[]; despesa: LinhaMacro[]; ipca: Record<string, number>; pib: Record<string, number>; fonteIpca: string
 }
 
-export function Painel({ linhas, nomes, coleta, outrosPoderes, macro, receitaMes, petroleo }: { linhas: Linha[]; nomes: Nomes; coleta: string; outrosPoderes: string[]; macro: MacroProps; receitaMes: DadosReceita; petroleo?: PetroleoSefaz }) {
+export function Painel({ linhas, nomes, coleta, outrosPoderes, macro, receitaMes, petroleo, mercado }: { linhas: Linha[]; nomes: Nomes; coleta: string; outrosPoderes: string[]; macro: MacroProps; receitaMes: DadosReceita; petroleo?: PetroleoSefaz; mercado?: PetroleoMercado }) {
   const [aba, setAba] = useState<Aba>('visao')
   useEffect(() => {
     const h = window.location.hash.slice(1)
@@ -245,12 +245,12 @@ export function Painel({ linhas, nomes, coleta, outrosPoderes, macro, receitaMes
       </div>
 
       <div role="tabpanel" id={`painel-${aba}`} aria-labelledby={`aba-${aba}`} className="mt-4">
-        {aba === 'visao' && <VisaoGeral receita={macro.receita} despesa={macro.despesa} ipca={macro.ipca} fonteIpca={macro.fonteIpca} dados={receitaMes} irParaMetodo={() => { escolheAba('metodo'); window.scrollTo({ top: 0 }) }} />}
+        {aba === 'visao' && <VisaoGeral receita={macro.receita} despesa={macro.despesa} ipca={macro.ipca} pib={macro.pib} fonteIpca={macro.fonteIpca} dados={receitaMes} irParaMetodo={() => { escolheAba('metodo'); window.scrollTo({ top: 0 }) }} />}
         {aba === 'metodo' && <Metodo receita={macro.receita} dados={receitaMes} />}
         {aba === 'receita' && (
           <Subvisoes rotulo="O que ver na receita" itens={[
             { id: 'fechamento', rotulo: 'Fechamento de 2026', conteudo: <ReceitaMensal dados={receitaMes} macro={macro.receita} parte="fechamento" /> },
-            { id: 'fontes', rotulo: 'ICMS, FPE e petróleo', conteudo: <PrincipaisFontes dados={receitaMes} receita={macro.receita} ipca={macro.ipca} pib={macro.pib} petroleo={petroleo} /> },
+            { id: 'fontes', rotulo: 'ICMS, FPE e petróleo', conteudo: <PrincipaisFontes dados={receitaMes} receita={macro.receita} ipca={macro.ipca} pib={macro.pib} petroleo={petroleo} mercado={mercado} /> },
             { id: 'detalhe', rotulo: 'Perfil de 2027 e quadro oficial', conteudo: (
               <div className="space-y-3">
                 <ReceitaMensal dados={receitaMes} macro={macro.receita} parte="perfil" />
