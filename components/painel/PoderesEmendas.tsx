@@ -50,17 +50,39 @@ export function PoderesEmendas({ linhas }: { linhas: Linha[] }) {
   const rcl25 = (rreoRaw as unknown as { serie: { ano: number; rcl12m: number }[] }).serie.find((s) => s.ano === 2025)?.rcl12m ?? 0
   const emendas27 = rcl25 * 0.0155
 
+  /* onde os ajustes entram e quanto pesam */
+  const uosPoderes = new Set(PODERES.flatMap((p) => p.uos))
+  const ploaLinha = (l: Linha) => l[5 + PLOA] as number
+  const executavel = linhas.filter((l) => l[3] !== '9').reduce((t, l) => t + ploaLinha(l), 0)
+  const livres = linhas.filter((l) => !uosPoderes.has(l[0]) && (l[4] === '500' || l[4] === '501') && '345'.includes(l[3])).reduce((t, l) => t + ploaLinha(l), 0)
+  const contingencia = linhas.filter((l) => l[3] === '9' && l[2] === '9999').reduce((t, l) => t + ploaLinha(l), 0)
+  const dosPoderes = linhas.filter((l) => uosPoderes.has(l[0]))
+  const poderesTotal = dosPoderes.reduce((t, l) => t + ploaLinha(l), 0)
+  const parcela = (f: (l: Linha) => boolean) => numero((dosPoderes.filter(f).reduce((t, l) => t + ploaLinha(l), 0) / poderesTotal) * 100, 0)
   const limitesAjuste = PODERES.map((p) => ({ lim: (p.limite / 100) * RCL_JUL25_JUN26, ploa: (itens.find((i) => i.chave === p.chave)?.v[PLOA] ?? 0) })).filter((x) => x.ploa < x.lim).reduce((t, x) => t + (x.lim - x.ploa), 0)
+  const entradas = [
+    { chave: 'pod', rotulo: 'Poderes ao limite da LDO', sub: `${parcela((l) => l[3] === '1')}% pessoal, ${parcela((l) => l[3] === '3')}% outras correntes, ${parcela((l) => l[3] === '4' || l[3] === '5')}% investimentos`, v: limitesAjuste },
+    { chave: 'eme', rotulo: 'Emendas impositivas, além dos R$ 90 mi já reservados', sub: 'Outras correntes e investimentos; metade em saúde; sem pessoal', v: emendas27 - 90e6 },
+    { chave: 'tot', rotulo: 'Pressão adicional sobre a despesa', sub: '', v: limitesAjuste + emendas27 - 90e6 },
+  ]
   return (
     <div className="space-y-3">
-      <Cartao titulo="Ajustes à PLOA na votação da LOA: Poderes e emendas impositivas">
-        <p className="text-small text-ink">Estimativa de ajuste entre R$ {mi(limitesAjuste + emendas27 - 90e6)} e R$ {mi(limitesAjuste + emendas27)} milhões (limites dos Poderes e emendas impositivas), com a hipótese de que o recurso venha da despesa. Será atualizada com a votação da LOA.</p>
-        <Nota titulo="Metodologia e calendário">
+      <Cartao titulo="Poderes e emendas impositivas: onde entram e o peso sobre a despesa de 2027">
+        <TabelaItens altura="livre" compacta itens={entradas} legenda="Ajustes previstos à PLOA 2027 pelos Poderes e pelas emendas impositivas, em R$ milhões e em proporção da despesa" colunas={[
+          { rotulo: 'R$ milhões', valor: (x) => x.chave === 'tot' ? <span className="font-semibold">{x.rotulo}</span> : <><span className="font-medium text-ink">{x.rotulo}</span><span className="block text-label font-normal normal-case tracking-normal text-ink-soft">{x.sub}</span></> },
+          { rotulo: 'Valor', valor: (x) => <span className="font-semibold">+{mi(x.v)}</span> },
+          { rotulo: '% da despesa', secundaria: true, valor: (x) => `${numero((x.v / executavel) * 100, 1)}%` },
+          { rotulo: '% das dotações livres', valor: (x) => `${numero((x.v / livres) * 100, 1)}%` },
+        ]} />
+        <p className={`mt-2 ${NOTA_DISCRETA}`}>
+          Despesa: PLOA sem reservas (R$ {numero(executavel / 1e9, 2)} bi). Dotações livres: recursos ordinários (fontes 500 e 501) do Executivo em outras despesas correntes, investimentos e inversões (R$ {numero(livres / 1e9, 2)} bi); parte delas cobre os mínimos de saúde e educação e subsídios, de modo que a margem efetiva é menor. Composição dos Poderes: dotação das suas unidades na PLOA ({parcela((l) => l[4] === '500')}% com recursos ordinários); as emendas entram em ações por emenda, como transferências a municípios e entidades e obras, e saem da anulação de outras dotações. Valores calculados a partir da LDO sobre a PLOA original, não são alterações já feitas; a emenda pode chegar a +R$ {mi(emendas27)} milhões se a reserva técnica de R$ 90 milhões tiver outra finalidade.
+        </p>
+        <Nota titulo="Efeito sobre o equilíbrio do orçamento">
           <p>
-            Base: PLOA original (enviada em 29 de setembro). Pressões previstas em lei sobre a despesa: ajuste dos limites dos Poderes (cerca de R$ {mi(limitesAjuste)} milhões nos quatro órgãos abaixo do limite) e emendas individuais impositivas (cerca de R$ {mi(emendas27 - 90e6)} milhões além da reserva de R$ 90 milhões, ou até R$ {mi(emendas27)} milhões se essa reserva tiver outra finalidade). A hipótese de ajuste pela despesa decorre de a receita total da PLOA estar próxima da projeção de 2026.
+            Os dois ajustes entram no orçamento já fechado: a receita estimada na PLOA não muda com eles, então o recurso precisa vir de outra despesa ou de receita estimada a maior na votação. Pela LDO, o recurso das emendas só pode sair de anulação de dotações que não sejam pessoal, dívida, transferências constitucionais, contrapartidas, vinculadas, precatórios e PPP, o que concentra o corte nas dotações livres acima. A reserva de contingência da PLOA é de R$ {mi(contingencia)} milhões, {numero((contingencia / RCL_JUL25_JUN26) * 100, 2)}% da RCL (mínimo da LDO: 2%, R$ {mi(0.02 * RCL_JUL25_JUN26)} milhões). Se as emendas anularem a diferença para os R$ 90 milhões já reservados, ela cai para cerca de R$ {mi(contingencia - (emendas27 - 90e6))} milhões, {numero(((contingencia - (emendas27 - 90e6)) / RCL_JUL25_JUN26) * 100, 2)}% da RCL, o que o art. 9º, § 3º, permite. O efeito não é, portanto, aumentar a despesa total, e sim mudar a composição e consumir a margem de segurança.
           </p>
           <p>
-            Calendário: apresentação das emendas de 12 a 30 de novembro; votação do parecer na comissão em 9 de dezembro. Os remanejamentos (origem dos recursos, unidades e ações) serão registrados com a LOA aprovada; até lá, os valores são cálculos a partir da LDO, não alterações realizadas.
+            Calendário: apresentação das emendas de 12 a 30 de novembro; votação do parecer na comissão em 9 de dezembro. Os remanejamentos (origem dos recursos, unidades e ações) serão registrados com a LOA aprovada.
           </p>
         </Nota>
       </Cartao>

@@ -214,3 +214,8 @@ export function totaisPorFuncao(): Record<string, TotaisFuncao> {
   }
   return out
 }
+
+/** Reserva de contingência da PLOA 2027 (ação 9999 do programa 9999, GND 9), sem a reserva do RPPS e a do Fundo Soberano, que têm ações próprias. */
+export function reservaContingenciaPloa(): number {
+  return linhas.filter((l) => l.gnd === '9' && l.acao === '9999').reduce((t, l) => t + (l.ploa2027 ?? 0), 0)
+}
