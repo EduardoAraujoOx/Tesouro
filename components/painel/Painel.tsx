@@ -11,6 +11,8 @@ import { VisaoGeral } from './Agregado'
 import { Metodo } from './Metodo'
 import { PoderesEmendas } from './PoderesEmendas'
 import { Furos } from './Furos'
+import { Subvisoes } from './Estrutura'
+import { PrincipaisFontes } from './Fontes'
 import { ControlesAcessibilidade } from '@/components/TopBar'
 import { CoberturaFontes, ReceitaMensal, type DadosReceita } from './ReceitaMensal'
 import type { LinhaMacro } from '@/lib/macro'
@@ -246,11 +248,16 @@ export function Painel({ linhas, nomes, coleta, outrosPoderes, macro, receitaMes
         {aba === 'visao' && <VisaoGeral receita={macro.receita} despesa={macro.despesa} ipca={macro.ipca} fonteIpca={macro.fonteIpca} dados={receitaMes} irParaMetodo={() => { escolheAba('metodo'); window.scrollTo({ top: 0 }) }} />}
         {aba === 'metodo' && <Metodo receita={macro.receita} dados={receitaMes} />}
         {aba === 'receita' && (
-          <>
-            <ReceitaMensal dados={receitaMes} macro={macro.receita} ipca={macro.ipca} pib={macro.pib} />
-            <h2 className="mt-8 border-b border-line pb-1.5 text-lead font-semibold">Detalhe: arrecadação mensal por fonte e quadro oficial</h2>
-            <div className="mt-1"><Receita receita={macro.receita} ipca={macro.ipca} dados={receitaMes} /></div>
-          </>
+          <Subvisoes rotulo="O que ver na receita" itens={[
+            { id: 'fechamento', rotulo: 'Fechamento de 2026', conteudo: <ReceitaMensal dados={receitaMes} macro={macro.receita} parte="fechamento" /> },
+            { id: 'fontes', rotulo: 'ICMS, FPE e petróleo', conteudo: <PrincipaisFontes dados={receitaMes} receita={macro.receita} ipca={macro.ipca} pib={macro.pib} /> },
+            { id: 'detalhe', rotulo: 'Perfil de 2027 e quadro oficial', conteudo: (
+              <div className="space-y-3">
+                <ReceitaMensal dados={receitaMes} macro={macro.receita} parte="perfil" />
+                <Receita receita={macro.receita} ipca={macro.ipca} dados={receitaMes} />
+              </div>
+            ) },
+          ]} />
         )}
         {aba === 'despesa' && (
           <>
@@ -338,11 +345,12 @@ export function Painel({ linhas, nomes, coleta, outrosPoderes, macro, receitaMes
           </>
         )}
         {aba === 'atencao' && (
-          <>
-            <PoderesEmendas linhas={linhas} />
-            <div className="mt-3"><Furos linhas={linhas} nomes={nomes} dados={receitaMes} receita={macro.receita} ipca={macro.ipca} pib={macro.pib} /></div>
-            <h2 className="mt-8 border-b border-line pb-1.5 text-lead font-semibold">Ações que merecem leitura cuidadosa</h2>
-            <div className="mt-3 print:hidden">{filtros}</div>
+          <Subvisoes rotulo="O que ver em Atenção" itens={[
+            { id: 'ajustes', rotulo: 'Ajustes da LOA', conteudo: <PoderesEmendas linhas={linhas} /> },
+            { id: 'furos', rotulo: 'Possíveis furos', conteudo: <Furos linhas={linhas} nomes={nomes} dados={receitaMes} receita={macro.receita} ipca={macro.ipca} pib={macro.pib} /> },
+            { id: 'acoes', rotulo: 'Ações em atenção', conteudo: (
+              <>
+            <div className="print:hidden">{filtros}</div>
             {/* alertas */}
       <section aria-label="Pontos de atenção" className="mt-4 min-w-0 rounded-brand border border-line bg-paper p-3 sm:p-4 md:p-5">
         <div className="flex flex-wrap items-center justify-between gap-3">
@@ -369,8 +377,9 @@ export function Painel({ linhas, nomes, coleta, outrosPoderes, macro, receitaMes
           />
         </div>
       </section>
-
-          </>
+              </>
+            ) },
+          ]} />
         )}
       </div>
 
