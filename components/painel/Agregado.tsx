@@ -7,7 +7,8 @@ import { Cartao, Legenda, COR, TabelaItens } from './Graficos'
 import { ColunasAnuais, fmtPct, type ColunaAnual } from './GraficosMacro'
 import { Nota, NOTA_DISCRETA } from './Estrutura'
 import { COD_DESPESA, COD_GRUPO } from './codigos'
-import { fatorPrecos, ipcaAnual, pibArrecadacao, projecaoItens, projetaDespesa2026, projetaReceita2026, type DadosReceita, type ItemProjetado } from './projecao'
+import { BRENT_CENTRAL, CAMBIO_CENTRAL, EDICAO_EIA, PRODUCAO_CENTRAL, receitaPetroleo } from './petroleo'
+import { analisaFontes, fatorPrecos, ipcaAnual, pibArrecadacao, projecaoItens, projetaDespesa2026, projetaReceita2026, type DadosReceita, type ItemProjetado } from './projecao'
 
 type Vista = 'receita' | 'despesa' | 'resultado'
 const VISTAS: { id: Vista; rotulo: string }[] = [
@@ -93,7 +94,14 @@ export function VisaoGeral({ receita, despesa, ipca: ipcaParams, pib, fonteIpca,
     : linhasDespesa.map((l) => ({ ...l, proj: projDe(l.chave) }))
 
   /* referência de 2027, independente da PLOA: o fechamento projetado de 2026 corrigido pela inflação e pelo PIB real (receita) ou só pela inflação (despesa) */
-  const refReceita = (l: Linha) => (l.proj ? (l.proj.central - (l.proj.pontual ?? 0)) * (SEM_CRESCIMENTO.has(l.chave) ? 1 : 1 + g27) : null)
+  /* petróleo: em vez de manter o patamar de 2026 corrigido, a receita de 2027 vem da relação com a cotação (Brent da EIA, câmbio do Focus, produção de 2026) */
+  const petroleo26 = useMemo(() => analisaFontes(dados).find((a) => a.id === 'petroleo')!.central, [dados])
+  const ajustePetroleo = receitaPetroleo(BRENT_CENTRAL, CAMBIO_CENTRAL, PRODUCAO_CENTRAL).transferencias - petroleo26 * (1 + g27)
+  const refReceita = (l: Linha) => {
+    if (!l.proj) return null
+    const base = (l.proj.central - (l.proj.pontual ?? 0)) * (SEM_CRESCIMENTO.has(l.chave) ? 1 : 1 + g27)
+    return l.chave === 'tuniao' || l.chave === 'transf' ? base + ajustePetroleo : base
+  }
   const refDe = (l: Linha): number | null => {
     if (vista === 'receita') {
       if (l.chave === 'liq') return comProj.filter((x) => x.nivel === 0 && x.chave !== 'liq').reduce((s, x) => s + (refReceita(x) ?? 0), 0)
@@ -204,7 +212,7 @@ export function VisaoGeral({ receita, despesa, ipca: ipcaParams, pib, fonteIpca,
   const notaReferencia = (
     <Nota titulo="Metodologia">
       <p>
-        Proj. 26: acumulado até {nomeCorte} (receita) ou {nomeCorteDesp} (despesa empenhada) dividido pela participação média do período no ano em 2022–2025; faixa pelas participações extremas. Proj. 27: Proj. 26 corrigida pela variação nominal do PIB na receita (IPCA e PIB real, Focus: +{numero(g27 * 100, 1)}%) e pelo IPCA na despesa (+{numero(i27 * 100, 1)}%); operações de crédito e demais receitas de capital mantidas no nível de 2026; reservas excluídas da despesa. Não incorpora hipóteses sobre preço do petróleo (Brent de 2026 mantido), alíquotas, crédito a contratar ou ampliação real da despesa.
+        Proj. 26: acumulado até {nomeCorte} (receita) ou {nomeCorteDesp} (despesa empenhada) dividido pela participação média do período no ano em 2022–2025; faixa pelas participações extremas. Proj. 27: Proj. 26 corrigida pela variação nominal do PIB na receita (IPCA e PIB real, Focus: +{numero(g27 * 100, 1)}%) e pelo IPCA na despesa (+{numero(i27 * 100, 1)}%); operações de crédito e demais receitas de capital mantidas no nível de 2026; reservas excluídas da despesa. Petróleo: receita das transferências modelada pela cotação (Brent: média de 2027 da previsão da EIA de {EDICAO_EIA}, US$ {numero(BRENT_CENTRAL, 0)}; câmbio: mediana do Focus, R$ {numero(CAMBIO_CENTRAL, 2)}; produção: média de 2026). Não incorpora hipóteses sobre alíquotas, crédito a contratar ou ampliação real da despesa.
       </p>
       <p>
         Faixa de Proj. 27: na receita, ± o desvio da diferença entre o crescimento dos impostos do ES e o do PIB nominal desde {pibA.linhas[0].ano} ({numero(pibA.difDesvio, 1)} p.p.); na despesa, as participações sazonais extremas. Dif.: PLOA menos Proj. 27; azul acima, rosa abaixo (≥ {DIF_MIN}%). IPCA: {fonteIpca}{' '}
