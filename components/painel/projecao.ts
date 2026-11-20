@@ -551,6 +551,17 @@ export function razoesFechamento2026(empenhadoPorGnd: Record<string, number>): R
   return out
 }
 
+/** Crescimento nominal anual do pessoal e encargos (empenhado) em 2024 e 2025 e na projeção de 2026, e a média dos três: a tendência recente da folha, com reajustes, progressões e vegetativo. */
+export function tendenciaPessoal(): { media: number; anos: { ano: number; cresc: number }[] } {
+  const v = (a: number) => acumDesp(a, GND_DESPESA.pessoal, 12, EMP)
+  const anos = [
+    { ano: 2024, cresc: v(2024) / v(2023) - 1 },
+    { ano: 2025, cresc: v(2025) / v(2024) - 1 },
+    { ano: 2026, cresc: projetaDespesa2026().itens.pessoal.central / v(2025) - 1 },
+  ]
+  return { media: anos.reduce((t, x) => t + x.cresc, 0) / anos.length, anos }
+}
+
 export type RetroDespesa = { id: string; rotulo: string; erros: { ano: number; erro: number | null }[]; erroMedio: number | null }
 const ROTULOS_DESPESA: Record<string, string> = { tot: 'Despesa total', pessoal: 'Pessoal e encargos', outras: 'Outras despesas correntes', inv: 'Investimentos' }
 /** Teste retroativo da projeção da despesa: em cada ano de 2022 a 2025, projeta ao fim do mesmo mês de corte com as frações dos até quatro anos anteriores (a partir de 2019). */
