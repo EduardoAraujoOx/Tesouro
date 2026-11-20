@@ -10,6 +10,7 @@ import { Receita } from './Macro'
 import { VisaoGeral } from './Agregado'
 import { Metodo } from './Metodo'
 import { PoderesEmendas } from './PoderesEmendas'
+import { Furos } from './Furos'
 import { ControlesAcessibilidade } from '@/components/TopBar'
 import { CoberturaFontes, ReceitaMensal, type DadosReceita } from './ReceitaMensal'
 import type { LinhaMacro } from '@/lib/macro'
@@ -339,6 +340,7 @@ export function Painel({ linhas, nomes, coleta, outrosPoderes, macro, receitaMes
         {aba === 'atencao' && (
           <>
             <PoderesEmendas linhas={linhas} />
+            <div className="mt-3"><Furos linhas={linhas} nomes={nomes} dados={receitaMes} receita={macro.receita} ipca={macro.ipca} pib={macro.pib} /></div>
             <h2 className="mt-8 border-b border-line pb-1.5 text-lead font-semibold">Ações que merecem leitura cuidadosa</h2>
             <div className="mt-3 print:hidden">{filtros}</div>
             {/* alertas */}

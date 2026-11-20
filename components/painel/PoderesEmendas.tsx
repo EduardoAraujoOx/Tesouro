@@ -49,8 +49,20 @@ export function PoderesEmendas({ linhas }: { linhas: Linha[] }) {
   const rcl25 = (rreoRaw as unknown as { serie: { ano: number; rcl12m: number }[] }).serie.find((s) => s.ano === 2025)?.rcl12m ?? 0
   const emendas27 = rcl25 * 0.0155
 
+  const limitesAjuste = PODERES.map((p) => ({ lim: (p.limite / 100) * RCL_JUL25_JUN26, ploa: (itens.find((i) => i.chave === p.chave)?.v[PLOA] ?? 0) })).filter((x) => x.ploa < x.lim).reduce((t, x) => t + (x.lim - x.ploa), 0)
   return (
     <div className="space-y-3">
+      <Cartao titulo="Observação: a PLOA deve ser ajustada na votação da LOA">
+        <div className="max-w-3xl space-y-2 text-small text-ink-soft">
+          <p>
+            O painel mostra a proposta original (PLOA, enviada em 29 de setembro). Há duas pressões já previstas em lei sobre a despesa, e a hipótese de trabalho é que o ajuste venha do lado da despesa, por anulação de dotações, já que a receita total da proposta está perto do ritmo de 2026 (aba Receita): o ajuste dos limites dos Poderes (cerca de R$ {mi(limitesAjuste)} milhões nos quatro órgãos abaixo do limite) e as emendas individuais impositivas (cerca de R$ {mi(emendas27 - 90e6)} milhões a mais do que a reserva de R$ 90 milhões, ou até R$ {mi(emendas27)} milhões se essa reserva for outra coisa). Somam entre R$ {mi(limitesAjuste + emendas27 - 90e6)} e R$ {mi(limitesAjuste + emendas27)} milhões.
+          </p>
+          <p>
+            <span className="font-semibold text-ink">Como acompanhar.</span> Quando as emendas forem apresentadas (12 a 30 de novembro) e o parecer for votado na comissão (9 de dezembro), os remanejamentos aparecem: é preciso confirmar de onde saíram os recursos (reservas, outras ações), em que unidades e ações, e então atualizar o painel com a LOA aprovada. Até lá, estes números são hipóteses calculadas a partir da LDO, e não alterações já feitas.
+          </p>
+        </div>
+      </Cartao>
+
       <Cartao titulo="Despesa dos Poderes e órgãos autônomos: PLOA 2027 contra 2026">
         <p className="max-w-3xl text-small text-ink-soft">
           Nos cinco Poderes e órgãos autônomos a PLOA soma R$ {mi(soma.v[PLOA])} milhões, {fmtPct(variacoes(soma.v[INI], soma.v[PLOA], 0).nominal)} sobre o orçamento inicial de 2026, contra {fmtPct(variacoes(exec.v[INI], exec.v[PLOA], 0).nominal)} nas demais unidades (Executivo). Sobre a dotação atualizada de 2026, que já incorpora os créditos abertos no ano, o aumento é de {fmtPct(variacoes(soma.v[ATU], soma.v[PLOA], 0).nominal)}.
