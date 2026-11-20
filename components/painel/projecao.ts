@@ -1,5 +1,7 @@
 import rreoRaw from '@/data/rreo.json'
 import ritmoRaw from '@/data/ritmo-receita.json'
+import ritmoDespRaw from '@/data/ritmo-despesa.json'
+import despesaMacroRaw from '@/data/ploa2027-macro.json'
 
 /** Linhas do arquivo de receita: [mes, alinea, fonte, bruta, deducao, liquida_tipo] (R$). */
 export type DadosReceita = {
@@ -438,4 +440,66 @@ export function implicitoPetroleo(dados: DadosReceita, analise: AnaliseFonte[], 
   const outras27 = outras26 * (1 + crescimento)
   const implicito = tUniao2027 - fpe27 - outras27
   return { fpe27, outras26, outras27, implicito, petroleo26: pet.central, petroleo25: pet.fechou2025 }
+}
+
+
+/* ---------- ritmo e projeção de fechamento da despesa ---------- */
+type RitmoDespesaDados = { anos: Record<string, Record<string, { empenhada: Record<string, number>; liquidada: Record<string, number> }>> }
+const ritmoDesp = ritmoDespRaw as unknown as RitmoDespesaDados
+export const ANOS_SAZONAL_DESPESA = [2022, 2023, 2024, 2025]
+const GRUPOS_DESPESA = ['pessoal', 'juros', 'outras_correntes', 'investimento', 'inversoes', 'amortizacao'] as const
+/** chave da linha do quadro de grandes grupos da Visão geral → chave do quadro da PLOA */
+const CHAVE_DESPESA: Record<string, string> = { pessoal: 'pessoal', juros: 'juros', outras: 'outras_correntes', inv: 'investimento', invf: 'inversoes', amort: 'amortizacao' }
+
+export type ProjecaoDespesa = { itens: Record<string, ItemProjetado>; bimestre: number; acumulado: number; acumulado25: number }
+
+/**
+ * Projeção de fechamento da despesa empenhada de 2026 por grupo de natureza: despesa acumulada até o bimestre mais recente (RREO, Anexo 01)
+ * dividida pela fração que o mesmo período costuma representar no ano (média de 2022 a 2025; mínimo e máximo dão a faixa).
+ * O RREO traz a despesa exceto intraorçamentária; para ficar na base dos quadros da PLOA, cada grupo é multiplicado pela razão entre o
+ * valor de 2025 no quadro da PLOA e o de 2025 no RREO. Reservas não são executadas, então entram com zero.
+ */
+export function projetaDespesa2026(): ProjecaoDespesa {
+  const anoCorrente = ritmoDesp.anos['2026']
+  const bim = Number(Object.keys(anoCorrente)[0])
+  const macro = Object.fromEntries((despesaMacroRaw as unknown as { despesa: { chave: string; valores: number[] }[] }).despesa.map((x) => [x.chave, x.valores]))
+  const grupo = (g: string) => {
+    const acum = anoCorrente[String(bim)].empenhada[g]
+    const fr = ANOS_SAZONAL_DESPESA.map((a) => ritmoDesp.anos[String(a)][String(bim)].empenhada[g] / ritmoDesp.anos[String(a)]['6'].empenhada[g])
+    const media = fr.reduce((x, y) => x + y, 0) / fr.length
+    const fator = macro[g][2] / ritmoDesp.anos['2025']['6'].empenhada[g]
+    return { central: (acum / media) * fator, min: (acum / Math.max(...fr)) * fator, max: (acum / Math.min(...fr)) * fator }
+  }
+  const itens: Record<string, ItemProjetado> = {}
+  for (const [chave, g] of Object.entries(CHAVE_DESPESA)) itens[chave] = { ...grupo(g), base: 'bimestres' }
+  const soma = (cs: string[]): ItemProjetado => ({
+    central: cs.reduce((x, c) => x + itens[c].central, 0),
+    min: cs.reduce((x, c) => x + (itens[c].min ?? 0), 0),
+    max: cs.reduce((x, c) => x + (itens[c].max ?? 0), 0),
+    base: 'bimestres',
+  })
+  itens.corr = soma(['pessoal', 'juros', 'outras'])
+  itens.capd = soma(['inv', 'invf', 'amort'])
+  itens.res = { central: 0, base: 'bimestres' }
+  itens.tot = soma(['corr', 'capd'])
+  const acumulado = GRUPOS_DESPESA.reduce((x, g) => x + anoCorrente[String(bim)].empenhada[g], 0)
+  const acumulado25 = GRUPOS_DESPESA.reduce((x, g) => x + ritmoDesp.anos['2025'][String(bim)].empenhada[g], 0)
+  return { itens, bimestre: bim, acumulado, acumulado25 }
+}
+
+export type RetroDespesa = { id: string; rotulo: string; erros: { ano: number; erro: number | null }[]; erroMedio: number | null }
+const ROTULOS_DESPESA: Record<string, string> = { total: 'Despesa total (exceto intra)', pessoal: 'Pessoal e encargos', outras_correntes: 'Outras despesas correntes', investimento: 'Investimentos' }
+/** Teste retroativo da projeção da despesa: em cada ano de 2022 a 2025, projeta com o acumulado até o 4º bimestre e as frações dos até quatro anos anteriores. */
+export function retrotesteDespesa(): RetroDespesa[] {
+  return Object.entries(ROTULOS_DESPESA).map(([id, rotulo]) => {
+    const erros = [2022, 2023, 2024, 2025].map((ano) => {
+      const fr = [1, 2, 3, 4].map((k) => ano - k).filter((a) => ritmoDesp.anos[String(a)]).map((a) => ritmoDesp.anos[String(a)]['4'].empenhada[id] / ritmoDesp.anos[String(a)]['6'].empenhada[id])
+      if (!fr.length) return { ano, erro: null }
+      const proj = ritmoDesp.anos[String(ano)]['4'].empenhada[id] / (fr.reduce((x, y) => x + y, 0) / fr.length)
+      const real = ritmoDesp.anos[String(ano)]['6'].empenhada[id]
+      return { ano, erro: (proj / real - 1) * 100 }
+    })
+    const v = erros.filter((e) => e.erro !== null).map((e) => Math.abs(e.erro as number))
+    return { id, rotulo, erros, erroMedio: v.length ? v.reduce((x, y) => x + y, 0) / v.length : null }
+  })
 }
