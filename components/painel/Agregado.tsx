@@ -154,17 +154,32 @@ export function VisaoGeral({ funcoes, contingencia, receita, despesa, ipca: ipca
     { chave: 'receita', rotulo: 'Limite pela receita', sub: `Referência de receita menos o resultado médio de 2023–25 (R$ ${numero(resultadoMedio / 1e9, 2)} bi)`, v: limiteReceita },
     { chave: 'pessoal', rotulo: 'Pessoal pela tendência', sub: `Folha +${numero(tendPessoal.media * 100, 1)}% a.a. (média de 2024–26); demais despesas inerciais`, v: comPessoalTendencia },
   ].map((x) => ({ ...x, d: ploa27 - x.v, pct: (ploa27 / x.v - 1) * 100 }))
+  const desp = vista === 'despesa'
+  const mesRec = MESES_NOME[proj.meses - 1]
+  const mesDesp = MESES_NOME[projD.mesCorte - 1]
+  const expReal = desp
+    ? 'Despesa empenhada no ano, incluídas as intraorçamentárias (Portal de Dados Abertos do ES).'
+    : 'Receita total arrecadada no ano, líquida das deduções para municípios e Fundeb (quadro de evolução da receita da PLOA 2027 e Portal de Dados Abertos).'
+  const exp26 = desp
+    ? `Fechamento projetado de 2026: despesa acumulada até ${mesDesp} dividida pela fração do ano que a mesma data representou em 2022–2025 (folha, juros e amortização pela liquidação; demais, média de empenhada e liquidada). O traço preto é a faixa pelas frações extremas.`
+    : `Fechamento projetado de 2026: arrecadação acumulada até ${mesRec} dividida pela fração do ano que o mesmo período costuma representar (média de 2022–2025), por linha de receita. O traço preto é a faixa pelas frações extremas.`
+  const expPloa = desp
+    ? 'Despesa fixada na proposta de lei orçamentária (Mensagem nº 189/2026), sem as reservas de RPPS, contingência e Fundo Soberano, que não são executadas.'
+    : 'Receita estimada na proposta de lei orçamentária (Mensagem nº 189/2026), líquida das deduções para municípios e Fundeb.'
+  const expEquipe = desp
+    ? `Referência independente da PLOA: o fechamento projetado de 2026 corrigido só pelo IPCA (+${numero(i27 * 100, 1)}%), sem crescimento real, e por isso funciona como piso. O traço tracejado é a PLOA; a faixa vem das frações sazonais extremas de 2026.`
+    : `Referência independente da PLOA: o fechamento projetado de 2026, sem a receita pontual, corrigido por IPCA e PIB real (+${numero(g27 * 100, 1)}%); o petróleo segue o Brent (US$ ${numero(BRENT_CENTRAL, 0)}) e o câmbio (R$ ${numero(CAMBIO_CENTRAL, 2)}) do Focus. O traço tracejado é a PLOA; a faixa é ± o desvio entre o crescimento dos impostos do ES e o do PIB nominal.`
   const colunasBrutas: ColunaAnual[] = [
-    { rotulo: '2023', v: serieTotal[0], tipo: 'real' },
-    { rotulo: '2024', v: serieTotal[1], tipo: 'real' },
-    { rotulo: '2025', v: serieTotal[2], tipo: 'real' },
+    { rotulo: '2023', v: serieTotal[0], tipo: 'real', explicacao: expReal },
+    { rotulo: '2024', v: serieTotal[1], tipo: 'real', explicacao: expReal },
+    { rotulo: '2025', v: serieTotal[2], tipo: 'real', explicacao: expReal },
     vista === 'despesa'
-      ? { rotulo: '2026', sub: 'projeção', v: projD.itens.tot.central, tipo: 'estim', faixa: [projD.itens.tot.min as number, projD.itens.tot.max as number] }
-      : { rotulo: '2026', sub: 'projeção', v: proj.central, tipo: 'estim', faixa: [proj.min, proj.max] },
-    { rotulo: '2027', sub: 'PLOA', v: ploa27, tipo: 'ploa' },
+      ? { rotulo: '2026', sub: 'projeção', v: projD.itens.tot.central, tipo: 'estim', faixa: [projD.itens.tot.min as number, projD.itens.tot.max as number], explicacao: exp26 }
+      : { rotulo: '2026', sub: 'projeção', v: proj.central, tipo: 'estim', faixa: [proj.min, proj.max], explicacao: exp26 },
+    { rotulo: '2027', sub: 'PLOA', v: ploa27, tipo: 'ploa', explicacao: expPloa },
     vista === 'despesa'
-      ? { rotulo: '2027', sub: 'equipe', v: refDespesa, tipo: 'ref', faixa: faixaRefDespesa, compara: { v: ploa27, rotulo: 'PLOA 2027' } }
-      : { rotulo: '2027', sub: 'equipe', v: refReceitaTotal, tipo: 'ref', faixa: faixaRefReceita, compara: { v: ploa27, rotulo: 'PLOA 2027' } },
+      ? { rotulo: '2027', sub: 'equipe', v: refDespesa, tipo: 'ref', faixa: faixaRefDespesa, compara: { v: ploa27, rotulo: 'PLOA 2027' }, explicacao: expEquipe }
+      : { rotulo: '2027', sub: 'equipe', v: refReceitaTotal, tipo: 'ref', faixa: faixaRefReceita, compara: { v: ploa27, rotulo: 'PLOA 2027' }, explicacao: expEquipe },
   ]
   const colunas = colunasBrutas.map((c, k) => {
     if (base === 'nominal') return c
