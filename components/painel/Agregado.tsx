@@ -198,23 +198,40 @@ export function VisaoGeral({ funcoes, contingencia, receita, despesa, ipca: ipca
     { rotulo: 'Dif. %', valor: (l: Linha) => { const d = difPct(l); return d === null ? '–' : <span className={`font-semibold ${corDif(d)}`}>{fmtPct(d)}</span> } },
   ]
 
+  /* resultado orçamentário em seis colunas: 2023–2025, Proj. 26, PLOA 27 e Proj. 27 (referência da equipe, sem reservas, que não são executadas) */
+  const seis = (v: number[], proj26: number, ref27: number) => [v[0], v[1], v[2], proj26, v[4], ref27]
+  const lr = (chave: string) => linhasReceita.find((x) => x.chave === chave)!
+  const somaRec = (chaves: string[], ref: boolean) => chaves.reduce((t, c) => t + (ref ? (refReceita({ ...lr(c), proj: itensProj[c] }) ?? 0) : itensProj[c].central), 0)
+  const CORRENTES = ['imp', 'taxas', 'contrib', 'patrim', 'transf', 'demais']
+  const rcBruta = seis(pick(R, 'receitas_correntes'), somaRec(CORRENTES, false), somaRec(CORRENTES, true))
+  const intra6 = seis(pick(R, 'intra'), somaRec(['intra'], false), somaRec(['intra'], true))
+  const ded6 = seis(pick(R, 'deducoes'), somaRec(['ded'], false), somaRec(['ded'], true))
+  const rcl6 = rcBruta.map((x, j) => x + intra6[j] + ded6[j])
+  const dcorr6 = seis(pick(D, 'despesas_correntes'), projD.itens.corr.central, projD.itens.corr.central * (1 + i27))
+  const rcap6 = seis(pick(R, 'receitas_capital'), somaRec(['cap'], false), somaRec(['cap'], true))
+  const dcap6 = seis(pick(D, 'despesas_capital'), projD.itens.capd.central, projD.itens.capd.central * (1 + i27))
+  const res6 = seis(reservas, 0, 0)
+  const supCorr6 = rcl6.map((x, j) => x - dcorr6[j])
+  const antesRes6 = supCorr6.map((x, j) => x + rcap6[j] - dcap6[j])
+  const ANOS6 = ['2023', '2024', '2025', 'Proj. 26', 'PLOA 27', 'Proj. 27']
   const indicadores = [
-    { chave: 'pessoal', rotulo: 'Pessoal e encargos ÷ RCL', v: pessoalRcl },
-    { chave: 'correntes', rotulo: 'Despesas correntes ÷ RCL', v: correntesRcl },
-    { chave: 'inv', rotulo: 'Investimentos ÷ RCL', v: pick(D, 'investimento').map((x, j) => (x / rcl[j]) * 100) },
-    { chave: 'sup', rotulo: 'Superávit corrente ÷ RCL', v: supCorrente.map((x, j) => (x / rcl[j]) * 100) },
+    { chave: 'pessoal', rotulo: 'Pessoal e encargos ÷ RCL', v: seis(pick(D, 'pessoal'), projD.itens.pessoal.central, projD.itens.pessoal.central * (1 + i27)).map((x, j) => (x / rcl6[j]) * 100) },
+    { chave: 'correntes', rotulo: 'Despesas correntes ÷ RCL', v: dcorr6.map((x, j) => (x / rcl6[j]) * 100) },
+    { chave: 'inv', rotulo: 'Investimentos ÷ RCL', v: seis(pick(D, 'investimento'), projD.itens.inv.central, projD.itens.inv.central * (1 + i27)).map((x, j) => (x / rcl6[j]) * 100) },
+    { chave: 'sup', rotulo: 'Superávit corrente ÷ RCL', v: supCorr6.map((x, j) => (x / rcl6[j]) * 100) },
   ]
   const linhasResultado: Linha[] = [
-    { chave: 'rc', rotulo: 'Receitas correntes (brutas)', nivel: 0, v: pick(R, 'receitas_correntes') },
-    { chave: 'intra', rotulo: '(+) Intraorçamentárias', nivel: 0, v: pick(R, 'intra') },
-    { chave: 'ded', rotulo: '(−) Deduções (municípios e Fundeb)', nivel: 0, v: pick(R, 'deducoes') },
-    { chave: 'rcl', rotulo: '= RCL (aproximada)', nivel: 0, negrito: true, v: rcl },
-    { chave: 'dc', rotulo: '(−) Despesas correntes', nivel: 0, v: pick(D, 'despesas_correntes').map(neg) },
-    { chave: 'sup', rotulo: '= Superávit corrente', nivel: 0, negrito: true, v: supCorrente },
-    { chave: 'rk', rotulo: '(+) Receitas de capital', nivel: 0, v: pick(R, 'receitas_capital') },
-    { chave: 'dk', rotulo: '(−) Despesas de capital', nivel: 0, v: pick(D, 'despesas_capital').map(neg) },
-    { chave: 'res', rotulo: '(−) Reservas (RPPS e contingência)', nivel: 0, v: reservas.map(neg) },
-    { chave: 'saldo', rotulo: '= Resultado orçamentário', nivel: 0, negrito: true, v: COL.map((_, j) => supCorrente[j] + pick(R, 'receitas_capital')[j] - pick(D, 'despesas_capital')[j] - reservas[j]) },
+    { chave: 'rc', rotulo: 'Receitas correntes (brutas)', nivel: 0, v: rcBruta },
+    { chave: 'intra', rotulo: '(+) Intraorçamentárias', nivel: 0, v: intra6 },
+    { chave: 'ded', rotulo: '(−) Deduções (municípios e Fundeb)', nivel: 0, v: ded6 },
+    { chave: 'rcl', rotulo: '= RCL (aproximada)', nivel: 0, negrito: true, v: rcl6 },
+    { chave: 'dc', rotulo: '(−) Despesas correntes', nivel: 0, v: dcorr6.map(neg) },
+    { chave: 'sup', rotulo: '= Superávit corrente', nivel: 0, negrito: true, v: supCorr6 },
+    { chave: 'rk', rotulo: '(+) Receitas de capital', nivel: 0, v: rcap6 },
+    { chave: 'dk', rotulo: '(−) Despesas de capital', nivel: 0, v: dcap6.map(neg) },
+    { chave: 'antes', rotulo: '= Resultado antes das reservas', nivel: 0, negrito: true, v: antesRes6 },
+    { chave: 'res', rotulo: '(−) Reservas (RPPS e contingência)', nivel: 0, v: res6.map(neg) },
+    { chave: 'saldo', rotulo: '= Resultado orçamentário', nivel: 0, negrito: true, v: antesRes6.map((x, j) => x - res6[j]) },
   ]
 
   /* limites e mínimos: regras fiscais e constitucionais contra a PLOA 2027 */
@@ -314,15 +331,16 @@ export function VisaoGeral({ funcoes, contingencia, receita, despesa, ipca: ipca
           <Cartao titulo="Resultado orçamentário">
             <TabelaItens altura="livre" itens={linhasResultado} legenda="Resultado orçamentário, em R$ milhões" colunas={[
               { rotulo: 'R$ milhões', valor: celulaLinha },
-              ...ANOS.map((a, j) => ({ rotulo: a, valor: (l: Linha) => <span className={l.negrito || j === 4 ? 'font-semibold' : ''}>{mi(l.v[j])}</span> })),
+              ...ANOS6.map((a, j) => ({ rotulo: a, valor: (l: Linha) => <span className={l.negrito || j === 4 ? 'font-semibold' : ''}>{mi(l.v[j])}</span> })),
             ]} />
+            <p className={`mt-2 ${NOTA_DISCRETA}`}>Proj. 26 e Proj. 27: referência da equipe, sem reservas (não são executadas), de modo que o resultado projetado é a receita menos a despesa executada; na PLOA as reservas fecham o resultado em zero.</p>
           </Cartao>
           <Cartao titulo="Indicadores (% da RCL aproximada)">
             <TabelaItens altura="livre" itens={indicadores} legenda="Indicadores, em % da RCL aproximada" colunas={[
               { rotulo: 'Indicador', valor: (x) => x.rotulo },
-              ...ANOS.map((a, j) => ({ rotulo: a, valor: (x: (typeof indicadores)[number]) => `${numero(x.v[j], 1)}%` })),
+              ...ANOS6.map((a, j) => ({ rotulo: a, valor: (x: (typeof indicadores)[number]) => `${numero(x.v[j], 1)}%` })),
             ]} />
-            <p className={`mt-2 ${NOTA_DISCRETA}`}>RCL aproximada: receitas correntes + intraorçamentárias − deduções da receita (quadro da PLOA); difere da RCL do art. 2º, IV, da LRF. Provável 26: estimativa de 2026 informada na PLOA.</p>
+            <p className={`mt-2 ${NOTA_DISCRETA}`}>RCL aproximada: receitas correntes + intraorçamentárias − deduções da receita (quadro da PLOA); difere da RCL do art. 2º, IV, da LRF.</p>
           </Cartao>
 
           <Cartao titulo="Limites e mínimos: LRF, LDO e Constituição">
