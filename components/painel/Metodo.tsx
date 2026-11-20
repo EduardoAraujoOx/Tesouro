@@ -41,11 +41,11 @@ export function Metodo({ receita, dados, pib27 }: { receita: LinhaMacro[]; dados
 
   return (
     <Subvisoes rotulo="O que ver no método" itens={[
-      { id: 'fontes', rotulo: 'As fontes batem?', conteudo: (
+      { id: 'fontes', rotulo: 'Conciliação', conteudo: (
         <div className="space-y-3">
-          <Cartao titulo="As fontes batem entre si?">
-            <p className="max-w-3xl text-small text-ink-soft">O painel usa três fontes de receita: o quadro “Evolução da Receita” da PLOA 2027 (p. 97), o Balanço Orçamentário do RREO no Siconfi (Anexo 01) e o arquivo de receitas do Portal de Dados Abertos do ES. A conferência abaixo, para 2025 (ano fechado), mostra onde elas coincidem.</p>
-              <Nota titulo="Como foi feito, limites e leitura">
+          <Cartao titulo="Conciliação da receita de 2025: PLOA, RREO e Portal">
+            <p className="max-w-3xl text-small text-ink-soft">Fontes de receita: quadro Evolução da Receita da PLOA 2027 (p. 97), Balanço Orçamentário do RREO (Siconfi, Anexo 01) e Portal de Dados Abertos do ES. Conciliação do exercício fechado de 2025.</p>
+              <Nota titulo="Metodologia e limites">
               <p>
                 O RREO e o Portal coincidem linha a linha, com diferença inferior a R$ 1 milhão em cada uma (ambos líquidos das deduções). O quadro da PLOA é bruto, com as deduções num bloco à parte, e para 2023 e 2024 o total líquido coincide com o RREO em até R$ 2 milhões. Em 2025 há diferença: o quadro da PLOA soma {mi(total25.ploa)} milhões contra {mi(total25.rreo)} milhões no RREO ({dif(total25.ploa, total25.rreo)} milhões), e as deduções do quadro são {mi(dedLinha?.ploa ?? 0)} milhões contra {mi(dedLinha?.portalBruto ?? 0)} milhões no Portal. Convém perguntar à SEFAZ de onde vem a diferença antes de tomar o quadro de 2025 como referência.
               </p>
@@ -75,33 +75,31 @@ export function Metodo({ receita, dados, pib27 }: { receita: LinhaMacro[]; dados
           </Cartao>
         </div>
       ) },
-      { id: 'projecao', rotulo: 'Como projetamos 2026', conteudo: (
+      { id: 'projecao', rotulo: 'Projeção de 2026', conteudo: (
         <div className="space-y-3">
-          <Cartao titulo="Receita: como projetamos o fechamento de 2026">
+          <Cartao titulo="Projeção de fechamento de 2026: receita">
             <p className="max-w-3xl text-small text-ink-soft">
-                O método é o da participação sazonal: para cada tipo de receita, mede-se que fração da arrecadação do ano já estava feita até {mes} nos anos anteriores (média de 2022 a 2025) e divide-se o acumulado de 2026 por essa fração. Para a receita líquida total, {bilhoes(proj.acumulado)} ÷ {numero(proj.participacao * 100, 1)}% = {bilhoes(proj.central)}. A faixa de {numero(proj.min / 1e9, 1)} a {numero(proj.max / 1e9, 1)} bi usa a menor e a maior fração observadas ({proj.sazonalidade.map((s) => `${numero(s.participacao * 100, 1)}% em ${s.ano}`).join('; ')}).
+                Participação sazonal: acumulado de 2026 até {mes} ÷ participação média do período no ano em 2022–2025, por tipo de receita. Receita total, líquida de deduções: {bilhoes(proj.acumulado)} ÷ {numero(proj.participacao * 100, 1)}% = {bilhoes(proj.central)}. Faixa de {numero(proj.min / 1e9, 1)} a {numero(proj.max / 1e9, 1)} bi pelas participações extremas ({proj.sazonalidade.map((s) => `${numero(s.participacao * 100, 1)}% em ${s.ano}`).join('; ')}).
               </p>
-              <Nota titulo="Como foi feito, limites e leitura">
+              <Nota titulo="Metodologia e limites">
               <p>
-                Só entra arrecadação realizada (Siconfi, RREO, Anexo 01, até 2025; Portal de Dados Abertos para 2026, que coincide com o RREO). Não se usa orçamento nem previsão de nenhum ano. Para o ICMS a fração é mês a mês (RREO, Anexo 03); IPVA, IRRF e ITCD usam a sazonalidade de 2023 a 2025 do demonstrativo mensal da SEFAZ (o Portal só tem mês a mês a partir de 2025); em demais receitas correntes, indenizações, restituições e ressarcimentos (espécie 192) são tratados como pontuais e entram só pelo que já foi realizado; as deduções são o resíduo entre a receita líquida projetada e a soma das linhas brutas.
+                Só entra arrecadação realizada (Siconfi, RREO, Anexo 01, até 2025; Portal de Dados Abertos para 2026, que coincide com o RREO). Não se usa orçamento nem previsão de nenhum ano. Para o ICMS a fração é mês a mês (RREO, Anexo 03); IPVA, IRRF e ITCD usam a sazonalidade de 2023 a 2025 do demonstrativo mensal da SEFAZ (o Portal só tem mês a mês a partir de 2025); em demais receitas correntes, indenizações, restituições e ressarcimentos (espécie 192) são tratados como pontuais e entram só pelo que já foi realizado; as deduções são o resíduo entre a receita total projetada, líquida de deduções, e a soma das linhas brutas.
               </p>
-              <p>O método supõe que o resto do ano se comporta como nos anos anteriores: não enxerga receita extraordinária, operação de crédito que ainda não entrou nem mudança de alíquota. A tabela abaixo mostra o quanto ele erraria se tivesse sido usado em cada ano passado.</p>
+              <p>Pressupõe que o restante do ano siga a sazonalidade dos anos anteriores: não capta receita extraordinária, operação de crédito ainda não ingressada nem mudança de alíquota. Teste retroativo abaixo.</p>
               </Nota>
             <div className="mt-3">
               <TabelaItens altura="livre" itens={[...retro.grupos, retro.total].map((g) => ({ ...g, chave: g.id }))} legenda="Teste retroativo da projeção, erro de cada ano em %" colunas={[
                 { rotulo: 'Erro da projeção feita em outubro', valor: (g) => <span className={g.id === 'total' ? 'font-semibold' : ''}>{g.rotulo}</span> },
                 ...[2022, 2023, 2024, 2025].map((a) => ({ rotulo: String(a), valor: (g: (typeof retro.total)) => fmtPct(g.erros.find((e) => e.ano === a)?.erro ?? undefined) })),
                 { rotulo: 'Erro médio', valor: (g) => <span className="font-semibold">{g.erroMedio === null ? '–' : `${numero(g.erroMedio, 1)}%`}</span> },
-                { rotulo: 'Leitura', valor: (g) => (g.erroMedio === null ? '–' : g.erroMedio <= 3 ? 'confiável' : g.erroMedio <= 8 ? 'razoável' : 'pouco confiável') },
               ]} />
               <p className={`mt-2 ${NOTA_DISCRETA}`}>
-                Erro = projeção feita com o acumulado até outubro e as frações dos até quatro anos anteriores, menos o realizado do ano, em % do realizado. “Erro médio”: média dos erros em módulo. Confiável: até 3%; razoável: até 8%; pouco confiável: acima disso.
-                A projeção de 2026 usa 2022–2025, a mesma janela dos testes.
+                Erro = projeção com acumulado até outubro e frações dos até quatro anos anteriores, menos o realizado, em % do realizado; erro médio em módulo. A projeção de 2026 usa 2022–2025, a mesma janela.
               </p>
             </div>
           </Cartao>
-          <Cartao titulo="IPVA, IRRF, ITCD e demais receitas: quão boa é a projeção?">
-        <p className="max-w-3xl text-small text-ink-soft">Essas linhas usam a sazonalidade de 2023 a 2025 do demonstrativo mensal da SEFAZ. O teste refaz a projeção de outubro de 2024 e de 2025 com os anos anteriores disponíveis.</p>
+          <Cartao titulo="Teste retroativo: IPVA, IRRF, ITCD e demais receitas correntes">
+        <p className="max-w-3xl text-small text-ink-soft">Sazonalidade de 2023 a 2025 (demonstrativo mensal da SEFAZ). Projeção de outubro de 2024 e de 2025 com os anos anteriores disponíveis.</p>
         <div className="mt-3">
           <TabelaItens altura="livre" itens={retroSefaz.map((g) => ({ ...g, chave: g.id }))} legenda="Teste retroativo da projeção de IPVA, IRRF, ITCD e demais receitas correntes, erro em %" colunas={[
             { rotulo: 'Erro da projeção feita em outubro', valor: (g) => g.rotulo },
@@ -114,12 +112,12 @@ export function Metodo({ receita, dados, pib27 }: { receita: LinhaMacro[]; dados
         </Nota>
       </Cartao>
 
-      <Cartao titulo="Despesa: como projetamos o fechamento de 2026">
+      <Cartao titulo="Projeção de fechamento de 2026: despesa empenhada">
             <p className="max-w-3xl text-small text-ink-soft">
-                Mesma lógica da receita, aplicada à despesa empenhada de cada grupo: divide-se o que já foi empenhado até agosto (4º bimestre do RREO) pela fração que o mesmo período costuma representar no ano (média de 2022 a 2025). O RREO traz a despesa exceto intraorçamentária; para ficar na base dos quadros da PLOA, cada grupo é multiplicado pela razão entre o valor de 2025 no quadro da PLOA e o de 2025 no RREO. Reservas não são executadas e entram com zero.
+                Despesa empenhada por grupo de natureza até agosto (4º bimestre do RREO, Anexo 01) ÷ participação média do período no ano em 2022–2025. O RREO exclui a despesa intraorçamentária; para a base dos quadros da PLOA, cada grupo é multiplicado pela razão entre o valor de 2025 no quadro da PLOA e no RREO. Reservas não são executadas (zero).
               </p>
-              <Nota titulo="Como foi feito, limites e leitura">
-              <p>O erro é maior onde a execução é concentrada no fim do ano, como os investimentos: ver o teste retroativo.</p>
+              <Nota titulo="Metodologia e limites">
+              <p>O erro é maior onde a execução se concentra no fim do exercício, como nos investimentos (teste retroativo).</p>
               </Nota>
             <div className="mt-3">
               <TabelaItens altura="livre" itens={retroDesp.map((g) => ({ ...g, chave: g.id }))} legenda="Teste retroativo da projeção da despesa, erro de cada ano em %" colunas={[
@@ -132,9 +130,9 @@ export function Metodo({ receita, dados, pib27 }: { receita: LinhaMacro[]; dados
         </div>
       ) },
       { id: 'pib', rotulo: 'PIB e arrecadação', conteudo: (
-        <Cartao titulo="Arrecadação e PIB: a referência de 2027 é coerente com a história?">
+        <Cartao titulo="Impostos do ES e PIB nominal do Brasil">
           <p className="max-w-3xl text-small text-ink-soft">
-            Desde {pibA.linhas[0].ano}, os impostos do ES cresceram em média {numero(pibA.difMedia, 1)} ponto(s) percentual(is) acima do PIB nominal do Brasil, mas com oscilação de {numero(pibA.difDesvio, 1)} pontos de um ano para o outro: o PIB explica {numero(pibA.r2 * 100, 0)}% da variação (R² {numero(pibA.r2, 2)}). A referência de 2027, que faz a receita crescer com o PIB nominal do Focus ({fmtPct(pib27 * 100)}), fica abaixo da média histórica, mas dentro da oscilação normal.
+            Desde {pibA.linhas[0].ano}, os impostos do ES cresceram em média {numero(pibA.difMedia, 1)} p.p. acima do PIB nominal, com desvio de {numero(pibA.difDesvio, 1)} p.p. (R² {numero(pibA.r2, 2)}). A Proj. 27 supõe crescimento da receita igual ao do PIB nominal do Focus ({fmtPct(pib27 * 100)}).
           </p>
           <div className="mt-3">
             <TabelaItens altura="livre" itens={itensPib} legenda="Crescimento anual do PIB nominal e dos impostos do ES, em %" colunas={[
@@ -144,18 +142,18 @@ export function Metodo({ receita, dados, pib27 }: { receita: LinhaMacro[]; dados
               { rotulo: 'Diferença (p.p.)', valor: (l) => <span className={l.forte ? 'font-semibold' : ''}>{fmtPct(l.dif)}</span> },
             ]} />
           </div>
-          <Nota titulo="Como ler, o que entra no método e limites">
+          <Nota titulo="Metodologia e limites">
             <p>A elasticidade estimada é {numero(pibA.elasticidade, 2)} (regressão dos log-crescimentos, {pibA.n} anos): em média, cada 1% de PIB nominal veio com {numero(pibA.elasticidade, 1)}% de impostos. Com o PIB nominal de {fmtPct(pib27 * 100)} em 2027, a regressão daria impostos {fmtPct(impostosRegressao * 100)}, contra {fmtPct(pib27 * 100)} na referência e {fmtPct(impostosPloa * 100)} na PLOA (sobre o fechamento projetado de 2026).</p>
-            <p>O PIB entra no método como faixa de plausibilidade, não como correção do número central: a diferença para o PIB oscila muito (de {fmtPct(difMin.dif)} em {difMin.ano} a {fmtPct(difMax.dif)} em {difMax.ano}, em pontos percentuais), o que pode refletir mudanças de alíquota, de preço de combustíveis e de petróleo ou de atividade que o PIB não captura; não separei essas causas. Por isso a faixa da referência na Visão geral usa o desvio de {numero(pibA.difDesvio, 1)} ponto(s) percentual(is) como medida de dispersão, e a PLOA dentro dela não é, por si só, sinal de erro. Fontes: PIB, Banco Central (SGS 1207); impostos, Siconfi (RREO, Anexo 01, 6º bimestre). São poucos anos e há quebras estruturais: a leitura é indicativa.</p>
+            <p>O PIB entra como faixa de plausibilidade da Proj. 27, não como correção do valor central: a diferença para o PIB oscila de {fmtPct(difMin.dif)} ({difMin.ano}) a {fmtPct(difMax.dif)} ({difMax.ano}) p.p., o que pode refletir alíquotas, preços de combustíveis e petróleo ou atividade, sem separação de causas. A faixa usa o desvio de {numero(pibA.difDesvio, 1)} p.p. Fontes: PIB, Banco Central (SGS 1207); impostos, Siconfi (RREO, Anexo 01, 6º bimestre). Poucos anos e quebras estruturais: indicativo.</p>
           </Nota>
         </Cartao>
       ) },
-      { id: 'metodos', rotulo: 'ICMS e FPE: métodos', conteudo: (
+      { id: 'metodos', rotulo: 'ICMS e FPE', conteudo: (
         <div className="space-y-3">
-          <Cartao titulo="ICMS e FPE: qual método de projeção erra menos?">
-            <p className="max-w-3xl text-small text-ink-soft">Para as duas maiores fontes há série mensal longa (RREO, Anexo 03, desde 2019), o que permite comparar quatro métodos: a sazonalidade média de quatro anos e três variações do ritmo recente (últimos 3 meses, acumulado do ano e últimos 12 meses sobre o mesmo período do ano anterior). O ritmo recente capta aceleração ou desaceleração durante o ano, que a sazonalidade não vê.</p>
-              <Nota titulo="Como foi feito, limites e leitura">
-              <p>Cada método foi aplicado, como se fosse outubro, a cada ano de 2021 a 2025; a tabela mostra o erro (projeção menos realizado, em % do realizado) e a média dos erros em módulo. A diferença entre os métodos é pequena (a pior média fica em 2%) e baseada em cinco anos, por isso a projeção por fonte mostra também a faixa entre os métodos.</p>
+          <Cartao titulo="Teste de métodos de projeção: ICMS e FPE">
+            <p className="max-w-3xl text-small text-ink-soft">Série mensal do RREO (Anexo 03, desde 2019). Quatro métodos: sazonalidade média de quatro anos e variação sobre o mesmo período do ano anterior nos 3 últimos meses, no acumulado do ano e nos 12 últimos meses.</p>
+              <Nota titulo="Metodologia e limites">
+              <p>Cada método foi aplicado, com dados até outubro, a cada ano de 2021 a 2025; erro = projeção menos realizado, em % do realizado, e média dos erros em módulo. A diferença entre os métodos é pequena (pior média de 2%) e baseada em cinco anos; a projeção por fonte traz a faixa entre os métodos.</p>
               </Nota>
             <div className="mt-3 space-y-3">
               {retroFontes.map((f) => (
@@ -165,23 +163,22 @@ export function Metodo({ receita, dados, pib27 }: { receita: LinhaMacro[]; dados
                   { rotulo: 'Erro médio', valor: (x) => <span className={x.mae === Math.min(...f.r.map((y) => y.mae)) ? 'font-semibold text-navy' : 'font-semibold'}>{numero(x.mae, 1)}%{x.mae === Math.min(...f.r.map((y) => y.mae)) ? ' ✓' : ''}</span> },
                 ]} />
               ))}
-              <p className={`${NOTA_DISCRETA}`}>✓ marca o método de menor erro médio, usado na projeção da aba Receita. O petróleo (compensação financeira pela produção) não tem história mensal no Portal antes de 2025 e chega em parcelas trimestrais: nele o ritmo recente é a única referência, com faixa indicativa.</p>
+              <p className={`${NOTA_DISCRETA}`}>✓ método de menor erro médio, usado na projeção. Petróleo (compensação financeira pela produção): sem história mensal no Portal antes de 2025 e com parcelas trimestrais; ritmo recente como única referência, com faixa indicativa.</p>
             </div>
           </Cartao>
         </div>
       ) },
       { id: 'def', rotulo: 'Definições', conteudo: (
         <div className="space-y-3">
-          <Cartao titulo="Definições usadas nas telas">
+          <Cartao titulo="Definições">
             <dl className="max-w-3xl space-y-2 text-small">
               {[
-                ['Receita líquida', 'Arrecadação bruta menos as deduções (transferências constitucionais aos municípios, Fundeb e outras). É o valor que o RREO apresenta.'],
+                ['Receita total, líquida de deduções', 'Arrecadação bruta (correntes, intraorçamentárias e de capital) menos as deduções da receita (transferências constitucionais aos municípios, Fundeb e outras). Corresponde ao subtotal das receitas (III) do Balanço Orçamentário (RREO) e ao total do quadro Evolução da Receita da PLOA. Distinta da RCL (LRF, art. 2º, IV).'],
                 ['Real', 'Variação nominal deflacionada pelo IPCA do ano de destino: (1 + variação nominal) ÷ (1 + IPCA) − 1. IPCA de 2023 a 2025 observado; 2026 e 2027 do Focus.'],
-                ['Receita corrente líquida aproximada', 'Receitas correntes mais intraorçamentárias menos as deduções do quadro da PLOA. Não é a RCL da LRF, que tem regras próprias de apuração.'],
-                ['Δ% sobre a projeção', 'Quanto a receita proposta para 2027 se afasta do fechamento de 2026 projetado pelo ritmo de arrecadação, e não do “provável” informado na PLOA.'],
-                ['≈ (oscila)', 'A fração do ano arrecadada até o corte varia mais de 8 pontos percentuais entre os anos: a projeção dessa linha é pouco confiável.'],
-                ['▲ ▼ (destaque)', 'A variação da linha difere em 5 pontos percentuais ou mais da do total e envolve ao menos R$ 100 milhões. Serve para indicar onde olhar primeiro, não como conclusão.'],
-              ].map(([t, d]) => (
+                ['RCL aproximada', 'Receitas correntes mais intraorçamentárias menos as deduções do quadro da PLOA; difere da RCL apurada nos termos da LRF.'],
+                ['Proj. 26 e Proj. 27', 'Proj. 26: fechamento de 2026 projetado pelo ritmo de arrecadação ou execução. Proj. 27: Proj. 26 corrigida por IPCA e PIB real (receita) ou IPCA (despesa), sem usar a PLOA. Dif. = PLOA 2027 menos Proj. 27.'],
+                ['≈ (oscila)', 'Participação do período no ano varia mais de 8 p.p. entre os anos: projeção da linha de baixa precisão.'],
+                              ].map(([t, d]) => (
                 <div key={t}><dt className="font-semibold text-ink">{t}</dt><dd className="text-ink-soft">{d}</dd></div>
               ))}
             </dl>

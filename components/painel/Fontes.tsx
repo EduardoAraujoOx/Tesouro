@@ -61,7 +61,7 @@ function PetroleoPorNatureza({ dados }: { dados: PetroleoSefaz }) {
   const sub = linhas.find((l) => l.chave === 'sub')!
   return (
     <Cartao titulo="Petróleo por natureza: royalties, excedente e participação especial">
-      <Nota titulo="Leitura"><p>
+      <Nota titulo="Notas"><p>
         De janeiro a {nomeMes}, a participação especial somou R$ {numero(pe.p26 / 1e6, 0)} mi, {numero((pe.p26 / pe.p25 - 1) * 100, 0)}% acima do mesmo período de 2025; royalties e excedente, juntos, R$ {numero(sub.p26 / 1e6, 0)} mi ({fmtPct((sub.p26 / sub.p25 - 1) * 100)}).
       </p></Nota>
       <div className="mt-3">
@@ -80,7 +80,7 @@ function PetroleoPorNatureza({ dados }: { dados: PetroleoSefaz }) {
           ...meses.map((m) => ({ rotulo: MESES[m - 1], valor: (s: (typeof serie)[number]) => mi(mensal(s.ano, m, s.c)) })),
         ]} />
       </div>
-      <Nota titulo="Como ler e limites">
+      <Nota titulo="Metodologia e limites">
         <p>
           A participação especial é paga por trimestre (fevereiro, maio, agosto e novembro concentram o valor): por isso a linha mensal tem picos e meses quase vazios, e o acumulado do ano é a leitura confiável. Royalties e excedente da produção são mais regulares, e a alta de 2026 neles aparece a partir do segundo trimestre (no 1º trimestre royalties e excedente ficaram em R$ {numero(((achar(2026, 3)?.naturezas[ROY].acumulado ?? 0) + (achar(2026, 3)?.naturezas[EXC].acumulado ?? 0)) / 1e6, 0)} mi, contra R$ {numero(((achar(2025, 3)?.naturezas[ROY].acumulado ?? 0) + (achar(2025, 3)?.naturezas[EXC].acumulado ?? 0)) / 1e6, 0)} mi em 2025).
         </p>
@@ -118,13 +118,13 @@ function PetroleoMercadoCartao({ m }: { m: PetroleoMercado }) {
   const f = (x: number, c: number) => numero(x, c)
   const brent = linhas[0], prod = linhas[2]
   return (
-    <Cartao titulo="Petróleo: Brent, câmbio e produção realizados contra a LDO">
-      <Nota titulo="Leitura"><p>
+    <Cartao titulo="Petróleo: Brent, câmbio e produção realizados e premissas da LDO 2027">
+      <Nota titulo="Notas"><p>
         Em 2026 o Brent médio foi US$ {f(brent.a26, 0)} e a produção do Espírito Santo {f(prod.a26, 0)} mil barris por dia: {f(brent.pct, 0)}% e {f(prod.pct, 0)}% acima do cenário base da LDO 2027 (US$ {f(brent.base, 0)} e {f(prod.base, 1)} mil), com o câmbio próximo do suposto.
       </p></Nota>
       <div className="mt-3">
         <TabelaItens altura="livre" itens={linhas} legenda="Brent, câmbio e produção: realizado e premissas da LDO 2027" colunas={[
-          { rotulo: 'Premissa', valor: (l) => <span className="font-semibold">{l.rotulo}</span> },
+          { rotulo: 'Variável', valor: (l) => <span className="font-semibold">{l.rotulo}</span> },
           { rotulo: '2025 (média)', secundaria: true, valor: (l) => f(l.a25, l.casas) },
           { rotulo: '2026 (média)', valor: (l) => <span className="font-semibold">{f(l.a26, l.casas)}</span> },
           { rotulo: '3 últimos meses', secundaria: true, valor: (l) => f(l.u3, l.casas) },
@@ -132,7 +132,7 @@ function PetroleoMercadoCartao({ m }: { m: PetroleoMercado }) {
           { rotulo: '2026 sobre a base', valor: (l) => fmtPct(l.pct) },
         ]} />
       </div>
-      <Nota titulo="Como ler e limites">
+      <Nota titulo="Metodologia e limites">
         <p>
           A receita de petróleo do Estado depende do preço do barril, do câmbio e da produção (a participação especial, ainda, da escala dos campos). A tabela compara a média de 2026 (até o último mês de cada série: Brent {linhas[0].ate}, câmbio {linhas[1].ate}, produção {linhas[2].ate}) com as premissas do cenário base de 2027 na LDO. Com o Brent no patamar de 2026, a base da LDO é de fato um cenário de preços bem mais baixos, não uma projeção do que vem sendo realizado: a diferença não vem do câmbio. O Brent oscila muito (média mensal de US$ {f(Math.min(...Object.entries(m.brent).filter(([k]) => k.startsWith('2026')).map(([, x]) => x)), 0)} a US$ {f(Math.max(...Object.entries(m.brent).filter(([k]) => k.startsWith('2026')).map(([, x]) => x)), 0)} em 2026), então o cenário prudente da LDO protege contra reversão, mas deixa de fora o que o preço atual já entrega.
         </p>
@@ -161,17 +161,17 @@ export function PrincipaisFontes({ dados, receita, ipca, pib, petroleo, mercado 
   const nomeCorte = ['janeiro', 'fevereiro', 'março', 'abril', 'maio', 'junho', 'julho', 'agosto', 'setembro', 'outubro', 'novembro', 'dezembro'][ultimo - 1]
 
   const cenariosIcms = [
-    { chave: 'ploa', rotulo: 'PLOA 2027 (o que a proposta supõe)', g: R.icms[5] / icms.central - 1 },
-    { chave: 'g3m', rotulo: 'Ritmo dos três últimos meses mantido', g: icms.g3m ?? 0 },
-    { chave: 'focus', rotulo: 'Inflação + PIB (Focus): economia crescendo como esperado', g: g27 },
-    { chave: 'ano', rotulo: 'Ritmo do acumulado do ano mantido', g: icms.gAno ?? 0 },
+    { chave: 'ploa', rotulo: 'PLOA 2027 (implícito)', g: R.icms[5] / icms.central - 1 },
+    { chave: 'g3m', rotulo: 'Ritmo dos 3 últimos meses', g: icms.g3m ?? 0 },
+    { chave: 'focus', rotulo: 'IPCA + PIB real (Focus)', g: g27 },
+    { chave: 'ano', rotulo: 'Ritmo do acumulado no ano', g: icms.gAno ?? 0 },
   ].map((c) => ({ ...c, valor: icms.central * (1 + c.g) }))
 
   const linhaFonte = (a: AnaliseFonte) => ({ ...a, chave: a.id })
   return (
     <div className="space-y-3">
-      <Cartao titulo="ICMS, FPE e petróleo: o ritmo de 2026 mês a mês">
-        <Nota titulo="Como ler"><p>As três fontes somam {numero(soma * 100, 0)}% da receita bruta de 2025. Cada célula: crescimento da arrecadação do mês sobre o mesmo mês de 2025.</p><p>A leitura mês a mês separa tendência de sazonalidade e deixa ver se o crescimento está acelerando ou perdendo fôlego. Azul: acima do mesmo mês de 2025; rosa: abaixo (intensidade até ±30%). O petróleo chega em parcelas trimestrais (fevereiro, maio, agosto e novembro concentram a participação especial), por isso oscila muito. Fonte: Portal de Dados Abertos do ES; ICMS e FPE conferem com o RREO (Anexo 03).</p></Nota>
+      <Cartao titulo="Arrecadação mensal de 2026: variação sobre o mesmo mês de 2025">
+        <Nota titulo="Notas"><p>As três fontes somam {numero(soma * 100, 0)}% da receita bruta de 2025. Cada célula: crescimento da arrecadação do mês sobre o mesmo mês de 2025.</p><p>A leitura mês a mês separa tendência de sazonalidade e deixa ver se o crescimento está acelerando ou perdendo fôlego. Azul: acima do mesmo mês de 2025; rosa: abaixo (intensidade até ±30%). O petróleo chega em parcelas trimestrais (fevereiro, maio, agosto e novembro concentram a participação especial), por isso oscila muito. Fonte: Portal de Dados Abertos do ES; ICMS e FPE conferem com o RREO (Anexo 03).</p></Nota>
         <div className="mt-3">
           <TabelaItens altura="livre" itens={analise.map(linhaFonte)} legenda="Crescimento da arrecadação de cada mês sobre o mesmo mês de 2025, em %" colunas={[
             { rotulo: 'Fonte', valor: (a) => <span className="font-semibold">{a.rotulo}</span> },
@@ -187,8 +187,8 @@ export function PrincipaisFontes({ dados, receita, ipca, pib, petroleo, mercado 
       </Cartao>
 
       <Cartao titulo="Fechamento de 2026 por fonte">
-        <Nota titulo="Método e faixa"><p>Pelo método de menor erro no teste retroativo (ICMS: ritmo dos 3 últimos meses; FPE: dos 12 últimos); a faixa vai do menor ao maior resultado entre os métodos.</p>
-          <p>Para cada fonte, a projeção usa o método que menos errou quando aplicado aos anos passados (ver o teste em Método e fontes): ICMS pelo ritmo dos três últimos meses, FPE pelo ritmo dos doze últimos. A faixa vai do menor ao maior resultado entre os métodos. No petróleo não há história mensal longa para testar; o ritmo recente é a melhor referência, e a faixa é só indicativa.</p>
+        <Nota titulo="Metodologia"><p>Pelo método de menor erro no teste retroativo (ICMS: ritmo dos 3 últimos meses; FPE: dos 12 últimos); a faixa vai do menor ao maior resultado entre os métodos.</p>
+          <p>Para cada fonte, a projeção usa o método que menos errou quando aplicado aos anos passados: ICMS pelo ritmo dos três últimos meses, FPE pelo ritmo dos doze últimos. A faixa vai do menor ao maior resultado entre os métodos. No petróleo não há história mensal longa para testar; o ritmo recente é a melhor referência, e a faixa é só indicativa.</p>
         </Nota>
         <div className="mt-3">
           <TabelaItens altura="livre" itens={analise.map(linhaFonte)} legenda="Fechamento de 2026 por fonte, em R$ milhões" colunas={[
@@ -204,8 +204,8 @@ export function PrincipaisFontes({ dados, receita, ipca, pib, petroleo, mercado 
         </div>
       </Cartao>
 
-      <Cartao titulo="ICMS em 2027: o que a PLOA supõe">
-        <Nota titulo="Leitura"><p>A PLOA prevê ICMS de {bilhoes(R.icms[5])} em 2027. Sobre o fechamento projetado de 2026 ({bilhoes(icms.central)}), isso é um crescimento nominal de {fmtPct((R.icms[5] / icms.central - 1) * 100)}. A tabela compara com o que cada hipótese de crescimento daria.</p></Nota>
+      <Cartao titulo="ICMS 2027: PLOA e hipóteses de crescimento">
+        <Nota titulo="Notas"><p>A PLOA prevê ICMS de {bilhoes(R.icms[5])} em 2027. Sobre o fechamento projetado de 2026 ({bilhoes(icms.central)}), isso é um crescimento nominal de {fmtPct((R.icms[5] / icms.central - 1) * 100)}. A tabela compara com o que cada hipótese de crescimento daria.</p></Nota>
         <div className="mt-3">
           <TabelaItens altura="livre" itens={cenariosIcms} legenda="ICMS de 2027 sob hipóteses de crescimento, em R$ milhões" colunas={[
             { rotulo: 'Hipótese', valor: (c) => <span className={c.chave === 'ploa' ? 'font-semibold' : ''}>{c.rotulo}</span> },
@@ -217,23 +217,23 @@ export function PrincipaisFontes({ dados, receita, ipca, pib, petroleo, mercado 
         </div>
       </Cartao>
 
-      <Cartao titulo="Transferências da União: o que a PLOA precisa supor para o petróleo">
+      <Cartao titulo="Petróleo implícito nas transferências da União (PLOA 2027)">
         <div className="max-w-3xl space-y-2 text-small text-ink-soft">
           <p>A PLOA traz as transferências da União numa linha só ({bilhoes(R.transf_corr_uniao[5])} em 2027). Tirando dela o FPE e as demais transferências crescendo como a economia esperada pelo Focus, sobra o que a proposta precisa supor para o petróleo.</p>
         </div>
         <div className="mt-3">
           <TabelaItens altura="livre" itens={[
             { chave: 'a', rotulo: 'Transferências da União na PLOA 2027', v: R.transf_corr_uniao[5], forte: true },
-            { chave: 'b', rotulo: '(−) FPE 2027: fechamento de 2026 projetado, mais o crescimento do Focus', v: -impl.fpe27, forte: false },
-            { chave: 'c', rotulo: '(−) Demais transferências da União 2027: idem', v: -impl.outras27, forte: false },
-            { chave: 'd', rotulo: '= Petróleo que a PLOA precisa supor para 2027', v: impl.implicito, forte: true },
-            { chave: 'e', rotulo: 'Para comparar: petróleo realizado em 2025', v: impl.petroleo25, forte: false },
-            { chave: 'f', rotulo: 'Para comparar: petróleo projetado para 2026', v: impl.petroleo26, forte: false },
+            { chave: 'b', rotulo: '(−) FPE 2027 (projeção)', v: -impl.fpe27, forte: false },
+            { chave: 'c', rotulo: '(−) Demais transferências da União 2027 (projeção)', v: -impl.outras27, forte: false },
+            { chave: 'd', rotulo: '= Petróleo implícito na PLOA 2027', v: impl.implicito, forte: true },
+            { chave: 'e', rotulo: 'Petróleo realizado em 2025', v: impl.petroleo25, forte: false },
+            { chave: 'f', rotulo: 'Petróleo projetado para 2026', v: impl.petroleo26, forte: false },
           ]} legenda="Petróleo implícito na PLOA 2027, em R$ milhões" colunas={[
             { rotulo: 'R$ milhões', valor: (x) => <span className={x.forte ? 'font-semibold' : ''}>{x.rotulo}</span> },
             { rotulo: 'Valor', valor: (x) => <span className={x.forte ? 'font-semibold' : ''}>{x.v < 0 ? `−${mi(-x.v)}` : mi(x.v)}</span> },
           ]} />
-          <Nota titulo="Como ler">          <p>
+          <Nota titulo="Notas">          <p>
             O resultado indica que a PLOA supõe petróleo em {bilhoes(impl.implicito)}, {fmtPct((impl.implicito / impl.petroleo26 - 1) * 100)} sobre o fechamento projetado de 2026 e {fmtPct((impl.implicito / impl.petroleo25 - 1) * 100)} sobre 2025. É uma dedução, não um número publicado: a PLOA não detalha a linha. Para comparar com a leitura pela sazonalidade do grupo, a projeção top-down das transferências da União é {bilhoes(topDownUniao)} em 2026, contra {bilhoes(impl.fpe27 / (1 + g27) + impl.outras26 + impl.petroleo26)} somando as três partes pelo ritmo recente.
           </p></Nota>
         </div>
@@ -243,8 +243,8 @@ export function PrincipaisFontes({ dados, receita, ipca, pib, petroleo, mercado 
 
       {mercado && <PetroleoMercadoCartao m={mercado} />}
 
-      <Cartao titulo="Petróleo: as premissas da própria LDO 2027">
-        <Nota titulo="Comparação com 2026 e limites da leitura"><p>Cenário base da LDO para 2027: Brent a US$ 60, câmbio de R$ 5,40 e 224,5 mil barris por dia, o que dá R$ 1,24 bi, cerca de 60% abaixo do ritmo de 2026 ({bilhoes(impl.petroleo26)}).</p>
+      <Cartao titulo="Petróleo: premissas da LDO 2027">
+        <Nota titulo="Notas"><p>Cenário base da LDO para 2027: Brent a US$ 60, câmbio de R$ 5,40 e 224,5 mil barris por dia, o que dá R$ 1,24 bi, cerca de 60% abaixo do ritmo de 2026 ({bilhoes(impl.petroleo26)}).</p>
           <p>
             O Anexo de Riscos Fiscais da LDO 2027 (Lei nº 12.967/2026, p. 52, fonte Nupetro/Subser/Sefaz) traz o cenário base do Estado para as receitas de petróleo e gás em 2027: produção de 224,5 mil barris por dia, Brent a US$ 60 e câmbio de R$ 5,40, o que dá R$ 1.240,8 milhões (royalties R$ 693,8 mi, participação especial R$ 527,2 mi e Fundo do Petróleo R$ 19,8 mi). A dedução feita acima a partir da PLOA (cerca de {bilhoes(impl.implicito)}) é da mesma ordem de grandeza dessa base, o que sugere que a proposta usa o cenário de Brent a US$ 60 para 2027; a PLOA não detalha a linha, então isso continua sendo indício.
           </p>

@@ -27,7 +27,7 @@ export function Subvisoes({ itens, rotulo }: { itens: { id: string; rotulo: stri
 export const NOTA_DISCRETA = 'text-[0.6875rem] normal-case leading-snug tracking-normal text-ink-soft/75'
 
 /** Texto de apoio recolhido: a tela mostra a frase-resumo, e o método, a fonte e as ressalvas ficam a um toque (e saem no PDF). */
-export function Nota({ children, titulo = 'Como ler, método e fontes' }: { children: ReactNode; titulo?: string }) {
+export function Nota({ children, titulo = 'Metodologia e fontes' }: { children: ReactNode; titulo?: string }) {
   const [aberta, setAberta] = useState(false)
   return (
     <div className="mt-2">

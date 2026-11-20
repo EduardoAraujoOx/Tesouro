@@ -21,7 +21,7 @@ export function RitmoReceita({ dados }: { dados: DadosReceita }) {
   const mes = NOMES_MES[r.meses - 1]
   const linhas = [...r.grupos, r.total].map((g) => ({ ...g, chave: g.id }))
   return (
-    <Cartao titulo={`Ritmo da arrecadação até ${mes}, ano a ano`}>
+    <Cartao titulo={`Arrecadação acumulada até ${mes}`}>
       <TabelaItens altura="livre" itens={linhas} legenda={`Arrecadação líquida acumulada de janeiro a ${mes}, por tipo de receita, em R$ milhões`} colunas={[
         { rotulo: 'R$ milhões · natureza', valor: (g) => <span className={g.id === 'total' ? 'font-semibold' : ''}>{COD_GRUPO[g.id] && <span className="block text-label normal-case tracking-normal tabular-nums text-ink-soft md:mr-1.5 md:inline-block md:min-w-[6.5rem] md:text-small">{COD_GRUPO[g.id]}</span>}{g.rotulo}{g.oscila && <span title="A participação do período no ano oscila muito entre os anos: projeção pouco confiável" className="ml-1 text-ink-soft">≈</span>}</span> },
         ...ANOS_RITMO.map((a) => ({ rotulo: String(a), valor: (g: RitmoGrupo) => mi(g.acumulado[a]), secundaria: true })),

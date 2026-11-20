@@ -68,7 +68,7 @@ export function ReceitaMensal({ dados, macro, parte }: { dados: DadosReceita; ma
 
   const itensPerfil = [
     ...comps.linhas.map((l) => ({ chave: l.id, rotulo: l.rotulo, mensal: l.mensal, anual: l.valor })),
-    { chave: 'total', rotulo: '= Receita líquida', mensal: comps.totalMes, anual: soma(comps.totalMes) },
+    { chave: 'total', rotulo: '= Receita total (líquida de deduções)', mensal: comps.totalMes, anual: soma(comps.totalMes) },
   ]
   const colsPerfil = [
     { rotulo: 'R$ milhões', valor: (x: (typeof itensPerfil)[number]) => x.rotulo },
@@ -80,7 +80,7 @@ export function ReceitaMensal({ dados, macro, parte }: { dados: DadosReceita; ma
   if (parte === 'perfil') {
     return (
       <div className="space-y-3">
-        <Cartao titulo="Perfil mensal proposto para 2027 (ensaio das metas de arrecadação)"
+        <Cartao titulo="Perfil mensal da receita de 2027 (estimativa)"
           grafico={<TabelaItens itens={itensPerfil} colunas={colsPerfil} legenda="Perfil mensal proposto da receita de 2027, em R$ milhões" />} />
         <p className="text-small text-ink-soft">
           Valor anual de cada componente no quadro da PLOA distribuído pela participação de cada mês na arrecadação bruta de 2025; deduções pela participação de 2025. É um ponto de partida para as metas mensais do decreto de início de exercício, e não a meta oficial.
@@ -92,10 +92,10 @@ export function ReceitaMensal({ dados, macro, parte }: { dados: DadosReceita; ma
     <div>
       <div><RitmoReceita dados={dados} /></div>
       <div className="mt-3">
-        <Cartao titulo="Receita líquida por mês: 2026 e 2025"
+        <Cartao titulo="Receita total, líquida de deduções, por mês: 2025 e 2026"
           legenda={<Legenda itens={[{ cor: COR.atualizada, contorno: COR.contornoAtualizada, rotulo: '2025' }, { cor: COR.ploa, rotulo: `2026 (até ${NOMES_MES[ultimo - 1]})` }]} />}
           grafico={<ColunasMeses anterior={liq25} corrente={mesesCom26} rotuloAnterior="2025" rotuloCorrente="2026" />}
-          tabela={<TabelaItens itens={MESES.map((m, i) => ({ chave: m, mes: m, a: liq25[i], c: mesesCom26[i] }))} legenda="Receita líquida por mês, em R$ milhões"
+          tabela={<TabelaItens itens={MESES.map((m, i) => ({ chave: m, mes: m, a: liq25[i], c: mesesCom26[i] }))} legenda="Receita total, líquida de deduções, por mês, em R$ milhões"
             colunas={[{ rotulo: 'Mês', valor: (x) => x.mes }, { rotulo: '2025', valor: (x) => milhoes(x.a, 0) }, { rotulo: '2026', valor: (x) => (x.c === null ? '–' : milhoes(x.c, 0)) }, { rotulo: 'Δ%', valor: (x) => (x.c !== null && x.a ? fmtPct((x.c / x.a - 1) * 100) : '–') }]} />} />
       </div>
       <p className={`mt-3 ${NOTA_DISCRETA}`}>Fonte: Portal de Dados Abertos do ES (receitas, coleta em {coleta.toLocaleDateString('pt-BR', { timeZone: 'America/Sao_Paulo' })}).</p>
@@ -126,7 +126,7 @@ export function CoberturaFontes({ dados, linhas, nomesFonte }: { dados: DadosRec
   return (
     <div className="mt-3">
       <div className="mt-3">
-        <Cartao titulo="Cobertura por fonte de recursos: 14 maiores">
+        <Cartao titulo="Receita arrecadada e despesa empenhada por fonte de recursos (14 maiores)">
           <TabelaDelta itens={top} delta={(x) => x.receita - x.emp} rotuloBarra="Fonte|Receita menos empenhado" primeira={(x) => x.rotulo}
             legenda="Cobertura por fonte, em R$ milhões" colunas={[
               { rotulo: 'Receita 26', valor: (x) => milhoes(x.receita, 0) },
