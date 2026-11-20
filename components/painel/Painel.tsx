@@ -28,7 +28,7 @@ const ABAS: { id: Aba; rotulo: string; nota: string }[] = [
   { id: 'despesa', rotulo: 'Despesa', nota: 'PLOA 2027 contra a dotação e o empenho de 2026, por unidade orçamentária' },
   { id: 'fontes', rotulo: 'Fontes e grupos', nota: 'Grupos de despesa, fontes de recursos e cobertura da despesa pela receita' },
   { id: 'atencao', rotulo: 'Atenção', nota: 'Poderes e emendas impositivas na proposta, e ações que merecem leitura cuidadosa antes da programação do exercício' },
-  { id: 'metodo', rotulo: 'Método e fontes', nota: 'Se as fontes batem entre si, como a receita de 2026 é projetada e quão boa é a projeção' },
+  { id: 'metodo', rotulo: 'Método e fontes', nota: 'Se as fontes batem entre si, como a receita e a despesa de 2026 são projetadas e quão boa é a projeção' },
 ]
 
 const cap = titulo
@@ -266,13 +266,15 @@ export function Painel({ linhas, nomes, coleta, outrosPoderes, macro, receitaMes
       <Faixa itens={resumo} nota="Tabelas em R$ milhões, arredondadas; valores correntes." />
 
             <div className="mt-3">
+              <Subvisoes rotulo="O que ver na despesa" itens={[
+                { id: 'variacoes', rotulo: 'Maiores variações', conteudo: (
               <Cartao titulo={uoAtiva ? 'Ações da unidade: maiores aumentos e reduções' : 'Unidades: maiores aumentos e reduções da PLOA sobre a atualizada de 2026'}>
                 <TabelaDelta itens={variacao} delta={(i) => i.v[PLOA] - i.v[ATU]} rotuloBarra={`${tituloNivel}|PLOA 2027 menos atualizada 2026`} primeira={nomeItem}
                   legenda="Maiores aumentos e reduções da PLOA 2027 sobre a dotação atualizada de 2026, em R$ milhões" colunas={colsDelta} />
               </Cartao>
-            </div>
-            {/* tabela */}
-      <section aria-label={tituloNivel} data-longa className="mt-3 min-w-0 rounded-brand border border-line bg-paper p-3 sm:p-4 md:p-5">
+                ) },
+                { id: 'tabela', rotulo: uoAtiva ? 'Todas as ações da unidade' : 'Todas as unidades', conteudo: (
+      <section aria-label={tituloNivel} data-longa className="min-w-0 rounded-brand border border-line bg-paper p-3 sm:p-4 md:p-5">
         <h2 className="text-body font-semibold md:text-lead">{tituloNivel}</h2>
         <div tabIndex={0} role="region" aria-label={`Tabela: ${tituloNivel}`} className="rola mt-3 max-h-[36rem] overflow-auto rounded-brand border border-line">
           <table className="w-full min-w-max text-left text-small">
@@ -322,6 +324,9 @@ export function Painel({ linhas, nomes, coleta, outrosPoderes, macro, receitaMes
           </table>
         </div>
       </section>
+                ) },
+              ]} />
+            </div>
 
           </>
         )}
