@@ -8,6 +8,11 @@ import { Nota } from './Estrutura'
 import { fmtPct } from './GraficosMacro'
 import { analisaFontes, implicitoPetroleo, mesesCorte, projecaoItens, type AnaliseFonte, type DadosReceita } from './projecao'
 
+export type PetroleoSefaz = {
+  fonte: string; coletado_em: string
+  meses: { ano: number; mes: number; naturezas: Record<string, { prevista: number; mes: number; acumulado: number }> }[]
+}
+
 const MESES = ['jan', 'fev', 'mar', 'abr', 'mai', 'jun', 'jul', 'ago', 'set', 'out', 'nov', 'dez']
 const mi = (x: number | null | undefined) => (x === null || x === undefined || !Number.isFinite(x) ? '–' : milhoes(x === 0 ? 0 : x, 0))
 const dMi = (x: number) => `${x > 0 ? '+' : x < 0 ? '−' : ''}${milhoes(Math.abs(x), 0)}`
@@ -20,11 +25,73 @@ function fundo(v: number | null): string | undefined {
 }
 
 /**
+ * Petróleo aberto por natureza (demonstrativo mensal da SEFAZ). O Portal agrega as quatro naturezas numa alínea só; aqui se separa o que é
+ * recorrente (royalties e excedente da produção) do que é lumpy e muito sensível a preço, câmbio e produção (participação especial).
+ */
+function PetroleoPorNatureza({ dados }: { dados: PetroleoSefaz }) {
+  const achar = (ano: number, mes: number) => dados.meses.find((m) => m.ano === ano && m.mes === mes)
+  const ultima = dados.meses.filter((m) => m.ano === 2026).at(-1)!
+  const k = ultima.mes
+  const acum = (ano: number, mes: number, cods: string[]) => cods.reduce((s, c) => s + (achar(ano, mes)?.naturezas[c]?.acumulado ?? 0), 0)
+  const mensal = (ano: number, mes: number, cods: string[]) => cods.reduce((s, c) => s + (achar(ano, mes)?.naturezas[c]?.mes ?? 0), 0)
+  const ROY = '17125211', EXC = '17125221', PE = '17125231', FEP = '17125241'
+  const linhas = [
+    { chave: 'roy', rotulo: 'Royalties (Lei 7.990/89)', c: [ROY], ldo: null as number | null, ident: false },
+    { chave: 'exc', rotulo: 'Excedente da produção (Lei 9.478/97, art. 49)', c: [EXC], ldo: null, ident: false },
+    { chave: 'sub', rotulo: 'Royalties + excedente', c: [ROY, EXC], ldo: 693.8e6, ident: true },
+    { chave: 'pe', rotulo: 'Participação especial', c: [PE], ldo: 527.2e6, ident: true },
+    { chave: 'fep', rotulo: 'Fundo Especial do Petróleo', c: [FEP], ldo: 19.8e6, ident: true },
+    { chave: 'tot', rotulo: 'Total das quatro (principal)', c: [ROY, EXC, PE, FEP], ldo: 1240.8e6, ident: true },
+  ].map((l) => ({ ...l, a25: acum(2025, 12, l.c), p25: acum(2025, k, l.c), p26: acum(2026, k, l.c) }))
+  const nomeMes = MESES[k - 1]
+  const meses = Array.from({ length: k }, (_, i) => i + 1)
+  const serie = [
+    { chave: 'r26', rotulo: 'Royalties + excedente, 2026', c: [ROY, EXC], ano: 2026 },
+    { chave: 'r25', rotulo: 'Royalties + excedente, 2025', c: [ROY, EXC], ano: 2025 },
+    { chave: 'p26', rotulo: 'Participação especial, 2026', c: [PE], ano: 2026 },
+    { chave: 'p25', rotulo: 'Participação especial, 2025', c: [PE], ano: 2025 },
+  ]
+  const pe = linhas.find((l) => l.chave === 'pe')!
+  const sub = linhas.find((l) => l.chave === 'sub')!
+  return (
+    <Cartao titulo="Petróleo por natureza: royalties, excedente e participação especial">
+      <p className="max-w-3xl text-small text-ink-soft">
+        De janeiro a {nomeMes}, a participação especial somou R$ {numero(pe.p26 / 1e6, 0)} mi, {numero((pe.p26 / pe.p25 - 1) * 100, 0)}% acima do mesmo período de 2025; royalties e excedente, juntos, R$ {numero(sub.p26 / 1e6, 0)} mi ({fmtPct((sub.p26 / sub.p25 - 1) * 100)}).
+      </p>
+      <div className="mt-3">
+        <TabelaItens altura="livre" itens={linhas} legenda="Petróleo por natureza, acumulado em R$ milhões" colunas={[
+          { rotulo: 'R$ milhões', valor: (l) => <span className={l.ident ? 'font-semibold' : ''}>{l.rotulo}</span> },
+          { rotulo: '2025 (ano)', secundaria: true, valor: (l) => mi(l.a25) },
+          { rotulo: `Jan–${nomeMes} 2025`, secundaria: true, valor: (l) => mi(l.p25) },
+          { rotulo: `Jan–${nomeMes} 2026`, valor: (l) => <span className="font-semibold">{mi(l.p26)}</span> },
+          { rotulo: 'Variação', valor: (l) => fmtPct((l.p26 / l.p25 - 1) * 100) },
+          { rotulo: 'Base LDO 2027', valor: (l) => (l.ldo === null ? '–' : mi(l.ldo)) },
+        ]} />
+      </div>
+      <div className="mt-3">
+        <TabelaItens altura="livre" itens={serie} legenda="Arrecadação de cada mês, em R$ milhões" colunas={[
+          { rotulo: 'Realizado no mês, R$ milhões', valor: (s) => s.rotulo },
+          ...meses.map((m) => ({ rotulo: MESES[m - 1], valor: (s: (typeof serie)[number]) => mi(mensal(s.ano, m, s.c)) })),
+        ]} />
+      </div>
+      <Nota titulo="Como ler e limites">
+        <p>
+          A participação especial é paga por trimestre (fevereiro, maio, agosto e novembro concentram o valor): por isso a linha mensal tem picos e meses quase vazios, e o acumulado do ano é a leitura confiável. Royalties e excedente da produção são mais regulares, e a alta de 2026 neles aparece a partir do segundo trimestre (no 1º trimestre royalties e excedente ficaram em R$ {numero(((achar(2026, 3)?.naturezas[ROY].acumulado ?? 0) + (achar(2026, 3)?.naturezas[EXC].acumulado ?? 0)) / 1e6, 0)} mi, contra R$ {numero(((achar(2025, 3)?.naturezas[ROY].acumulado ?? 0) + (achar(2025, 3)?.naturezas[EXC].acumulado ?? 0)) / 1e6, 0)} mi em 2025).
+        </p>
+        <p>
+          A coluna da LDO reproduz o cenário base de 2027 (Brent a US$ 60). A LDO não diz se a linha “royalties” (R$ 693,8 mi) inclui o excedente da produção; a hipótese de que inclui é sugerida pelo realizado de 2025, em que royalties mais excedente somaram R$ {numero(sub.a25 / 1e6, 0)} mi, e é a que a tabela adota. Se for isso, a base de 2027 fica próxima do patamar de 2025, e a participação especial da base (R$ 527 mi) abaixo dos R$ {numero(pe.a25 / 1e6, 0)} mi de 2025, ambos bem abaixo do ritmo de 2026. Os valores são das naturezas “principal” (sem multas e juros de mora, cerca de 2% a 3% do total da alínea). Fonte: demonstrativo mensal da realização da receita, SEFAZ-ES, até {nomeMes}/2026; o Portal de Dados Abertos é mais recente, mas não abre as naturezas.
+        </p>
+      </Nota>
+    </Cartao>
+  )
+}
+
+/**
  * Os três maiores motores da receita bruta: ICMS, cota-parte do FPE e compensação pela produção de petróleo.
  * Mostra o ritmo mês a mês contra o mesmo mês do ano anterior (para ver aceleração ou desaceleração), o fechamento de 2026 por fonte
  * e o que a PLOA precisa supor para 2027.
  */
-export function PrincipaisFontes({ dados, receita, ipca, pib }: { dados: DadosReceita; receita: LinhaMacro[]; ipca: Record<string, number>; pib: Record<string, number> }) {
+export function PrincipaisFontes({ dados, receita, ipca, pib, petroleo }: { dados: DadosReceita; receita: LinhaMacro[]; ipca: Record<string, number>; pib: Record<string, number>; petroleo?: PetroleoSefaz }) {
   const analise = useMemo(() => analisaFontes(dados), [dados])
   const { ultimo } = useMemo(() => mesesCorte(dados), [dados])
   const R = useMemo(() => Object.fromEntries(receita.map((x) => [x.chave, x.valores])) as Record<string, number[]>, [receita])
@@ -115,6 +182,8 @@ export function PrincipaisFontes({ dados, receita, ipca, pib }: { dados: DadosRe
           </p></Nota>
         </div>
       </Cartao>
+
+      {petroleo && <PetroleoPorNatureza dados={petroleo} />}
 
       <Cartao titulo="Petróleo: as premissas da própria LDO 2027">
         <p className="max-w-3xl text-small text-ink-soft">Cenário base da LDO para 2027: Brent a US$ 60, câmbio de R$ 5,40 e 224,5 mil barris por dia, o que dá R$ 1,24 bi, cerca de 60% abaixo do ritmo de 2026 ({bilhoes(impl.petroleo26)}).</p>
