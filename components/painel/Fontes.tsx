@@ -7,7 +7,7 @@ import { Cartao, TabelaItens } from './Graficos'
 import { Nota, NOTA_DISCRETA } from './Estrutura'
 import { fmtPct } from './GraficosMacro'
 import cafRaw from '@/data/icms-caf.json'
-import sensRaw from '@/data/petroleo-sensibilidade.json'
+import { BRENT_CENTRAL, CAMBIO_CENTRAL, EDICAO_EIA, PRODUCAO_CENTRAL, PRODUCAO_LDO, prev, receitaPetroleo, sens } from './petroleo'
 import { analisaFontes, implicitoPetroleo, mesesCorte, projecaoItens, type AnaliseFonte, type DadosReceita } from './projecao'
 
 export type PetroleoSefaz = {
@@ -191,32 +191,12 @@ function IcmsPorSegmento() {
   )
 }
 
-/* Sensibilidade da receita do petróleo à cotação: relações estimadas em scripts/analisar_petroleo.py sobre a história mensal. */
-type Sens = {
-  royalties: { defasagem_meses: number; k: number; n: number; amostra: { n: number; de: string; ate: string }; por_defasagem: { defasagem: number; r2: number; elast_preco: number; elast_producao: number }[]; fora_da_amostra: { previsto: number; realizado: number } }
-  participacao_especial: { a: number; elasticidade: number; erro_padrao_elasticidade: number; r2: number; n: number; elasticidade_ate_2025: number; fora_da_amostra: { mes: string; previsto: number; realizado: number }[] }
-  icms_petroleo: { a: number; elasticidade_preco: number; r2: number; n: number }
-  base_2025: { brent: number; cambio: number; producao: number; roy_exc: number; pe: number; icms_petroleo: number }
-  base_2026: { brent: number; cambio: number; producao: number }
-  fator_alinea_171252: number
-}
-const sens = sensRaw as unknown as Sens
 const NOMES_MES_CURTO = ['jan', 'fev', 'mar', 'abr', 'mai', 'jun', 'jul', 'ago', 'set', 'out', 'nov', 'dez']
 
-/** Receita anual de petróleo do Estado (R$) para uma cotação (US$/bbl), um câmbio (R$/US$) e uma produção (mil bbl/d) médios. */
-export function receitaPetroleo(brent: number, cambio: number, producao: number) {
-  const preco = brent * cambio
-  const pq = preco * producao
-  const royExc = sens.royalties.k * 12 * pq
-  const pe = 4 * Math.exp(sens.participacao_especial.a) * Math.pow(pq, sens.participacao_especial.elasticidade)
-  const icms = sens.base_2025.icms_petroleo * Math.pow(preco / (sens.base_2025.brent * sens.base_2025.cambio), sens.icms_petroleo.elasticidade_preco)
-  return { royExc, pe, transferencias: (royExc + pe) * sens.fator_alinea_171252, icms }
-}
-
 function SensibilidadePetroleo({ implicito }: { implicito: number }) {
-  const [cambio, setCambio] = useState(5.4)
-  const [producao, setProducao] = useState(Math.round(sens.base_2026.producao))
-  const [brent, setBrent] = useState(70)
+  const [cambio, setCambio] = useState(CAMBIO_CENTRAL)
+  const [producao, setProducao] = useState(PRODUCAO_CENTRAL)
+  const [brent, setBrent] = useState(BRENT_CENTRAL)
   const lin = (b: number, rotulo: string, destaque = false) => ({ chave: rotulo, rotulo, b, destaque, ...receitaPetroleo(b, cambio, producao) })
   const grade = [60, 70, 80, 90, 100].map((b) => lin(b, `US$ ${b}`))
   const escolhida = lin(brent, `US$ ${numero(brent, 0)} (escolhido)`, true)
@@ -225,16 +205,29 @@ function SensibilidadePetroleo({ implicito }: { implicito: number }) {
   for (let i = 0; i < 60; i++) { const mid = (lo + hi) / 2; if (receitaPetroleo(mid, cambio, producao).transferencias < implicito) lo = mid; else hi = mid }
   const equivalente = (lo + hi) / 2
   const itens = [...grade.filter((g) => g.b !== brent), escolhida, media26].sort((x, y) => x.b - y.b)
+  const fontesBrent = [
+    { chave: 'eia', fonte: `EIA, ${EDICAO_EIA} (valor central)`, valor: prev.eia.media_2027, central: true },
+    ...prev.outras_previsoes_2027.map((o, i) => ({ chave: `o${i}`, fonte: o.fonte, valor: o.preco_2027, central: false })),
+    { chave: 'ldo', fonte: 'LDO 2027 (premissa)', valor: 60, central: false },
+    { chave: 'm26', fonte: 'Média de 2026 (realizado até novembro)', valor: sens.base_2026.brent, central: false },
+  ]
   const campo = 'w-24 rounded-brand border border-line bg-paper px-2 py-1 text-small tabular-nums'
   return (
     <Cartao titulo="Petróleo: receita do Estado por cotação média do Brent em 2027">
+      <div className="mb-3">
+        <TabelaItens altura="livre" compacta itens={fontesBrent} legenda="Brent médio de 2027: previsões e premissas, em US$ por barril" colunas={[
+          { rotulo: 'Brent médio de 2027', valor: (f) => <span className={f.central ? 'font-semibold' : ''}>{f.fonte}</span> },
+          { rotulo: 'US$/bbl', valor: (f) => <span className={f.central ? 'font-semibold' : ''}>{numero(f.valor, 1)}</span> },
+          { rotulo: '', valor: (f) => <button type="button" onClick={() => setBrent(Math.round(f.valor))} className="text-label underline underline-offset-4">usar</button> },
+        ]} />
+      </div>
       <div className="flex flex-wrap items-end gap-x-5 gap-y-2 text-small text-ink-soft">
         <label className="flex flex-col gap-1">Brent (US$/barril)<input type="number" inputMode="decimal" min={20} max={200} step={5} value={brent} onChange={(e) => setBrent(Number(e.target.value) || 0)} className={campo} /></label>
         <label className="flex flex-col gap-1">Câmbio (R$/US$)<input type="number" inputMode="decimal" min={3} max={8} step={0.1} value={cambio} onChange={(e) => setCambio(Number(e.target.value) || 0)} className={campo} /></label>
         <label className="flex flex-col gap-1">Produção do ES (mil bbl/d)<input type="number" inputMode="decimal" min={100} max={500} step={10} value={producao} onChange={(e) => setProducao(Number(e.target.value) || 0)} className={campo} /></label>
         <span className="flex gap-2 pb-1">
-          <button type="button" onClick={() => setProducao(Math.round(sens.base_2026.producao))} className="text-label underline underline-offset-4">média de 2026</button>
-          <button type="button" onClick={() => setProducao(224.5)} className="text-label underline underline-offset-4">base da LDO</button>
+          <button type="button" onClick={() => setProducao(PRODUCAO_CENTRAL)} className="text-label underline underline-offset-4">média de 2026</button>
+          <button type="button" onClick={() => setProducao(PRODUCAO_LDO)} className="text-label underline underline-offset-4">base da LDO</button>
         </span>
       </div>
       <div className="mt-3">
@@ -247,6 +240,9 @@ function SensibilidadePetroleo({ implicito }: { implicito: number }) {
         ]} />
       </div>
       <Nota titulo="Metodologia e fontes">
+        <p>
+          Valor central do Brent: média de 2027 da previsão mais recente da EIA (Short-Term Energy Outlook, {EDICAO_EIA}), com câmbio da mediana do Focus (R$ {numero(CAMBIO_CENTRAL, 2)}, {prev.cambio_focus_2027.respondentes} respondentes) e produção da média de 2026; Banco Mundial e FMI conforme divulgados (o FMI usa a média de Brent, Dubai e WTI). A previsão da EIA é revista todo mês: em janeiro de 2026 estimava US$ 54 para 2027. Intervalo de sensibilidade não tratado aqui.
+        </p>
         <p>
           Transferências (alínea 171252): royalties + excedente (proporcionais a preço em reais × produção, defasagem de {sens.royalties.defasagem_meses} meses) e participação especial (elasticidade {numero(sens.participacao_especial.elasticidade, 1)} à média trimestral de preço × produção), vezes {numero(sens.fator_alinea_171252, 3)} (multas, juros e FEP, que completam a alínea 171252). ICMS da indústria do petróleo (CAF): elasticidade {numero(sens.icms_petroleo.elasticidade_preco, 2)} ao preço em reais (R² {numero(sens.icms_petroleo.r2, 2)}), a partir da arrecadação de 2025 (R$ {mi(sens.base_2025.icms_petroleo)} mi). O ICMS não entra no total das transferências. Valores anuais, brutos de deduções.
         </p>

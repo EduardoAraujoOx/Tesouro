@@ -73,6 +73,11 @@ jobs:
         continue-on-error: true
         run: python3 scripts/atualizar_petroleo_mercado.py
 
+      - name: Coletar previsão do Brent (EIA) e câmbio do Focus
+        id: brentprev
+        continue-on-error: true
+        run: python3 scripts/atualizar_brent_previsao.py
+
       - name: Instalar leitor de PDF
         run: sudo apt-get update -qq && sudo apt-get install -y -qq poppler-utils
 
@@ -141,6 +146,7 @@ jobs:
           RESULTADO_RECEITASEFAZ: ${{ steps.receitasefaz.outcome }}
           RESULTADO_PIB: ${{ steps.pib.outcome }}
           RESULTADO_SENSIBILIDADE: ${{ steps.sensibilidade.outcome }}
+          RESULTADO_BRENTPREV: ${{ steps.brentprev.outcome }}
           RESULTADO_RITMODESP: ${{ steps.ritmodesp.outcome }}
           RESULTADO_MERCADO: ${{ steps.mercado.outcome }}
           RESULTADO_MINIMOS: ${{ steps.minimos.outcome }}
@@ -157,7 +163,7 @@ jobs:
           cat > corpo.md <<CORPO
           Atualização automática dos dados, gerada pela rotina semanal.
 
-          Resultado de cada coleta: indicadores (Siconfi e CAPAG): $RESULTADO_INDICADORES; orçamento e arrecadação (RREO, RGF, ANP): $RESULTADO_RREO; dotação e execução por unidade e ação (Painel do orçamento): $RESULTADO_ORCAMENTO; receita mensal por alínea e fonte: $RESULTADO_RECEITA; ritmo da arrecadação (RREO, Anexo 01): $RESULTADO_RITMO; petróleo por natureza (SEFAZ): $RESULTADO_PETROLEO; receita por natureza desde 2023 (SEFAZ): $RESULTADO_RECEITASEFAZ; PIB e receita anual: $RESULTADO_PIB; sensibilidade do petróleo: $RESULTADO_SENSIBILIDADE; ritmo da despesa (RREO): $RESULTADO_RITMODESP; Brent, câmbio e produção: $RESULTADO_MERCADO; mínimos de educação e saúde: $RESULTADO_MINIMOS; notícias: $RESULTADO_NOTICIAS; acervo da SEFAZ: $RESULTADO_CONTEUDO.
+          Resultado de cada coleta: indicadores (Siconfi e CAPAG): $RESULTADO_INDICADORES; orçamento e arrecadação (RREO, RGF, ANP): $RESULTADO_RREO; dotação e execução por unidade e ação (Painel do orçamento): $RESULTADO_ORCAMENTO; receita mensal por alínea e fonte: $RESULTADO_RECEITA; ritmo da arrecadação (RREO, Anexo 01): $RESULTADO_RITMO; petróleo por natureza (SEFAZ): $RESULTADO_PETROLEO; receita por natureza desde 2023 (SEFAZ): $RESULTADO_RECEITASEFAZ; PIB e receita anual: $RESULTADO_PIB; sensibilidade do petróleo: $RESULTADO_SENSIBILIDADE; previsão do Brent (EIA) e câmbio (Focus): $RESULTADO_BRENTPREV; ritmo da despesa (RREO): $RESULTADO_RITMODESP; Brent, câmbio e produção: $RESULTADO_MERCADO; mínimos de educação e saúde: $RESULTADO_MINIMOS; notícias: $RESULTADO_NOTICIAS; acervo da SEFAZ: $RESULTADO_CONTEUDO.
 
           O site foi construído com sucesso usando estes dados. Conferir o painel fiscal na prévia da Vercel antes de mesclar.
           CORPO
