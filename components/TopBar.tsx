@@ -3,7 +3,6 @@
 import { useEffect, useState } from 'react'
 import { usePathname } from 'next/navigation'
 import { IconAccess, IconContrast } from './Icons'
-import { IDENTIDADE } from '@/lib/identidade-painel'
 
 type Tam = 'sm' | 'md' | 'lg' | 'xl'
 const ORDEM: Tam[] = ['sm', 'md', 'lg', 'xl']
@@ -12,8 +11,8 @@ function guardar(chave: string, valor: string) {
   try { localStorage.setItem(chave, valor) } catch { /* armazenamento indisponível: segue sem persistir */ }
 }
 
-export function TopBar() {
-  const painel = usePathname().startsWith('/painel')
+/** Controles de acessibilidade (alto contraste e tamanho do texto), usados na faixa do portal e na barra do painel. */
+export function ControlesAcessibilidade({ className = '', claro = false, compacto = false }: { className?: string; claro?: boolean; compacto?: boolean }) {
   const [tam, setTam] = useState<Tam>('md')
   const [alto, setAlto] = useState(false)
 
@@ -44,15 +43,30 @@ export function TopBar() {
     guardar('tesouro:contraste', novo ? 'alto' : 'normal')
   }
 
-  const btn =
-    'inline-flex h-9 min-w-9 items-center justify-center rounded px-2 text-small font-semibold text-on-navy hover:bg-white/15 focus-visible:outline-white'
+  const btn = `inline-flex h-9 min-w-9 items-center justify-center rounded px-2 text-small font-semibold ${claro ? 'text-ink-soft hover:bg-surface hover:text-ink' : 'text-on-navy hover:bg-white/15 focus-visible:outline-white'}`
+  return (
+    <div className={`items-center gap-1 ${className}`} role="group" aria-label="Recursos de acessibilidade">
+      <button type="button" className={`${btn} disabled:opacity-40`} onClick={alternarContraste} aria-pressed={alto}>
+        <IconAccess className={`h-[18px] w-[18px] ${compacto ? '2xl:mr-1.5' : 'mr-1.5'}`} />
+        <span className={compacto ? 'sr-only 2xl:not-sr-only' : ''}>Acessibilidade</span><span className="sr-only">: alto contraste</span>
+        <IconContrast className={`h-[18px] w-[18px] ${compacto ? 'ml-1 2xl:ml-2' : 'ml-2'}`} />
+      </button>
+      <span aria-hidden="true" className="mx-2 h-4 w-px bg-current opacity-40" />
+      <button type="button" className={btn} onClick={() => passo(-1)} disabled={tam === 'sm'}>A−<span className="sr-only"> diminuir o tamanho do texto</span></button>
+      <button type="button" className={btn} onClick={() => aplicarTam('md')} aria-pressed={tam === 'md'}>A<span className="sr-only"> tamanho padrão do texto</span></button>
+      <button type="button" className={btn} onClick={() => passo(1)} disabled={tam === 'xl'}>A+<span className="sr-only"> aumentar o tamanho do texto</span></button>
+    </div>
+  )
+}
+
+export function TopBar() {
+  // o painel de dados tem a própria barra, no topo da página (ver components/painel/Painel.tsx)
+  const painel = usePathname().startsWith('/painel')
+  if (painel) return null
 
   return (
-    <div role="region" aria-label={painel ? IDENTIDADE.faixa : 'Governo do Estado do Espírito Santo'} className={`on-dark bg-navy-deep text-on-navy print:hidden ${painel ? 'hidden md:block' : ''}`}>
-      <div className={`mx-auto flex items-center justify-center gap-4 px-4 text-small sm:px-5 md:justify-between md:px-8 ${painel ? 'min-h-9 max-w-[1600px]' : 'min-h-11 max-w-page'}`}>
-        {painel ? (
-          <p className="py-1.5 text-label normal-case tracking-normal font-semibold">{IDENTIDADE.faixa}</p>
-        ) : (
+    <div role="region" aria-label="Governo do Estado do Espírito Santo" className="on-dark bg-navy-deep text-on-navy print:hidden">
+      <div className="mx-auto flex min-h-11 max-w-page items-center justify-center gap-4 px-4 text-small sm:px-5 md:justify-between md:px-8">
         <p className="flex flex-wrap items-center justify-center gap-x-3 py-2">
           <span>Governo do Estado do Espírito Santo</span>
           <span aria-hidden="true" className="hidden h-4 w-px bg-current opacity-60 sm:block" />
@@ -60,19 +74,7 @@ export function TopBar() {
             <span className="hidden md:inline">Secretaria da Fazenda (</span>SEFAZ<span className="hidden md:inline">)</span>
           </a>
         </p>
-        )}
-
-        <div className="hidden items-center gap-1 md:flex" role="group" aria-label="Recursos de acessibilidade">
-          <button type="button" className={`${btn} disabled:opacity-40`} onClick={alternarContraste} aria-pressed={alto}>
-            <IconAccess className="mr-1.5 h-[18px] w-[18px]" />
-            Acessibilidade<span className="sr-only">: alto contraste</span>
-            <IconContrast className="ml-2 h-[18px] w-[18px]" />
-          </button>
-          <span aria-hidden="true" className="mx-2 h-4 w-px bg-current opacity-40" />
-          <button type="button" className={btn} onClick={() => passo(-1)} disabled={tam === 'sm'}>A−<span className="sr-only"> diminuir o tamanho do texto</span></button>
-          <button type="button" className={btn} onClick={() => aplicarTam('md')} aria-pressed={tam === 'md'}>A<span className="sr-only"> tamanho padrão do texto</span></button>
-          <button type="button" className={btn} onClick={() => passo(1)} disabled={tam === 'xl'}>A+<span className="sr-only"> aumentar o tamanho do texto</span></button>
-        </div>
+        <ControlesAcessibilidade className="hidden md:flex" />
       </div>
     </div>
   )

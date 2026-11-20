@@ -9,6 +9,8 @@ import { Faixa } from './Faixa'
 import { Receita } from './Macro'
 import { VisaoGeral } from './Agregado'
 import { Metodo } from './Metodo'
+import { PoderesEmendas } from './PoderesEmendas'
+import { ControlesAcessibilidade } from '@/components/TopBar'
 import { CoberturaFontes, ReceitaMensal, type DadosReceita } from './ReceitaMensal'
 import type { LinhaMacro } from '@/lib/macro'
 import { ATU, EMP, INI, PLOA, agrupa, execucaoPct, titulo, total, variacaoPct, type Item, type Linha, type Soma } from './dados'
@@ -22,7 +24,7 @@ const ABAS: { id: Aba; rotulo: string; nota: string }[] = [
   { id: 'receita', rotulo: 'Receita', nota: 'Arrecadação de 2026, perfil mensal proposto para 2027 e quadro oficial detalhado' },
   { id: 'despesa', rotulo: 'Despesa', nota: 'PLOA 2027 contra a dotação e o empenho de 2026, por unidade orçamentária' },
   { id: 'fontes', rotulo: 'Fontes e grupos', nota: 'Grupos de despesa, fontes de recursos e cobertura da despesa pela receita' },
-  { id: 'atencao', rotulo: 'Atenção', nota: 'Ações que merecem leitura cuidadosa antes da programação do exercício' },
+  { id: 'atencao', rotulo: 'Atenção', nota: 'Poderes e emendas impositivas na proposta, e ações que merecem leitura cuidadosa antes da programação do exercício' },
   { id: 'metodo', rotulo: 'Método e fontes', nota: 'Se as fontes batem entre si, como a receita de 2026 é projetada e quão boa é a projeção' },
 ]
 
@@ -179,9 +181,13 @@ export function Painel({ linhas, nomes, coleta, outrosPoderes, macro, receitaMes
   const abaAtual = ABAS.find((a) => a.id === aba)!
   return (
     <div className="painel mx-auto max-w-[1600px] px-4 pb-8 sm:px-5 md:px-8">
-      {/* barra fixa: no computador, abas; no celular, um menu discreto com a seção atual */}
+      {/* barra no topo da página, fixa ao rolar: identidade, seções (abas no computador, menu no celular) e exportação */}
       <div className="print:hidden sticky top-0 z-30 -mx-4 border-b border-line bg-paper px-4 sm:-mx-5 sm:px-5 md:-mx-8 md:px-8">
-        <div className="flex items-center justify-between gap-2">
+        <div className="flex items-center gap-2 lg:gap-6">
+          <div className="hidden shrink-0 py-1.5 lg:block">
+            <span className="block text-body font-semibold leading-tight text-navy">{IDENTIDADE.nome}</span>
+            <span className="block text-label normal-case leading-tight tracking-normal text-ink-soft">{IDENTIDADE.apoio}</span>
+          </div>
           <div role="tablist" aria-label="Seções do painel" className="hidden md:flex">
             {ABAS.map((a) => (
               <button key={a.id} type="button" role="tab" id={`aba-${a.id}`} aria-selected={aba === a.id} aria-controls={`painel-${a.id}`} tabIndex={aba === a.id ? 0 : -1}
@@ -216,7 +222,9 @@ export function Painel({ linhas, nomes, coleta, outrosPoderes, macro, receitaMes
               </ul>
             )}
           </div>
-          <button type="button" onClick={() => window.print()} title="Abre a impressão: escolha “Salvar como PDF”" className="inline-flex items-center gap-1.5 rounded-brand px-2.5 py-1.5 text-small font-semibold text-ink-soft hover:bg-surface hover:text-ink">
+          <span className="ml-auto text-label font-semibold normal-case tracking-normal text-navy lg:hidden"><span className="md:hidden">{IDENTIDADE.nome}</span></span>
+          <ControlesAcessibilidade claro compacto className="ml-auto hidden xl:flex" />
+          <button type="button" onClick={() => window.print()} title="Abre a impressão: escolha “Salvar como PDF”" className="inline-flex items-center gap-1.5 rounded-brand px-2.5 py-1.5 text-small font-semibold text-ink-soft hover:bg-surface hover:text-ink md:ml-auto xl:ml-0">
             <svg aria-hidden="true" viewBox="0 0 20 20" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"><path d="M10 3v9m0 0-3.5-3.5M10 12l3.5-3.5M4 14v2h12v-2" /></svg>
             PDF<span className="sr-only"> (exportar esta seção)</span>
           </button>
@@ -330,7 +338,9 @@ export function Painel({ linhas, nomes, coleta, outrosPoderes, macro, receitaMes
         )}
         {aba === 'atencao' && (
           <>
-            <div className="print:hidden">{filtros}</div>
+            <PoderesEmendas linhas={linhas} />
+            <h2 className="mt-8 border-b border-line pb-1.5 text-lead font-semibold">Ações que merecem leitura cuidadosa</h2>
+            <div className="mt-3 print:hidden">{filtros}</div>
             {/* alertas */}
       <section aria-label="Pontos de atenção" className="mt-4 min-w-0 rounded-brand border border-line bg-paper p-3 sm:p-4 md:p-5">
         <div className="flex flex-wrap items-center justify-between gap-3">
