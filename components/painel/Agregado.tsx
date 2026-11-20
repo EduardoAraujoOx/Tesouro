@@ -6,6 +6,7 @@ import type { LinhaMacro } from '@/lib/macro'
 import { Cartao, Legenda, COR, TabelaItens } from './Graficos'
 import { ColunasAnuais, fmtPct, type ColunaAnual } from './GraficosMacro'
 import { Nota, NOTA_DISCRETA } from './Estrutura'
+import minimosRaw from '@/data/minimos.json'
 import { COD_DESPESA, COD_GRUPO } from './codigos'
 import { BRENT_CENTRAL, CAMBIO_CENTRAL, EDICAO_EIA, PRODUCAO_CENTRAL, receitaPetroleo } from './petroleo'
 import { analisaFontes, fatorPrecos, ipcaAnual, pibArrecadacao, projecaoItens, projetaDespesa2026, projetaReceita2026, type DadosReceita, type ItemProjetado } from './projecao'
@@ -33,8 +34,8 @@ const DIF_MIN = 3
 const MESES_NOME = ['janeiro', 'fevereiro', 'março', 'abril', 'maio', 'junho', 'julho', 'agosto', 'setembro', 'outubro', 'novembro', 'dezembro']
 const corDif = (d: number) => (Math.abs(d) < DIF_MIN ? '' : d > 0 ? 'text-serie3' : 'text-serie2')
 
-export function VisaoGeral({ receita, despesa, ipca: ipcaParams, pib, fonteIpca, dados, irParaMetodo }: {
-  receita: LinhaMacro[]; despesa: LinhaMacro[]; ipca: Record<string, number>; pib: Record<string, number>; fonteIpca: string; dados: DadosReceita; irParaMetodo: () => void
+export function VisaoGeral({ funcoes, receita, despesa, ipca: ipcaParams, pib, fonteIpca, dados, irParaMetodo }: {
+  funcoes: Record<string, { emp25: number; ini26: number; atu26: number; emp26: number; ploa27: number }>; receita: LinhaMacro[]; despesa: LinhaMacro[]; ipca: Record<string, number>; pib: Record<string, number>; fonteIpca: string; dados: DadosReceita; irParaMetodo: () => void
 }) {
   const [vista, setVista] = useState<Vista>('receita')
   const [abertos, setAbertos] = useState<Set<string>>(new Set(['corr', 'capd']))
@@ -202,6 +203,25 @@ export function VisaoGeral({ receita, despesa, ipca: ipcaParams, pib, fonteIpca,
     { chave: 'saldo', rotulo: '= Resultado orçamentário', nivel: 0, negrito: true, v: COL.map((_, j) => supCorrente[j] + pick(R, 'receitas_capital')[j] - pick(D, 'despesas_capital')[j] - reservas[j]) },
   ]
 
+  /* limites e mínimos: regras fiscais e constitucionais contra a PLOA 2027 */
+  const RCL_LDO = 30126.1e6 // RCL de julho de 2025 a junho de 2026, base dos limites da LDO 2027
+  const m25 = (minimosRaw as unknown as { serie: { ano: number; ensino: number; saude: number }[] }).serie.find((x) => x.ano === 2025)!
+  const pc = (x: number, c = 1) => `${numero(x, c)}%`
+  const pp = (x: number, c = 1) => `${x > 0 ? '+' : x < 0 ? '−' : ''}${numero(Math.abs(x), c)} p.p.`
+  const limites = [
+    { chave: 'pessoal', rotulo: 'Pessoal ÷ RCL', base: 'LRF art. 19: até 60% (prudencial 57%)', v25: pc(pessoalRcl[2]), v27: pc(pessoalRcl[4]), folga: pp(60 - pessoalRcl[4]) },
+    { chave: 'conting', rotulo: 'Contingência ÷ RCL', base: 'LDO art. 9º: mínimo de 2%', v25: '–', v27: pc(D.reserva_contingencia[5] / RCL_LDO * 100, 2), folga: `${dMi(D.reserva_contingencia[5] - 0.02 * RCL_LDO)} mi` },
+    { chave: 'ouro', rotulo: 'Crédito ÷ capital líquido', base: 'CF art. 167, III: até 100%', v25: pc((R.operacoes_credito[2] / (D.despesas_capital[2] - D.amortizacao[2])) * 100), v27: pc((R.operacoes_credito[5] / (D.despesas_capital[5] - D.amortizacao[5])) * 100), folga: `${mi(D.despesas_capital[5] - D.amortizacao[5] - R.operacoes_credito[5])} mi` },
+    { chave: 'ensino', rotulo: 'Ensino (MDE)', base: 'CF art. 212: mínimo de 25%', v25: pc(m25.ensino, 2), v27: '–', folga: pp(m25.ensino - 25, 2) },
+    { chave: 'saude', rotulo: 'Saúde (ASPS)', base: 'LC 141 art. 6º: mínimo de 12%', v25: pc(m25.saude, 2), v27: '–', folga: pp(m25.saude - 12, 2) },
+  ]
+  const impostosProj26 = itensProj.imp.central
+  const funcoesMinimo = [
+    { chave: 'edu', rotulo: 'Despesa na função Educação', v26: funcoes['12']?.atu26 ?? 0, v27: funcoes['12']?.ploa27 ?? 0 },
+    { chave: 'sau', rotulo: 'Despesa na função Saúde', v26: funcoes['10']?.atu26 ?? 0, v27: funcoes['10']?.ploa27 ?? 0 },
+    { chave: 'imp', rotulo: 'Receita de impostos (base dos mínimos)', v26: impostosProj26, v27: R.impostos[5] },
+  ].map((f) => ({ ...f, d: (f.v27 / f.v26 - 1) * 100 }))
+
   const tituloGrafico = vista === 'despesa' ? 'Despesa total' : 'Receita total, líquida de deduções'
   const legendaGrafico = [
     { cor: COR.empenhado, rotulo: vista === 'despesa' ? 'Executado' : 'Arrecadado' },
@@ -274,6 +294,25 @@ export function VisaoGeral({ receita, despesa, ipca: ipcaParams, pib, fonteIpca,
               ...ANOS.map((a, j) => ({ rotulo: a, valor: (x: (typeof indicadores)[number]) => `${numero(x.v[j], 1)}%` })),
             ]} />
             <p className={`mt-2 ${NOTA_DISCRETA}`}>RCL aproximada: receitas correntes + intraorçamentárias − deduções da receita (quadro da PLOA); difere da RCL do art. 2º, IV, da LRF. Provável 26: estimativa de 2026 informada na PLOA.</p>
+          </Cartao>
+
+          <Cartao titulo="Limites e mínimos: LRF, LDO e Constituição">
+            <TabelaItens altura="livre" compacta itens={limites} legenda="Limites e mínimos fiscais e constitucionais contra a PLOA 2027" colunas={[
+              { rotulo: 'Regra', valor: (l) => <><span className="font-medium text-ink">{l.rotulo}</span><span className="block text-label font-normal normal-case tracking-normal text-ink-soft">{l.base}</span></> },
+              { rotulo: '2025', secundaria: true, valor: (l) => l.v25 },
+              { rotulo: 'PLOA 2027', valor: (l) => l.v27 },
+              { rotulo: 'Folga', valor: (l) => <span className="font-semibold">{l.folga}</span> },
+            ]} />
+            <p className={`mt-2 ${NOTA_DISCRETA}`}>Pessoal sobre a RCL aproximada do quadro da PLOA, sem as exclusões da LRF. Contingência contra 2% da RCL de julho de 2025 a junho de 2026 (R$ {numero(RCL_LDO / 1e9, 1)} bi). Crédito contra despesas de capital líquidas de amortizações. Ensino e saúde: percentual apurado no RREO de 2025, sobre a receita de impostos líquida de transferências constitucionais; a folga é a de 2025, pois o valor aplicado em 2027 só se conhece na execução.</p>
+          </Cartao>
+          <Cartao titulo="Funções com mínimo constitucional: dotação de 2026 e PLOA 2027">
+            <TabelaItens altura="livre" compacta itens={funcoesMinimo} legenda="Despesa nas funções Educação e Saúde e receita de impostos, 2026 e PLOA 2027, em R$ milhões" colunas={[
+              { rotulo: 'R$ milhões', valor: (f) => <span className="font-medium">{f.rotulo}</span> },
+              { rotulo: '2026', valor: (f) => mi(f.v26) },
+              { rotulo: 'PLOA 27', valor: (f) => <span className="font-semibold">{mi(f.v27)}</span> },
+              { rotulo: 'Dif. %', valor: (f) => <span className={`font-semibold ${corDif(f.d)}`}>{fmtPct(f.d)}</span> },
+            ]} />
+            <p className={`mt-2 ${NOTA_DISCRETA}`}>2026: dotação atualizada das funções (Portal de Dados Abertos) e Proj. 26 dos impostos. A função inclui despesas fora do cômputo do mínimo (por exemplo, parte da previdência e transferências), de modo que a comparação é de ordem de grandeza, não de apuração.</p>
           </Cartao>
         </div>
       )}

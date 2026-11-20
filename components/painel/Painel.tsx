@@ -42,7 +42,7 @@ type MacroProps = {
   receita: LinhaMacro[]; despesa: LinhaMacro[]; ipca: Record<string, number>; pib: Record<string, number>; fonteIpca: string
 }
 
-export function Painel({ linhas, nomes, coleta, outrosPoderes, macro, receitaMes, petroleo, mercado }: { linhas: Linha[]; nomes: Nomes; coleta: string; outrosPoderes: string[]; macro: MacroProps; receitaMes: DadosReceita; petroleo?: PetroleoSefaz; mercado?: PetroleoMercado }) {
+export function Painel({ linhas, nomes, coleta, outrosPoderes, macro, receitaMes, petroleo, mercado, funcoes }: { linhas: Linha[]; nomes: Nomes; coleta: string; outrosPoderes: string[]; macro: MacroProps; receitaMes: DadosReceita; petroleo?: PetroleoSefaz; mercado?: PetroleoMercado; funcoes: Record<string, { emp25: number; ini26: number; atu26: number; emp26: number; ploa27: number }> }) {
   const [aba, setAba] = useState<Aba>('visao')
   useEffect(() => {
     const h = window.location.hash.slice(1)
@@ -241,7 +241,7 @@ export function Painel({ linhas, nomes, coleta, outrosPoderes, macro, receitaMes
       </div>
 
       <div role="tabpanel" id={`painel-${aba}`} aria-labelledby={`aba-${aba}`} className="mt-3">
-        {aba === 'visao' && <VisaoGeral receita={macro.receita} despesa={macro.despesa} ipca={macro.ipca} pib={macro.pib} fonteIpca={macro.fonteIpca} dados={receitaMes} irParaMetodo={() => { escolheAba('metodo'); window.scrollTo({ top: 0 }) }} />}
+        {aba === 'visao' && <VisaoGeral funcoes={funcoes} receita={macro.receita} despesa={macro.despesa} ipca={macro.ipca} pib={macro.pib} fonteIpca={macro.fonteIpca} dados={receitaMes} irParaMetodo={() => { escolheAba('metodo'); window.scrollTo({ top: 0 }) }} />}
         {aba === 'metodo' && <Metodo receita={macro.receita} dados={receitaMes} pib27={(1 + (macro.ipca['2027'] ?? 0)) * (1 + (macro.pib['2027'] ?? 0)) - 1} />}
         {aba === 'receita' && (
           <Subvisoes rotulo="O que ver na receita" itens={[
