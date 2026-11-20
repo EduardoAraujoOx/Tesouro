@@ -4,7 +4,7 @@ import { useMemo } from 'react'
 import { bilhoes, milhoes, numero } from '@/lib/formato'
 import rreoRaw from '@/data/rreo.json'
 import { Cartao, TabelaItens } from './Graficos'
-import { Nota } from './Estrutura'
+import { Nota, NOTA_DISCRETA } from './Estrutura'
 import { fmtPct, variacoes } from './GraficosMacro'
 import { ATU, INI, PLOA, agrupa, type Linha } from './dados'
 
@@ -54,8 +54,7 @@ export function PoderesEmendas({ linhas }: { linhas: Linha[] }) {
   return (
     <div className="space-y-3">
       <Cartao titulo="Observação: a PLOA deve ser ajustada na votação da LOA">
-        <p className="max-w-3xl text-small text-ink-soft">Entre R$ {mi(limitesAjuste + emendas27 - 90e6)} e R$ {mi(limitesAjuste + emendas27)} milhões (limites dos Poderes e emendas impositivas), com a hipótese de que o recurso venha da despesa. O painel será atualizado quando a LOA for votada.</p>
-        <Nota titulo="Cálculo e como acompanhar">
+        <Nota titulo="Cálculo e como acompanhar"><p>Entre R$ {mi(limitesAjuste + emendas27 - 90e6)} e R$ {mi(limitesAjuste + emendas27)} milhões (limites dos Poderes e emendas impositivas), com a hipótese de que o recurso venha da despesa. O painel será atualizado quando a LOA for votada.</p>
           <p>
             O painel mostra a proposta original (PLOA, enviada em 29 de setembro). Há duas pressões já previstas em lei sobre a despesa, e a hipótese de trabalho é que o ajuste venha do lado da despesa, por anulação de dotações, já que a receita total da proposta está perto do ritmo de 2026 (aba Receita): o ajuste dos limites dos Poderes (cerca de R$ {mi(limitesAjuste)} milhões nos quatro órgãos abaixo do limite) e as emendas individuais impositivas (cerca de R$ {mi(emendas27 - 90e6)} milhões a mais do que a reserva de R$ 90 milhões, ou até R$ {mi(emendas27)} milhões se essa reserva for outra coisa). Somam entre R$ {mi(limitesAjuste + emendas27 - 90e6)} e R$ {mi(limitesAjuste + emendas27)} milhões.
           </p>
@@ -66,9 +65,9 @@ export function PoderesEmendas({ linhas }: { linhas: Linha[] }) {
       </Cartao>
 
       <Cartao titulo="Despesa dos Poderes e órgãos autônomos: PLOA 2027 contra 2026">
-        <p className="max-w-3xl text-small text-ink-soft">
+        <Nota titulo="Leitura"><p>
           Nos cinco Poderes e órgãos autônomos a PLOA soma R$ {mi(soma.v[PLOA])} milhões, {fmtPct(variacoes(soma.v[INI], soma.v[PLOA], 0).nominal)} sobre o orçamento inicial de 2026, contra {fmtPct(variacoes(exec.v[INI], exec.v[PLOA], 0).nominal)} nas demais unidades (Executivo). Sobre a dotação atualizada de 2026, que já incorpora os créditos abertos no ano, o aumento é de {fmtPct(variacoes(soma.v[ATU], soma.v[PLOA], 0).nominal)}.
-        </p>
+        </p></Nota>
         <div className="mt-3">
           <TabelaItens altura="livre" itens={itens} legenda="Despesa dos Poderes e órgãos autônomos, em R$ milhões" colunas={[
             { rotulo: 'R$ milhões', valor: (x) => <span className={x.chave === 'soma' ? 'font-semibold' : ''}>{x.rotulo}</span> },
@@ -78,7 +77,7 @@ export function PoderesEmendas({ linhas }: { linhas: Linha[] }) {
             { rotulo: 'Atualizada 2026', valor: (x) => mi(x.v[ATU]) },
             { rotulo: 'Δ% sobre atualizada', valor: (x) => fmtPct(variacoes(x.v[ATU], x.v[PLOA], 0).nominal) },
           ]} />
-          <p className="mt-2 text-label normal-case tracking-normal text-ink-soft">Programa de Trabalho da PLOA 2027 (Mensagem nº 189/2026) e Portal de Dados Abertos do ES. O repasse aos Poderes divulgado pelo Governo (R$ 3,9 bi, segundo a imprensa) inclui parcelas que não estão neste recorte por unidade orçamentária.</p>
+          <p className={`mt-2 ${NOTA_DISCRETA}`}>Programa de Trabalho da PLOA 2027 (Mensagem nº 189/2026) e Portal de Dados Abertos do ES. O repasse aos Poderes divulgado pelo Governo (R$ 3,9 bi, segundo a imprensa) inclui parcelas que não estão neste recorte por unidade orçamentária.</p>
         </div>
         <Nota titulo="O que a LDO 2027 determina para os Poderes">
           <p>
@@ -96,13 +95,12 @@ export function PoderesEmendas({ linhas }: { linhas: Linha[] }) {
             { rotulo: 'PLOA 2027', valor: (x) => <span className="font-semibold">{mi(x.ploa)}</span> },
             { rotulo: 'PLOA menos limite', valor: (x) => `${x.ploa - x.limite > 0 ? '+' : x.ploa - x.limite < 0 ? '−' : ''}${mi(Math.abs(x.ploa - x.limite))}` },
           ]} />
-          <p className="mt-2 text-label normal-case tracking-normal text-ink-soft">Fonte dos limites: Lei nº 12.967/2026 (LDO 2027), Diário Oficial dos Poderes de 27/10/2026, art. 21; texto guardado em painel-es/fontes/ldo. RCL: RREO do 3º bimestre de 2026 (Siconfi).</p>
+          <p className={`mt-2 ${NOTA_DISCRETA}`}>Fonte dos limites: Lei nº 12.967/2026 (LDO 2027), Diário Oficial dos Poderes de 27/10/2026, art. 21; texto guardado em painel-es/fontes/ldo. RCL: RREO do 3º bimestre de 2026 (Siconfi).</p>
         </div>
       </Cartao>
 
       <Cartao titulo="Emendas parlamentares impositivas: o que a LDO determina e o que a PLOA traz">
-        <p className="max-w-3xl text-small text-ink-soft">Emendas individuais: 1,55% da RCL de 2025, cerca de R$ {mi(emendas27)} milhões, de execução obrigatória. A PLOA só reserva R$ 90 milhões (indício), e a LDO permite cobrir a diferença anulando a reserva de contingência (art. 9º, § 3º).</p>
-        <Nota titulo="Regras da LDO, origem do recurso, o que a PLOA traz e calendário">
+        <Nota titulo="Regras da LDO, origem do recurso, o que a PLOA traz e calendário"><p>Emendas individuais: 1,55% da RCL de 2025, cerca de R$ {mi(emendas27)} milhões, de execução obrigatória. A PLOA só reserva R$ 90 milhões (indício), e a LDO permite cobrir a diferença anulando a reserva de contingência (art. 9º, § 3º).</p>
           <p>
             <span className="font-semibold text-ink">O que a LDO 2027 determina</span> (Lei nº 12.967/2026, arts. 9º e 23 a 27). As emendas individuais à LOA são aprovadas no limite de 1,55% da receita corrente líquida de 2025 (RGF do 3º quadrimestre de 2025, R$ {numero(rcl25 / 1e9, 1)} bi), o que dá cerca de R$ {mi(emendas27)} milhões, distribuídos por igual entre os 30 deputados (R$ 14,5 milhões cada). Metade do valor de cada deputado vai para ações e serviços de saúde, sem pagamento de pessoal. A execução é obrigatória e integral, salvo impedimento de ordem técnica, que segue um rito com prazos (60 dias para o Executivo justificar, mais 30 para o deputado sanear e 30 para o remanejamento); conveniência e oportunidade não são impedimento. Cada emenda tem marcador próprio na LOA e no SIGEFES, e o Executivo publica a execução todo mês. Em 2026 o valor era de R$ 3 milhões por deputado, ou R$ 90 milhões, segundo a imprensa: o aumento é de uns R$ {mi(emendas27 - 90e6)} milhões.
           </p>

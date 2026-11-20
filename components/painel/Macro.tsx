@@ -1,5 +1,6 @@
 'use client'
 
+import { NOTA_DISCRETA } from './Estrutura'
 import { useMemo, useState } from 'react'
 import { bilhoes, milhoes, numero } from '@/lib/formato'
 import type { LinhaMacro } from '@/lib/macro'
@@ -67,7 +68,7 @@ export function Receita({ receita, ipca, dados }: Omit<Props, 'despesa' | 'fonte
             { rotulo: 'Real', valor: (x) => fmtPct(varQ(x.v).real) },
           ]} />} />
       </div>
-      <p className="mt-3 text-small text-ink-soft">Fonte: arrecadação mensal do Portal de Dados Abertos do ES (até {mesNome[info.ate]} de 2026), que coincide com o RREO; quadro Evolução da Receita da PLOA 2027 (p. 97).</p>
+      <p className={`mt-3 ${NOTA_DISCRETA}`}>Fonte: arrecadação mensal do Portal de Dados Abertos do ES (até {mesNome[info.ate]} de 2026), que coincide com o RREO; quadro Evolução da Receita da PLOA 2027 (p. 97).</p>
     </div>
   )
 }

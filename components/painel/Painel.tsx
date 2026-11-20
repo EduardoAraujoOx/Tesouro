@@ -11,7 +11,7 @@ import { VisaoGeral } from './Agregado'
 import { Metodo } from './Metodo'
 import { PoderesEmendas } from './PoderesEmendas'
 import { Furos } from './Furos'
-import { Subvisoes } from './Estrutura'
+import { Subvisoes, NOTA_DISCRETA } from './Estrutura'
 import { PrincipaisFontes, type PetroleoMercado, type PetroleoSefaz } from './Fontes'
 import { ControlesAcessibilidade } from '@/components/TopBar'
 import { CoberturaFontes, ReceitaMensal, type DadosReceita } from './ReceitaMensal'
@@ -234,17 +234,14 @@ export function Painel({ linhas, nomes, coleta, outrosPoderes, macro, receitaMes
         </div>
       </div>
 
-      <div className="mt-4 print:hidden">
-        <h1 className="text-title font-semibold leading-tight md:text-section">{abaAtual.rotulo}</h1>
-        <p className="mt-0.5 text-small text-ink-soft">{abaAtual.nota}</p>
-      </div>
+      <h1 className="sr-only print:hidden">{abaAtual.rotulo}</h1>
       <div className="hidden print:block">
-        <p className="text-label normal-case tracking-normal text-ink-soft">{IDENTIDADE.nome} · {IDENTIDADE.apoio}</p>
+        <p className={`${NOTA_DISCRETA}`}>{IDENTIDADE.nome} · {IDENTIDADE.apoio}</p>
         <h1 className="text-title font-semibold">{IDENTIDADE.painel} · {abaAtual.rotulo}</h1>
         <p className="text-small text-ink-soft">{abaAtual.nota}</p>
       </div>
 
-      <div role="tabpanel" id={`painel-${aba}`} aria-labelledby={`aba-${aba}`} className="mt-4">
+      <div role="tabpanel" id={`painel-${aba}`} aria-labelledby={`aba-${aba}`} className="mt-3">
         {aba === 'visao' && <VisaoGeral receita={macro.receita} despesa={macro.despesa} ipca={macro.ipca} pib={macro.pib} fonteIpca={macro.fonteIpca} dados={receitaMes} irParaMetodo={() => { escolheAba('metodo'); window.scrollTo({ top: 0 }) }} />}
         {aba === 'metodo' && <Metodo receita={macro.receita} dados={receitaMes} pib27={(1 + (macro.ipca['2027'] ?? 0)) * (1 + (macro.pib['2027'] ?? 0)) - 1} />}
         {aba === 'receita' && (
@@ -262,8 +259,6 @@ export function Painel({ linhas, nomes, coleta, outrosPoderes, macro, receitaMes
         {aba === 'despesa' && (
           <>
             <div className="print:hidden">{filtros}</div>
-            {/* totais do recorte, numa linha */}
-      <Faixa itens={resumo} nota="Tabelas em R$ milhões, arredondadas; valores correntes." />
 
             <div className="mt-3">
               <Subvisoes rotulo="O que ver na despesa" itens={[
@@ -333,8 +328,6 @@ export function Painel({ linhas, nomes, coleta, outrosPoderes, macro, receitaMes
         {aba === 'fontes' && (
           <>
             <div className="print:hidden">{filtros}</div>
-            {/* totais do recorte, numa linha */}
-      <Faixa itens={resumo} nota="Tabelas em R$ milhões, arredondadas; valores correntes." />
 
             <div className="mt-3 space-y-3">
               <Cartao titulo="Grupo de despesa">
@@ -388,7 +381,7 @@ export function Painel({ linhas, nomes, coleta, outrosPoderes, macro, receitaMes
         )}
       </div>
 
-      <p className="mt-4 text-small text-ink-soft print:mt-2">
+      <p className={`mt-4 ${NOTA_DISCRETA} print:mt-2`}>
         {aba === 'despesa' || aba === 'fontes' || aba === 'atencao' ? <>Fonte: Portal de Dados Abertos do ES (2025 e 2026, coleta em {coleta}); PLOA 2027: Mensagem nº 189/2026, proposta e não a LOA. Δ = PLOA 2027 menos atualizada 2026.<br /></> : null}
         <span className="print:hidden">{IDENTIDADE.aviso}</span>
       </p>

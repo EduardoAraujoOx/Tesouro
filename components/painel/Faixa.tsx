@@ -1,3 +1,5 @@
+import { NOTA_DISCRETA } from './Estrutura'
+
 const COLUNAS: Record<number, string> = { 2: 'md:grid-cols-2', 3: 'md:grid-cols-3', 4: 'md:grid-cols-4' }
 
 /** Totais do recorte numa faixa só: rótulo pequeno, valor em destaque e complemento, separados por filetes (sem cartões). */
@@ -13,7 +15,7 @@ export function Faixa({ itens, nota }: { itens: { r: string; v: string; s?: stri
           </div>
         ))}
       </dl>
-      {nota && <p className="mt-1.5 text-label normal-case tracking-normal text-ink-soft">{nota}</p>}
+      {nota && <p className={`mt-1.5 ${NOTA_DISCRETA}`}>{nota}</p>}
     </div>
   )
 }

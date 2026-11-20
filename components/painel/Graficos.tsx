@@ -55,35 +55,19 @@ export function Cartao({ titulo, legenda, grafico, tabela, direita, className = 
 export type ColunaDelta<T> = { rotulo: string; valor: (x: T) => ReactNode; forte?: boolean }
 
 /**
- * Tabela de variação: rótulo, uma barra divergente (azul = aumento, rosa = redução) e os números exatos ao lado.
- * A barra mostra uma coisa só, a diferença que importa; os valores ficam na tabela, arredondados.
+ * Tabela de variação: rótulo e os números exatos, já ordenados pela diferença que importa. A barra divergente foi retirada:
+ * repetia a coluna de diferença, e a cor do percentual já dá o sentido. No celular, cada linha vira um bloco, sem rolagem lateral.
+ * (`delta` e a segunda parte de `rotuloBarra` ficam por compatibilidade com as telas que a usam.)
  */
-export function TabelaDelta<T extends { chave: string }>({ itens, colunas, delta, rotuloBarra, legenda, primeira }: {
-  itens: T[]; colunas: ColunaDelta<T>[]; delta: (x: T) => number; rotuloBarra: string; legenda: string; primeira: (x: T) => ReactNode
+export function TabelaDelta<T extends { chave: string }>({ itens, colunas, rotuloBarra, legenda, primeira }: {
+  itens: T[]; colunas: ColunaDelta<T>[]; delta?: (x: T) => number; rotuloBarra: string; legenda: string; primeira: (x: T) => ReactNode
 }) {
-  const max = Math.max(1, ...itens.map((i) => Math.max(0, delta(i))))
-  const min = Math.min(-1, ...itens.map((i) => Math.min(0, delta(i))))
-  const amplitude = max - min
-  const zeroPct = (-min / amplitude) * 100
-  const barraDe = (x: number) => (
-    <div className="relative h-3 w-full min-w-[7rem]" aria-hidden="true">
-      <span className="absolute inset-y-0 w-px bg-ink-soft/60" style={{ left: `${zeroPct}%` }} />
-      <span className="absolute inset-y-0.5" style={{
-        left: x >= 0 ? `${zeroPct}%` : `${zeroPct - (-x / amplitude) * 100}%`,
-        width: `${(Math.abs(x) / amplitude) * 100}%`,
-        background: x >= 0 ? COR.alta : COR.baixa,
-        borderRadius: x >= 0 ? '0 4px 4px 0' : '4px 0 0 4px',
-      }} />
-    </div>
-  )
   return (
     <>
-    {/* celular: cada linha vira um bloco (nome, barra e os números com seus nomes), sem rolagem lateral */}
     <ul aria-label={legenda} className="divide-y divide-line border-y border-line md:hidden">
       {itens.map((it) => (
         <li key={it.chave} className="py-2.5">
           <div className="text-small">{primeira(it)}</div>
-          <div className="mt-1.5">{barraDe(delta(it))}</div>
           <dl className="mt-1.5 grid gap-x-2 gap-y-1 text-small tabular-nums" style={{ gridTemplateColumns: `repeat(${colunas.length === 6 ? 3 : Math.min(colunas.length, 4)}, minmax(0, 1fr))` }}>
             {colunas.map((c) => (
               <div key={c.rotulo}>
@@ -101,21 +85,16 @@ export function TabelaDelta<T extends { chave: string }>({ itens, colunas, delta
         <thead>
           <tr>
             <th scope="col" className="sticky left-0 top-0 z-20 min-w-[9rem] bg-surface px-3 py-2 font-semibold">{rotuloBarra.split('|')[0]}</th>
-            <th scope="col" className="sticky top-0 z-10 min-w-[8.5rem] bg-surface px-3 py-2 font-semibold">{rotuloBarra.split('|')[1]}</th>
             {colunas.map((c) => <th key={c.rotulo} scope="col" className="sticky top-0 z-10 whitespace-nowrap bg-surface px-3 py-2 text-right font-semibold">{c.rotulo}</th>)}
           </tr>
         </thead>
         <tbody>
-          {itens.map((it) => {
-            const barra = barraDe(delta(it))
-            return (
-              <tr key={it.chave} className="border-t border-line">
-                <th scope="row" className="sticky left-0 z-[1] min-w-[10rem] max-w-[12rem] whitespace-normal bg-paper px-3 py-1.5 align-middle font-normal shadow-[1px_0_0_rgb(var(--line))] md:max-w-[26rem]">{primeira(it)}</th>
-                <td className="px-3 py-1.5" aria-hidden="true">{barra}</td>
-                {colunas.map((c) => <td key={c.rotulo} className={`whitespace-nowrap px-3 py-1.5 text-right tabular-nums ${c.forte ? 'font-semibold' : ''}`}>{c.valor(it)}</td>)}
-              </tr>
-            )
-          })}
+          {itens.map((it) => (
+            <tr key={it.chave} className="border-t border-line">
+              <th scope="row" className="sticky left-0 z-[1] min-w-[10rem] max-w-[12rem] whitespace-normal bg-paper px-3 py-1.5 align-middle font-normal shadow-[1px_0_0_rgb(var(--line))] md:max-w-[26rem]">{primeira(it)}</th>
+              {colunas.map((c) => <td key={c.rotulo} className={`whitespace-nowrap px-3 py-1.5 text-right tabular-nums ${c.forte ? 'font-semibold' : ''}`}>{c.valor(it)}</td>)}
+            </tr>
+          ))}
         </tbody>
       </table>
     </div>

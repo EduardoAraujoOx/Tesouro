@@ -67,50 +67,60 @@ export function ColunasMeses({ anterior, corrente, rotuloAnterior, rotuloCorrent
 
 export type ColunaAnual = {
   rotulo: string
+  /** segunda linha do rótulo (ex.: "PLOA", "projeção"), em tom mais discreto */
+  sub?: string
   /** valor da barra, em R$ */
   v: number
-  /** 'real' = realizado; 'estim' = estimativa ou projeção (barra clara tracejada); 'ploa' = proposta de 2027 (azul-marinho) */
+  /** 'real' = realizado; 'estim' = estimativa ou projeção (barra clara tracejada); 'ploa' = proposta de 2027 (azul-marinho); 'ref' = nossa projeção de 2027 (azul-celeste) */
   tipo: 'real' | 'estim' | 'ploa' | 'ref'
   /** faixa de incerteza da projeção (R$) */
   faixa?: [number, number]
-  /** índice da coluna com que a variação mostrada embaixo é calculada (padrão: a coluna anterior) */
-  contra?: number
   /** traço de referência (R$) com o seu nome */
   marca?: { v: number; rotulo: string }
+  /** traço de comparação: um valor (R$) marcado sobre a barra, com a diferença da barra para ele (usado para pôr a PLOA sobre a nossa projeção) */
+  compara?: { v: number; rotulo: string }
 }
 
-/** Colunas por ano: valor em bilhões em cima, variação sobre a coluna anterior embaixo. Faixa e traço de referência opcionais. */
+/** Colunas por ano, com o valor em bilhões em cima. Faixa, traço de referência e traço de comparação opcionais. */
 export function ColunasAnuais({ colunas, descricao }: { colunas: ColunaAnual[]; descricao: string }) {
-  const max = Math.max(...colunas.flatMap((c) => [c.v, c.faixa?.[1] ?? 0, c.marca?.v ?? 0]))
+  const max = Math.max(...colunas.flatMap((c) => [c.v, c.faixa?.[1] ?? 0, c.marca?.v ?? 0, c.compara?.v ?? 0]))
   const topo = max * 1.08
   const h = (x: number) => `${(x / topo) * 100}%`
   const bi = (x: number) => numero(x / 1e9, 1)
   return (
     <div role="img" aria-label={descricao}>
       <div className="flex gap-1.5 sm:gap-4">
-        {colunas.map((c, k) => {
-          const ant = c.contra !== undefined ? colunas[c.contra].v : k > 0 ? colunas[k - 1].v : null
-          const d = ant ? (c.v / ant - 1) * 100 : null
+        {colunas.map((c) => {
+          const dif = c.compara ? (c.compara.v / c.v - 1) * 100 : null
+          const dentro = c.compara ? c.compara.v < c.v : false
           return (
-            <div key={c.rotulo} className="flex min-w-0 flex-1 flex-col items-center">
+            <div key={c.rotulo + (c.sub ?? '')} className="flex min-w-0 flex-1 flex-col items-center">
               <div className="relative h-52 w-full">
                 <div className="absolute inset-x-0 bottom-0 mx-auto w-full max-w-[4.5rem]" style={{ height: h(c.v) }}>
-                  <span className="absolute inset-x-0 -top-5 text-center text-small font-semibold tabular-nums text-ink">{bi(c.v)}</span>
                   <span className="block h-full w-full" style={{
                     background: c.tipo === 'ploa' ? COR.ploa : c.tipo === 'ref' ? COR.referencia : c.tipo === 'real' ? COR.empenhado : COR.atualizada,
                     outline: c.tipo === 'estim' ? `1.5px dashed ${COR.contornoAtualizada}` : undefined, outlineOffset: -1.5,
                     borderRadius: '4px 4px 0 0',
                   }} />
                 </div>
+                <span className="absolute inset-x-0 text-center text-small font-semibold tabular-nums leading-none text-ink" style={{ bottom: `calc(${h(Math.max(c.v, c.faixa?.[1] ?? 0, c.marca?.v ?? 0))} + 0.3rem)` }}>{bi(c.v)}</span>
                 {c.faixa && (
                   <span aria-hidden="true" className="absolute left-1/2 w-0.5 -translate-x-1/2 bg-ink" style={{ bottom: h(c.faixa[0]), height: `calc(${h(c.faixa[1])} - ${h(c.faixa[0])})` }} />
                 )}
                 {c.marca && (
                   <span aria-hidden="true" title={`${c.marca.rotulo}: ${bi(c.marca.v)} bi`} className="absolute inset-x-0 mx-auto flex max-w-[4.5rem] items-center border-t-2 border-serie2" style={{ bottom: h(c.marca.v) }} />
                 )}
+                {c.compara && dif !== null && (
+                  <>
+                    <span aria-hidden="true" title={`${c.compara.rotulo}: ${bi(c.compara.v)} bi`} className="absolute inset-x-0 mx-auto max-w-[4.5rem] border-t-2 border-dashed" style={{ bottom: h(c.compara.v), borderColor: dentro ? 'rgb(var(--on-navy))' : 'rgb(var(--navy))' }} />
+                    <span aria-hidden="true" className={`absolute inset-x-0 mx-auto max-w-[4.5rem] text-center text-label font-semibold normal-case tabular-nums leading-none tracking-normal ${dentro ? 'text-on-navy' : 'text-ink'}`} style={{ bottom: `calc(${h(c.compara.v)} ${dentro ? '- 1.1rem' : '+ 0.25rem'})` }}>
+                      {fmtPct(dif)}
+                    </span>
+                  </>
+                )}
               </div>
               <span className="mt-1.5 w-full border-t border-line pt-1 text-center text-label font-semibold normal-case leading-tight tracking-normal text-ink sm:text-small">{c.rotulo}</span>
-              <span className={`text-label normal-case tracking-normal tabular-nums ${d === null ? 'text-transparent' : 'text-ink-soft'}`}>{d === null ? '–' : fmtPct(d)}</span>
+              <span className={`text-center text-label normal-case leading-tight tracking-normal text-ink-soft ${c.sub ? '' : 'invisible'}`}>{c.sub ?? '–'}</span>
             </div>
           )
         })}

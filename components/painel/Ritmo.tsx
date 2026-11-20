@@ -1,5 +1,6 @@
 'use client'
 
+import { NOTA_DISCRETA } from './Estrutura'
 import { useMemo } from 'react'
 import { milhoes, numero } from '@/lib/formato'
 import { Cartao, TabelaItens } from './Graficos'
@@ -32,7 +33,7 @@ export function RitmoReceita({ dados }: { dados: DadosReceita }) {
         { rotulo: 'Fechamento 2026', valor: (g) => <span className="font-semibold">{Number.isFinite(g.central) ? mi(g.central) : '–'}</span> },
         { rotulo: 'Faixa', valor: (g) => (Number.isFinite(g.min) ? `${mi(g.min)} a ${mi(g.max)}` : '–'), secundaria: true },
       ]} />
-      <p className="mt-2 text-label normal-case tracking-normal text-ink-soft">
+      <p className={`mt-2 ${NOTA_DISCRETA}`}>
         Acumulado líquido das deduções (transferências aos municípios e Fundeb). Δ% 24, 25 e 26: crescimento do acumulado sobre o do ano anterior, no mesmo período. “% do ano”: média de 2022 a 2025 do quanto do ano já estava arrecadado até {mes}.
         Fechamento = acumulado de 2026 ÷ essa participação; a faixa usa a menor e a maior participação observadas. ≈ marca tipos de receita cuja participação oscila muito entre os anos. Fontes: Siconfi (RREO, Anexo 01) para 2023 a 2025 e Portal de Dados Abertos do ES para 2026, que coincidem.
       </p>

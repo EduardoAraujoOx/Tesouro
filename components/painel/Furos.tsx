@@ -4,7 +4,7 @@ import { useMemo } from 'react'
 import { bilhoes, milhoes, numero } from '@/lib/formato'
 import type { LinhaMacro } from '@/lib/macro'
 import { Cartao, TabelaItens } from './Graficos'
-import { Nota } from './Estrutura'
+import { Nota, NOTA_DISCRETA } from './Estrutura'
 import { fmtPct } from './GraficosMacro'
 import { ATU, EMP, EMP25, PLOA, agrupa, titulo, type Linha } from './dados'
 import { projecaoItens, type DadosReceita } from './projecao'
@@ -92,10 +92,9 @@ export function Furos({ linhas, nomes, dados, receita, ipca, pib }: { linhas: Li
   return (
     <div className="space-y-3">
       <Cartao titulo="Possíveis furos: receita esticada, despesa apertada">
-        <p className="max-w-3xl text-small text-ink-soft">
+        <Nota titulo="Como ler e regras usadas"><p>
           Despesa recorrente R$ {numero(totalCortes / 1e9, 1)} bi abaixo do que já foi empenhado em 2026 (saúde R$ {mi(cortes.filter((a) => a.unidade.toLowerCase().includes('saúde')).reduce((t, a) => t + a.gap, 0))} milhões); aumentos de R$ {numero(totalAumentos / 1e9, 1)} bi acima do executado (reservas R$ {numero((porTipo.find(([t]) => t === 'Reserva')?.[1] ?? 0) / 1e9, 1)} bi); receita esticada em R$ {numero(receitaEsticada / 1e9, 1)} bi (crédito e ICMS) contra R$ {numero(Math.abs(receitaConservadora) / 1e9, 1)} bi conservadores (petróleo).
         </p>
-        <Nota titulo="Como ler e regras usadas">
           <p>
             O orçamento fecha com receita igual à despesa. Se a receita total está perto do que o ritmo de 2026 indica (a projeção está na aba Receita), então um corte abaixo do que a despesa já executa só se sustenta se outro lugar aumentar ou se a receita estiver esticada. Como a receita não parece inflada no total, a pergunta se desloca para a despesa: o que foi apertado, e o que cresceu. A leitura abaixo põe os dois lados à vista: onde a proposta parece apertada, onde cresce e quais linhas de receita ficam acima do que o ritmo daria. Não conclui qual aumento é menos necessário: isso é julgamento de quem decide.
           </p>
@@ -132,9 +131,9 @@ export function Furos({ linhas, nomes, dados, receita, ipca, pib }: { linhas: Li
         </div>
 
         <h3 className="mt-5 text-body font-semibold">Receita: onde a PLOA fica acima ou abaixo do ritmo de 2026</h3>
-        <p className="mt-1 max-w-3xl text-small text-ink-soft">
+        <Nota titulo="Leitura"><p>
           Para cada linha, compara-se a PLOA 2027 com o fechamento projetado de 2026 crescendo com inflação e PIB do Focus ({fmtPct(g27 * 100)}). As linhas acima do esperado somam R$ {numero(receitaEsticada / 1e9, 1)} bi de receita esticada (operações de crédito e ICMS à frente); as abaixo, R$ {numero(Math.abs(receitaConservadora) / 1e9, 1)} bi de receita conservadora (sobretudo transferências da União, ou seja, o petróleo). No saldo a PLOA fica R$ {numero(Math.abs(receitaEsticada + receitaConservadora) / 1e9, 1)} bi {receitaEsticada + receitaConservadora < 0 ? 'abaixo' : 'acima'} do que o ritmo de 2026 com o crescimento do Focus daria: o risco de receita inflada está concentrado em crédito e ICMS, e a folga está no petróleo.
-        </p>
+        </p></Nota>
         <div className="mt-2">
           <TabelaItens altura="livre" itens={linhasReceita} legenda="Receita da PLOA 2027 contra o ritmo de 2026 com crescimento do Focus, em R$ milhões" colunas={[
             { rotulo: 'R$ milhões (bruto)', valor: (l) => l.rotulo },
@@ -143,7 +142,7 @@ export function Furos({ linhas, nomes, dados, receita, ipca, pib }: { linhas: Li
             { rotulo: 'PLOA 2027', valor: (l) => <span className="font-semibold">{mi(l.ploa)}</span> },
             { rotulo: 'PLOA menos esperado', valor: (l) => <span className={`font-semibold ${l.excesso > 0 ? 'text-ink' : 'text-ink-soft'}`}>{dMi(l.excesso)}</span> },
           ]} />
-          <p className="mt-2 text-label normal-case tracking-normal text-ink-soft">Positivo: a PLOA supõe mais do que o ritmo de 2026 daria (receita esticada). Negativo: supõe menos (conservadora). Operações de crédito e receitas de capital dependem de contratação e de eventos pontuais; IPVA, IRRF e ITCD têm só a sazonalidade de 2025 (ver Método e fontes). Bilhões: {bilhoes(receitaEsticada)} esticada; {bilhoes(Math.abs(receitaConservadora))} conservadora.</p>
+          <p className={`mt-2 ${NOTA_DISCRETA}`}>Positivo: a PLOA supõe mais do que o ritmo de 2026 daria (receita esticada). Negativo: supõe menos (conservadora). Operações de crédito e receitas de capital dependem de contratação e de eventos pontuais; IPVA, IRRF e ITCD têm só a sazonalidade de 2025 (ver Método e fontes). Bilhões: {bilhoes(receitaEsticada)} esticada; {bilhoes(Math.abs(receitaConservadora))} conservadora.</p>
         </div>
       </Cartao>
     </div>
