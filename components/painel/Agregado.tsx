@@ -3,7 +3,7 @@
 import { useMemo, useState, type ReactNode } from 'react'
 import { bilhoes, milhoes, numero } from '@/lib/formato'
 import type { LinhaMacro } from '@/lib/macro'
-import { Cartao, Legenda, COR, TabelaDelta, TabelaItens } from './Graficos'
+import { Cartao, Legenda, COR, TabelaItens } from './Graficos'
 import { ColunasAnuais, fmtPct, type ColunaAnual } from './GraficosMacro'
 import { Faixa } from './Faixa'
 import { Nota } from './Estrutura'
@@ -248,14 +248,13 @@ export function VisaoGeral({ receita, despesa, ipca: ipcaParams, pib, fonteIpca,
           <Cartao titulo="PLOA 2027 contra a nossa referência independente">
             <p className="max-w-3xl text-small text-ink-soft">Onde a proposta supõe mais ou menos do que o ritmo de 2026, corrigido, indicaria. Azul: PLOA acima da referência; rosa: abaixo.</p>
             <div className="mt-3">
-              <TabelaDelta itens={itensResumo} delta={(i) => i.d} rotuloBarra="R$ milhões|PLOA 2027 menos referência" legenda="PLOA 2027 contra a referência de 2027, em R$ milhões"
-                primeira={(i) => <><span className="font-medium text-ink">{i.rotulo}</span><span className="block text-label normal-case tracking-normal text-ink-soft">{i.tag}</span></>}
-                colunas={[
-                  { rotulo: 'Ref. 2027', valor: (i) => mi(i.ref) },
-                  { rotulo: 'PLOA 2027', valor: (i) => mi(i.p), forte: true },
-                  { rotulo: 'Dif. R$ mi', valor: (i) => dMi(i.d) },
-                  { rotulo: 'Dif. %', valor: (i) => <span className={corDif(i.pct)}>{fmtPct(i.pct)}</span> },
-                ]} />
+              <TabelaItens altura="livre" compacta itens={itensResumo} legenda="PLOA 2027 contra a referência de 2027, em R$ milhões" colunas={[
+                { rotulo: 'R$ milhões', valor: (i) => <><span className="font-medium text-ink">{i.rotulo}</span><span className="block text-label normal-case tracking-normal text-ink-soft">{i.tag}</span></> },
+                { rotulo: 'Ref. 27', valor: (i) => mi(i.ref) },
+                { rotulo: 'PLOA 27', valor: (i) => <span className="font-semibold">{mi(i.p)}</span> },
+                { rotulo: 'Dif. R$ mi', secundaria: true, valor: (i) => dMi(i.d) },
+                { rotulo: 'Dif. %', valor: (i) => <span className={`font-semibold ${corDif(i.pct)}`}>{fmtPct(i.pct)}</span> },
+              ]} />
             </div>
             {notaReferencia}
           </Cartao>
