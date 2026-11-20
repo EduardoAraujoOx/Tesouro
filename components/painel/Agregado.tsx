@@ -8,11 +8,10 @@ import { ColunasAnuais, fmtPct, type ColunaAnual } from './GraficosMacro'
 import { Faixa } from './Faixa'
 import { Nota } from './Estrutura'
 import { COD_DESPESA, COD_GRUPO } from './codigos'
-import { analisaFontes, fatorPrecos, implicitoPetroleo, ipcaAnual, projecaoItens, projetaDespesa2026, projetaReceita2026, type DadosReceita, type ItemProjetado } from './projecao'
+import { fatorPrecos, ipcaAnual, projecaoItens, projetaDespesa2026, projetaReceita2026, type DadosReceita, type ItemProjetado } from './projecao'
 
-type Vista = 'resumo' | 'receita' | 'despesa' | 'resultado'
+type Vista = 'receita' | 'despesa' | 'resultado'
 const VISTAS: { id: Vista; rotulo: string }[] = [
-  { id: 'resumo', rotulo: 'Resumo' },
   { id: 'receita', rotulo: 'Receita' },
   { id: 'despesa', rotulo: 'Despesa' },
   { id: 'resultado', rotulo: 'Resultado' },
@@ -37,7 +36,7 @@ const corDif = (d: number) => (Math.abs(d) < DIF_MIN ? '' : d > 0 ? 'text-serie3
 export function VisaoGeral({ receita, despesa, ipca: ipcaParams, pib, fonteIpca, dados, irParaMetodo }: {
   receita: LinhaMacro[]; despesa: LinhaMacro[]; ipca: Record<string, number>; pib: Record<string, number>; fonteIpca: string; dados: DadosReceita; irParaMetodo: () => void
 }) {
-  const [vista, setVista] = useState<Vista>('resumo')
+  const [vista, setVista] = useState<Vista>('receita')
   const [abertos, setAbertos] = useState<Set<string>>(new Set(['corr', 'capd']))
   const [base, setBase] = useState<'nominal' | 'real'>('nominal')
   const R = useMemo(() => Object.fromEntries(receita.map((x) => [x.chave, x.valores])) as Record<string, number[]>, [receita])
@@ -48,8 +47,6 @@ export function VisaoGeral({ receita, despesa, ipca: ipcaParams, pib, fonteIpca,
   const proj = useMemo(() => projetaReceita2026(dados), [dados])
   const itensProj = useMemo(() => projecaoItens(dados), [dados])
   const projD = useMemo(() => projetaDespesa2026(), [])
-  const analiseFontes = useMemo(() => analisaFontes(dados), [dados])
-  const petr = useMemo(() => implicitoPetroleo(dados, analiseFontes, R.transf_corr_uniao[5], g27), [dados, analiseFontes, R, g27])
   const pick = (m: Record<string, number[]>, ...ch: string[]) => COL.map((c) => ch.reduce((s, k) => s + m[k][c], 0))
   const soma = (...a: number[][]) => COL.map((_, j) => a.reduce((s, x) => s + x[j], 0))
 
@@ -109,18 +106,10 @@ export function VisaoGeral({ receita, despesa, ipca: ipcaParams, pib, fonteIpca,
   const visiveis = comProj.filter((l) => !l.pai || abertos.has(l.pai))
   const alterna = (c: string) => setAbertos((a) => { const n = new Set(a); if (n.has(c)) n.delete(c); else n.add(c); return n })
 
-  /* ---------- resumo: onde a PLOA se afasta da referência independente ---------- */
+  /* ---------- totais de referência para a faixa de números ---------- */
   const reservas27 = reservas[4]
   const refReceitaTotal = linhasReceita.filter((x) => x.nivel === 0 && x.chave !== 'liq').reduce((s, x) => s + (refReceita({ ...x, proj: itensProj[x.chave] }) ?? 0), 0)
   const refDespesa = projD.itens.tot.central * (1 + i27)
-  const itensResumo = [
-    { chave: 'rec', rotulo: 'Receita líquida total', tag: 'Receita', p: R.total[5], ref: refReceitaTotal },
-    { chave: 'icms', rotulo: 'ICMS', tag: 'Receita', p: R.icms[5], ref: itensProj.icms.central * (1 + g27) },
-    { chave: 'pet', rotulo: 'Petróleo (valor implícito na PLOA)', tag: 'Receita', p: petr.implicito, ref: petr.petroleo26 * (1 + g27) },
-    { chave: 'des', rotulo: 'Despesa executável (sem reservas)', tag: 'Despesa', p: D.total[5] - reservas27, ref: refDespesa },
-    { chave: 'pes', rotulo: 'Pessoal e encargos', tag: 'Despesa', p: D.pessoal[5], ref: projD.itens.pessoal.central * (1 + i27) },
-    { chave: 'out', rotulo: 'Outras despesas correntes', tag: 'Despesa', p: D.outras_correntes[5], ref: projD.itens.outras.central * (1 + i27) },
-  ].map((l) => ({ ...l, d: l.p - l.ref, pct: (l.p / l.ref - 1) * 100 }))
 
   /* ---------- gráfico anual ---------- */
   const serieTotal = vista === 'despesa' ? D.total : R.total
@@ -243,25 +232,7 @@ export function VisaoGeral({ receita, despesa, ipca: ipcaParams, pib, fonteIpca,
         ))}
       </div>
 
-      {vista === 'resumo' && (
-        <div className="mt-3">
-          <Cartao titulo="PLOA 2027 contra a nossa referência independente">
-            <p className="max-w-3xl text-small text-ink-soft">Onde a proposta supõe mais ou menos do que o ritmo de 2026, corrigido, indicaria. Azul: PLOA acima da referência; rosa: abaixo.</p>
-            <div className="mt-3">
-              <TabelaItens altura="livre" compacta itens={itensResumo} legenda="PLOA 2027 contra a referência de 2027, em R$ milhões" colunas={[
-                { rotulo: 'R$ milhões', valor: (i) => <><span className="font-medium text-ink">{i.rotulo}</span><span className="block text-label normal-case tracking-normal text-ink-soft">{i.tag}</span></> },
-                { rotulo: 'Ref. 27', valor: (i) => mi(i.ref) },
-                { rotulo: 'PLOA 27', valor: (i) => <span className="font-semibold">{mi(i.p)}</span> },
-                { rotulo: 'Dif. R$ mi', secundaria: true, valor: (i) => dMi(i.d) },
-                { rotulo: 'Dif. %', valor: (i) => <span className={`font-semibold ${corDif(i.pct)}`}>{fmtPct(i.pct)}</span> },
-              ]} />
-            </div>
-            {notaReferencia}
-          </Cartao>
-        </div>
-      )}
-
-      {vista !== 'resumo' && <Faixa itens={faixa} nota="Valores correntes. Tabelas em R$ milhões, arredondadas." />}
+      <Faixa itens={faixa} nota="Valores correntes. Tabelas em R$ milhões, arredondadas." />
 
       {(vista === 'receita' || vista === 'despesa') && (
         <div className="mt-3 space-y-3">
