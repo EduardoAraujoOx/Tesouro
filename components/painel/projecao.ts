@@ -562,6 +562,38 @@ export function tendenciaPessoal(): { media: number; anos: { ano: number; cresc:
   return { media: anos.reduce((t, x) => t + x.cresc, 0) / anos.length, anos }
 }
 
+export type ElementoDespesa = { cod: string; nome: string; v25: number; p26: number }
+type ElementosAno = Record<string, Record<string, number[]>>
+const nomesElemento = ((despesaMensalRaw as unknown as { nomes_elemento?: Record<string, string> }).nomes_elemento ?? {})
+
+/**
+ * Elementos de despesa de cada grupo: empenhado de 2025 e fechamento projetado de 2026. A projeção do grupo é distribuída entre os elementos
+ * na proporção do empenhado de cada um até o último mês fechado, de modo que os elementos somam o grupo. Elementos pequenos (abaixo de R$ 1 milhão
+ * em 2025 e em 2026) ficam agrupados em "Demais elementos". A PLOA 2027 só traz o detalhe por elemento em meio magnético, fora do PDF.
+ */
+export function elementosDespesa(): Record<string, ElementoDespesa[]> {
+  const m = despMensal['2026'].meses_completos
+  const e25 = (despMensal['2025'] as unknown as { elementos?: ElementosAno }).elementos ?? {}
+  const e26 = (despMensal['2026'] as unknown as { elementos?: ElementosAno }).elementos ?? {}
+  const p = projetaDespesa2026()
+  const saida: Record<string, ElementoDespesa[]> = {}
+  for (const [chave, g] of Object.entries(GND_DESPESA)) {
+    const cods = [...new Set([...Object.keys(e25[g] ?? {}), ...Object.keys(e26[g] ?? {})])]
+    const corte = (c: string) => e26[g]?.[c]?.[m - 1] ?? 0
+    const totalCorte = cods.reduce((t, c) => t + corte(c), 0)
+    const itens = cods.map((cod) => ({
+      cod, nome: nomesElemento[cod] ?? `Elemento ${cod}`,
+      v25: e25[g]?.[cod]?.[11] ?? 0,
+      p26: totalCorte > 0 ? (p.itens[chave].central * corte(cod)) / totalCorte : 0,
+    }))
+    const grandes = itens.filter((x) => Math.abs(x.v25) >= 1e6 || Math.abs(x.p26) >= 1e6).sort((a, b) => Math.max(b.v25, b.p26) - Math.max(a.v25, a.p26))
+    const pequenos = itens.filter((x) => !grandes.includes(x))
+    if (pequenos.length) grandes.push({ cod: '--', nome: 'Demais elementos', v25: pequenos.reduce((t, x) => t + x.v25, 0), p26: pequenos.reduce((t, x) => t + x.p26, 0) })
+    saida[chave] = grandes
+  }
+  return saida
+}
+
 export type RetroDespesa = { id: string; rotulo: string; erros: { ano: number; erro: number | null }[]; erroMedio: number | null }
 const ROTULOS_DESPESA: Record<string, string> = { tot: 'Despesa total', pessoal: 'Pessoal e encargos', outras: 'Outras despesas correntes', inv: 'Investimentos' }
 /** Teste retroativo da projeção da despesa: em cada ano de 2022 a 2025, projeta ao fim do mesmo mês de corte com as frações dos até quatro anos anteriores (a partir de 2019). */

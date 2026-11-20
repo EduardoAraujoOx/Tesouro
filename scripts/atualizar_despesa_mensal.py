@@ -11,6 +11,9 @@ Fonte: conjunto "[Portal da Transparência] Despesas, execução orçamentária 
 lançamento, com data, GND e os valores empenhado, liquidado e pago; anulações aparecem como valores negativos). Os valores são somados por
 (dia, GND) sem outra transformação. O arquivo é lido em fluxo e descartado.
 
+Detalhamento: para o ano corrente e o anterior, o arquivo traz também o empenhado acumulado por elemento de despesa dentro de cada GND
+(`elementos`), com os nomes em `nomes_elemento`. A PLOA 2027 só publica o detalhe por elemento em meio magnético, fora do PDF.
+
 Conferência: o total anual por GND de cada ano fechado é comparado ao de data/orcamento.json (que vem de outro arquivo do mesmo conjunto); a
 diferença relativa fica em `conferencia`.
 
@@ -42,6 +45,8 @@ def br(s):
 def agregar(url):
     """Lê o CSV em fluxo e devolve {GND: {AAAA-MM-DD: [empenhado, liquidado, pago]}}."""
     acc = defaultdict(lambda: defaultdict(lambda: [0.0, 0.0, 0.0]))
+    elem = defaultdict(lambda: defaultdict(float))  # (GND, elemento) -> dia -> empenhado
+    nomes = {}
     linhas = 0
     with orc.abrir(url) as r:
         texto = io.TextIOWrapper(r, encoding="utf-8-sig", newline="")
@@ -56,7 +61,22 @@ def agregar(url):
             a[0] += br(x["ValorEmpenho"])
             a[1] += br(x["ValorLiquidado"])
             a[2] += br(x["ValorPago"])
-    return {g: {d: [round(v) for v in vs] for d, vs in sorted(dias.items()) if any(round(v) for v in vs)} for g, dias in acc.items()}, linhas
+            el = (x.get("CodigoElementoDespesa") or "").strip()
+            if el:
+                elem[(gnd, el)][dia] += br(x["ValorEmpenho"])
+                nomes.setdefault(el, (x.get("ElementoDespesa") or "").strip())
+    diario = {g: {d: [round(v) for v in vs] for d, vs in sorted(dias.items()) if any(round(v) for v in vs)} for g, dias in acc.items()}
+    return diario, {k: {d: round(v) for d, v in dias.items() if round(v)} for k, dias in elem.items()}, nomes, linhas
+
+
+def compactar_elementos(elem, completos):
+    """{(GND, elemento): {dia: empenhado}} -> {GND: {elemento: [acumulado no ano ao fim de cada mês completo]}}."""
+    saida = {}
+    for (g, el), dias in elem.items():
+        serie = [sum(v for d, v in dias.items() if int(d[5:7]) <= m) for m in range(1, completos + 1)]
+        if any(serie):
+            saida.setdefault(g, {})[el] = serie
+    return saida
 
 
 def compactar(dados):
@@ -86,8 +106,11 @@ def main():
             print(f"{nome}: não encontrado, ignorado", file=sys.stderr)
             continue
         t0 = time.time()
-        dados, n = agregar(orc.url_recurso(ids[nome], nome))
+        dados, elem, nomes_el, n = agregar(orc.url_recurso(ids[nome], nome))
         saida["anos"][str(ano)] = compactar(dados)
+        if ano >= hoje.year - 1:
+            saida["anos"][str(ano)]["elementos"] = compactar_elementos(elem, saida["anos"][str(ano)]["meses_completos"])
+            saida.setdefault("nomes_elemento", {}).update(nomes_el)
         ultimo = max((d for g in dados.values() for d in g), default="")
         print(f"{ano}: {n} lançamentos, último dia {ultimo}, {time.time() - t0:.0f} s", file=sys.stderr)
         # conferência contra o orçamento (empenhado por GND, ano inteiro)
