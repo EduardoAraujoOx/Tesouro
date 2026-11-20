@@ -129,7 +129,9 @@ export function Painel({ linhas, nomes, coleta, outrosPoderes, macro, receitaMes
 
   /* PLOA 2027 contra o fechamento projetado de 2026: cada linha leva o seu empenhado até a data vezes a razão de fechamento do seu grupo de natureza */
   const fechamento = useMemo(() => {
-    const razao = razoesFechamento2026()
+    const porGndTodas: Record<string, number> = {}
+    for (const l of linhas) porGndTodas[l[3]] = (porGndTodas[l[3]] ?? 0) + (l[5 + EMP] as number)
+    const razao = razoesFechamento2026(porGndTodas)
     const m = new Map<string, { emp: number; proj: number; ploa: number }>()
     for (const l of L) {
       const k = uoAtiva ? `${l[1]}|${l[2]}` : l[0]
@@ -143,7 +145,7 @@ export function Painel({ linhas, nomes, coleta, outrosPoderes, macro, receitaMes
       return { chave: k, rotulo: uoAtiva ? nomeAcao(ac) : nomeUo(k), sub: uoAtiva ? `ação ${ac} · programa ${prog}` : k, ...v, d: v.ploa - v.proj, pct: v.proj > 0 ? (v.ploa / v.proj - 1) * 100 : null }
     }).filter((x) => x.proj > 0 || x.ploa > 0).sort((a, b) => a.d - b.d)
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [L, uoAtiva])
+  }, [L, uoAtiva, linhas])
   const fechamentoTotal = useMemo(() => fechamento.reduce((t, x) => ({ emp: t.emp + x.emp, proj: t.proj + x.proj, ploa: t.ploa + x.ploa }), { emp: 0, proj: 0, ploa: 0 }), [fechamento])
   const dataCorte = useMemo(() => { const u = projetaDespesa2026().ultimoDia; return `${u.slice(8, 10)}/${u.slice(5, 7)}` }, [])
 

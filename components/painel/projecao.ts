@@ -539,14 +539,15 @@ export function projetaDespesa2026(): ProjecaoDespesa {
 }
 
 /**
- * Razão entre o fechamento projetado de 2026 e o empenhado até o último dia disponível, por GND (chave: código do GND). Serve para levar a projeção
- * do grupo às unidades e ações: o fechamento de cada linha é o seu empenhado até a data vezes a razão do seu grupo de natureza. Reserva (GND 9) não é executada.
+ * Razão entre o fechamento projetado de 2026 e o empenhado do conjunto por unidade e ação, por GND (chave: código do GND). Serve para levar a projeção
+ * do grupo às unidades e ações: o fechamento de cada linha é o seu empenhado vezes a razão do seu grupo de natureza. O denominador (`empenhadoPorGnd`)
+ * deve vir do mesmo conjunto de linhas que será multiplicado, e não do coletor mensal, porque os dois arquivos são atualizados em horários diferentes;
+ * assim a soma das unidades fecha com a projeção de cada grupo. Reserva (GND 9) não é executada.
  */
-export function razoesFechamento2026(): Record<string, number> {
+export function razoesFechamento2026(empenhadoPorGnd: Record<string, number>): Record<string, number> {
   const p = projetaDespesa2026()
-  const a26 = despMensal['2026']
   const out: Record<string, number> = { '9': 0 }
-  for (const [chave, g] of Object.entries(GND_DESPESA)) out[g] = p.itens[chave].central / a26.ate_ultimo_dia[g][EMP]
+  for (const [chave, g] of Object.entries(GND_DESPESA)) out[g] = empenhadoPorGnd[g] > 0 ? p.itens[chave].central / empenhadoPorGnd[g] : 1
   return out
 }
 
