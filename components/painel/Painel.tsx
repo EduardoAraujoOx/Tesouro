@@ -7,8 +7,9 @@ import { Cartao, TabelaDelta, TabelaItens } from './Graficos'
 import { fmtPct } from './GraficosMacro'
 import { Faixa } from './Faixa'
 import { Receita } from './Macro'
-import { VisaoGeral, type RclOficial } from './Agregado'
+import { VisaoGeral, type IndicadoresFiscais, type RclOficial } from './Agregado'
 import { Metodo } from './Metodo'
+import { Cenarios } from './Cenarios'
 import { projetaDespesa2026, razoesFechamento2026 } from './projecao'
 import { PoderesEmendas } from './PoderesEmendas'
 import { Furos } from './Furos'
@@ -22,9 +23,10 @@ import { ATU, EMP, INI, PLOA, agrupa, execucaoPct, titulo, total, variacaoPct, t
 type Nomes = { uo: Record<string, string>; programa: Record<string, string>; acao: Record<string, string>; gnd: Record<string, string>; fonte: Record<string, string> }
 type Escopo = 'executivo' | 'outros' | 'todos'
 type Alerta = 'abaixo' | 'novas' | 'extintas'
-type Aba = 'visao' | 'receita' | 'despesa' | 'fontes' | 'atencao' | 'metodo'
+type Aba = 'visao' | 'cenarios' | 'receita' | 'despesa' | 'fontes' | 'atencao' | 'metodo'
 const ABAS: { id: Aba; rotulo: string; nota: string }[] = [
   { id: 'visao', rotulo: 'Visão geral', nota: 'A proposta de 2027 contra a nossa referência independente, a história e o fechamento projetado de 2026' },
+  { id: 'cenarios', rotulo: 'Cenários', nota: 'Premissas de receita e de despesa para 2027 e o que cada combinação faz com o resultado, a RCL e os créditos suplementares' },
   { id: 'receita', rotulo: 'Receita', nota: 'Arrecadação de 2026, perfil mensal proposto para 2027 e quadro oficial detalhado' },
   { id: 'despesa', rotulo: 'Despesa', nota: 'PLOA 2027 contra a dotação e o empenho de 2026, por unidade orçamentária' },
   { id: 'fontes', rotulo: 'Fontes e grupos', nota: 'Grupos de despesa, fontes de recursos e cobertura da despesa pela receita' },
@@ -43,7 +45,7 @@ type MacroProps = {
   receita: LinhaMacro[]; despesa: LinhaMacro[]; ipca: Record<string, number>; pib: Record<string, number>; fonteIpca: string
 }
 
-export function Painel({ linhas, nomes, coleta, outrosPoderes, macro, receitaMes, petroleo, mercado, funcoes, contingencia, elementosPloa, rclOficial }: { linhas: Linha[]; nomes: Nomes; coleta: string; outrosPoderes: string[]; macro: MacroProps; receitaMes: DadosReceita; petroleo?: PetroleoSefaz; mercado?: PetroleoMercado; funcoes: Record<string, { emp25: number; ini26: number; atu26: number; emp26: number; ploa27: number }>; contingencia: number; elementosPloa: Record<string, Record<string, number>>; rclOficial: RclOficial }) {
+export function Painel({ linhas, nomes, coleta, outrosPoderes, macro, receitaMes, petroleo, mercado, funcoes, contingencia, elementosPloa, rclOficial, fiscais }: { linhas: Linha[]; nomes: Nomes; coleta: string; outrosPoderes: string[]; macro: MacroProps; receitaMes: DadosReceita; petroleo?: PetroleoSefaz; mercado?: PetroleoMercado; funcoes: Record<string, { emp25: number; ini26: number; atu26: number; emp26: number; ploa27: number }>; contingencia: number; elementosPloa: Record<string, Record<string, number>>; rclOficial: RclOficial; fiscais: IndicadoresFiscais }) {
   const [aba, setAba] = useState<Aba>('visao')
   useEffect(() => {
     const h = window.location.hash.slice(1)
@@ -264,7 +266,8 @@ export function Painel({ linhas, nomes, coleta, outrosPoderes, macro, receitaMes
       </div>
 
       <div role="tabpanel" id={`painel-${aba}`} aria-labelledby={`aba-${aba}`} className="mt-3">
-        {aba === 'visao' && <VisaoGeral funcoes={funcoes} contingencia={contingencia} elementosPloa={elementosPloa} rclOficial={rclOficial} receita={macro.receita} despesa={macro.despesa} ipca={macro.ipca} pib={macro.pib} fonteIpca={macro.fonteIpca} dados={receitaMes} irParaMetodo={() => { escolheAba('metodo'); window.scrollTo({ top: 0 }) }} />}
+        {aba === 'visao' && <VisaoGeral funcoes={funcoes} contingencia={contingencia} elementosPloa={elementosPloa} rclOficial={rclOficial} fiscais={fiscais} receita={macro.receita} despesa={macro.despesa} ipca={macro.ipca} pib={macro.pib} fonteIpca={macro.fonteIpca} dados={receitaMes} irParaMetodo={() => { escolheAba('metodo'); window.scrollTo({ top: 0 }) }} />}
+        {aba === 'cenarios' && <Cenarios receita={macro.receita} despesa={macro.despesa} ipca={macro.ipca} pib={macro.pib} dados={receitaMes} rclOficial={rclOficial} contingencia={contingencia} />}
         {aba === 'metodo' && <Metodo receita={macro.receita} dados={receitaMes} pib27={(1 + (macro.ipca['2027'] ?? 0)) * (1 + (macro.pib['2027'] ?? 0)) - 1} />}
         {aba === 'receita' && (
           <Subvisoes rotulo="O que ver na receita" itens={[
