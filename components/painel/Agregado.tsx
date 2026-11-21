@@ -221,11 +221,11 @@ export function VisaoGeral({ funcoes, contingencia, elementosPloa, rclOficial, f
     const c = codigoDe(l)
     const filhos = comProj.some((x) => x.pai === l.chave)
     const aberto = abertos.has(l.chave)
-    if (l.nivel === 2) return <span className="block pl-10 text-ink-soft">{l.rotulo}</span>
-    if (l.nivel === 1 && !filhos) return <span title={c ? `Código ${c}` : undefined} className="block pl-5 text-ink-soft">{c && <span className="sr-only">{c} </span>}{l.rotulo}</span>
-    if (!filhos) return <span title={c ? `Código ${c}` : undefined} className={`block pl-5 ${l.negrito ? 'font-semibold' : 'font-medium'}`}>{c && <span className="sr-only">{c} </span>}{l.rotulo}</span>
+    if (l.nivel === 2) return <span className="block pl-6 text-ink-soft md:pl-10">{l.rotulo}</span>
+    if (l.nivel === 1 && !filhos) return <span title={c ? `Código ${c}` : undefined} className="block pl-4 text-ink-soft md:pl-5">{c && <span className="sr-only">{c} </span>}{l.rotulo}</span>
+    if (!filhos) return <span title={c ? `Código ${c}` : undefined} className={`block pl-4 md:pl-5 ${l.negrito ? 'font-semibold' : 'font-medium'}`}>{c && <span className="sr-only">{c} </span>}{l.rotulo}</span>
     return (
-      <button type="button" aria-expanded={aberto} onClick={() => alterna(l.chave)} title={c ? `Código ${c}` : undefined} className={`inline-flex items-center gap-1.5 text-left ${l.nivel === 1 ? 'ml-5 text-ink-soft' : 'font-medium text-ink'}`}>
+      <button type="button" aria-expanded={aberto} onClick={() => alterna(l.chave)} title={c ? `Código ${c}` : undefined} className={`inline-flex items-center gap-1.5 text-left ${l.nivel === 1 ? 'ml-4 text-ink-soft md:ml-5' : 'font-medium text-ink'}`}>
         <span aria-hidden="true" className="inline-block w-3.5 text-ink-soft">{aberto ? '▾' : '▸'}</span>{l.rotulo}
         <span className="sr-only">{c ? ` (código ${c}); ` : ' '}{aberto ? 'recolher detalhe' : 'mostrar detalhe'}</span>
       </button>
