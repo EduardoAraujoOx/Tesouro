@@ -562,33 +562,34 @@ export function tendenciaPessoal(): { media: number; anos: { ano: number; cresc:
   return { media: anos.reduce((t, x) => t + x.cresc, 0) / anos.length, anos }
 }
 
-export type ElementoDespesa = { cod: string; nome: string; v25: number; p26: number }
+export type ElementoDespesa = { cod: string; nome: string; v25: number; p26: number; ploa27: number }
 type ElementosAno = Record<string, Record<string, number[]>>
 const nomesElemento = ((despesaMensalRaw as unknown as { nomes_elemento?: Record<string, string> }).nomes_elemento ?? {})
 
 /**
  * Elementos de despesa de cada grupo: empenhado de 2025 e fechamento projetado de 2026. A projeção do grupo é distribuída entre os elementos
  * na proporção do empenhado de cada um até o último mês fechado, de modo que os elementos somam o grupo. Elementos pequenos (abaixo de R$ 1 milhão
- * em 2025 e em 2026) ficam agrupados em "Demais elementos". A PLOA 2027 só traz o detalhe por elemento em meio magnético, fora do PDF.
+ * em 2025, em 2026 e na PLOA) ficam agrupados em "Demais elementos". A PLOA 2027 vem do detalhamento por elemento da proposta (PL 525/2026).
  */
-export function elementosDespesa(): Record<string, ElementoDespesa[]> {
+export function elementosDespesa(ploa: Record<string, Record<string, number>>): Record<string, ElementoDespesa[]> {
   const m = despMensal['2026'].meses_completos
   const e25 = (despMensal['2025'] as unknown as { elementos?: ElementosAno }).elementos ?? {}
   const e26 = (despMensal['2026'] as unknown as { elementos?: ElementosAno }).elementos ?? {}
   const p = projetaDespesa2026()
   const saida: Record<string, ElementoDespesa[]> = {}
   for (const [chave, g] of Object.entries(GND_DESPESA)) {
-    const cods = [...new Set([...Object.keys(e25[g] ?? {}), ...Object.keys(e26[g] ?? {})])]
+    const cods = [...new Set([...Object.keys(e25[g] ?? {}), ...Object.keys(e26[g] ?? {}), ...Object.keys(ploa[g] ?? {})])]
     const corte = (c: string) => e26[g]?.[c]?.[m - 1] ?? 0
     const totalCorte = cods.reduce((t, c) => t + corte(c), 0)
     const itens = cods.map((cod) => ({
       cod, nome: nomesElemento[cod] ?? `Elemento ${cod}`,
       v25: e25[g]?.[cod]?.[11] ?? 0,
       p26: totalCorte > 0 ? (p.itens[chave].central * corte(cod)) / totalCorte : 0,
+      ploa27: ploa[g]?.[cod] ?? 0,
     }))
-    const grandes = itens.filter((x) => Math.abs(x.v25) >= 1e6 || Math.abs(x.p26) >= 1e6).sort((a, b) => Math.max(b.v25, b.p26) - Math.max(a.v25, a.p26))
+    const grandes = itens.filter((x) => Math.abs(x.v25) >= 1e6 || Math.abs(x.p26) >= 1e6 || Math.abs(x.ploa27) >= 1e6).sort((a, b) => Math.max(b.v25, b.p26, b.ploa27) - Math.max(a.v25, a.p26, a.ploa27))
     const pequenos = itens.filter((x) => !grandes.includes(x))
-    if (pequenos.length) grandes.push({ cod: '--', nome: 'Demais elementos', v25: pequenos.reduce((t, x) => t + x.v25, 0), p26: pequenos.reduce((t, x) => t + x.p26, 0) })
+    if (pequenos.length) grandes.push({ cod: '--', nome: 'Demais elementos', v25: pequenos.reduce((t, x) => t + x.v25, 0), p26: pequenos.reduce((t, x) => t + x.p26, 0), ploa27: pequenos.reduce((t, x) => t + x.ploa27, 0) })
     saida[chave] = grandes
   }
   return saida

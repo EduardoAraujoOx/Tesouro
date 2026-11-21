@@ -1,5 +1,6 @@
 import raw from '@/data/orcamento.json'
 import ploaRaw from '@/data/ploa2027.json'
+import elementosRaw from '@/data/ploa2027-elementos.json'
 
 /**
  * Camadas do painel do orçamento:
@@ -218,4 +219,18 @@ export function totaisPorFuncao(): Record<string, TotaisFuncao> {
 /** Reserva de contingência da PLOA 2027 (ação 9999 do programa 9999, GND 9), sem a reserva do RPPS e a do Fundo Soberano, que têm ações próprias. */
 export function reservaContingenciaPloa(): number {
   return linhas.filter((l) => l.gnd === '9' && l.acao === '9999').reduce((t, l) => t + (l.ploa2027 ?? 0), 0)
+}
+
+/** PLOA 2027 por GND e elemento de despesa (código sem zero à esquerda, como no Portal), em reais, do detalhamento por elemento da proposta (PL 525/2026). Sem as reservas (GND 9). */
+export function ploaPorElemento(): Record<string, Record<string, number>> {
+  const out: Record<string, Record<string, number>> = {}
+  for (const l of (elementosRaw as unknown as { linhas: [string, string, string, string, string, string, string, string, number][] }).linhas) {
+    const nat = l[6]
+    const gnd = nat[1]
+    if (gnd === '9') continue
+    const el = String(Number(nat.slice(4, 6)))
+    out[gnd] ??= {}
+    out[gnd][el] = (out[gnd][el] ?? 0) + l[8]
+  }
+  return out
 }
