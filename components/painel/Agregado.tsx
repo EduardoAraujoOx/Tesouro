@@ -238,6 +238,22 @@ export function VisaoGeral({ vista, elementosPloa, receita, despesa, ipca: ipcaP
   const antesRes6 = rt6.map((x, j) => x - dcorr6[j] - dcap6[j])
   /* operações de crédito: 2023–2025 e PLOA pelo quadro da Mensagem; Proj. 26 e Proj. 27 no nível de 2026 */
   const cred6 = seis(pick(R, 'operacoes_credito'), itensProj.cred.central, itensProj.cred.central)
+  /* decomposição aproximada, acima da linha: retirando o crédito e a amortização chega-se a um resultado nominal aproximado; somando os juros, a um primário aproximado */
+  const grupoDesp = (chaveD: string, chaveProj: string) => seis(pick(D, chaveD), projD.itens[chaveProj].central, projD.itens[chaveProj].central * (1 + i27))
+  const amort6 = grupoDesp('amortizacao', 'amort')
+  const juros6 = grupoDesp('juros', 'juros')
+  const invf6 = grupoDesp('inversoes', 'invf')
+  const nominal6 = antesRes6.map((x, j) => x - cred6[j] + amort6[j])
+  const primario6 = nominal6.map((x, j) => x + juros6[j])
+  const linhasPrimario: Linha[] = [
+    { chave: 'antes', rotulo: 'Resultado antes das reservas', nivel: 0, v: antesRes6 },
+    { chave: 'cred', rotulo: '(−) Operações de crédito', nivel: 0, v: cred6.map(neg) },
+    { chave: 'amort', rotulo: '(+) Amortização da dívida', nivel: 0, v: amort6 },
+    { chave: 'nominal', rotulo: '= Resultado nominal aproximado', nivel: 0, negrito: true, v: nominal6 },
+    { chave: 'juros', rotulo: '(+) Juros e encargos da dívida', nivel: 0, v: juros6 },
+    { chave: 'primario', rotulo: '= Resultado primário aproximado', nivel: 0, negrito: true, v: primario6 },
+    { chave: 'invf', rotulo: 'Inversões financeiras (parte é despesa financeira e não foi retirada)', nivel: 1, v: invf6 },
+  ]
   const ANOS6 = ['2023', '2024', '2025', 'Proj. 26', 'PLOA 27', 'Proj. 27']
   /* ordem de exibição: a projeção da equipe antes da PLOA, para ler de pronto se a PLOA está acima ou abaixo (os vetores seguem [.., PLOA, Proj. 27]) */
   const ORDEM6 = [0, 1, 2, 3, 5, 4]
@@ -339,6 +355,15 @@ export function VisaoGeral({ vista, elementosPloa, receita, despesa, ipca: ipcaP
             ]} />
             <p className={`mt-2 ${NOTA_DISCRETA}`}>
               Resultado do Balanço Orçamentário: receita total, líquida de deduções, menos a despesa empenhada. Não é resultado primário nem nominal: inclui como receita as operações de crédito e como despesa a amortização da dívida, e por isso as duas últimas linhas mostram o resultado sem o crédito. As reservas de RPPS e de contingência só existem no orçamento (nos anos executados são zero), de modo que a comparação entre os anos é feita antes delas e, na PLOA, elas fecham o resultado em zero. 2023–2025: realizado, pelos quadros da Mensagem nº 189/2026. Proj. 26 e Proj. 27: referência da equipe, sem reservas; a Proj. 26 inclui a receita pontual de 2026 e a Proj. 27 a exclui, com o crédito mantido no nível de 2026. PLOA 27: receita estimada menos despesa fixada.
+            </p>
+          </Cartao>
+          <Cartao titulo="Do resultado aos resultados nominal e primário (aproximados)">
+            <TabelaItens altura="livre" itens={linhasPrimario} legenda="Resultados nominal e primário aproximados, em R$ milhões" colunas={[
+              { rotulo: 'R$ milhões', valor: celulaLinha },
+              ...ORDEM6.map((j) => ({ rotulo: ANOS6[j], valor: (l: Linha) => <span className={l.negrito || j === 4 ? 'font-semibold' : ''}>{mi(l.v[j])}</span> })),
+            ]} />
+            <p className={`mt-2 ${NOTA_DISCRETA}`}>
+              Cálculo acima da linha, por receitas e despesas do orçamento, e por isso aproximado: o resultado nominal retira do resultado orçamentário as operações de crédito (receita) e soma de volta a amortização da dívida (despesa), e o primário soma ainda os juros e encargos. Os resultados oficiais (RREO e LDO) são apurados abaixo da linha, pela variação da dívida fiscal líquida, e podem diferir. Não foram retiradas as demais receitas financeiras (rendimentos de aplicações, que estão na receita patrimonial, alienação de bens e amortização de empréstimos) nem a parte financeira das inversões financeiras, mostradas na última linha. Proj. 26 e Proj. 27: juros, amortização e inversões na projeção da despesa, com o crédito no nível de 2026.
             </p>
           </Cartao>
         </div>
