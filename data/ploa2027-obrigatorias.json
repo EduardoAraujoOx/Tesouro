@@ -1,0 +1,50 @@
+{
+ "fonte": "Mensagem nº 189/2026 (PLOA 2027), Demonstrativo de Despesas Financeiras e Primárias (art. 5º, V, da Lei Complementar nº 224/2025; art. 10, XVI, do projeto de lei), p. 343 de 472 do arquivo",
+ "documento": {
+  "url": "https://planejamento.es.gov.br/media/Or%C3%A7amento/Or%C3%A7amentos/Or%C3%A7amento_Anual_2027/PLOA/ploa-2027-mensagem-texto-complemento-e-anexo.pdf",
+  "sha256": "c90e69353555bd645b6f5ee19fb0ff0bbc6995edaedffcb81297dbb47d02b830",
+  "pagina": 343
+ },
+ "unidade": "R$",
+ "colunas": [
+  "autorizado_2026",
+  "ploa_2027",
+  "projecao_2028"
+ ],
+ "posicao_autorizado_2026": "orçamento autorizado em 25/09/2026",
+ "linhas": {
+  "despesa_primaria": [
+   33862517656,
+   33408538497,
+   35349574584
+  ],
+  "primarias_obrigatorias": [
+   16551231069,
+   17717799850,
+   18747204021
+  ],
+  "primarias_discricionarias": [
+   17311286587,
+   15690738647,
+   16602370562
+  ],
+  "despesas_financeiras": [
+   1212985382,
+   1272214852,
+   1322212896
+  ],
+  "total": [
+   35075503038,
+   34680753349,
+   36671787479
+  ]
+ },
+ "metodologia": {
+  "financeiras": "juros, encargos e amortização da dívida e, no GND Inversões Financeiras, a aquisição de títulos de crédito",
+  "primarias_obrigatorias": "critério da rigidez orçamentária: despesas de pessoal e encargos sociais, sentenças judiciais, obrigações tributárias/PASEP e despesas de custeio obrigatórias, identificadas pelo plano orçamentário \"Despesa Obrigatória\"",
+  "primarias_discricionarias": "demais despesas primárias, com maior flexibilidade de programação e execução",
+  "projecao_2028": "obrigatórias e discricionárias atualizadas em 5,81% (IPCA de 2027, 4,30%, e PIB de 2027, 1,45%, Focus de 11/09/2026); financeiras em 3,93% (crescimento anual recente)"
+ },
+ "observacao": "O total (R$ 34,68 bi) fica R$ 745,8 milhões abaixo da despesa total da PLOA (R$ 35,43 bi): é a reserva do RPPS, que o demonstrativo não classifica.",
+ "transcricao": "valores lidos da imagem da página (documento digitalizado); conferidos por soma (obrigatórias + discricionárias = primárias; primárias + financeiras = total) nas três colunas, com diferença de até R$ 1 na projeção de 2028, que é arredondamento do próprio quadro"
+}

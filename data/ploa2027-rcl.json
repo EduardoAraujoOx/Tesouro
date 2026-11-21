@@ -1,0 +1,41 @@
+{
+ "fonte": "Mensagem nº 189/2026 (PLOA 2027), Quadro VI: metodologia, índices aplicados e memória de cálculo da receita corrente líquida, p. 42 de 472 do arquivo",
+ "documento": {
+  "url": "https://planejamento.es.gov.br/media/Or%C3%A7amento/Or%C3%A7amentos/Or%C3%A7amento_Anual_2027/PLOA/ploa-2027-mensagem-texto-complemento-e-anexo.pdf",
+  "sha256": "c90e69353555bd645b6f5ee19fb0ff0bbc6995edaedffcb81297dbb47d02b830",
+  "pagina": 42
+ },
+ "unidade": "R$",
+ "metodologia": "Manual de Demonstrativos Fiscais, 15ª ed.; art. 2º, IV, da LRF: receitas correntes (sem as intraorçamentárias) menos transferências constitucionais aos municípios, contribuição do servidor para o regime de previdência, compensação previdenciária (art. 201, § 9º, da CF) e, pelo manual, rendimentos de aplicações de recursos previdenciários e dedução para o Fundeb",
+ "observacao": "A coluna do quadro se intitula \"Previsão atualizada 2026\", mas os valores coincidem com a coluna de 2027 do quadro Evolução da Receita (ICMS R$ 26.559.172.319, receitas correntes R$ 45.242.095.708, deduções para municípios R$ 7.555.426.888 e Fundeb R$ 4.994.674.323): são a receita da PLOA 2027, não de 2026.",
+ "linhas": {
+  "receitas_correntes": 45242095708,
+  "impostos_taxas_contribuicoes_melhoria": 31449065397,
+  "icms": 26559172319,
+  "ipva": 1513190869,
+  "itcd": 215492839,
+  "irrf": 1759054101,
+  "outros_impostos_taxas": 1402155269,
+  "contribuicoes": 909979557,
+  "patrimonial": 1996352683,
+  "aplicacoes_financeiras": 1775124616,
+  "outras_patrimoniais": 221228067,
+  "agropecuaria": 300000,
+  "industrial": 5728510,
+  "servicos": 77290782,
+  "transferencias_correntes": 9586931501,
+  "fpe": 3839514967,
+  "lc_61_1989": 285070775,
+  "fundeb": 2372548662,
+  "outras_transferencias": 3089797097,
+  "outras_receitas_correntes": 1216447278,
+  "deducoes": 14312910080,
+  "transferencias_constitucionais_legais": 7555426888,
+  "contribuicao_servidor_previdencia": 909646255,
+  "compensacao_previdenciaria": 160175057,
+  "rendimento_aplicacoes_previdenciarias": 692987557,
+  "deducao_fundeb": 4994674323,
+  "rcl": 30929185628
+ },
+ "transcricao": "valores lidos da imagem da página (documento digitalizado); conferidos por soma em todos os subtotais e na RCL"
+}
