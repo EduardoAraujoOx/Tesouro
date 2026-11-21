@@ -12,6 +12,18 @@ import { COD_DESPESA, COD_GRUPO } from './codigos'
 import { BRENT_CENTRAL, CAMBIO_CENTRAL, EDICAO_EIA, PRODUCAO_CENTRAL, receitaPetroleo } from './petroleo'
 import { analisaFontes, elementosDespesa, fatorPrecos, ipcaAnual, pibArrecadacao, projecaoItens, projetaDespesa2026, projetaReceita2026, tendenciaPessoal, type DadosReceita, type ItemProjetado } from './projecao'
 
+/** RCL oficial (LRF, art. 2º, IV) e o indicador de pessoal do RGF, preparados no servidor */
+export type RclOficial = {
+  /** RCL dos 12 meses até dezembro (RGF/RREO), por ano */
+  historico: Record<string, number>
+  /** Quadro VI da Mensagem nº 189/2026: RCL da PLOA 2027, as receitas correntes de que parte e as deduções previdenciárias */
+  ploa27: { rcl: number; correntes: number; previdenciarias: number }
+  /** pessoal líquido do Poder Executivo, % da RCL, por quadrimestre (RGF), com o limite e o limite prudencial */
+  rgfPessoal: { ano: number; quad: number; valor: number; limite: number; prudencial: number }[]
+  /** pessoal e encargos (GND 1) do Executivo na PLOA 2027, bruto */
+  pessoalExecutivoPloa: number
+}
+
 type Vista = 'receita' | 'despesa' | 'resultado'
 const VISTAS: { id: Vista; rotulo: string }[] = [
   { id: 'receita', rotulo: 'Receita' },
@@ -35,8 +47,8 @@ const DIF_MIN = 3
 const MESES_NOME = ['janeiro', 'fevereiro', 'março', 'abril', 'maio', 'junho', 'julho', 'agosto', 'setembro', 'outubro', 'novembro', 'dezembro']
 const corDif = (d: number) => (Math.abs(d) < DIF_MIN ? '' : d > 0 ? 'text-serie3' : 'text-serie2')
 
-export function VisaoGeral({ funcoes, contingencia, elementosPloa, receita, despesa, ipca: ipcaParams, pib, fonteIpca, dados, irParaMetodo }: {
-  funcoes: Record<string, { emp25: number; ini26: number; atu26: number; emp26: number; ploa27: number }>; contingencia: number; elementosPloa: Record<string, Record<string, number>>; receita: LinhaMacro[]; despesa: LinhaMacro[]; ipca: Record<string, number>; pib: Record<string, number>; fonteIpca: string; dados: DadosReceita; irParaMetodo: () => void
+export function VisaoGeral({ funcoes, contingencia, elementosPloa, rclOficial, receita, despesa, ipca: ipcaParams, pib, fonteIpca, dados, irParaMetodo }: {
+  funcoes: Record<string, { emp25: number; ini26: number; atu26: number; emp26: number; ploa27: number }>; contingencia: number; elementosPloa: Record<string, Record<string, number>>; rclOficial: RclOficial; receita: LinhaMacro[]; despesa: LinhaMacro[]; ipca: Record<string, number>; pib: Record<string, number>; fonteIpca: string; dados: DadosReceita; irParaMetodo: () => void
 }) {
   const [vista, setVista] = useState<Vista>('receita')
   const [abertos, setAbertos] = useState<Set<string>>(new Set(['corr', 'capd']))
@@ -53,8 +65,6 @@ export function VisaoGeral({ funcoes, contingencia, elementosPloa, receita, desp
   const pick = (m: Record<string, number[]>, ...ch: string[]) => COL.map((c) => ch.reduce((s, k) => s + m[k][c], 0))
   const soma = (...a: number[][]) => COL.map((_, j) => a.reduce((s, x) => s + x[j], 0))
 
-  /* receita corrente líquida aproximada (correntes + intra − deduções), base dos indicadores */
-  const rcl = soma(pick(R, 'receitas_correntes'), pick(R, 'intra'), pick(R, 'deducoes'))
   const reservas = pick(D, 'reserva_rpps', 'reserva_contingencia')
 
   /* ---------- quadro de grandes grupos: poucos grupos, detalhe sob demanda ---------- */
@@ -192,9 +202,6 @@ export function VisaoGeral({ funcoes, contingencia, elementosPloa, receita, desp
 
   /* ---------- faixa de números ---------- */
   const v27 = serieTotal[5]
-  const pessoalRcl = pick(D, 'pessoal').map((x, j) => (x / rcl[j]) * 100)
-  const correntesRcl = pick(D, 'despesas_correntes').map((x, j) => (x / rcl[j]) * 100)
-  const supCorrente = rcl.map((x, j) => x - pick(D, 'despesas_correntes')[j])
   const resultadoOrc = COL.map((_, j) => R.total[COL[j]] - D.total[COL[j]])
   const execPloa = D.total[5] - reservas27
 
@@ -234,32 +241,49 @@ export function VisaoGeral({ funcoes, contingencia, elementosPloa, receita, desp
   const rcBruta = seis(pick(R, 'receitas_correntes'), somaRec(CORRENTES, false), somaRec(CORRENTES, true))
   const intra6 = seis(pick(R, 'intra'), somaRec(['intra'], false), somaRec(['intra'], true))
   const ded6 = seis(pick(R, 'deducoes'), somaRec(['ded'], false), somaRec(['ded'], true))
-  const rcl6 = rcBruta.map((x, j) => x + intra6[j] + ded6[j])
-  const dcorr6 = seis(pick(D, 'despesas_correntes'), projD.itens.corr.central, projD.itens.corr.central * (1 + i27))
+  /* RCL conforme a LRF (art. 2º, IV): receitas correntes, sem as intraorçamentárias, menos municípios e Fundeb e menos as deduções previdenciárias
+     (contribuição do servidor, compensação previdenciária e rendimentos de recursos previdenciários). 2023–2025: RCL do RGF; PLOA 2027: Quadro VI
+     da Mensagem; Proj. 26 e Proj. 27: as deduções previdenciárias na proporção média de 2023–25 das receitas correntes. */
+  const rclH = ['2023', '2024', '2025'].map((a) => rclOficial.historico[a])
+  const previdH = [0, 1, 2].map((j) => rcBruta[j] + ded6[j] - rclH[j])
+  const propPrevid = previdH.reduce((t, x, j) => t + x / rcBruta[j], 0) / 3
+  const previd6 = [previdH[0], previdH[1], previdH[2], propPrevid * rcBruta[3], rclOficial.ploa27.previdenciarias, propPrevid * rcBruta[5]]
+  const rcl6 = rcBruta.map((x, j) => x + ded6[j] - previd6[j])
   const rcap6 = seis(pick(R, 'receitas_capital'), somaRec(['cap'], false), somaRec(['cap'], true))
+  const rt6 = rcBruta.map((x, j) => x + intra6[j] + ded6[j] + rcap6[j])
+  const dcorr6 = seis(pick(D, 'despesas_correntes'), projD.itens.corr.central, projD.itens.corr.central * (1 + i27))
   const dcap6 = seis(pick(D, 'despesas_capital'), projD.itens.capd.central, projD.itens.capd.central * (1 + i27))
   const res6 = seis(reservas, 0, 0)
-  const supCorr6 = rcl6.map((x, j) => x - dcorr6[j])
-  const antesRes6 = supCorr6.map((x, j) => x + rcap6[j] - dcap6[j])
+  const antesRes6 = rt6.map((x, j) => x - dcorr6[j] - dcap6[j])
   const ANOS6 = ['2023', '2024', '2025', 'Proj. 26', 'PLOA 27', 'Proj. 27']
+  const pessoal6 = seis(pick(D, 'pessoal'), projD.itens.pessoal.central, projD.itens.pessoal.central * (1 + i27))
+  const rgf3q = (ano: number) => rclOficial.rgfPessoal.find((x) => x.ano === ano && x.quad === 3)?.valor ?? NaN
+  const rgfUltimo = rclOficial.rgfPessoal[rclOficial.rgfPessoal.length - 1]
   const indicadores = [
-    { chave: 'pessoal', rotulo: 'Pessoal e encargos ÷ RCL', v: seis(pick(D, 'pessoal'), projD.itens.pessoal.central, projD.itens.pessoal.central * (1 + i27)).map((x, j) => (x / rcl6[j]) * 100) },
+    { chave: 'pessoal', rotulo: 'Pessoal e encargos, bruto ÷ RCL', v: pessoal6.map((x, j) => (x / rcl6[j]) * 100) },
     { chave: 'correntes', rotulo: 'Despesas correntes ÷ RCL', v: dcorr6.map((x, j) => (x / rcl6[j]) * 100) },
     { chave: 'inv', rotulo: 'Investimentos ÷ RCL', v: seis(pick(D, 'investimento'), projD.itens.inv.central, projD.itens.inv.central * (1 + i27)).map((x, j) => (x / rcl6[j]) * 100) },
-    { chave: 'sup', rotulo: 'Superávit corrente ÷ RCL', v: supCorr6.map((x, j) => (x / rcl6[j]) * 100) },
+    { chave: 'rgf', rotulo: 'Pessoal líquido do Executivo, RGF (3º quadrimestre)', v: [rgf3q(2023), rgf3q(2024), rgf3q(2025), NaN, NaN, NaN] },
   ]
   const linhasResultado: Linha[] = [
     { chave: 'rc', rotulo: 'Receitas correntes (brutas)', nivel: 0, v: rcBruta },
     { chave: 'intra', rotulo: '(+) Intraorçamentárias', nivel: 0, v: intra6 },
     { chave: 'ded', rotulo: '(−) Deduções (municípios e Fundeb)', nivel: 0, v: ded6 },
-    { chave: 'rcl', rotulo: '= RCL (aproximada)', nivel: 0, negrito: true, v: rcl6 },
-    { chave: 'dc', rotulo: '(−) Despesas correntes', nivel: 0, v: dcorr6.map(neg) },
-    { chave: 'sup', rotulo: '= Superávit corrente', nivel: 0, negrito: true, v: supCorr6 },
     { chave: 'rk', rotulo: '(+) Receitas de capital', nivel: 0, v: rcap6 },
+    { chave: 'rt', rotulo: '= Receita total (líquida de deduções)', nivel: 0, negrito: true, v: rt6 },
+    { chave: 'dc', rotulo: '(−) Despesas correntes', nivel: 0, v: dcorr6.map(neg) },
     { chave: 'dk', rotulo: '(−) Despesas de capital', nivel: 0, v: dcap6.map(neg) },
     { chave: 'antes', rotulo: '= Resultado antes das reservas', nivel: 0, negrito: true, v: antesRes6 },
     { chave: 'res', rotulo: '(−) Reservas (RPPS e contingência)', nivel: 0, v: res6.map(neg) },
     { chave: 'saldo', rotulo: '= Resultado orçamentário', nivel: 0, negrito: true, v: antesRes6.map((x, j) => x - res6[j]) },
+  ]
+  /* ponte da receita total à RCL */
+  const linhasRcl: Linha[] = [
+    { chave: 'rt', rotulo: 'Receita total (líquida de deduções)', nivel: 0, v: rt6 },
+    { chave: 'rk', rotulo: '(−) Receitas de capital', nivel: 0, v: rcap6.map(neg) },
+    { chave: 'intra', rotulo: '(−) Receitas intraorçamentárias', nivel: 0, v: intra6.map(neg) },
+    { chave: 'prev', rotulo: '(−) Deduções previdenciárias (servidor, compensação e rendimentos)', nivel: 0, v: previd6.map(neg) },
+    { chave: 'rcl', rotulo: '= RCL (LRF, art. 2º, IV)', nivel: 0, negrito: true, v: rcl6 },
   ]
 
   /* limites e mínimos: regras fiscais e constitucionais contra a PLOA 2027 */
@@ -270,7 +294,8 @@ export function VisaoGeral({ funcoes, contingencia, elementosPloa, receita, desp
   const pc = (x: number, c = 1) => `${numero(x, c)}%`
   const pp = (x: number, c = 1) => `${x > 0 ? '+' : x < 0 ? '−' : ''}${numero(Math.abs(x), c)} p.p.`
   const limites = [
-    { chave: 'pessoal', rotulo: 'Pessoal ÷ RCL', base: 'LRF art. 19: até 60% (prudencial 57%)', v25: pc(pessoalRcl[2]), v27: pc(pessoalRcl[4]), folga: pp(60 - pessoalRcl[4]) },
+    { chave: 'pessoal', rotulo: 'Pessoal bruto, todos os Poderes ÷ RCL', base: 'LRF art. 19, II: até 60% (prudencial 57%)', v25: pc((D.pessoal[2] / rcl6[2]) * 100), v27: pc((D.pessoal[5] / rcl6[4]) * 100), folga: pp(60 - (D.pessoal[5] / rcl6[4]) * 100) },
+    { chave: 'pessoalexec', rotulo: 'Pessoal bruto do Executivo ÷ RCL', base: `LRF art. 20, II, c: até ${numero(rgfUltimo.limite, 0)}% (prudencial ${numero(rgfUltimo.prudencial, 2)}%); RGF, pessoal líquido: ${numero(rgfUltimo.valor, 1)}% no ${rgfUltimo.quad}º quadrimestre de ${rgfUltimo.ano}`, v25: '–', v27: pc((rclOficial.pessoalExecutivoPloa / rcl6[4]) * 100), folga: pp(rgfUltimo.limite - (rclOficial.pessoalExecutivoPloa / rcl6[4]) * 100) },
     { chave: 'conting', rotulo: 'Contingência ÷ RCL', base: 'LDO art. 9º: mínimo de 2%', v25: '–', v27: pc(contingencia / RCL_LDO * 100, 2), folga: `${dMi(contingencia - 0.02 * RCL_LDO)} mi` },
     { chave: 'suplem', rotulo: 'Créditos suplementares autorizados', base: 'PLOA art. 6º: até 30% da receita', v25: '–', v27: `${numero(LIMITE_SUPLEMENTAR / 1e9, 2)} bi`, folga: `${mi(LIMITE_SUPLEMENTAR - difDespesaProj27)} mi` },
     { chave: 'ouro', rotulo: 'Crédito ÷ capital líquido', base: 'CF art. 167, III: até 100%', v25: pc((R.operacoes_credito[2] / (D.despesas_capital[2] - D.amortizacao[2])) * 100), v27: pc((R.operacoes_credito[5] / (D.despesas_capital[5] - D.amortizacao[5])) * 100), folga: `${mi(D.despesas_capital[5] - D.amortizacao[5] - R.operacoes_credito[5])} mi` },
@@ -366,12 +391,19 @@ export function VisaoGeral({ funcoes, contingencia, elementosPloa, receita, desp
             ]} />
             <p className={`mt-2 ${NOTA_DISCRETA}`}>Proj. 26 e Proj. 27: referência da equipe, sem reservas (não são executadas), de modo que o resultado projetado é a receita menos a despesa executada; na PLOA as reservas fecham o resultado em zero.</p>
           </Cartao>
-          <Cartao titulo="Indicadores (% da RCL aproximada)">
-            <TabelaItens altura="livre" itens={indicadores} legenda="Indicadores, em % da RCL aproximada" colunas={[
-              { rotulo: 'Indicador', valor: (x) => x.rotulo },
-              ...ANOS6.map((a, j) => ({ rotulo: a, valor: (x: (typeof indicadores)[number]) => `${numero(x.v[j], 1)}%` })),
+          <Cartao titulo="Da receita total à RCL (LRF, art. 2º, IV)">
+            <TabelaItens altura="livre" itens={linhasRcl} legenda="Da receita total à receita corrente líquida, em R$ milhões" colunas={[
+              { rotulo: 'R$ milhões', valor: celulaLinha },
+              ...ANOS6.map((a, j) => ({ rotulo: a, valor: (l: Linha) => <span className={l.negrito || j === 4 ? 'font-semibold' : ''}>{mi(l.v[j])}</span> })),
             ]} />
-            <p className={`mt-2 ${NOTA_DISCRETA}`}>RCL aproximada: receitas correntes + intraorçamentárias − deduções da receita (quadro da PLOA); difere da RCL do art. 2º, IV, da LRF.</p>
+            <p className={`mt-2 ${NOTA_DISCRETA}`}>2023–2025: RCL dos 12 meses até dezembro (RGF/RREO); as deduções previdenciárias vêm por diferença. PLOA 27: Quadro VI da Mensagem nº 189/2026 (R$ {numero(rclOficial.ploa27.rcl / 1e9, 2)} bi); o título do quadro diz 2026, mas os valores são os de 2027. Proj. 26 e Proj. 27: as deduções previdenciárias na proporção média de 2023–25 das receitas correntes ({numero(propPrevid * 100, 1)}%). A RCL é a base dos limites da LRF e da LDO; a receita total é a que a lei orçamentária fixa e iguala à despesa.</p>
+          </Cartao>
+          <Cartao titulo="Indicadores (% da RCL)">
+            <TabelaItens altura="livre" itens={indicadores} legenda="Indicadores, em % da RCL (LRF, art. 2º, IV)" colunas={[
+              { rotulo: 'Indicador', valor: (x) => x.rotulo },
+              ...ANOS6.map((a, j) => ({ rotulo: a, valor: (x: (typeof indicadores)[number]) => (Number.isFinite(x.v[j]) ? `${numero(x.v[j], 1)}%` : '–') })),
+            ]} />
+            <p className={`mt-2 ${NOTA_DISCRETA}`}>Despesa bruta da PLOA e das projeções sobre a RCL acima. O pessoal líquido do RGF é o do Poder Executivo, com as exclusões da LRF (inativos pagos com recursos vinculados, indenizações e outras), e por isso não é comparável com o pessoal bruto de todos os Poderes; no 2º quadrimestre de 2026 era de {numero(rgfUltimo.valor, 1)}%.</p>
           </Cartao>
 
           <Cartao titulo="Limites e mínimos: LRF, LDO e Constituição">
@@ -381,7 +413,7 @@ export function VisaoGeral({ funcoes, contingencia, elementosPloa, receita, desp
               { rotulo: 'PLOA 2027', valor: (l) => l.v27 },
               { rotulo: 'Folga', valor: (l) => <span className="font-semibold">{l.folga}</span> },
             ]} />
-            <p className={`mt-2 ${NOTA_DISCRETA}`}>Pessoal sobre a RCL aproximada do quadro da PLOA, sem as exclusões da LRF. Contingência: ação 9999 (sem as reservas do RPPS e do Fundo Soberano) contra 2% da RCL de julho de 2025 a junho de 2026 (R$ {numero(RCL_LDO / 1e9, 1)} bi). Créditos suplementares: limite do art. 6º do projeto de lei (anulação de dotações, excesso de arrecadação, superávit financeiro, operações de crédito ou reserva de contingência); a folga desconta a diferença entre a PLOA e a Proj. 27 (R$ {mi(difDespesaProj27)} milhões), que seria coberta por esses créditos. Crédito contra despesas de capital líquidas de amortizações. Ensino e saúde: percentual apurado no RREO de 2025, sobre a receita de impostos líquida de transferências constitucionais; a folga é a de 2025, pois o valor aplicado em 2027 só se conhece na execução.</p>
+            <p className={`mt-2 ${NOTA_DISCRETA}`}>Pessoal sobre a RCL do Quadro VI da PLOA, em valor bruto (sem as exclusões da LRF); o limite de 60% é o consolidado do Estado e o de 49%, o do Poder Executivo. Contingência: ação 9999 (sem as reservas do RPPS e do Fundo Soberano) contra 2% da RCL de julho de 2025 a junho de 2026 (R$ {numero(RCL_LDO / 1e9, 1)} bi). Créditos suplementares: limite do art. 6º do projeto de lei (anulação de dotações, excesso de arrecadação, superávit financeiro, operações de crédito ou reserva de contingência); a folga desconta a diferença entre a PLOA e a Proj. 27 (R$ {mi(difDespesaProj27)} milhões), que seria coberta por esses créditos. Crédito contra despesas de capital líquidas de amortizações. Ensino e saúde: percentual apurado no RREO de 2025, sobre a receita de impostos líquida de transferências constitucionais; a folga é a de 2025, pois o valor aplicado em 2027 só se conhece na execução.</p>
           </Cartao>
           <Cartao titulo="Funções com mínimo constitucional: dotação de 2026 e PLOA 2027">
             <TabelaItens altura="livre" compacta itens={funcoesMinimo} legenda="Despesa nas funções Educação e Saúde e receita de impostos, 2026 e PLOA 2027, em R$ milhões" colunas={[
