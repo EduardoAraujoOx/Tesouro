@@ -264,12 +264,15 @@ export function VisaoGeral({ funcoes, contingencia, elementosPloa, receita, desp
 
   /* limites e mínimos: regras fiscais e constitucionais contra a PLOA 2027 */
   const RCL_LDO = 30126.1e6 // RCL de julho de 2025 a junho de 2026, base dos limites da LDO 2027
+  const difDespesaProj27 = Math.max(refDespesa - (D.total[5] - reservas27), 0) // PLOA executável (sem reservas) abaixo da Proj. 27
+  const LIMITE_SUPLEMENTAR = 10627969219.2 // PLOA 2027, art. 6º: créditos suplementares aos Orçamentos Fiscal e da Seguridade, 30% da receita (LDO 2027, art. 24, § 3º, I)
   const m25 = (minimosRaw as unknown as { serie: { ano: number; ensino: number; saude: number }[] }).serie.find((x) => x.ano === 2025)!
   const pc = (x: number, c = 1) => `${numero(x, c)}%`
   const pp = (x: number, c = 1) => `${x > 0 ? '+' : x < 0 ? '−' : ''}${numero(Math.abs(x), c)} p.p.`
   const limites = [
     { chave: 'pessoal', rotulo: 'Pessoal ÷ RCL', base: 'LRF art. 19: até 60% (prudencial 57%)', v25: pc(pessoalRcl[2]), v27: pc(pessoalRcl[4]), folga: pp(60 - pessoalRcl[4]) },
     { chave: 'conting', rotulo: 'Contingência ÷ RCL', base: 'LDO art. 9º: mínimo de 2%', v25: '–', v27: pc(contingencia / RCL_LDO * 100, 2), folga: `${dMi(contingencia - 0.02 * RCL_LDO)} mi` },
+    { chave: 'suplem', rotulo: 'Créditos suplementares autorizados', base: 'PLOA art. 6º: até 30% da receita', v25: '–', v27: `${numero(LIMITE_SUPLEMENTAR / 1e9, 2)} bi`, folga: `${mi(LIMITE_SUPLEMENTAR - difDespesaProj27)} mi` },
     { chave: 'ouro', rotulo: 'Crédito ÷ capital líquido', base: 'CF art. 167, III: até 100%', v25: pc((R.operacoes_credito[2] / (D.despesas_capital[2] - D.amortizacao[2])) * 100), v27: pc((R.operacoes_credito[5] / (D.despesas_capital[5] - D.amortizacao[5])) * 100), folga: `${mi(D.despesas_capital[5] - D.amortizacao[5] - R.operacoes_credito[5])} mi` },
     { chave: 'ensino', rotulo: 'Ensino (MDE)', base: 'CF art. 212: mínimo de 25%', v25: pc(m25.ensino, 2), v27: '–', folga: pp(m25.ensino - 25, 2) },
     { chave: 'saude', rotulo: 'Saúde (ASPS)', base: 'LC 141 art. 6º: mínimo de 12%', v25: pc(m25.saude, 2), v27: '–', folga: pp(m25.saude - 12, 2) },
@@ -378,7 +381,7 @@ export function VisaoGeral({ funcoes, contingencia, elementosPloa, receita, desp
               { rotulo: 'PLOA 2027', valor: (l) => l.v27 },
               { rotulo: 'Folga', valor: (l) => <span className="font-semibold">{l.folga}</span> },
             ]} />
-            <p className={`mt-2 ${NOTA_DISCRETA}`}>Pessoal sobre a RCL aproximada do quadro da PLOA, sem as exclusões da LRF. Contingência: ação 9999 (sem as reservas do RPPS e do Fundo Soberano) contra 2% da RCL de julho de 2025 a junho de 2026 (R$ {numero(RCL_LDO / 1e9, 1)} bi). Crédito contra despesas de capital líquidas de amortizações. Ensino e saúde: percentual apurado no RREO de 2025, sobre a receita de impostos líquida de transferências constitucionais; a folga é a de 2025, pois o valor aplicado em 2027 só se conhece na execução.</p>
+            <p className={`mt-2 ${NOTA_DISCRETA}`}>Pessoal sobre a RCL aproximada do quadro da PLOA, sem as exclusões da LRF. Contingência: ação 9999 (sem as reservas do RPPS e do Fundo Soberano) contra 2% da RCL de julho de 2025 a junho de 2026 (R$ {numero(RCL_LDO / 1e9, 1)} bi). Créditos suplementares: limite do art. 6º do projeto de lei (anulação de dotações, excesso de arrecadação, superávit financeiro, operações de crédito ou reserva de contingência); a folga desconta a diferença entre a PLOA e a Proj. 27 (R$ {mi(difDespesaProj27)} milhões), que seria coberta por esses créditos. Crédito contra despesas de capital líquidas de amortizações. Ensino e saúde: percentual apurado no RREO de 2025, sobre a receita de impostos líquida de transferências constitucionais; a folga é a de 2025, pois o valor aplicado em 2027 só se conhece na execução.</p>
           </Cartao>
           <Cartao titulo="Funções com mínimo constitucional: dotação de 2026 e PLOA 2027">
             <TabelaItens altura="livre" compacta itens={funcoesMinimo} legenda="Despesa nas funções Educação e Saúde e receita de impostos, 2026 e PLOA 2027, em R$ milhões" colunas={[
