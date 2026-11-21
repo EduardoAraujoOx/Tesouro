@@ -7,7 +7,7 @@ import { Cartao, TabelaDelta, TabelaItens } from './Graficos'
 import { fmtPct } from './GraficosMacro'
 import { Faixa } from './Faixa'
 import { Receita } from './Macro'
-import { VisaoGeral } from './Agregado'
+import { VisaoGeral, type RclOficial } from './Agregado'
 import { Metodo } from './Metodo'
 import { projetaDespesa2026, razoesFechamento2026 } from './projecao'
 import { PoderesEmendas } from './PoderesEmendas'
@@ -43,7 +43,7 @@ type MacroProps = {
   receita: LinhaMacro[]; despesa: LinhaMacro[]; ipca: Record<string, number>; pib: Record<string, number>; fonteIpca: string
 }
 
-export function Painel({ linhas, nomes, coleta, outrosPoderes, macro, receitaMes, petroleo, mercado, funcoes, contingencia, elementosPloa }: { linhas: Linha[]; nomes: Nomes; coleta: string; outrosPoderes: string[]; macro: MacroProps; receitaMes: DadosReceita; petroleo?: PetroleoSefaz; mercado?: PetroleoMercado; funcoes: Record<string, { emp25: number; ini26: number; atu26: number; emp26: number; ploa27: number }>; contingencia: number; elementosPloa: Record<string, Record<string, number>> }) {
+export function Painel({ linhas, nomes, coleta, outrosPoderes, macro, receitaMes, petroleo, mercado, funcoes, contingencia, elementosPloa, rclOficial }: { linhas: Linha[]; nomes: Nomes; coleta: string; outrosPoderes: string[]; macro: MacroProps; receitaMes: DadosReceita; petroleo?: PetroleoSefaz; mercado?: PetroleoMercado; funcoes: Record<string, { emp25: number; ini26: number; atu26: number; emp26: number; ploa27: number }>; contingencia: number; elementosPloa: Record<string, Record<string, number>>; rclOficial: RclOficial }) {
   const [aba, setAba] = useState<Aba>('visao')
   useEffect(() => {
     const h = window.location.hash.slice(1)
@@ -264,7 +264,7 @@ export function Painel({ linhas, nomes, coleta, outrosPoderes, macro, receitaMes
       </div>
 
       <div role="tabpanel" id={`painel-${aba}`} aria-labelledby={`aba-${aba}`} className="mt-3">
-        {aba === 'visao' && <VisaoGeral funcoes={funcoes} contingencia={contingencia} elementosPloa={elementosPloa} receita={macro.receita} despesa={macro.despesa} ipca={macro.ipca} pib={macro.pib} fonteIpca={macro.fonteIpca} dados={receitaMes} irParaMetodo={() => { escolheAba('metodo'); window.scrollTo({ top: 0 }) }} />}
+        {aba === 'visao' && <VisaoGeral funcoes={funcoes} contingencia={contingencia} elementosPloa={elementosPloa} rclOficial={rclOficial} receita={macro.receita} despesa={macro.despesa} ipca={macro.ipca} pib={macro.pib} fonteIpca={macro.fonteIpca} dados={receitaMes} irParaMetodo={() => { escolheAba('metodo'); window.scrollTo({ top: 0 }) }} />}
         {aba === 'metodo' && <Metodo receita={macro.receita} dados={receitaMes} pib27={(1 + (macro.ipca['2027'] ?? 0)) * (1 + (macro.pib['2027'] ?? 0)) - 1} />}
         {aba === 'receita' && (
           <Subvisoes rotulo="O que ver na receita" itens={[

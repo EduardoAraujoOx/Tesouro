@@ -234,3 +234,8 @@ export function ploaPorElemento(): Record<string, Record<string, number>> {
   }
   return out
 }
+
+/** Pessoal e encargos (GND 1) do Poder Executivo na PLOA 2027, em reais: despesa bruta, sem as exclusões que a LRF faz na apuração do limite. */
+export function pessoalPloaExecutivo(): number {
+  return linhas.filter((l) => l.gnd === '1' && ehExecutivo(l.uo)).reduce((t, l) => t + (l.ploa2027 ?? 0), 0)
+}

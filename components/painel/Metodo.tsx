@@ -176,7 +176,7 @@ export function Metodo({ receita, dados, pib27 }: { receita: LinhaMacro[]; dados
               {[
                 ['Receita total, líquida de deduções', 'Arrecadação bruta (correntes, intraorçamentárias e de capital) menos as deduções da receita (transferências constitucionais aos municípios, Fundeb e outras). Corresponde ao subtotal das receitas (III) do Balanço Orçamentário (RREO) e ao total do quadro Evolução da Receita da PLOA. Distinta da RCL (LRF, art. 2º, IV).'],
                 ['Real', 'Variação nominal deflacionada pelo IPCA do ano de destino: (1 + variação nominal) ÷ (1 + IPCA) − 1. IPCA de 2023 a 2025 observado; 2026 e 2027 do Focus.'],
-                ['RCL aproximada', 'Receitas correntes mais intraorçamentárias menos as deduções do quadro da PLOA; difere da RCL apurada nos termos da LRF.'],
+                ['RCL (LRF, art. 2º, IV)', 'Receitas correntes, sem as intraorçamentárias, menos as transferências constitucionais aos municípios, o Fundeb, a contribuição do servidor para a previdência, a compensação previdenciária e os rendimentos de recursos previdenciários. É a base dos limites da LRF e da LDO. 2023–2025: RGF; PLOA 2027: Quadro VI da Mensagem; projeções: mesma estrutura de deduções. Não é a receita total da lei orçamentária.'],
                 ['Proj. 26 e Proj. 27', 'Proj. 26: fechamento de 2026 projetado pelo ritmo de arrecadação ou execução. Proj. 27: Proj. 26 corrigida por IPCA e PIB real (receita) ou IPCA (despesa), sem usar a PLOA. Dif. = PLOA 2027 menos Proj. 27.'],
                 ['≈ (oscila)', 'Participação do período no ano varia mais de 8 p.p. entre os anos: projeção da linha de baixa precisão.'],
                               ].map(([t, d]) => (
