@@ -239,3 +239,8 @@ export function ploaPorElemento(): Record<string, Record<string, number>> {
 export function pessoalPloaExecutivo(): number {
   return linhas.filter((l) => l.gnd === '1' && ehExecutivo(l.uo)).reduce((t, l) => t + (l.ploa2027 ?? 0), 0)
 }
+
+/** Pessoal e encargos (GND 1) do Poder Executivo empenhado em 2025, em reais: base para ligar a despesa bruta ao pessoal líquido do RGF. */
+export function pessoalExecutivoEmpenhado2025(): number {
+  return linhas.filter((l) => l.gnd === '1' && ehExecutivo(l.uo)).reduce((t, l) => t + (l.y2025?.empenhado ?? 0), 0)
+}
