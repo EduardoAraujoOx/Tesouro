@@ -10,6 +10,7 @@ import { Receita } from './Macro'
 import { VisaoGeral, type IndicadoresFiscais, type RclOficial } from './Agregado'
 import { Metodo } from './Metodo'
 import { Cenarios } from './Cenarios'
+import { DespesaPorOrgao, ReceitaTesouro, type OrgaosArt5 } from './Orgaos'
 import { projetaDespesa2026, razoesFechamento2026 } from './projecao'
 import { PoderesEmendas } from './PoderesEmendas'
 import { Furos } from './Furos'
@@ -23,14 +24,12 @@ import { ATU, EMP, INI, PLOA, agrupa, execucaoPct, titulo, total, variacaoPct, t
 type Nomes = { uo: Record<string, string>; programa: Record<string, string>; acao: Record<string, string>; gnd: Record<string, string>; fonte: Record<string, string> }
 type Escopo = 'executivo' | 'outros' | 'todos'
 type Alerta = 'abaixo' | 'novas' | 'extintas'
-type Aba = 'visao' | 'cenarios' | 'receita' | 'despesa' | 'fontes' | 'atencao' | 'metodo'
+type Aba = 'visao' | 'cenarios' | 'receita' | 'despesa' | 'metodo'
 const ABAS: { id: Aba; rotulo: string; nota: string }[] = [
   { id: 'visao', rotulo: 'Visão geral', nota: 'A proposta de 2027 contra a nossa referência independente, a história e o fechamento projetado de 2026' },
   { id: 'cenarios', rotulo: 'Cenários', nota: 'Premissas de receita e de despesa para 2027 e o que cada combinação faz com o resultado, a RCL e os créditos suplementares' },
-  { id: 'receita', rotulo: 'Receita', nota: 'Arrecadação de 2026, perfil mensal proposto para 2027 e quadro oficial detalhado' },
-  { id: 'despesa', rotulo: 'Despesa', nota: 'PLOA 2027 contra a dotação e o empenho de 2026, por unidade orçamentária' },
-  { id: 'fontes', rotulo: 'Fontes e grupos', nota: 'Grupos de despesa, fontes de recursos e cobertura da despesa pela receita' },
-  { id: 'atencao', rotulo: 'Observações', nota: 'Poderes e emendas impositivas na proposta, e ações que merecem leitura cuidadosa antes da programação do exercício' },
+  { id: 'receita', rotulo: 'Receita', nota: 'Detalhamento da receita: fechamento de 2026, ICMS, FPE e petróleo, perfil mensal, Tesouro e outras fontes e cobertura por fonte' },
+  { id: 'despesa', rotulo: 'Despesa', nota: 'Detalhamento da despesa: PLOA 2027 contra o fechamento de 2026 por unidade, por órgão, por grupo e fonte, Poderes e emendas e ações selecionadas' },
   { id: 'metodo', rotulo: 'Método e fontes', nota: 'Se as fontes batem entre si, como a receita e a despesa de 2026 são projetadas e quão boa é a projeção' },
 ]
 
@@ -45,10 +44,11 @@ type MacroProps = {
   receita: LinhaMacro[]; despesa: LinhaMacro[]; ipca: Record<string, number>; pib: Record<string, number>; fonteIpca: string
 }
 
-export function Painel({ linhas, nomes, coleta, outrosPoderes, macro, receitaMes, petroleo, mercado, funcoes, contingencia, elementosPloa, rclOficial, fiscais }: { linhas: Linha[]; nomes: Nomes; coleta: string; outrosPoderes: string[]; macro: MacroProps; receitaMes: DadosReceita; petroleo?: PetroleoSefaz; mercado?: PetroleoMercado; funcoes: Record<string, { emp25: number; ini26: number; atu26: number; emp26: number; ploa27: number }>; contingencia: number; elementosPloa: Record<string, Record<string, number>>; rclOficial: RclOficial; fiscais: IndicadoresFiscais }) {
+export function Painel({ linhas, nomes, coleta, outrosPoderes, macro, receitaMes, petroleo, mercado, funcoes, contingencia, elementosPloa, rclOficial, fiscais, orgaos }: { linhas: Linha[]; nomes: Nomes; coleta: string; outrosPoderes: string[]; macro: MacroProps; receitaMes: DadosReceita; petroleo?: PetroleoSefaz; mercado?: PetroleoMercado; funcoes: Record<string, { emp25: number; ini26: number; atu26: number; emp26: number; ploa27: number }>; contingencia: number; elementosPloa: Record<string, Record<string, number>>; rclOficial: RclOficial; fiscais: IndicadoresFiscais; orgaos: OrgaosArt5 }) {
   const [aba, setAba] = useState<Aba>('visao')
   useEffect(() => {
-    const h = window.location.hash.slice(1)
+    const h0 = window.location.hash.slice(1)
+    const h = h0 === 'fontes' || h0 === 'atencao' ? 'despesa' : h0 /* abas antigas: o conteúdo passou a sub-itens da Despesa */
     if (ABAS.some((a) => a.id === h)) setAba(h as Aba)
   }, [])
   const escolheAba = (a: Aba) => { setAba(a); try { window.history.replaceState(null, '', `#${a}`) } catch { /* sem histórico: segue */ } }
@@ -268,7 +268,7 @@ export function Painel({ linhas, nomes, coleta, outrosPoderes, macro, receitaMes
       <div role="tabpanel" id={`painel-${aba}`} aria-labelledby={`aba-${aba}`} className="mt-3">
         {aba === 'visao' && <VisaoGeral funcoes={funcoes} contingencia={contingencia} elementosPloa={elementosPloa} rclOficial={rclOficial} fiscais={fiscais} receita={macro.receita} despesa={macro.despesa} ipca={macro.ipca} pib={macro.pib} fonteIpca={macro.fonteIpca} dados={receitaMes} irParaMetodo={() => { escolheAba('metodo'); window.scrollTo({ top: 0 }) }} />}
         {aba === 'cenarios' && <Cenarios receita={macro.receita} despesa={macro.despesa} ipca={macro.ipca} pib={macro.pib} dados={receitaMes} rclOficial={rclOficial} contingencia={contingencia} />}
-        {aba === 'metodo' && <Metodo receita={macro.receita} dados={receitaMes} pib27={(1 + (macro.ipca['2027'] ?? 0)) * (1 + (macro.pib['2027'] ?? 0)) - 1} />}
+        {aba === 'metodo' && <Metodo extras={[{ id: 'furos', rotulo: 'Consistência da PLOA', conteudo: <Furos linhas={linhas} nomes={nomes} dados={receitaMes} receita={macro.receita} ipca={macro.ipca} pib={macro.pib} /> }]} receita={macro.receita} dados={receitaMes} pib27={(1 + (macro.ipca['2027'] ?? 0)) * (1 + (macro.pib['2027'] ?? 0)) - 1} />}
         {aba === 'receita' && (
           <Subvisoes rotulo="O que ver na receita" itens={[
             { id: 'fechamento', rotulo: 'Fechamento de 2026', conteudo: <ReceitaMensal dados={receitaMes} macro={macro.receita} parte="fechamento" /> },
@@ -279,6 +279,8 @@ export function Painel({ linhas, nomes, coleta, outrosPoderes, macro, receitaMes
                 <Receita receita={macro.receita} ipca={macro.ipca} dados={receitaMes} />
               </div>
             ) },
+            { id: 'tesouro', rotulo: 'Tesouro e outras fontes', conteudo: <ReceitaTesouro orgaos={orgaos} /> },
+            { id: 'cobertura', rotulo: 'Cobertura por fonte de recursos', conteudo: <CoberturaFontes dados={receitaMes} linhas={linhas} nomesFonte={nomes.fonte} /> },
           ]} />
         )}
         {aba === 'despesa' && (
@@ -363,35 +365,22 @@ export function Painel({ linhas, nomes, coleta, outrosPoderes, macro, receitaMes
         </div>
       </section>
                 ) },
-              ]} />
-            </div>
-
-          </>
-        )}
-        {aba === 'fontes' && (
-          <>
-            <div className="print:hidden">{filtros}</div>
-
-            <div className="mt-3 space-y-3">
-              <Cartao titulo="Despesa por grupo de natureza (GND)">
-                <TabelaDelta itens={porGnd} delta={(i) => i.v[PLOA] - i.v[ATU]} rotuloBarra="Grupo|PLOA 2027 menos atualizada 2026" primeira={nomeItem}
-                  legenda="Por grupo de natureza da despesa, em R$ milhões" colunas={colsDelta} />
-              </Cartao>
-              <Cartao titulo="Despesa por fonte de recursos (12 maiores)">
-                <TabelaDelta itens={porFonte} delta={(i) => i.v[PLOA] - i.v[ATU]} rotuloBarra="Fonte|PLOA 2027 menos atualizada 2026" primeira={nomeItem}
-                  legenda="Doze maiores fontes de recursos, em R$ milhões" colunas={colsDelta} />
-              </Cartao>
-            </div>
-            <div className="mt-6"><CoberturaFontes dados={receitaMes} linhas={linhas} nomesFonte={nomes.fonte} /></div>
-          </>
-        )}
-        {aba === 'atencao' && (
-          <Subvisoes rotulo="O que ver em Atenção" itens={[
-            { id: 'ajustes', rotulo: 'Poderes e emendas', conteudo: <PoderesEmendas linhas={linhas} /> },
-            { id: 'furos', rotulo: 'Consistência da PLOA', conteudo: <Furos linhas={linhas} nomes={nomes} dados={receitaMes} receita={macro.receita} ipca={macro.ipca} pib={macro.pib} /> },
-            { id: 'acoes', rotulo: 'Ações selecionadas', conteudo: (
+                { id: 'orgao', rotulo: 'Por órgão (art. 5º)', conteudo: <DespesaPorOrgao orgaos={orgaos} linhas={linhas} /> },
+                { id: 'grupos', rotulo: 'Por grupo e fonte', conteudo: (
+                  <div className="space-y-3">
+                    <Cartao titulo="Despesa por grupo de natureza (GND)">
+                      <TabelaDelta itens={porGnd} delta={(i) => i.v[PLOA] - i.v[ATU]} rotuloBarra="Grupo|PLOA 2027 menos atualizada 2026" primeira={nomeItem}
+                        legenda="Por grupo de natureza da despesa, em R$ milhões" colunas={colsDelta} />
+                    </Cartao>
+                    <Cartao titulo="Despesa por fonte de recursos (12 maiores)">
+                      <TabelaDelta itens={porFonte} delta={(i) => i.v[PLOA] - i.v[ATU]} rotuloBarra="Fonte|PLOA 2027 menos atualizada 2026" primeira={nomeItem}
+                        legenda="Doze maiores fontes de recursos, em R$ milhões" colunas={colsDelta} />
+                    </Cartao>
+                  </div>
+                ) },
+                { id: 'ajustes', rotulo: 'Poderes e emendas', conteudo: <PoderesEmendas linhas={linhas} /> },
+                { id: 'acoes', rotulo: 'Ações selecionadas', conteudo: (
               <>
-            <div className="print:hidden">{filtros}</div>
             {/* alertas */}
       <section aria-label="Pontos de atenção" className="mt-4 min-w-0 rounded-brand border border-line bg-paper p-3 sm:p-4 md:p-5">
         <div className="flex flex-wrap items-center justify-between gap-3">
@@ -420,12 +409,15 @@ export function Painel({ linhas, nomes, coleta, outrosPoderes, macro, receitaMes
       </section>
               </>
             ) },
-          ]} />
+              ]} />
+            </div>
+
+          </>
         )}
       </div>
 
       <p className={`mt-4 ${NOTA_DISCRETA} print:mt-2`}>
-        {aba === 'despesa' || aba === 'fontes' || aba === 'atencao' ? <>Fonte: Portal de Dados Abertos do ES (2025 e 2026, coleta em {coleta}); PLOA 2027: Mensagem nº 189/2026, proposta e não a LOA. Δ nas demais vistas = PLOA 2027 menos atualizada 2026.<br /></> : null}
+        {aba === 'despesa' ? <>Fonte: Portal de Dados Abertos do ES (2025 e 2026, coleta em {coleta}); PLOA 2027: Mensagem nº 189/2026, proposta e não a LOA. Δ nas demais vistas = PLOA 2027 menos atualizada 2026.<br /></> : null}
         <span className="print:hidden">{IDENTIDADE.aviso}</span>
       </p>
     </div>

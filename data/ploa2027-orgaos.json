@@ -1,0 +1,292 @@
+{
+ "fonte": "Mensagem nº 189/2026 (PLOA 2027), projeto de lei, art. 5º (distribuição da despesa por órgão), p. 86 de 472 do arquivo; art. 3º (receitas do Tesouro e de outras fontes), p. 85",
+ "documento": {
+  "url": "https://planejamento.es.gov.br/media/Or%C3%A7amento/Or%C3%A7amentos/Or%C3%A7amento_Anual_2027/PLOA/ploa-2027-mensagem-texto-complemento-e-anexo.pdf",
+  "sha256": "c90e69353555bd645b6f5ee19fb0ff0bbc6995edaedffcb81297dbb47d02b830",
+  "paginas": [
+   85,
+   86
+  ]
+ },
+ "unidade": "R$",
+ "poderes": [
+  {
+   "poder": "Poder Legislativo",
+   "tesouro": 562520396,
+   "outras": 0,
+   "total": 562520396,
+   "orgaos": [
+    {
+     "cod": "01",
+     "nome": "Assembleia Legislativa",
+     "tesouro": 325702915,
+     "outras": 0,
+     "total": 325702915
+    },
+    {
+     "cod": "02",
+     "nome": "Tribunal de Contas",
+     "tesouro": 236817481,
+     "outras": 0,
+     "total": 236817481
+    }
+   ]
+  },
+  {
+   "poder": "Poder Judiciário",
+   "tesouro": 2071667237,
+   "outras": 0,
+   "total": 2071667237,
+   "orgaos": [
+    {
+     "cod": "03",
+     "nome": "Poder Judiciário",
+     "tesouro": 2071667237,
+     "outras": 0,
+     "total": 2071667237
+    }
+   ]
+  },
+  {
+   "poder": "Ministério Público",
+   "tesouro": 635133026,
+   "outras": 0,
+   "total": 635133026,
+   "orgaos": [
+    {
+     "cod": "05",
+     "nome": "Ministério Público",
+     "tesouro": 635133026,
+     "outras": 0,
+     "total": 635133026
+    }
+   ]
+  },
+  {
+   "poder": "Defensoria Pública",
+   "tesouro": 156735690,
+   "outras": 0,
+   "total": 156735690,
+   "orgaos": [
+    {
+     "cod": "06",
+     "nome": "Defensoria Pública",
+     "tesouro": 156735690,
+     "outras": 0,
+     "total": 156735690
+    }
+   ]
+  },
+  {
+   "poder": "Poder Executivo",
+   "tesouro": 29061201923,
+   "outras": 2939305792,
+   "total": 32000507715,
+   "orgaos": [
+    {
+     "cod": "10",
+     "nome": "Governadoria do Estado",
+     "tesouro": 277148550,
+     "outras": 0,
+     "total": 277148550
+    },
+    {
+     "cod": "16",
+     "nome": "Procuradoria Geral do Estado",
+     "tesouro": 148431833,
+     "outras": 0,
+     "total": 148431833
+    },
+    {
+     "cod": "19",
+     "nome": "Vice-Governadoria do Estado",
+     "tesouro": 4140062,
+     "outras": 0,
+     "total": 4140062
+    },
+    {
+     "cod": "22",
+     "nome": "Secretaria de Estado da Fazenda",
+     "tesouro": 835850515,
+     "outras": 40407000,
+     "total": 876257515
+    },
+    {
+     "cod": "27",
+     "nome": "Secretaria de Estado de Economia e Planejamento",
+     "tesouro": 36150472,
+     "outras": 128761,
+     "total": 36279233
+    },
+    {
+     "cod": "28",
+     "nome": "Secretaria de Estado de Gestão e Recursos Humanos",
+     "tesouro": 184964730,
+     "outras": 49099607,
+     "total": 234064337
+    },
+    {
+     "cod": "31",
+     "nome": "Secretaria de Estado da Agricultura, Abastecimento, Aquicultura e Pesca",
+     "tesouro": 415955074,
+     "outras": 67941671,
+     "total": 483896745
+    },
+    {
+     "cod": "32",
+     "nome": "Secretaria de Estado da Ciência, Tecnologia, Inovação e Educação Profissional",
+     "tesouro": 552661260,
+     "outras": 33105000,
+     "total": 585766260
+    },
+    {
+     "cod": "35",
+     "nome": "Secretaria de Estado de Mobilidade e Infraestrutura",
+     "tesouro": 2936051020,
+     "outras": 36530000,
+     "total": 2972581020
+    },
+    {
+     "cod": "36",
+     "nome": "Secretaria de Estado de Saneamento, Habitação e Desenvolvimento Urbano",
+     "tesouro": 451014858,
+     "outras": 0,
+     "total": 451014858
+    },
+    {
+     "cod": "37",
+     "nome": "Secretaria de Estado do Turismo",
+     "tesouro": 64974699,
+     "outras": 0,
+     "total": 64974699
+    },
+    {
+     "cod": "39",
+     "nome": "Secretaria de Estado de Esportes e Lazer",
+     "tesouro": 70290808,
+     "outras": 0,
+     "total": 70290808
+    },
+    {
+     "cod": "40",
+     "nome": "Secretaria de Estado da Cultura",
+     "tesouro": 166213116,
+     "outras": 0,
+     "total": 166213116
+    },
+    {
+     "cod": "41",
+     "nome": "Secretaria de Estado de Meio Ambiente e Recursos Hídricos",
+     "tesouro": 215527983,
+     "outras": 25158671,
+     "total": 240686654
+    },
+    {
+     "cod": "42",
+     "nome": "Secretaria de Estado da Educação",
+     "tesouro": 4415540126,
+     "outras": 43100,
+     "total": 4415583226
+    },
+    {
+     "cod": "44",
+     "nome": "Secretaria de Estado da Saúde",
+     "tesouro": 4882363945,
+     "outras": 0,
+     "total": 4882363945
+    },
+    {
+     "cod": "45",
+     "nome": "Secretaria de Estado da Segurança Pública e Defesa Social",
+     "tesouro": 2869382087,
+     "outras": 448437650,
+     "total": 3317819737
+    },
+    {
+     "cod": "46",
+     "nome": "Secretaria de Estado da Justiça",
+     "tesouro": 1088001257,
+     "outras": 527252,
+     "total": 1088528509
+    },
+    {
+     "cod": "47",
+     "nome": "Secretaria de Estado de Trabalho, Assistência e Desenvolvimento Social",
+     "tesouro": 247657939,
+     "outras": 0,
+     "total": 247657939
+    },
+    {
+     "cod": "48",
+     "nome": "Secretaria de Estado de Direitos Humanos",
+     "tesouro": 387929064,
+     "outras": 263000,
+     "total": 388192064
+    },
+    {
+     "cod": "49",
+     "nome": "Secretaria de Estado de Desenvolvimento",
+     "tesouro": 65583600,
+     "outras": 33312917,
+     "total": 98896517
+    },
+    {
+     "cod": "50",
+     "nome": "Secretaria Estadual das Mulheres",
+     "tesouro": 22097760,
+     "outras": 0,
+     "total": 22097760
+    },
+    {
+     "cod": "51",
+     "nome": "Secretaria de Estado de Recuperação do Rio Doce",
+     "tesouro": 701991972,
+     "outras": 0,
+     "total": 701991972
+    },
+    {
+     "cod": "60",
+     "nome": "Instituto de Previdência dos Servidores do Estado do Espírito Santo",
+     "tesouro": 4253211039,
+     "outras": 2204351163,
+     "total": 6457562202
+    },
+    {
+     "cod": "80",
+     "nome": "Encargos Gerais do Estado",
+     "tesouro": 3768068154,
+     "outras": 0,
+     "total": 3768068154,
+     "detalhe": [
+      {
+       "nome": "Encargos gerais, SEGER",
+       "valor": 306159134
+      },
+      {
+       "nome": "Encargos gerais, SEFAZ",
+       "valor": 2703087004
+      },
+      {
+       "nome": "Encargos gerais, SEP",
+       "valor": 758822016,
+       "inclui": "reserva de contingência de R$ 668.822.016"
+      }
+     ]
+    }
+   ]
+  }
+ ],
+ "total": {
+  "tesouro": 32487258272,
+  "outras": 2939305792,
+  "total": 35426564064
+ },
+ "receita": {
+  "tesouro": 32487258272,
+  "outras_fontes": 2939305792,
+  "total": 35426564064,
+  "caixa_do_tesouro_mensagem": 26600000000.0,
+  "observacao_caixa": "A Mensagem diz que a Receita de Caixa do Tesouro, isto é, a receita disponível do Estado, está estimada para 2027 em R$ 26,6 bilhões (valor arredondado; a Mensagem não detalha como a obteve)."
+ },
+ "transcricao": "valores lidos da imagem da página (documento digitalizado); conferidos por soma: os órgãos somam cada Poder, os Poderes somam o total de R$ 35.426.564.064 (igual à despesa fixada no art. 4º), o Tesouro soma R$ 32.487.258.272 e as outras fontes R$ 2.939.305.792 (iguais às receitas do art. 3º); o total de cada órgão coincide com a soma das suas unidades orçamentárias na base do painel"
+}

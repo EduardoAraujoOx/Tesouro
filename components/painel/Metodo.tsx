@@ -1,6 +1,6 @@
 'use client'
 
-import { useMemo } from 'react'
+import { useMemo, type ReactNode } from 'react'
 import { bilhoes, milhoes, numero } from '@/lib/formato'
 import type { LinhaMacro } from '@/lib/macro'
 import { Cartao, TabelaItens } from './Graficos'
@@ -14,7 +14,7 @@ const dif = (a: number | null, b: number | null) => (a === null || b === null ? 
 const cod = (c: string) => <span className="block text-label normal-case tracking-normal tabular-nums text-ink-soft md:mr-1.5 md:inline-block md:min-w-[6.5rem] md:text-small md:normal-case">{c}</span>
 
 /** Seção de método e fontes: as fontes batem entre si, como a projeção é feita e quão boa ela é, e o que significam os números. */
-export function Metodo({ receita, dados, pib27 }: { receita: LinhaMacro[]; dados: DadosReceita; /** crescimento nominal esperado do PIB em 2027 (inflação e PIB real do Focus) */ pib27: number }) {
+export function Metodo({ receita, dados, pib27, extras = [] }: { receita: LinhaMacro[]; dados: DadosReceita; /** sub-itens acrescentados ao fim (por exemplo, a consistência da PLOA) */ extras?: { id: string; rotulo: string; conteudo: ReactNode }[]; /** crescimento nominal esperado do PIB em 2027 (inflação e PIB real do Focus) */ pib27: number }) {
   const quadro = useMemo(() => Object.fromEntries(receita.map((x) => [x.chave, x.valores])) as Record<string, number[]>, [receita])
   const linhas = useMemo(() => conciliacao(dados, quadro, 2025).map((l) => ({ ...l, chave: l.chave })), [dados, quadro])
   const totais = useMemo(() => ANOS_RITMO.map((a) => {
@@ -186,6 +186,7 @@ export function Metodo({ receita, dados, pib27 }: { receita: LinhaMacro[]; dados
           </Cartao>
         </div>
       ) },
+      ...extras,
     ]} />
   )
 }

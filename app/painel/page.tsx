@@ -6,12 +6,14 @@ import { despesaMacro, parametros, receitaMacro } from '@/lib/macro'
 import receitaRaw from '@/data/receita.json'
 import rreoRaw from '@/data/rreo.json'
 import rclRaw from '@/data/ploa2027-rcl.json'
+import orgaosRaw from '@/data/ploa2027-orgaos.json'
 import indicadoresRaw from '@/data/indicadores.json'
 import petroleoRaw from '@/data/petroleo-sefaz.json'
 import mercadoRaw from '@/data/petroleo-mercado.json'
 import type { PetroleoMercado, PetroleoSefaz } from '@/components/painel/Fontes'
 import type { DadosReceita } from '@/components/painel/ReceitaMensal'
 import type { IndicadoresFiscais, RclOficial } from '@/components/painel/Agregado'
+import type { OrgaosArt5 } from '@/components/painel/Orgaos'
 
 export const metadata: Metadata = {
   title: { absolute: `${IDENTIDADE.nome} · ${IDENTIDADE.painel}` },
@@ -44,5 +46,5 @@ export default function PaginaPainel() {
   const coleta = new Date(coletadoEm).toLocaleDateString('pt-BR', { timeZone: 'America/Sao_Paulo' })
   return <Painel linhas={linhas} nomes={nomesPainel(linhas)} coleta={coleta} outrosPoderes={[...ORGAOS_OUTROS_PODERES]}
     macro={{ receita: receitaMacro, despesa: despesaMacro, ipca: parametros.ipca, pib: parametros.pib_real, fonteIpca: parametros.fonte }}
-    funcoes={totaisPorFuncao()} contingencia={reservaContingenciaPloa()} elementosPloa={ploaPorElemento()} rclOficial={rclOficial()} fiscais={indicadoresFiscais()} receitaMes={receitaRaw as unknown as DadosReceita} petroleo={petroleoRaw as unknown as PetroleoSefaz} mercado={mercadoRaw as unknown as PetroleoMercado} />
+    funcoes={totaisPorFuncao()} contingencia={reservaContingenciaPloa()} elementosPloa={ploaPorElemento()} rclOficial={rclOficial()} fiscais={indicadoresFiscais()} orgaos={orgaosRaw as unknown as OrgaosArt5} receitaMes={receitaRaw as unknown as DadosReceita} petroleo={petroleoRaw as unknown as PetroleoSefaz} mercado={mercadoRaw as unknown as PetroleoMercado} />
 }
