@@ -6,7 +6,6 @@ import type { LinhaMacro } from '@/lib/macro'
 import { Cartao, Legenda, COR, TabelaItens } from './Graficos'
 import { ColunasAnuais, fmtPct, type ColunaAnual } from './GraficosMacro'
 import { Nota, NOTA_DISCRETA } from './Estrutura'
-import minimosRaw from '@/data/minimos.json'
 import { titulo } from './dados'
 import { COD_DESPESA, COD_GRUPO } from './codigos'
 import { BRENT_CENTRAL, CAMBIO_CENTRAL, EDICAO_EIA, PRODUCAO_CENTRAL, receitaPetroleo } from './petroleo'
@@ -32,13 +31,7 @@ export type IndicadoresFiscais = {
   pessoalExecutivoEmpenhado2025: number
 }
 
-type Vista = 'receita' | 'despesa' | 'resultado' | 'fiscais'
-const VISTAS: { id: Vista; rotulo: string }[] = [
-  { id: 'receita', rotulo: 'Receita' },
-  { id: 'despesa', rotulo: 'Despesa' },
-  { id: 'resultado', rotulo: 'Resultado' },
-  { id: 'fiscais', rotulo: 'LRF e CAPAG' },
-]
+export type Vista = 'receita' | 'despesa' | 'resultado'
 const ANOS = ['2023', '2024', '2025', 'Provável 26 (PLOA)', '2027'] as const
 /** posição de cada coluna acima nos seis valores dos quadros da PLOA: 2023, 2024, 2025, orçamento 2026, provável 2026, 2027 */
 const COL = [0, 1, 2, 4, 5]
@@ -56,10 +49,9 @@ const DIF_MIN = 3
 const MESES_NOME = ['janeiro', 'fevereiro', 'março', 'abril', 'maio', 'junho', 'julho', 'agosto', 'setembro', 'outubro', 'novembro', 'dezembro']
 const corDif = (d: number) => (Math.abs(d) < DIF_MIN ? '' : d > 0 ? 'text-serie3' : 'text-serie2')
 
-export function VisaoGeral({ funcoes, contingencia, elementosPloa, rclOficial, fiscais, receita, despesa, ipca: ipcaParams, pib, fonteIpca, dados, irParaMetodo }: {
-  funcoes: Record<string, { emp25: number; ini26: number; atu26: number; emp26: number; ploa27: number }>; contingencia: number; elementosPloa: Record<string, Record<string, number>>; rclOficial: RclOficial; fiscais: IndicadoresFiscais; receita: LinhaMacro[]; despesa: LinhaMacro[]; ipca: Record<string, number>; pib: Record<string, number>; fonteIpca: string; dados: DadosReceita; irParaMetodo: () => void
+export function VisaoGeral({ vista, elementosPloa, receita, despesa, ipca: ipcaParams, pib, fonteIpca, dados }: {
+  vista: Vista; elementosPloa: Record<string, Record<string, number>>; receita: LinhaMacro[]; despesa: LinhaMacro[]; ipca: Record<string, number>; pib: Record<string, number>; fonteIpca: string; dados: DadosReceita
 }) {
-  const [vista, setVista] = useState<Vista>('receita')
   const [abertos, setAbertos] = useState<Set<string>>(new Set(['corr', 'capd']))
   const [base, setBase] = useState<'nominal' | 'real'>('nominal')
   const R = useMemo(() => Object.fromEntries(receita.map((x) => [x.chave, x.valores])) as Record<string, number[]>, [receita])
@@ -237,14 +229,6 @@ export function VisaoGeral({ funcoes, contingencia, elementosPloa, rclOficial, f
   const rcBruta = seis(pick(R, 'receitas_correntes'), somaRec(CORRENTES, false), somaRec(CORRENTES, true))
   const intra6 = seis(pick(R, 'intra'), somaRec(['intra'], false), somaRec(['intra'], true))
   const ded6 = seis(pick(R, 'deducoes'), somaRec(['ded'], false), somaRec(['ded'], true))
-  /* RCL conforme a LRF (art. 2º, IV): receitas correntes, sem as intraorçamentárias, menos municípios e Fundeb e menos as deduções previdenciárias
-     (contribuição do servidor, compensação previdenciária e rendimentos de recursos previdenciários). 2023–2025: RCL do RGF; PLOA 2027: Quadro VI
-     da Mensagem; Proj. 26 e Proj. 27: as deduções previdenciárias na proporção média de 2023–25 das receitas correntes. */
-  const rclH = ['2023', '2024', '2025'].map((a) => rclOficial.historico[a])
-  const previdH = [0, 1, 2].map((j) => rcBruta[j] + ded6[j] - rclH[j])
-  const propPrevid = previdH.reduce((t, x, j) => t + x / rcBruta[j], 0) / 3
-  const previd6 = [previdH[0], previdH[1], previdH[2], propPrevid * rcBruta[3], rclOficial.ploa27.previdenciarias, propPrevid * rcBruta[5]]
-  const rcl6 = rcBruta.map((x, j) => x + ded6[j] - previd6[j])
   const rcap6 = seis(pick(R, 'receitas_capital'), somaRec(['cap'], false), somaRec(['cap'], true))
   const rt6 = rcBruta.map((x, j) => x + intra6[j] + ded6[j] + rcap6[j])
   const dcorr6 = seis(pick(D, 'despesas_correntes'), projD.itens.corr.central, projD.itens.corr.central * (1 + i27))
@@ -254,15 +238,6 @@ export function VisaoGeral({ funcoes, contingencia, elementosPloa, rclOficial, f
   const ANOS6 = ['2023', '2024', '2025', 'Proj. 26', 'PLOA 27', 'Proj. 27']
   /* ordem de exibição: a projeção da equipe antes da PLOA, para ler de pronto se a PLOA está acima ou abaixo (os vetores seguem [.., PLOA, Proj. 27]) */
   const ORDEM6 = [0, 1, 2, 3, 5, 4]
-  const pessoal6 = seis(pick(D, 'pessoal'), projD.itens.pessoal.central, projD.itens.pessoal.central * (1 + i27))
-  const rgf3q = (ano: number) => rclOficial.rgfPessoal.find((x) => x.ano === ano && x.quad === 3)?.valor ?? NaN
-  const rgfUltimo = rclOficial.rgfPessoal[rclOficial.rgfPessoal.length - 1]
-  const indicadores = [
-    { chave: 'pessoal', rotulo: 'Pessoal e encargos, bruto ÷ RCL', v: pessoal6.map((x, j) => (x / rcl6[j]) * 100) },
-    { chave: 'correntes', rotulo: 'Despesas correntes ÷ RCL', v: dcorr6.map((x, j) => (x / rcl6[j]) * 100) },
-    { chave: 'inv', rotulo: 'Investimentos ÷ RCL', v: seis(pick(D, 'investimento'), projD.itens.inv.central, projD.itens.inv.central * (1 + i27)).map((x, j) => (x / rcl6[j]) * 100) },
-    { chave: 'rgf', rotulo: 'Pessoal líquido do Executivo, RGF (3º quadrimestre)', v: [rgf3q(2023), rgf3q(2024), rgf3q(2025), NaN, NaN, NaN] },
-  ]
   const linhasResultado: Linha[] = [
     { chave: 'rc', rotulo: 'Receitas correntes (brutas)', nivel: 0, v: rcBruta },
     { chave: 'intra', rotulo: '(+) Intraorçamentárias', nivel: 0, v: intra6 },
@@ -275,70 +250,6 @@ export function VisaoGeral({ funcoes, contingencia, elementosPloa, rclOficial, f
     { chave: 'res', rotulo: '(−) Reservas (RPPS e contingência)', nivel: 0, v: res6.map(neg) },
     { chave: 'saldo', rotulo: '= Resultado orçamentário', nivel: 0, negrito: true, v: antesRes6.map((x, j) => x - res6[j]) },
   ]
-  /* ponte da receita total à RCL */
-  const linhasRcl: Linha[] = [
-    { chave: 'rt', rotulo: 'Receita total (líquida de deduções)', nivel: 0, v: rt6 },
-    { chave: 'rk', rotulo: '(−) Receitas de capital', nivel: 0, v: rcap6.map(neg) },
-    { chave: 'intra', rotulo: '(−) Receitas intraorçamentárias', nivel: 0, v: intra6.map(neg) },
-    { chave: 'prev', rotulo: '(−) Deduções previdenciárias (servidor, compensação e rendimentos)', nivel: 0, v: previd6.map(neg) },
-    { chave: 'rcl', rotulo: '= RCL (LRF, art. 2º, IV)', nivel: 0, negrito: true, v: rcl6 },
-  ]
-
-  /* LRF e CAPAG: projeção de 2027 sobre a RCL da PLOA (rcl6[4]) e sobre a nossa (rcl6[5]) */
-  const lrfUlt = fiscais.lrf[fiscais.lrf.length - 1]
-  const lrf3q25 = fiscais.lrf.find((x) => x.ano === 2025 && x.quad === 3) ?? lrfUlt
-  const razaoLiqBruto = lrf3q25.pessoal.montante / fiscais.pessoalExecutivoEmpenhado2025 // pessoal líquido do RGF sobre o bruto empenhado, 2025
-  const parteExecutivo = rclOficial.pessoalExecutivoPloa / D.pessoal[5]
-  const pessoalExec27 = [rclOficial.pessoalExecutivoPloa, projD.itens.pessoal.central * (1 + i27) * parteExecutivo]
-  const pessoalLiq27 = pessoalExec27.map((x, k) => ((razaoLiqBruto * x) / rcl6[k === 0 ? 4 : 5]) * 100)
-  const dc26 = lrfUlt.divida.rcl_ajustada ? (lrfUlt.divida.dc / 100) * lrfUlt.divida.rcl_ajustada : NaN // dívida consolidada, 2º quadrimestre de 2026
-  const dc27 = dc26 + R.operacoes_credito[5] - D.amortizacao[5] // mais a captação e menos a amortização da PLOA
-  const dcRcl27 = [(dc27 / rcl6[4]) * 100, (dc27 / rcl6[5]) * 100]
-  const credito27 = [(R.operacoes_credito[5] / rcl6[4]) * 100, (itensProj.cred.central / rcl6[5]) * 100]
-  /* poupança corrente (CAPAG): despesas correntes ÷ receitas correntes ajustadas. Proxy: receitas correntes menos municípios e Fundeb, calibrada em 2023–25 */
-  const poupProxy = dcorr6.map((x, j) => (x / (rcBruta[j] + ded6[j])) * 100)
-  const capagPoup = fiscais.capag.filter((x) => x.ano >= 2023 && x.ano <= 2025).map((x) => x.poupanca ?? NaN)
-  const calibra = capagPoup.map((v, j) => v / poupProxy[j])
-  const calibraMed = calibra.reduce((t, x) => t + x, 0) / calibra.length
-  const calibraErro = Math.max(...calibra.map((x) => Math.abs(x - calibraMed))) * poupProxy[4]
-  const poup27 = [poupProxy[4] * calibraMed, poupProxy[5] * calibraMed]
-  const capagAno = (a: number) => fiscais.capag.find((x) => x.ano === a)
-  const pcN = (x: number | null | undefined, c = 1) => (x === null || x === undefined || !Number.isFinite(x) ? '–' : `${numero(x, c)}%`)
-  const aprox = (x: number, c = 1) => `≈ ${numero(x, c)}%`
-  const linhasLrf = [
-    { chave: 'pessoal', rotulo: 'Pessoal líquido do Executivo ÷ RCL', base: 'Limite 49%, prudencial 46,55%', v25: pcN(lrf3q25.pessoal.valor), v26: pcN(lrfUlt.pessoal.valor), ploa: aprox(pessoalLiq27[0]), proj: aprox(pessoalLiq27[1]) },
-    { chave: 'dc', rotulo: 'Dívida consolidada ÷ RCL', base: 'Informativo: o limite de 200% é da dívida líquida', v25: pcN(lrf3q25.divida.dc), v26: pcN(lrfUlt.divida.dc), ploa: aprox(dcRcl27[0]), proj: aprox(dcRcl27[1]) },
-    { chave: 'dcl', rotulo: 'Dívida consolidada líquida ÷ RCL', base: 'Limite 200%, alerta 180%', v25: pcN(lrf3q25.divida.valor), v26: pcN(lrfUlt.divida.valor), ploa: '–', proj: '–' },
-    { chave: 'credito', rotulo: 'Operações de crédito ÷ RCL', base: 'Limite 16%, alerta 14,4%', v25: pcN(lrf3q25.credito.valor), v26: pcN(lrfUlt.credito.valor), ploa: aprox(credito27[0]), proj: aprox(credito27[1]) },
-    { chave: 'garantias', rotulo: 'Garantias ÷ RCL', base: 'Limite 22%, alerta 19,8%', v25: pcN(lrf3q25.garantias.valor), v26: pcN(lrfUlt.garantias.valor), ploa: '–', proj: '–' },
-  ]
-  const linhasCapag = [
-    { chave: 'endiv', rotulo: 'Endividamento (dívida consolidada ÷ RCL)', base: 'Nota A: abaixo de 60%', v: [2023, 2024, 2025].map((a) => pcN(capagAno(a)?.endividamento)), ploa: aprox(dcRcl27[0]), proj: aprox(dcRcl27[1]) },
-    { chave: 'poup', rotulo: 'Poupança corrente (despesas ÷ receitas correntes ajustadas)', base: 'Nota A: abaixo de 85%; B: de 85% a 95%', v: [2023, 2024, 2025].map((a) => pcN(capagAno(a)?.poupanca)), ploa: aprox(poup27[0]), proj: aprox(poup27[1]) },
-    { chave: 'liq', rotulo: 'Liquidez relativa (caixa líquida ÷ RCL)', base: 'Nota A: a partir de 5%', v: [2023, 2024, 2025].map((a) => pcN(capagAno(a)?.liquidez)), ploa: '–', proj: '–' },
-    { chave: 'nota', rotulo: 'Classificação geral', base: 'Combinação das três notas', v: [2023, 2024, 2025].map((a) => capagAno(a)?.classificacao ?? '–'), ploa: '–', proj: '–' },
-  ]
-
-  /* limites e mínimos: regras fiscais e constitucionais contra a PLOA 2027 */
-  const RCL_LDO = 30126.1e6 // RCL de julho de 2025 a junho de 2026, base dos limites da LDO 2027
-  const difDespesaProj27 = Math.max(refDespesa - (D.total[5] - reservas27), 0) // PLOA executável (sem reservas) abaixo da Proj. 27
-  const LIMITE_SUPLEMENTAR = 10627969219.2 // PLOA 2027, art. 6º: créditos suplementares aos Orçamentos Fiscal e da Seguridade, 30% da receita (LDO 2027, art. 24, § 3º, I)
-  const m25 = (minimosRaw as unknown as { serie: { ano: number; ensino: number; saude: number }[] }).serie.find((x) => x.ano === 2025)!
-  const pc = (x: number, c = 1) => `${numero(x, c)}%`
-  const pp = (x: number, c = 1) => `${x > 0 ? '+' : x < 0 ? '−' : ''}${numero(Math.abs(x), c)} p.p.`
-  const limites = [
-    { chave: 'conting', rotulo: 'Contingência ÷ RCL', base: 'LDO art. 9º: mínimo de 2%', v25: '–', v27: pc(contingencia / RCL_LDO * 100, 2), folga: `${dMi(contingencia - 0.02 * RCL_LDO)} mi` },
-    { chave: 'suplem', rotulo: 'Créditos suplementares autorizados', base: 'PLOA art. 6º: até 30% da receita', v25: '–', v27: `${numero(LIMITE_SUPLEMENTAR / 1e9, 2)} bi`, folga: `${mi(LIMITE_SUPLEMENTAR - difDespesaProj27)} mi` },
-    { chave: 'ouro', rotulo: 'Crédito ÷ capital líquido', base: 'CF art. 167, III: até 100%', v25: pc((R.operacoes_credito[2] / (D.despesas_capital[2] - D.amortizacao[2])) * 100), v27: pc((R.operacoes_credito[5] / (D.despesas_capital[5] - D.amortizacao[5])) * 100), folga: `${mi(D.despesas_capital[5] - D.amortizacao[5] - R.operacoes_credito[5])} mi` },
-    { chave: 'ensino', rotulo: 'Ensino (MDE)', base: 'CF art. 212: mínimo de 25%', v25: pc(m25.ensino, 2), v27: '–', folga: pp(m25.ensino - 25, 2) },
-    { chave: 'saude', rotulo: 'Saúde (ASPS)', base: 'LC 141 art. 6º: mínimo de 12%', v25: pc(m25.saude, 2), v27: '–', folga: pp(m25.saude - 12, 2) },
-  ]
-  const impostosProj26 = itensProj.imp.central
-  const funcoesMinimo = [
-    { chave: 'edu', rotulo: 'Despesa na função Educação', v26: funcoes['12']?.atu26 ?? 0, v27: funcoes['12']?.ploa27 ?? 0 },
-    { chave: 'sau', rotulo: 'Despesa na função Saúde', v26: funcoes['10']?.atu26 ?? 0, v27: funcoes['10']?.ploa27 ?? 0 },
-    { chave: 'imp', rotulo: 'Receita de impostos (base dos mínimos)', v26: impostosProj26, v27: R.impostos[5] },
-  ].map((f) => ({ ...f, d: (f.v27 / f.v26 - 1) * 100 }))
 
   const tituloGrafico = vista === 'despesa' ? 'Despesa total' : 'Receita total, líquida de deduções'
   const legendaGrafico = [
@@ -353,24 +264,13 @@ export function VisaoGeral({ funcoes, contingencia, elementosPloa, rclOficial, f
         Proj. 26: acumulado até {nomeCorte} (receita) ou {nomeCorteDesp} (despesa) dividido pela fração média do ano já realizada na mesma data em 2022–2025; faixa pelas frações extremas. Proj. 27: Proj. 26 corrigida pela variação nominal do PIB na receita (IPCA e PIB real, Focus: +{numero(g27 * 100, 1)}%) e pelo IPCA na despesa (+{numero(i27 * 100, 1)}%); operações de crédito e demais receitas de capital mantidas no nível de 2026; reservas excluídas da despesa. Petróleo: receita das transferências modelada pela cotação (Brent: média de 2027 da previsão da EIA de {EDICAO_EIA}, US$ {numero(BRENT_CENTRAL, 0)}; câmbio: mediana do Focus, R$ {numero(CAMBIO_CENTRAL, 2)}; produção: média de 2026). Não incorpora hipóteses sobre alíquotas, crédito a contratar ou ampliação real da despesa.
       </p>
       <p>
-        Faixa de Proj. 27: na receita, ± o desvio da diferença entre o crescimento dos impostos do ES e o do PIB nominal desde {pibA.linhas[0].ano} ({numero(pibA.difDesvio, 1)} p.p.); na despesa, as participações sazonais extremas. Dif.: PLOA menos Proj. 27; azul acima, rosa abaixo (≥ {DIF_MIN}%). IPCA: {fonteIpca}{' '}
-        <button type="button" onClick={irParaMetodo} className="font-semibold text-navy underline underline-offset-4">Testes e fontes</button>.
+        Faixa de Proj. 27: na receita, ± o desvio da diferença entre o crescimento dos impostos do ES e o do PIB nominal desde {pibA.linhas[0].ano} ({numero(pibA.difDesvio, 1)} p.p.); na despesa, as participações sazonais extremas. Dif.: PLOA menos Proj. 27; azul acima, rosa abaixo (≥ {DIF_MIN}%). IPCA: {fonteIpca}.
       </p>
     </Nota>
   )
 
   return (
     <div>
-      <div className="flex flex-wrap items-center gap-x-4 gap-y-2 print:hidden">
-        <div role="group" aria-label="O que ver" className="inline-flex max-w-full flex-wrap overflow-hidden rounded-brand border border-line text-small print:hidden">
-          {VISTAS.map((v) => (
-            <button key={v.id} type="button" aria-pressed={vista === v.id} onClick={() => setVista(v.id)}
-              className={`px-4 py-1.5 ${vista === v.id ? 'bg-navy font-semibold text-on-navy' : 'bg-paper text-ink hover:bg-surface'}`}>{v.rotulo}</button>
-          ))}
-        </div>
-      </div>
-
-
       {(vista === 'receita' || vista === 'despesa') && (
         <div className="mt-3 space-y-3">
           <Cartao titulo={tituloGrafico} legenda={<Legenda itens={legendaGrafico} />}
@@ -406,62 +306,6 @@ export function VisaoGeral({ funcoes, contingencia, elementosPloa, rclOficial, f
               ...ORDEM6.map((j) => ({ rotulo: ANOS6[j], valor: (l: Linha) => <span className={l.negrito || j === 4 ? 'font-semibold' : ''}>{mi(l.v[j])}</span> })),
             ]} />
             <p className={`mt-2 ${NOTA_DISCRETA}`}>Proj. 26 e Proj. 27: referência da equipe, sem reservas (não são executadas), de modo que o resultado projetado é a receita menos a despesa executada; na PLOA as reservas fecham o resultado em zero.</p>
-          </Cartao>
-          <Cartao titulo="Da receita total à RCL (LRF, art. 2º, IV)">
-            <TabelaItens altura="livre" itens={linhasRcl} legenda="Da receita total à receita corrente líquida, em R$ milhões" colunas={[
-              { rotulo: 'R$ milhões', valor: celulaLinha },
-              ...ORDEM6.map((j) => ({ rotulo: ANOS6[j], valor: (l: Linha) => <span className={l.negrito || j === 4 ? 'font-semibold' : ''}>{mi(l.v[j])}</span> })),
-            ]} />
-            <p className={`mt-2 ${NOTA_DISCRETA}`}>2023–2025: RCL dos 12 meses até dezembro (RGF/RREO); as deduções previdenciárias vêm por diferença. PLOA 27: Quadro VI da Mensagem nº 189/2026 (R$ {numero(rclOficial.ploa27.rcl / 1e9, 2)} bi); o título do quadro diz 2026, mas os valores são os de 2027. Proj. 26 e Proj. 27: as deduções previdenciárias na proporção média de 2023–25 das receitas correntes ({numero(propPrevid * 100, 1)}%). A RCL é a base dos limites da LRF e da LDO; a receita total é a que a lei orçamentária fixa e iguala à despesa.</p>
-          </Cartao>
-          <Cartao titulo="Indicadores (% da RCL)">
-            <TabelaItens altura="livre" itens={indicadores} legenda="Indicadores, em % da RCL (LRF, art. 2º, IV)" colunas={[
-              { rotulo: 'Indicador', valor: (x) => x.rotulo },
-              ...ORDEM6.map((j) => ({ rotulo: ANOS6[j], valor: (x: (typeof indicadores)[number]) => (Number.isFinite(x.v[j]) ? `${numero(x.v[j], 1)}%` : '–') })),
-            ]} />
-            <p className={`mt-2 ${NOTA_DISCRETA}`}>Despesa bruta da PLOA e das projeções sobre a RCL acima. O pessoal líquido do RGF é o do Poder Executivo, com as exclusões da LRF (inativos pagos com recursos vinculados, indenizações e outras), e por isso não é comparável com o pessoal bruto de todos os Poderes; no 2º quadrimestre de 2026 era de {numero(rgfUltimo.valor, 1)}%.</p>
-          </Cartao>
-
-          <Cartao titulo="Limites e mínimos: LRF, LDO e Constituição">
-            <TabelaItens altura="livre" compacta itens={limites} legenda="Limites e mínimos fiscais e constitucionais contra a PLOA 2027" colunas={[
-              { rotulo: 'Regra', valor: (l) => <><span className="font-medium text-ink">{l.rotulo}</span><span className="block text-label font-normal normal-case tracking-normal text-ink-soft">{l.base}</span></> },
-              { rotulo: '2025', secundaria: true, valor: (l) => l.v25 },
-              { rotulo: 'PLOA 2027', valor: (l) => l.v27 },
-              { rotulo: 'Folga', valor: (l) => <span className="font-semibold">{l.folga}</span> },
-            ]} />
-            <p className={`mt-2 ${NOTA_DISCRETA}`}>Pessoal sobre a RCL do Quadro VI da PLOA, em valor bruto (sem as exclusões da LRF); o limite de 60% é o consolidado do Estado e o de 49%, o do Poder Executivo. Contingência: ação 9999 (sem as reservas do RPPS e do Fundo Soberano) contra 2% da RCL de julho de 2025 a junho de 2026 (R$ {numero(RCL_LDO / 1e9, 1)} bi). Créditos suplementares: limite do art. 6º do projeto de lei (anulação de dotações, excesso de arrecadação, superávit financeiro, operações de crédito ou reserva de contingência); a folga desconta a diferença entre a PLOA e a Proj. 27 (R$ {mi(difDespesaProj27)} milhões), que seria coberta por esses créditos. Crédito contra despesas de capital líquidas de amortizações. Ensino e saúde: percentual apurado no RREO de 2025, sobre a receita de impostos líquida de transferências constitucionais; a folga é a de 2025, pois o valor aplicado em 2027 só se conhece na execução.</p>
-          </Cartao>
-          <Cartao titulo="Funções com mínimo constitucional: dotação de 2026 e PLOA 2027">
-            <TabelaItens altura="livre" compacta itens={funcoesMinimo} legenda="Despesa nas funções Educação e Saúde e receita de impostos, 2026 e PLOA 2027, em R$ milhões" colunas={[
-              { rotulo: 'R$ milhões', valor: (f) => <span className="font-medium">{f.rotulo}</span> },
-              { rotulo: '2026', valor: (f) => mi(f.v26) },
-              { rotulo: 'PLOA 27', valor: (f) => <span className="font-semibold">{mi(f.v27)}</span> },
-              { rotulo: 'Dif. %', valor: (f) => <span className={`font-semibold ${corDif(f.d)}`}>{fmtPct(f.d)}</span> },
-            ]} />
-            <p className={`mt-2 ${NOTA_DISCRETA}`}>2026: dotação atualizada das funções (Portal de Dados Abertos) e Proj. 26 dos impostos. A função inclui despesas fora do cômputo do mínimo (por exemplo, parte da previdência e transferências), de modo que a comparação é de ordem de grandeza, não de apuração.</p>
-          </Cartao>
-        </div>
-      )}
-      {vista === 'fiscais' && (
-        <div className="mt-3 space-y-3">
-          <Cartao titulo="LRF: limites e projeção para 2027">
-            <TabelaItens altura="livre" compacta itens={linhasLrf} legenda="Indicadores da Lei de Responsabilidade Fiscal, em % da RCL" colunas={[
-              { rotulo: 'Indicador', valor: (l) => <><span className="font-medium text-ink">{l.rotulo}</span><span className="block text-label font-normal normal-case tracking-normal text-ink-soft">{l.base}</span></> },
-              { rotulo: `${lrf3q25.ano} (${lrf3q25.quad}º quad.)`, secundaria: true, valor: (l) => l.v25 },
-              { rotulo: `${lrfUlt.ano} (${lrfUlt.quad}º quad.)`, valor: (l) => l.v26 },
-              { rotulo: 'Proj. 27', valor: (l) => l.proj },
-              { rotulo: 'PLOA 27', valor: (l) => <span className="font-semibold">{l.ploa}</span> },
-            ]} />
-            <p className={`mt-2 ${NOTA_DISCRETA}`}>2025 e 2026: RGF do Poder Executivo (Tesouro Nacional). Projeções (≈): pessoal líquido = pessoal bruto do Executivo (PLOA ou referência) vezes a razão entre o líquido do RGF e o bruto empenhado em 2025 ({numero(razaoLiqBruto * 100, 0)}%), sobre a RCL da PLOA (R$ {numero(rcl6[4] / 1e9, 2)} bi) ou a nossa (R$ {numero(rcl6[5] / 1e9, 2)} bi); dívida consolidada de {lrfUlt.ano} ({lrfUlt.quad}º quadrimestre) mais as operações de crédito e menos a amortização da PLOA 2027 (R$ {numero(dc27 / 1e9, 2)} bi); operações de crédito: captação da PLOA e, na Proj. 27, a de 2026. Não projetamos a dívida líquida nem as garantias, que dependem de caixa e de contratos.</p>
-          </Cartao>
-          <Cartao titulo="CAPAG: notas e projeção para 2027">
-            <TabelaItens altura="livre" compacta itens={linhasCapag} legenda="Capacidade de pagamento (CAPAG), três indicadores e classificação" colunas={[
-              { rotulo: 'Indicador', valor: (l) => <><span className="font-medium text-ink">{l.rotulo}</span><span className="block text-label font-normal normal-case tracking-normal text-ink-soft">{l.base}</span></> },
-              ...[0, 1, 2].map((j) => ({ rotulo: String(2023 + j), secundaria: j < 2, valor: (l: (typeof linhasCapag)[number]) => l.v[j] })),
-              { rotulo: 'Proj. 27', valor: (l: (typeof linhasCapag)[number]) => l.proj },
-              { rotulo: 'PLOA 27', valor: (l: (typeof linhasCapag)[number]) => <span className="font-semibold">{l.ploa}</span> },
-            ]} />
-            <p className={`mt-2 ${NOTA_DISCRETA}`}>Edições do Tesouro Nacional; faixas da Portaria Normativa MF nº 1.583/2023. Endividamento: mesma dívida consolidada projetada acima. Poupança corrente: razão entre as despesas correntes e as receitas correntes menos municípios e Fundeb, multiplicada por um fator calibrado nas edições de 2023 a 2025 ({numero(calibraMed, 2)}; erro de até ±{numero(calibraErro, 0)} p.p.), porque o conceito de receitas correntes ajustadas da STN não é reproduzível com os quadros da PLOA. A liquidez depende da posição de caixa e não é projetada; em 2025 estava em {pcN(capagAno(2025)?.liquidez)}, contra o piso de 5% da nota A. Em qualquer das projeções, endividamento e poupança permanecem na faixa da nota A.</p>
           </Cartao>
         </div>
       )}

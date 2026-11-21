@@ -1,64 +1,30 @@
 'use client'
 
-import { Fragment, useEffect, useId, useMemo, useState, type ReactNode } from 'react'
-import { bilhoes, milhoes, numero, pct } from '@/lib/formato'
+import { useEffect, useState } from 'react'
 import { IDENTIDADE } from '@/lib/identidade-painel'
-import { Cartao, TabelaDelta, TabelaItens } from './Graficos'
-import { fmtPct } from './GraficosMacro'
-import { Faixa } from './Faixa'
-import { Receita } from './Macro'
-import { VisaoGeral, type IndicadoresFiscais, type RclOficial } from './Agregado'
-import { Metodo } from './Metodo'
-import { Cenarios } from './Cenarios'
-import { DespesaPorOrgao, ReceitaTesouro, type OrgaosArt5 } from './Orgaos'
-import { projetaDespesa2026, razoesFechamento2026 } from './projecao'
-import { PoderesEmendas } from './PoderesEmendas'
-import { Furos } from './Furos'
-import { Nota, Subvisoes, NOTA_DISCRETA } from './Estrutura'
-import { PrincipaisFontes, type PetroleoMercado, type PetroleoSefaz } from './Fontes'
+import { VisaoGeral, type Vista } from './Agregado'
+import { NOTA_DISCRETA } from './Estrutura'
 import { ControlesAcessibilidade } from '@/components/TopBar'
-import { CoberturaFontes, ReceitaMensal, type DadosReceita } from './ReceitaMensal'
+import type { DadosReceita } from './projecao'
 import type { LinhaMacro } from '@/lib/macro'
-import { ATU, EMP, INI, PLOA, agrupa, execucaoPct, titulo, total, variacaoPct, type Item, type Linha, type Soma } from './dados'
 
-type Nomes = { uo: Record<string, string>; programa: Record<string, string>; acao: Record<string, string>; gnd: Record<string, string>; fonte: Record<string, string> }
-type Escopo = 'executivo' | 'outros' | 'todos'
-type Alerta = 'abaixo' | 'novas' | 'extintas'
-type Aba = 'visao' | 'cenarios' | 'receita' | 'despesa' | 'metodo'
-const ABAS: { id: Aba; rotulo: string; nota: string }[] = [
-  { id: 'visao', rotulo: 'Visão geral', nota: 'A proposta de 2027 contra a nossa referência independente, a história e o fechamento projetado de 2026' },
-  { id: 'cenarios', rotulo: 'Cenários', nota: 'Premissas de receita e de despesa para 2027 e o que cada combinação faz com o resultado, a RCL e os créditos suplementares' },
-  { id: 'receita', rotulo: 'Receita', nota: 'Detalhamento da receita: fechamento de 2026, ICMS, FPE e petróleo, perfil mensal, Tesouro e outras fontes e cobertura por fonte' },
-  { id: 'despesa', rotulo: 'Despesa', nota: 'Detalhamento da despesa: PLOA 2027 contra o fechamento de 2026 por unidade, por órgão, por grupo e fonte, Poderes e emendas e ações selecionadas' },
-  { id: 'metodo', rotulo: 'Método e fontes', nota: 'Se as fontes batem entre si, como a receita e a despesa de 2026 são projetadas e quão boa é a projeção' },
+type Aba = Vista
+const ABAS: { id: Aba; rotulo: string }[] = [
+  { id: 'receita', rotulo: 'Receita' },
+  { id: 'despesa', rotulo: 'Despesa' },
+  { id: 'resultado', rotulo: 'Resultado orçamentário' },
 ]
-
-const cap = titulo
-const sinal = (x: number) => (x > 0 ? '+' : x < 0 ? '−' : '')
-const mi = (x: number) => milhoes(x, 0)
-const dMi = (x: number) => `${sinal(x)}${milhoes(Math.abs(x), 0)}`
-const dPct = (x: number | null) => fmtPct(x)
-const topN = (itens: Item[], n: number) => [...itens].sort((a, b) => Math.max(b.v[PLOA], b.v[ATU]) - Math.max(a.v[PLOA], a.v[ATU])).slice(0, n)
 
 type MacroProps = {
   receita: LinhaMacro[]; despesa: LinhaMacro[]; ipca: Record<string, number>; pib: Record<string, number>; fonteIpca: string
 }
 
-export function Painel({ linhas, nomes, coleta, outrosPoderes, macro, receitaMes, petroleo, mercado, funcoes, contingencia, elementosPloa, rclOficial, fiscais, orgaos }: { linhas: Linha[]; nomes: Nomes; coleta: string; outrosPoderes: string[]; macro: MacroProps; receitaMes: DadosReceita; petroleo?: PetroleoSefaz; mercado?: PetroleoMercado; funcoes: Record<string, { emp25: number; ini26: number; atu26: number; emp26: number; ploa27: number }>; contingencia: number; elementosPloa: Record<string, Record<string, number>>; rclOficial: RclOficial; fiscais: IndicadoresFiscais; orgaos: OrgaosArt5 }) {
-  const [aba, setAba] = useState<Aba>('visao')
-  useEffect(() => {
-    const h0 = window.location.hash.slice(1)
-    const h = h0 === 'fontes' || h0 === 'atencao' ? 'despesa' : h0 /* abas antigas: o conteúdo passou a sub-itens da Despesa */
-    if (ABAS.some((a) => a.id === h)) setAba(h as Aba)
-  }, [])
-  const escolheAba = (a: Aba) => { setAba(a); try { window.history.replaceState(null, '', `#${a}`) } catch { /* sem histórico: segue */ } }
-  const idUo = useId()
-  const outros = useMemo(() => new Set(outrosPoderes), [outrosPoderes])
-  const [escopo, setEscopo] = useState<Escopo>('executivo')
-  const [uoSel, setUoSel] = useState('')
-  const [alerta, setAlerta] = useState<Alerta>('abaixo')
-  const [ordem, setOrdem] = useState<{ col: number; desc: boolean }>({ col: 0, desc: true })
-  const [aberta, setAberta] = useState<string | null>(null)
+/**
+ * Painel em três seções: Receita, Despesa e Resultado orçamentário, cada uma a PLOA 2027 contra a história, o fechamento projetado de 2026 e a nossa
+ * projeção de 2027. O restante do material (cenários, detalhamentos, LRF e CAPAG, método) ficou de fora por ora, até se decidir o que acrescentar.
+ */
+export function Painel({ macro, receitaMes, elementosPloa }: { macro: MacroProps; receitaMes: DadosReceita; elementosPloa: Record<string, Record<string, number>> }) {
+  const [aba, setAba] = useState<Aba>('receita')
   const [menuAberto, setMenuAberto] = useState(false)
   useEffect(() => {
     if (!menuAberto) return
@@ -66,149 +32,14 @@ export function Painel({ linhas, nomes, coleta, outrosPoderes, macro, receitaMes
     window.addEventListener('keydown', fecha)
     return () => window.removeEventListener('keydown', fecha)
   }, [menuAberto])
-
-  const doEscopo = useMemo(
-    () => linhas.filter((l) => (escopo === 'todos' ? true : escopo === 'outros' ? outros.has(l[0].slice(0, 2)) : !outros.has(l[0].slice(0, 2)))),
-    [linhas, escopo, outros],
-  )
-  const unidades = useMemo(
-    () => [...new Set(doEscopo.map((l) => l[0]))].sort((a, b) => (nomes.uo[a] ?? a).localeCompare(nomes.uo[b] ?? b, 'pt-BR')),
-    [doEscopo, nomes.uo],
-  )
-  const uoAtiva = unidades.includes(uoSel) ? uoSel : ''
-  const L = useMemo(() => (uoAtiva ? doEscopo.filter((l) => l[0] === uoAtiva) : doEscopo), [doEscopo, uoAtiva])
-  const tot = useMemo(() => total(L), [L])
-
-  const nomeUo = (c: string) => cap(nomes.uo[c] || c)
-  const nomeAcao = (c: string) => cap(nomes.acao[c] || c)
-
-  /* nível do gráfico principal: unidades; com uma unidade escolhida, as ações dela */
-  const nivel = useMemo<Item[]>(() => {
-    if (!uoAtiva) return [...agrupa(L, (l) => l[0])].map(([k, v]) => ({ chave: k, rotulo: nomeUo(k), sub: k, v }))
-    return [...agrupa(L, (l) => `${l[1]}|${l[2]}`)].map(([k, v]) => {
-      const [prog, ac] = k.split('|')
-      return { chave: k, rotulo: nomeAcao(ac), sub: `ação ${ac} · programa ${prog}`, v }
-    })
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [L, uoAtiva])
-
-  const porGnd = useMemo<Item[]>(
-    () => [...agrupa(L, (l) => l[3])].map(([k, v]) => ({ chave: k, rotulo: `${k} ${cap(nomes.gnd[k] || '')}`, v })).sort((a, b) => Math.max(b.v[PLOA], b.v[ATU]) - Math.max(a.v[PLOA], a.v[ATU])),
-    [L, nomes.gnd],
-  )
-  const porFonte = useMemo<Item[]>(
-    () => topN([...agrupa(L, (l) => l[4])].map(([k, v]) => ({ chave: k, rotulo: `${k} ${cap(nomes.fonte[k] || '')}`, v })), 12),
-    [L, nomes.fonte],
-  )
-  const principal = useMemo(() => topN(nivel, 15), [nivel])
-  const variacao = useMemo(() => {
-    const d = (i: Item) => i.v[PLOA] - i.v[ATU]
-    const ord = [...nivel].sort((a, b) => d(b) - d(a))
-    const alta = ord.filter((i) => d(i) > 0).slice(0, 8)
-    const baixa = ord.filter((i) => d(i) < 0).slice(-8)
-    return [...alta, ...baixa]
-  }, [nivel])
-
-  /* ações para a tabela e os alertas */
-  const acoes = useMemo<(Item & { uo: string })[]>(
-    () => [...agrupa(L, (l) => `${l[0]}|${l[1]}|${l[2]}`)].map(([k, v]) => {
-      const [uo, prog, ac] = k.split('|')
-      return { chave: k, uo, rotulo: nomeAcao(ac), sub: `${nomeUo(uo)} · ação ${ac}`, v }
-    }),
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  [L])
-  const em2026 = (v: Soma) => v[INI] !== 0 || v[ATU] !== 0 || v[EMP] !== 0
-  const listas = useMemo(() => ({
-    abaixo: acoes.filter((a) => em2026(a.v) && a.v[EMP] - a.v[PLOA] >= 5_000_000).sort((a, b) => (b.v[EMP] - b.v[PLOA]) - (a.v[EMP] - a.v[PLOA])).slice(0, 15),
-    novas: acoes.filter((a) => !em2026(a.v) && a.v[PLOA] > 0).sort((a, b) => b.v[PLOA] - a.v[PLOA]).slice(0, 15),
-    extintas: acoes.filter((a) => a.v[PLOA] === 0 && a.v[EMP] > 0).sort((a, b) => b.v[EMP] - a.v[EMP]).slice(0, 15),
-  }), [acoes])
-  const contagens = useMemo(() => ({
-    abaixo: acoes.filter((a) => em2026(a.v) && a.v[EMP] - a.v[PLOA] >= 5_000_000).length,
-    novas: acoes.filter((a) => !em2026(a.v) && a.v[PLOA] > 0).length,
-    extintas: acoes.filter((a) => a.v[PLOA] === 0 && a.v[EMP] > 0).length,
-  }), [acoes])
-
-  /* PLOA 2027 contra o fechamento projetado de 2026: cada linha leva o seu empenhado até a data vezes a razão de fechamento do seu grupo de natureza */
-  const fechamento = useMemo(() => {
-    const porGndTodas: Record<string, number> = {}
-    for (const l of linhas) porGndTodas[l[3]] = (porGndTodas[l[3]] ?? 0) + (l[5 + EMP] as number)
-    const razao = razoesFechamento2026(porGndTodas)
-    const m = new Map<string, { emp: number; proj: number; ploa: number }>()
-    for (const l of L) {
-      const k = uoAtiva ? `${l[1]}|${l[2]}` : l[0]
-      const a = m.get(k) ?? { emp: 0, proj: 0, ploa: 0 }
-      const e = l[5 + EMP] as number
-      a.emp += e; a.proj += e * (razao[l[3]] ?? 1); a.ploa += l[5 + PLOA] as number
-      m.set(k, a)
-    }
-    return [...m].map(([k, v]) => {
-      const [prog, ac] = k.split('|')
-      return { chave: k, rotulo: uoAtiva ? nomeAcao(ac) : nomeUo(k), sub: uoAtiva ? `ação ${ac} · programa ${prog}` : k, ...v, d: v.ploa - v.proj, pct: v.proj > 0 ? (v.ploa / v.proj - 1) * 100 : null }
-    }).filter((x) => x.proj > 0 || x.ploa > 0).sort((a, b) => a.d - b.d)
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [L, uoAtiva, linhas])
-  const fechamentoTotal = useMemo(() => fechamento.reduce((t, x) => ({ emp: t.emp + x.emp, proj: t.proj + x.proj, ploa: t.ploa + x.ploa }), { emp: 0, proj: 0, ploa: 0 }), [fechamento])
-  const dataCorte = useMemo(() => { const u = projetaDespesa2026().ultimoDia; return `${u.slice(8, 10)}/${u.slice(5, 7)}` }, [])
-
-  /* tabela principal (unidades, com as ações ao abrir; com unidade escolhida, só as ações) */
-  const colunas: { rotulo: string; valor: (v: Soma) => number }[] = [
-    { rotulo: 'PLOA 2027', valor: (v) => v[PLOA] },
-    { rotulo: 'Inicial 2026', valor: (v) => v[INI] },
-    { rotulo: 'Atualizada 2026', valor: (v) => v[ATU] },
-    { rotulo: 'Empenhado 2026', valor: (v) => v[EMP] },
-    { rotulo: 'Exec. %', valor: (v) => execucaoPct(v) ?? -1 },
-    { rotulo: 'Δ R$ mi', valor: (v) => v[PLOA] - v[ATU] },
-    { rotulo: 'Δ %', valor: (v) => variacaoPct(v) ?? 1e9 },
-  ]
-  const linhasTabela = useMemo(() => [...nivel].sort((a, b) => {
-    const c = colunas[ordem.col].valor
-    return ordem.desc ? c(b.v) - c(a.v) : c(a.v) - c(b.v)
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }), [nivel, ordem])
-  const filhos = (uo: string) => acoes.filter((a) => a.uo === uo).sort((a, b) => b.v[PLOA] - a.v[PLOA])
-
-  const resumo = [
-    { r: 'PLOA 2027', v: bilhoes(tot[PLOA]), s: '', destaque: true },
-    { r: 'Atualizada 2026', v: bilhoes(tot[ATU]), s: '' },
-    { r: 'Empenhado 2026', v: bilhoes(tot[EMP]), s: `${numero(execucaoPct(tot) ?? 0, 0)}% da atualizada` },
-    { r: 'PLOA − atualizada', v: `${sinal(tot[PLOA] - tot[ATU])}${bilhoes(Math.abs(tot[PLOA] - tot[ATU]))}`, s: dPct(variacaoPct(tot)) },
-  ]
-
-  const nomeItem = (i: Item) => <><span className="line-clamp-3 font-medium text-ink md:line-clamp-none">{i.rotulo}</span>{i.sub && <span className="block text-label normal-case tracking-normal text-ink-soft">{i.sub}</span>}</>
-  const colsDelta = [
-    { rotulo: 'Atual. 26', valor: (i: Item) => mi(i.v[ATU]) },
-    { rotulo: 'PLOA 27', valor: (i: Item) => mi(i.v[PLOA]), forte: true },
-    { rotulo: 'Δ R$ mi', valor: (i: Item) => dMi(i.v[PLOA] - i.v[ATU]) },
-    { rotulo: 'Δ%', valor: (i: Item) => dPct(variacaoPct(i.v)) },
-  ]
-  const tituloNivel = uoAtiva ? 'Ações da unidade' : 'Unidades orçamentárias'
-
-  const filtros = (
-    <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-end sm:gap-x-6">
-      <fieldset>
-        <legend className="text-small text-ink-soft">Recorte</legend>
-        <div className="mt-1 grid grid-cols-[1fr_1.6fr_1fr] gap-1.5 sm:flex">
-          {([['executivo', 'Executivo'], ['outros', 'Outros Poderes'], ['todos', 'Todos']] as [Escopo, string][]).map(([v, r]) => (
-            <label key={v} className={`cursor-pointer rounded-brand border px-2 py-1.5 text-center text-small sm:px-3 ${escopo === v ? 'border-navy bg-navy font-semibold text-on-navy' : 'border-line bg-paper'}`}>
-              <input type="radio" name="recorte" value={v} checked={escopo === v} onChange={() => { setEscopo(v); setUoSel(''); setAberta(null) }} className="sr-only" />{r}
-            </label>
-          ))}
-        </div>
-      </fieldset>
-      <div className="min-w-0 sm:min-w-[16rem] sm:max-w-md sm:flex-1">
-        <label htmlFor={idUo} className="text-small text-ink-soft">Unidade</label>
-        <select id={idUo} value={uoAtiva} onChange={(e) => { setUoSel(e.target.value); setAberta(null) }} className="mt-1 block w-full rounded-brand border border-line bg-paper px-3 py-1.5 text-small">
-          <option value="">Todas ({unidades.length})</option>
-          {unidades.map((u) => <option key={u} value={u}>{u} {cap(nomes.uo[u] ?? '')}</option>)}
-        </select>
-      </div>
-    </div>
-  )
-
+  useEffect(() => {
+    const h = window.location.hash.slice(1)
+    /* endereços das versões anteriores: visão geral e demais abas levam à seção mais próxima */
+    const alvo = h === 'despesa' || h === 'fontes' || h === 'atencao' ? 'despesa' : h === 'resultado' ? 'resultado' : 'receita'
+    setAba(alvo)
+  }, [])
+  const escolheAba = (a: Aba) => { setAba(a); try { window.history.replaceState(null, '', `#${a}`) } catch { /* sem histórico: segue */ } }
   const abaAtual = ABAS.find((a) => a.id === aba)!
-  /* Recorte e Unidade só valem para as visões que os respeitam; órgão (art. 5º) e Poderes e emendas são do Estado inteiro */
-  const comFiltros = (c: ReactNode) => <><div className="print:hidden">{filtros}</div><div className="mt-3 space-y-3">{c}</div></>
 
   return (
     <div className="painel mx-auto max-w-[1600px] px-4 pb-8 sm:px-5 md:px-8">
@@ -269,174 +100,12 @@ export function Painel({ linhas, nomes, coleta, outrosPoderes, macro, receitaMes
       </div>
 
       <div role="tabpanel" id={`painel-${aba}`} aria-labelledby={`aba-${aba}`} className="mt-3">
-        {aba === 'visao' && <VisaoGeral funcoes={funcoes} contingencia={contingencia} elementosPloa={elementosPloa} rclOficial={rclOficial} fiscais={fiscais} receita={macro.receita} despesa={macro.despesa} ipca={macro.ipca} pib={macro.pib} fonteIpca={macro.fonteIpca} dados={receitaMes} irParaMetodo={() => { escolheAba('metodo'); window.scrollTo({ top: 0 }) }} />}
-        {aba === 'cenarios' && <Cenarios receita={macro.receita} despesa={macro.despesa} ipca={macro.ipca} pib={macro.pib} dados={receitaMes} rclOficial={rclOficial} contingencia={contingencia} />}
-        {aba === 'metodo' && <Metodo extras={[{ id: 'furos', rotulo: 'Consistência da PLOA', conteudo: <Furos linhas={linhas} nomes={nomes} dados={receitaMes} receita={macro.receita} ipca={macro.ipca} pib={macro.pib} /> }]} receita={macro.receita} dados={receitaMes} pib27={(1 + (macro.ipca['2027'] ?? 0)) * (1 + (macro.pib['2027'] ?? 0)) - 1} />}
-        {aba === 'receita' && (
-          <Subvisoes rotulo="O que ver na receita" itens={[
-            { id: 'fechamento', rotulo: 'Fechamento de 2026', conteudo: <ReceitaMensal dados={receitaMes} macro={macro.receita} parte="fechamento" /> },
-            { id: 'fontes', rotulo: 'ICMS, FPE e petróleo', conteudo: <PrincipaisFontes dados={receitaMes} receita={macro.receita} ipca={macro.ipca} pib={macro.pib} petroleo={petroleo} mercado={mercado} /> },
-            { id: 'detalhe', rotulo: 'Perfil mensal e quadro da PLOA', conteudo: (
-              <div className="space-y-3">
-                <ReceitaMensal dados={receitaMes} macro={macro.receita} parte="perfil" />
-                <Receita receita={macro.receita} ipca={macro.ipca} dados={receitaMes} />
-              </div>
-            ) },
-            { id: 'tesouro', rotulo: 'Tesouro e outras fontes', conteudo: <ReceitaTesouro orgaos={orgaos} /> },
-            { id: 'cobertura', rotulo: 'Cobertura por fonte de recursos', conteudo: <CoberturaFontes dados={receitaMes} linhas={linhas} nomesFonte={nomes.fonte} /> },
-          ]} />
-        )}
-        {aba === 'despesa' && (
-          <>
-            <div>
-              <Subvisoes rotulo="O que ver na despesa" itens={[
-                { id: 'fechamento', rotulo: 'PLOA 2027 e fechamento de 2026', conteudo: comFiltros(
-              <Cartao titulo={uoAtiva ? 'Ações: PLOA 2027 contra o fechamento projetado de 2026' : 'Unidades orçamentárias: PLOA 2027 contra o fechamento projetado de 2026'}>
-                <Nota titulo="Metodologia">
-                  <p>Fechamento projetado de 2026 (Proj. 26): empenhado de cada linha até {dataCorte} vezes a razão entre o fechamento projetado do seu grupo de natureza e o empenhado do grupo até a mesma data (Método e fontes, Projeção de 2026). Pressupõe que cada unidade segue o ritmo do seu grupo até dezembro; unidades com obras ou despesas concentradas no fim do ano podem fugir disso. Ordenado pela diferença entre a PLOA e a Proj. 26, da maior insuficiência à maior folga; despesas de 2026 que não se repetem em 2027 (obras concluídas, por exemplo) também aparecem como insuficiência.</p>
-                </Nota>
-                <div className="mt-3">
-                  <TabelaItens compacta itens={[...fechamento, { chave: 'total', rotulo: `Total (${fechamento.length})`, sub: '', emp: fechamentoTotal.emp, proj: fechamentoTotal.proj, ploa: fechamentoTotal.ploa, d: fechamentoTotal.ploa - fechamentoTotal.proj, pct: fechamentoTotal.proj > 0 ? (fechamentoTotal.ploa / fechamentoTotal.proj - 1) * 100 : null }]}
-                    legenda={`PLOA 2027 contra o fechamento projetado de 2026, em R$ milhões, ordenado pela diferença`} colunas={[
-                    { rotulo: 'R$ milhões', valor: (x) => x.chave === 'total' ? <span className="font-semibold">{x.rotulo}</span> : <><span className="line-clamp-3 font-medium text-ink md:line-clamp-none">{x.rotulo}</span><span className="block text-label normal-case tracking-normal text-ink-soft">{x.sub}</span></> },
-                    { rotulo: `Emp. 26 (${dataCorte})`, secundaria: true, valor: (x) => mi(x.emp) },
-                    { rotulo: 'Proj. 26', valor: (x) => mi(x.proj) },
-                    { rotulo: 'PLOA 27', valor: (x) => <span className="font-semibold">{mi(x.ploa)}</span> },
-                    { rotulo: 'Dif. R$ mi', valor: (x) => <span className={x.d < 0 ? 'font-semibold text-ink' : ''}>{dMi(x.d)}</span> },
-                    { rotulo: 'Dif. %', secundaria: true, valor: (x) => dPct(x.pct) },
-                  ]} />
-                </div>
-              </Cartao>
-                ) },
-                { id: 'variacoes', rotulo: 'Maiores variações', conteudo: comFiltros(
-              <Cartao titulo={uoAtiva ? 'Ações: variação da PLOA 2027 sobre a dotação atualizada de 2026' : 'Unidades orçamentárias: variação da PLOA 2027 sobre a dotação atualizada de 2026'}>
-                <TabelaDelta itens={variacao} delta={(i) => i.v[PLOA] - i.v[ATU]} rotuloBarra={`${tituloNivel}|PLOA 2027 menos atualizada 2026`} primeira={nomeItem}
-                  legenda="Maiores aumentos e reduções da PLOA 2027 sobre a dotação atualizada de 2026, em R$ milhões" colunas={colsDelta} />
-              </Cartao>
-                ) },
-                { id: 'tabela', rotulo: uoAtiva ? 'Todas as ações da unidade' : 'Todas as unidades', conteudo: comFiltros(
-      <section aria-label={tituloNivel} data-longa className="min-w-0 rounded-brand border border-line bg-paper p-3 sm:p-4 md:p-5">
-        <h2 className="text-body font-semibold md:text-lead">{tituloNivel}</h2>
-        <div tabIndex={0} role="region" aria-label={`Tabela: ${tituloNivel}`} className="rola mt-3 max-h-[36rem] overflow-auto rounded-brand border border-line">
-          <table className="w-full min-w-max text-left text-small">
-            <caption className="sr-only">{tituloNivel}, em R$ milhões</caption>
-            <thead>
-              <tr>
-                <th scope="col" className="sticky left-0 top-0 z-20 min-w-[9.5rem] bg-surface px-3 py-2">{tituloNivel}</th>
-                {colunas.map((c, j) => (
-                  <th key={c.rotulo} scope="col" aria-sort={ordem.col === j ? (ordem.desc ? 'descending' : 'ascending') : 'none'} className="sticky top-0 z-10 whitespace-nowrap bg-surface px-3 py-2 text-right">
-                    <button type="button" onClick={() => setOrdem(ordem.col === j ? { col: j, desc: !ordem.desc } : { col: j, desc: true })} className="font-semibold underline-offset-4 hover:underline">
-                      {c.rotulo}<span aria-hidden="true" className="text-ink-soft">{ordem.col === j ? (ordem.desc ? ' ▼' : ' ▲') : ''}</span>
-                    </button>
-                  </th>
-                ))}
-              </tr>
-            </thead>
-            <tbody>
-              {linhasTabela.map((u) => {
-                const abre = aberta === u.chave
-                return (
-                  <Fragment key={u.chave}>
-                    <tr className="border-t border-line align-top">
-                      <th scope="row" className="sticky left-0 z-[1] min-w-[9.5rem] max-w-[11rem] whitespace-normal bg-paper px-3 py-1.5 font-normal shadow-[1px_0_0_rgb(var(--line))] md:max-w-[30rem]">
-                        {uoAtiva ? (
-                          <><span className="block font-semibold">{u.rotulo}</span><span className="text-ink-soft">{u.sub}</span></>
-                        ) : (
-                          <button type="button" aria-expanded={abre} onClick={() => setAberta(abre ? null : u.chave)} className="text-left font-semibold text-navy underline-offset-4 hover:underline">
-                            <span aria-hidden="true">{abre ? '− ' : '+ '}</span>{u.rotulo}<span className="block text-label font-normal normal-case tracking-normal text-ink-soft">{u.chave}</span>
-                          </button>
-                        )}
-                      </th>
-                      {celulas(u.v)}
-                    </tr>
-                    {abre && filhos(u.chave).map((a) => (
-                      <tr key={a.chave} className="border-t border-line bg-surface align-top">
-                        <th scope="row" className="sticky left-0 z-[1] min-w-[9.5rem] max-w-[11rem] whitespace-normal bg-surface px-3 py-1.5 pl-6 font-normal shadow-[1px_0_0_rgb(var(--line))] md:max-w-[30rem] md:pl-8"><span className="block">{a.rotulo}</span><span className="text-ink-soft">{a.chave.split('|')[2]} · programa {a.chave.split('|')[1]}</span></th>
-                        {celulas(a.v)}
-                      </tr>
-                    ))}
-                  </Fragment>
-                )
-              })}
-            </tbody>
-            <tfoot className="border-t-2 border-line bg-surface font-semibold">
-              <tr><th scope="row" className="sticky left-0 bg-surface px-3 py-1.5">Total ({linhasTabela.length})</th>{celulas(tot)}</tr>
-            </tfoot>
-          </table>
-        </div>
-      </section>
-                ) },
-                { id: 'orgao', rotulo: 'Por órgão (art. 5º)', conteudo: <DespesaPorOrgao orgaos={orgaos} linhas={linhas} /> },
-                { id: 'grupos', rotulo: 'Por grupo e fonte', conteudo: comFiltros(
-                  <div className="space-y-3">
-                    <Cartao titulo="Despesa por grupo de natureza (GND)">
-                      <TabelaDelta itens={porGnd} delta={(i) => i.v[PLOA] - i.v[ATU]} rotuloBarra="Grupo|PLOA 2027 menos atualizada 2026" primeira={nomeItem}
-                        legenda="Por grupo de natureza da despesa, em R$ milhões" colunas={colsDelta} />
-                    </Cartao>
-                    <Cartao titulo="Despesa por fonte de recursos (12 maiores)">
-                      <TabelaDelta itens={porFonte} delta={(i) => i.v[PLOA] - i.v[ATU]} rotuloBarra="Fonte|PLOA 2027 menos atualizada 2026" primeira={nomeItem}
-                        legenda="Doze maiores fontes de recursos, em R$ milhões" colunas={colsDelta} />
-                    </Cartao>
-                  </div>
-                ) },
-                { id: 'ajustes', rotulo: 'Poderes e emendas', conteudo: <PoderesEmendas linhas={linhas} /> },
-                { id: 'acoes', rotulo: 'Ações selecionadas', conteudo: comFiltros(
-              <>
-            {/* alertas */}
-      <section aria-label="Pontos de atenção" className="mt-4 min-w-0 rounded-brand border border-line bg-paper p-3 sm:p-4 md:p-5">
-        <div className="flex flex-wrap items-center justify-between gap-3">
-          <h2 className="text-body font-semibold md:text-lead">Pontos de atenção</h2>
-          <div role="group" aria-label="Tipo de ponto de atenção" className="flex w-full flex-col divide-y divide-line overflow-hidden rounded-brand border border-line text-small sm:inline-flex sm:w-auto sm:flex-row sm:divide-x sm:divide-y-0">
-            {([['abaixo', 'PLOA abaixo do empenhado 26'], ['novas', 'Ações novas'], ['extintas', 'Sem dotação na PLOA']] as [Alerta, string][]).map(([v, r]) => (
-              <button key={v} type="button" aria-pressed={alerta === v} onClick={() => setAlerta(v)} className={`px-3 py-2 text-left sm:py-1.5 sm:text-center ${alerta === v ? 'bg-navy font-semibold text-on-navy' : 'bg-paper text-ink'}`}>
-                {r} <span className="tabular-nums opacity-80">({contagens[v]})</span>
-              </button>
-            ))}
-          </div>
-        </div>
-        <div className="mt-3">
-          <TabelaItens
-            itens={listas[alerta]}
-            legenda={alerta === 'abaixo' ? 'Ações em que a PLOA 2027 é menor que o empenhado de 2026' : alerta === 'novas' ? 'Ações novas na PLOA 2027' : 'Ações com empenho em 2026 e sem dotação na PLOA 2027'}
-            colunas={[
-              { rotulo: 'Ação', valor: (i) => <><span className="line-clamp-3 font-medium text-ink md:line-clamp-none">{i.rotulo}</span><span className="block text-label normal-case tracking-normal text-ink-soft">{i.sub}</span></> },
-              { rotulo: 'PLOA 27', valor: (i) => mi(i.v[PLOA]) },
-              { rotulo: 'Atual. 26', valor: (i) => mi(i.v[ATU]) },
-              { rotulo: 'Emp. 26', valor: (i) => mi(i.v[EMP]) },
-              { rotulo: alerta === 'abaixo' ? 'Emp. − PLOA' : 'Δ R$ mi', valor: (i) => (alerta === 'abaixo' ? mi(i.v[EMP] - i.v[PLOA]) : dMi(i.v[PLOA] - i.v[ATU])) },
-            ]}
-          />
-        </div>
-      </section>
-              </>
-            ) },
-              ]} />
-            </div>
-
-          </>
-        )}
+        <VisaoGeral key={aba} vista={aba} elementosPloa={elementosPloa} receita={macro.receita} despesa={macro.despesa} ipca={macro.ipca} pib={macro.pib} fonteIpca={macro.fonteIpca} dados={receitaMes} />
       </div>
 
       <p className={`mt-4 ${NOTA_DISCRETA} print:mt-2`}>
-        {aba === 'despesa' ? <>Fonte: Portal de Dados Abertos do ES (2025 e 2026, coleta em {coleta}); PLOA 2027: Mensagem nº 189/2026, proposta e não a LOA. Δ nas demais vistas = PLOA 2027 menos atualizada 2026.<br /></> : null}
         <span className="print:hidden">{IDENTIDADE.aviso}</span>
       </p>
     </div>
   )
-
-  function celulas(v: Soma) {
-    const ex = execucaoPct(v)
-    const dv = variacaoPct(v)
-    return (
-      <>
-        <td className="whitespace-nowrap px-3 py-1.5 text-right font-semibold tabular-nums">{mi(v[PLOA])}</td>
-        <td className="whitespace-nowrap px-3 py-1.5 text-right tabular-nums">{mi(v[INI])}</td>
-        <td className="whitespace-nowrap px-3 py-1.5 text-right tabular-nums">{mi(v[ATU])}</td>
-        <td className="whitespace-nowrap px-3 py-1.5 text-right tabular-nums">{mi(v[EMP])}</td>
-        <td className="whitespace-nowrap px-3 py-1.5 text-right tabular-nums">{ex === null ? '–' : `${numero(ex, 0)}%`}</td>
-        <td className="whitespace-nowrap px-3 py-1.5 text-right tabular-nums">{dMi(v[PLOA] - v[ATU])}</td>
-        <td className="whitespace-nowrap px-3 py-1.5 text-right tabular-nums">{dPct(dv)}</td>
-      </>
-    )
-  }
 }
