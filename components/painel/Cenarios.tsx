@@ -77,10 +77,23 @@ export function Cenarios({ receita, despesa, ipca: ipcaParams, pib, dados, rclOf
     return { total, rcl, desp, pessoal, resultado: total - desp }
   }, [p, itens, projD, petroleo26, propPrevid])
 
+  /* referências alternativas para a despesa executável de 2027: inercial, limite pela receita do cenário e folha pela tendência */
+  const resultadoMedio = [0, 1, 2].reduce((t, c) => t + (R.total[c] - D.total[c]), 0) / 3
+  const refInercial = projD.itens.tot.central * (1 + i27)
+  const limiteReceita = res.total - resultadoMedio
+  const pessoalInercial = projD.itens.pessoal.central * (1 + i27)
+  const comPessoalTendencia = refInercial - pessoalInercial + projD.itens.pessoal.central * (1 + tend)
+  const compressaoNecessaria = comPessoalTendencia - limiteReceita
+
   const ploa = {
     total: R.total[5], rcl: rclOficial.ploa27.rcl, desp: D.total[5] - D.reserva_rpps[5] - D.reserva_contingencia[5], pessoal: D.pessoal[5],
   }
   const reservas = D.reserva_rpps[5] + D.reserva_contingencia[5]
+  const refsDespesa = [
+    { chave: 'inercial', rotulo: 'Inercial', sub: 'Proj. 26 corrigida pelo IPCA', v: refInercial },
+    { chave: 'receita', rotulo: 'Limite pela receita', sub: `Receita do cenário menos o resultado médio de 2023–25 (R$ ${numero(resultadoMedio / 1e9, 2)} bi)`, v: limiteReceita },
+    { chave: 'pessoal', rotulo: 'Pessoal pela tendência', sub: `Folha +${numero(tend * 100, 1)}% a.a. (média de 2024–26); demais despesas inerciais`, v: comPessoalTendencia },
+  ].map((x) => ({ ...x, d: ploa.desp - x.v, pct: (ploa.desp / x.v - 1) * 100 }))
   const excesso = res.total - ploa.total
   const creditos = Math.max(res.desp - ploa.desp, 0)
   const linhas = [
@@ -140,6 +153,18 @@ export function Cenarios({ receita, despesa, ipca: ipcaParams, pib, dados, rclOf
         ]} />
         <p className={`mt-2 ${NOTA_DISCRETA}`}>
           A PLOA fecha em zero porque as reservas (R$ {mi(reservas)} mi) são despesa orçada; o resultado antes das reservas é a folga que a proposta guarda. Créditos suplementares necessários: a despesa do cenário acima da despesa executável da PLOA; o limite do art. 6º (R$ {numero(LIMITE_SUPLEMENTAR / 1e9, 2)} bi) vale para todas as fontes (anulação, excesso de arrecadação, superávit financeiro, crédito e reserva de contingência). &ldquo;Excesso e contingência menos créditos&rdquo; positivo indica que o excesso de arrecadação e a reserva de contingência cobririam os créditos; negativo, que o resto precisaria vir de superávit financeiro de 2026, de anulação de outras dotações ou de compressão (a reserva do RPPS não é fonte). Pessoal e demais despesas partem do fechamento projetado de 2026 ({fmtPct(((projD.itens.tot.central / 1e9) / (D.total[2] / 1e9) - 1) * 100)} sobre 2025).
+        </p>
+      </Cartao>
+      <Cartao titulo="Despesa de 2027: referências alternativas">
+        <TabelaItens altura="livre" compacta itens={refsDespesa} legenda="Referências para a despesa executável de 2027 e a PLOA, em R$ milhões" colunas={[
+          { rotulo: 'R$ milhões', valor: (x) => <><span className="font-medium text-ink">{x.rotulo}</span><span className="block text-label font-normal normal-case tracking-normal text-ink-soft">{x.sub}</span></> },
+          { rotulo: 'Proj. 27', valor: (x) => mi(x.v) },
+          { rotulo: 'PLOA 27', valor: () => mi(ploa.desp) },
+          { rotulo: 'Dif. R$ mi', valor: (x) => <span className="font-semibold">{dMi(x.d)}</span> },
+          { rotulo: 'Dif. %', secundaria: true, valor: (x) => fmtPct(x.pct) },
+        ]} />
+        <p className={`mt-2 ${NOTA_DISCRETA}`}>
+          Despesa executável, sem reservas. O resultado orçamentário (receita líquida menos despesa empenhada) foi positivo em 2023, 2024 e 2025: a despesa ficou abaixo da receita, e o limite pela receita supõe que isso se repita; ele acompanha a receita do cenário escolhido acima. Com a folha na tendência recente e o total no limite da receita, as demais despesas teriam de ficar R$ {mi(compressaoNecessaria)} milhões ({numero((compressaoNecessaria / (refInercial - pessoalInercial)) * 100, 1)}%) abaixo da trajetória inercial. A PLOA é o orçamento inicial, que historicamente fecha abaixo do executado e é complementado por créditos adicionais ao longo do ano.
         </p>
       </Cartao>
     </div>
