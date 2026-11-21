@@ -211,7 +211,7 @@ export function VisaoGeral({ vista, elementosPloa, receita, despesa, ipca: ipcaP
       </button>
     )
   }
-  const celulaLinha = (l: Linha): ReactNode => <span className={l.negrito ? 'font-semibold' : ''}>{l.rotulo}</span>
+  const celulaLinha = (l: Linha): ReactNode => <span className={l.negrito ? 'font-semibold' : l.nivel === 1 ? 'text-ink-soft' : ''}>{l.rotulo}</span>
   const colunasTabela = [
     { rotulo: 'R$ milhões', valor: celulaGrupo },
     { rotulo: '2025', secundaria: true, valor: (l: Linha) => (l.chave === 'res' && l.v[2] === 0 ? '–' : mi(l.v[2])) },
@@ -236,6 +236,8 @@ export function VisaoGeral({ vista, elementosPloa, receita, despesa, ipca: ipcaP
   const dcap6 = seis(pick(D, 'despesas_capital'), projD.itens.capd.central, projD.itens.capd.central * (1 + i27))
   const res6 = seis(reservas, 0, 0)
   const antesRes6 = rt6.map((x, j) => x - dcorr6[j] - dcap6[j])
+  /* operações de crédito: 2023–2025 e PLOA pelo quadro da Mensagem; Proj. 26 e Proj. 27 no nível de 2026 */
+  const cred6 = seis(pick(R, 'operacoes_credito'), itensProj.cred.central, itensProj.cred.central)
   const ANOS6 = ['2023', '2024', '2025', 'Proj. 26', 'PLOA 27', 'Proj. 27']
   /* ordem de exibição: a projeção da equipe antes da PLOA, para ler de pronto se a PLOA está acima ou abaixo (os vetores seguem [.., PLOA, Proj. 27]) */
   const ORDEM6 = [0, 1, 2, 3, 5, 4]
@@ -250,6 +252,8 @@ export function VisaoGeral({ vista, elementosPloa, receita, despesa, ipca: ipcaP
     { chave: 'antes', rotulo: '= Resultado antes das reservas', nivel: 0, negrito: true, v: antesRes6 },
     { chave: 'res', rotulo: '(−) Reservas (RPPS e contingência)', nivel: 0, v: res6.map(neg) },
     { chave: 'saldo', rotulo: '= Resultado orçamentário', nivel: 0, negrito: true, v: antesRes6.map((x, j) => x - res6[j]) },
+    { chave: 'cred', rotulo: 'Operações de crédito (incluídas nas receitas de capital)', nivel: 1, v: cred6 },
+    { chave: 'semcred', rotulo: 'Resultado antes das reservas, sem operações de crédito', nivel: 1, v: antesRes6.map((x, j) => x - cred6[j]) },
   ]
   /* gráfico do resultado: antes das reservas, que só existem no orçamento (na PLOA fecham o resultado em zero) e não são executadas */
   const colunasResultado = aplicaBase([
@@ -333,7 +337,9 @@ export function VisaoGeral({ vista, elementosPloa, receita, despesa, ipca: ipcaP
               { rotulo: 'R$ milhões', valor: celulaLinha },
               ...ORDEM6.map((j) => ({ rotulo: ANOS6[j], valor: (l: Linha) => <span className={l.negrito || j === 4 ? 'font-semibold' : ''}>{mi(l.v[j])}</span> })),
             ]} />
-            <p className={`mt-2 ${NOTA_DISCRETA}`}>Proj. 26 e Proj. 27: referência da equipe, sem reservas (não são executadas), de modo que o resultado projetado é a receita menos a despesa executada; na PLOA as reservas fecham o resultado em zero.</p>
+            <p className={`mt-2 ${NOTA_DISCRETA}`}>
+              Resultado do Balanço Orçamentário: receita total, líquida de deduções, menos a despesa empenhada. Não é resultado primário nem nominal: inclui como receita as operações de crédito e como despesa a amortização da dívida, e por isso as duas últimas linhas mostram o resultado sem o crédito. As reservas de RPPS e de contingência só existem no orçamento (nos anos executados são zero), de modo que a comparação entre os anos é feita antes delas e, na PLOA, elas fecham o resultado em zero. 2023–2025: realizado, pelos quadros da Mensagem nº 189/2026. Proj. 26 e Proj. 27: referência da equipe, sem reservas; a Proj. 26 inclui a receita pontual de 2026 e a Proj. 27 a exclui, com o crédito mantido no nível de 2026. PLOA 27: receita estimada menos despesa fixada.
+            </p>
           </Cartao>
         </div>
       )}
