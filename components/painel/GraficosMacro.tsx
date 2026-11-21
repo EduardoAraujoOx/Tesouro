@@ -78,17 +78,17 @@ export type ColunaAnual = {
   /** traço de referência (R$) com o seu nome */
   marca?: { v: number; rotulo: string }
   /** traço de comparação: um valor (R$) marcado sobre a barra, com o percentual da barra sobre ele (usado para pôr a PLOA sobre a nossa projeção: o percentual diz se a PLOA está acima ou abaixo) */
-  compara?: { v: number; rotulo: string }
+  compara?: { v: number; rotulo: string; /** 'pct' (padrão): percentual da barra sobre o traço; 'valor': diferença em R$ milhões (para resultados, em que o percentual sobre uma base pequena não informa) */ modo?: 'pct' | 'valor' }
   /** o que é a barra e como foi calculada, em poucas palavras: aparece ao passar o mouse, tocar ou focar na coluna */
   explicacao?: string
 }
 
 /** Colunas por ano, com o valor em bilhões em cima. Faixa, traço de referência e traço de comparação opcionais. */
-export function ColunasAnuais({ colunas, descricao }: { colunas: ColunaAnual[]; descricao: string }) {
+export function ColunasAnuais({ colunas, descricao, casas = 1 }: { colunas: ColunaAnual[]; descricao: string; /** casas decimais do valor em bilhões (2 para séries pequenas, como o resultado) */ casas?: number }) {
   const max = Math.max(...colunas.flatMap((c) => [c.v, c.faixa?.[1] ?? 0, c.marca?.v ?? 0, c.compara?.v ?? 0]))
   const topo = max * (colunas.some((c) => c.compara) ? 1.16 : 1.08)
-  const h = (x: number) => `${(x / topo) * 100}%`
-  const bi = (x: number) => numero(x / 1e9, 1)
+  const h = (x: number) => `${(Math.max(x, 0) / topo) * 100}%`
+  const bi = (x: number) => numero(x / 1e9, casas)
   return (
     <div role="group" aria-label={descricao}>
       <div className="flex gap-1.5 sm:gap-4">
@@ -125,7 +125,7 @@ export function ColunasAnuais({ colunas, descricao }: { colunas: ColunaAnual[]; 
                   <>
                     <span aria-hidden="true" title={`${c.compara.rotulo}: ${bi(c.compara.v)} bi`} className="absolute inset-x-0 mx-auto max-w-[4.5rem] border-t-2 border-dashed" style={{ bottom: h(c.compara.v), borderColor: dentro ? 'rgb(var(--on-navy))' : 'rgb(var(--navy))' }} />
                     <span aria-hidden="true" className={`absolute inset-x-0 mx-auto max-w-[4.5rem] text-center text-label font-semibold normal-case tabular-nums leading-none tracking-normal ${dentro ? 'text-on-navy' : 'text-ink'}`} style={{ bottom: `calc(${h(c.compara.v)} ${dentro ? '- 1.1rem' : '+ 0.25rem'})` }}>
-                      {fmtPct(dif)}
+                      {c.compara.modo === 'valor' ? `${sinal(c.v - c.compara.v)}${numero(Math.abs(c.v - c.compara.v) / 1e6, 0)} mi` : fmtPct(dif)}
                     </span>
                   </>
                 )}

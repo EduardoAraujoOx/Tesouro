@@ -179,12 +179,13 @@ export function VisaoGeral({ vista, elementosPloa, receita, despesa, ipca: ipcaP
       : { rotulo: '2027', sub: 'equipe', v: refReceitaTotal, tipo: 'ref', faixa: faixaRefReceita, explicacao: expEquipe },
     { rotulo: '2027', sub: 'PLOA', v: ploa27, tipo: 'ploa', compara: { v: vista === 'despesa' ? refDespesa : refReceitaTotal, rotulo: 'Projeção 2027 (equipe)' }, explicacao: expPloa },
   ]
-  const colunas = colunasBrutas.map((c, k) => {
+  /* a base real leva cada ano aos preços de 2027 (o traço de comparação e a faixa acompanham) */
+  const aplicaBase = (cols: ColunaAnual[]) => cols.map((c, k) => {
     if (base === 'nominal') return c
     const f = fatorPrecos(ipca, anosNum[k], 2027)
     return { ...c, v: c.v * f, faixa: c.faixa && ([c.faixa[0] * f, c.faixa[1] * f] as [number, number]), marca: c.marca && { ...c.marca, v: c.marca.v * f }, compara: c.compara && { ...c.compara, v: c.compara.v * f } }
   })
-  const proj26 = colunasBrutas[3].v
+  const colunas = aplicaBase(colunasBrutas)
   const nomeCorteDesp = MESES_NOME[projD.mesCorte - 1]
   const nomeCorte = MESES_NOME[proj.meses - 1]
 
@@ -250,6 +251,15 @@ export function VisaoGeral({ vista, elementosPloa, receita, despesa, ipca: ipcaP
     { chave: 'res', rotulo: '(−) Reservas (RPPS e contingência)', nivel: 0, v: res6.map(neg) },
     { chave: 'saldo', rotulo: '= Resultado orçamentário', nivel: 0, negrito: true, v: antesRes6.map((x, j) => x - res6[j]) },
   ]
+  /* gráfico do resultado: antes das reservas, que só existem no orçamento (na PLOA fecham o resultado em zero) e não são executadas */
+  const colunasResultado = aplicaBase([
+    { rotulo: '2023', v: antesRes6[0], tipo: 'real', explicacao: 'Receita total, líquida de deduções, menos a despesa empenhada no ano.' },
+    { rotulo: '2024', v: antesRes6[1], tipo: 'real', explicacao: 'Receita total, líquida de deduções, menos a despesa empenhada no ano.' },
+    { rotulo: '2025', v: antesRes6[2], tipo: 'real', explicacao: 'Receita total, líquida de deduções, menos a despesa empenhada no ano.' },
+    { rotulo: '2026', sub: 'projeção', v: antesRes6[3], tipo: 'estim', explicacao: 'Receita projetada menos despesa projetada de 2026, pelos mesmos métodos das seções Receita e Despesa.' },
+    { rotulo: '2027', sub: 'equipe', v: antesRes6[5], tipo: 'ref', explicacao: 'Referência da equipe, independente da PLOA: receita de 2027 menos despesa de 2027, ambas sem as reservas, que não são executadas.' },
+    { rotulo: '2027', sub: 'PLOA', v: antesRes6[4], tipo: 'ploa', compara: { v: antesRes6[5], rotulo: 'Projeção 2027 (equipe)', modo: 'valor' }, explicacao: 'Receita estimada menos despesa fixada na proposta, sem as reservas de RPPS e contingência, que fecham o resultado em zero. O traço tracejado é a projeção da equipe e o texto, a diferença da PLOA para ela, em R$ milhões.' },
+  ])
 
   const tituloGrafico = vista === 'despesa' ? 'Despesa total' : 'Receita total, líquida de deduções'
   const legendaGrafico = [
@@ -300,6 +310,24 @@ export function VisaoGeral({ vista, elementosPloa, receita, despesa, ipca: ipcaP
 
       {vista === 'resultado' && (
         <div className="mt-3 space-y-3">
+          <Cartao titulo="Resultado antes das reservas" legenda={<Legenda itens={[
+            { cor: COR.empenhado, rotulo: 'Apurado' },
+            { cor: COR.atualizada, contorno: COR.contornoAtualizada, rotulo: 'Projeção 2026' },
+            { cor: COR.referencia, rotulo: 'Projeção 2027 (equipe)' },
+            { cor: COR.ploa, rotulo: 'PLOA 2027' },
+          ]} />}
+            direita={
+              <div role="group" aria-label="Valores" className="inline-flex overflow-hidden rounded-brand border border-line text-small">
+                {([['nominal', 'Nominal'], ['real', 'Real (R$ de 2027)']] as const).map(([k, r]) => (
+                  <button key={k} type="button" aria-pressed={base === k} onClick={() => setBase(k)} className={`px-3 py-1 ${base === k ? 'bg-navy font-semibold text-on-navy' : 'bg-paper text-ink'}`}>{r}</button>
+                ))}
+              </div>
+            }>
+            <ColunasAnuais colunas={colunasResultado} casas={2} descricao={`Resultado antes das reservas, em R$ bilhões, ${base === 'real' ? 'a preços de 2027' : 'valores correntes'}: ${colunasResultado.map((c) => `${c.rotulo}${c.sub ? ' ' + c.sub : ''} ${numero(c.v / 1e9, 2)}`).join('; ')}`} />
+            <p className={`mt-2 ${NOTA_DISCRETA}`}>
+              R$ bilhões, valores correntes{base === 'real' ? ' (reais de 2027)' : ''}. Receita total menos despesa, antes das reservas; traço tracejado na barra da PLOA: projeção 2027 da equipe, e o texto é a diferença da PLOA para ela, em R$ milhões.
+            </p>
+          </Cartao>
           <Cartao titulo="Resultado orçamentário">
             <TabelaItens altura="livre" itens={linhasResultado} legenda="Resultado orçamentário, em R$ milhões" colunas={[
               { rotulo: 'R$ milhões', valor: celulaLinha },
