@@ -39,7 +39,7 @@ export function DespesaPorOrgao({ orgaos, linhas }: { orgaos: OrgaosArt5; linhas
         { rotulo: 'Dif. %', valor: (x) => fmtPct(x.a26 > 0 ? (x.total / x.a26 - 1) * 100 : undefined) },
       ]} />
       <p className={`mt-2 ${NOTA_DISCRETA}`}>
-        Art. 5º do projeto de lei (Mensagem nº 189/2026): a despesa fixada à conta dos recursos do Tesouro e de outras fontes, que somam R$ {numero(orgaos.total.total / 1e9, 2)} bi, igual à receita estimada. Em outras fontes, R$ {mi(orgaos.poderes.flatMap((p) => p.orgaos).find((o) => o.cod === '60')?.outras ?? 0)} milhões são do Instituto de Previdência (recursos do RPPS). Dif. %: PLOA 2027 sobre a dotação atualizada de 2026 do órgão (Portal de Dados Abertos).
+        Art. 5º do projeto de lei (Mensagem nº 189/2026): a despesa fixada à conta dos recursos do Tesouro e de outras fontes, que somam R$ {numero(orgaos.total.total / 1e9, 2)} bi, igual à receita estimada. Em outras fontes, R$ {mi(orgaos.poderes.flatMap((p) => p.orgaos).find((o) => o.cod === '60')?.outras ?? 0)} milhões são do Instituto de Previdência (recursos do RPPS). Dif. %: PLOA 2027 sobre a dotação atualizada de 2026 do órgão (Portal de Dados Abertos). Visão do Estado inteiro: não segue o recorte nem a unidade das outras visões.
         {encargos?.detalhe && <> Encargos gerais: {encargos.detalhe.map((d) => `${d.nome.replace('Encargos gerais, ', '')} R$ ${mi(d.valor)} mi${d.inclui ? ` (inclui ${d.inclui.replace('reserva de contingência de R$ 668.822.016', 'a reserva de contingência de R$ 669 mi')})` : ''}`).join('; ')}.</>}
       </p>
     </Cartao>

@@ -1,6 +1,6 @@
 'use client'
 
-import { Fragment, useEffect, useId, useMemo, useState } from 'react'
+import { Fragment, useEffect, useId, useMemo, useState, type ReactNode } from 'react'
 import { bilhoes, milhoes, numero, pct } from '@/lib/formato'
 import { IDENTIDADE } from '@/lib/identidade-painel'
 import { Cartao, TabelaDelta, TabelaItens } from './Graficos'
@@ -207,6 +207,9 @@ export function Painel({ linhas, nomes, coleta, outrosPoderes, macro, receitaMes
   )
 
   const abaAtual = ABAS.find((a) => a.id === aba)!
+  /* Recorte e Unidade só valem para as visões que os respeitam; órgão (art. 5º) e Poderes e emendas são do Estado inteiro */
+  const comFiltros = (c: ReactNode) => <><div className="print:hidden">{filtros}</div><div className="mt-3 space-y-3">{c}</div></>
+
   return (
     <div className="painel mx-auto max-w-[1600px] px-4 pb-8 sm:px-5 md:px-8">
       {/* barra no topo da página, fixa ao rolar: identidade, seções (abas no computador, menu no celular) e exportação */}
@@ -285,11 +288,9 @@ export function Painel({ linhas, nomes, coleta, outrosPoderes, macro, receitaMes
         )}
         {aba === 'despesa' && (
           <>
-            <div className="print:hidden">{filtros}</div>
-
-            <div className="mt-3">
+            <div>
               <Subvisoes rotulo="O que ver na despesa" itens={[
-                { id: 'fechamento', rotulo: 'PLOA 2027 e fechamento de 2026', conteudo: (
+                { id: 'fechamento', rotulo: 'PLOA 2027 e fechamento de 2026', conteudo: comFiltros(
               <Cartao titulo={uoAtiva ? 'Ações: PLOA 2027 contra o fechamento projetado de 2026' : 'Unidades orçamentárias: PLOA 2027 contra o fechamento projetado de 2026'}>
                 <Nota titulo="Metodologia">
                   <p>Fechamento projetado de 2026 (Proj. 26): empenhado de cada linha até {dataCorte} vezes a razão entre o fechamento projetado do seu grupo de natureza e o empenhado do grupo até a mesma data (Método e fontes, Projeção de 2026). Pressupõe que cada unidade segue o ritmo do seu grupo até dezembro; unidades com obras ou despesas concentradas no fim do ano podem fugir disso. Ordenado pela diferença entre a PLOA e a Proj. 26, da maior insuficiência à maior folga; despesas de 2026 que não se repetem em 2027 (obras concluídas, por exemplo) também aparecem como insuficiência.</p>
@@ -307,13 +308,13 @@ export function Painel({ linhas, nomes, coleta, outrosPoderes, macro, receitaMes
                 </div>
               </Cartao>
                 ) },
-                { id: 'variacoes', rotulo: 'Maiores variações', conteudo: (
+                { id: 'variacoes', rotulo: 'Maiores variações', conteudo: comFiltros(
               <Cartao titulo={uoAtiva ? 'Ações: variação da PLOA 2027 sobre a dotação atualizada de 2026' : 'Unidades orçamentárias: variação da PLOA 2027 sobre a dotação atualizada de 2026'}>
                 <TabelaDelta itens={variacao} delta={(i) => i.v[PLOA] - i.v[ATU]} rotuloBarra={`${tituloNivel}|PLOA 2027 menos atualizada 2026`} primeira={nomeItem}
                   legenda="Maiores aumentos e reduções da PLOA 2027 sobre a dotação atualizada de 2026, em R$ milhões" colunas={colsDelta} />
               </Cartao>
                 ) },
-                { id: 'tabela', rotulo: uoAtiva ? 'Todas as ações da unidade' : 'Todas as unidades', conteudo: (
+                { id: 'tabela', rotulo: uoAtiva ? 'Todas as ações da unidade' : 'Todas as unidades', conteudo: comFiltros(
       <section aria-label={tituloNivel} data-longa className="min-w-0 rounded-brand border border-line bg-paper p-3 sm:p-4 md:p-5">
         <h2 className="text-body font-semibold md:text-lead">{tituloNivel}</h2>
         <div tabIndex={0} role="region" aria-label={`Tabela: ${tituloNivel}`} className="rola mt-3 max-h-[36rem] overflow-auto rounded-brand border border-line">
@@ -366,7 +367,7 @@ export function Painel({ linhas, nomes, coleta, outrosPoderes, macro, receitaMes
       </section>
                 ) },
                 { id: 'orgao', rotulo: 'Por órgão (art. 5º)', conteudo: <DespesaPorOrgao orgaos={orgaos} linhas={linhas} /> },
-                { id: 'grupos', rotulo: 'Por grupo e fonte', conteudo: (
+                { id: 'grupos', rotulo: 'Por grupo e fonte', conteudo: comFiltros(
                   <div className="space-y-3">
                     <Cartao titulo="Despesa por grupo de natureza (GND)">
                       <TabelaDelta itens={porGnd} delta={(i) => i.v[PLOA] - i.v[ATU]} rotuloBarra="Grupo|PLOA 2027 menos atualizada 2026" primeira={nomeItem}
@@ -379,7 +380,7 @@ export function Painel({ linhas, nomes, coleta, outrosPoderes, macro, receitaMes
                   </div>
                 ) },
                 { id: 'ajustes', rotulo: 'Poderes e emendas', conteudo: <PoderesEmendas linhas={linhas} /> },
-                { id: 'acoes', rotulo: 'Ações selecionadas', conteudo: (
+                { id: 'acoes', rotulo: 'Ações selecionadas', conteudo: comFiltros(
               <>
             {/* alertas */}
       <section aria-label="Pontos de atenção" className="mt-4 min-w-0 rounded-brand border border-line bg-paper p-3 sm:p-4 md:p-5">
