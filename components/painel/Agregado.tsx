@@ -183,11 +183,11 @@ export function VisaoGeral({ funcoes, contingencia, elementosPloa, rclOficial, f
     ? `Fechamento projetado de 2026: despesa acumulada até ${mesDesp} dividida pela fração do ano que a mesma data representou em 2022–2025 (folha, juros e amortização pela liquidação; demais, média de empenhada e liquidada). O traço preto é a faixa pelas frações extremas.`
     : `Fechamento projetado de 2026: arrecadação acumulada até ${mesRec} dividida pela fração do ano que o mesmo período costuma representar (média de 2022–2025), por linha de receita. O traço preto é a faixa pelas frações extremas.`
   const expPloa = desp
-    ? 'Despesa fixada na proposta de lei orçamentária (Mensagem nº 189/2026), sem as reservas de RPPS, contingência e Fundo Soberano, que não são executadas.'
-    : 'Receita estimada na proposta de lei orçamentária (Mensagem nº 189/2026), líquida das deduções para municípios e Fundeb.'
+    ? 'Despesa fixada na proposta de lei orçamentária (Mensagem nº 189/2026), sem as reservas de RPPS, contingência e Fundo Soberano, que não são executadas. O traço tracejado é a projeção da equipe e o percentual mostra quanto a PLOA está acima ou abaixo dela.'
+    : 'Receita estimada na proposta de lei orçamentária (Mensagem nº 189/2026), líquida das deduções para municípios e Fundeb. O traço tracejado é a projeção da equipe e o percentual mostra quanto a PLOA está acima ou abaixo dela.'
   const expEquipe = desp
-    ? `Referência independente da PLOA: o fechamento projetado de 2026 corrigido só pelo IPCA (+${numero(i27 * 100, 1)}%), sem crescimento real, e por isso funciona como piso. O traço tracejado é a PLOA; a faixa vem das frações sazonais extremas de 2026.`
-    : `Referência independente da PLOA: o fechamento projetado de 2026, sem a receita pontual, corrigido por IPCA e PIB real (+${numero(g27 * 100, 1)}%); o petróleo segue o Brent (US$ ${numero(BRENT_CENTRAL, 0)}) e o câmbio (R$ ${numero(CAMBIO_CENTRAL, 2)}) do Focus. O traço tracejado é a PLOA; a faixa é ± o desvio entre o crescimento dos impostos do ES e o do PIB nominal.`
+    ? `Referência independente da PLOA: o fechamento projetado de 2026 corrigido só pelo IPCA (+${numero(i27 * 100, 1)}%), sem crescimento real, e por isso funciona como piso. A faixa vem das frações sazonais extremas de 2026.`
+    : `Referência independente da PLOA: o fechamento projetado de 2026, sem a receita pontual, corrigido por IPCA e PIB real (+${numero(g27 * 100, 1)}%); o petróleo segue o Brent (US$ ${numero(BRENT_CENTRAL, 0)}) e o câmbio (R$ ${numero(CAMBIO_CENTRAL, 2)}) do Focus. A faixa é ± o desvio entre o crescimento dos impostos do ES e o do PIB nominal.`
   const colunasBrutas: ColunaAnual[] = [
     { rotulo: '2023', v: serieTotal[0], tipo: 'real', explicacao: expReal },
     { rotulo: '2024', v: serieTotal[1], tipo: 'real', explicacao: expReal },
@@ -195,10 +195,10 @@ export function VisaoGeral({ funcoes, contingencia, elementosPloa, rclOficial, f
     vista === 'despesa'
       ? { rotulo: '2026', sub: 'projeção', v: projD.itens.tot.central, tipo: 'estim', faixa: [projD.itens.tot.min as number, projD.itens.tot.max as number], explicacao: exp26 }
       : { rotulo: '2026', sub: 'projeção', v: proj.central, tipo: 'estim', faixa: [proj.min, proj.max], explicacao: exp26 },
-    { rotulo: '2027', sub: 'PLOA', v: ploa27, tipo: 'ploa', explicacao: expPloa },
     vista === 'despesa'
-      ? { rotulo: '2027', sub: 'equipe', v: refDespesa, tipo: 'ref', faixa: faixaRefDespesa, compara: { v: ploa27, rotulo: 'PLOA 2027' }, explicacao: expEquipe }
-      : { rotulo: '2027', sub: 'equipe', v: refReceitaTotal, tipo: 'ref', faixa: faixaRefReceita, compara: { v: ploa27, rotulo: 'PLOA 2027' }, explicacao: expEquipe },
+      ? { rotulo: '2027', sub: 'equipe', v: refDespesa, tipo: 'ref', faixa: faixaRefDespesa, explicacao: expEquipe }
+      : { rotulo: '2027', sub: 'equipe', v: refReceitaTotal, tipo: 'ref', faixa: faixaRefReceita, explicacao: expEquipe },
+    { rotulo: '2027', sub: 'PLOA', v: ploa27, tipo: 'ploa', compara: { v: vista === 'despesa' ? refDespesa : refReceitaTotal, rotulo: 'Projeção 2027 (equipe)' }, explicacao: expPloa },
   ]
   const colunas = colunasBrutas.map((c, k) => {
     if (base === 'nominal') return c
@@ -236,8 +236,8 @@ export function VisaoGeral({ funcoes, contingencia, elementosPloa, rclOficial, f
     { rotulo: 'R$ milhões', valor: celulaGrupo },
     { rotulo: '2025', secundaria: true, valor: (l: Linha) => (l.chave === 'res' && l.v[2] === 0 ? '–' : mi(l.v[2])) },
     { rotulo: 'Proj. 26', secundaria: true, valor: (l: Linha) => (l.proj && l.chave !== 'res' ? <span title={l.proj.base === 'resíduo' ? 'Resultado: receita líquida projetada menos a soma das linhas' : undefined}>{mi(l.proj.central)}</span> : '–') },
-    { rotulo: 'PLOA 27', valor: (l: Linha) => <span className="font-semibold">{mi(l.v[4])}</span> },
     { rotulo: 'Proj. 27', valor: (l: Linha) => { const r = refDe(l); return r === null ? '–' : <span title={l.proj?.pontual ? 'Sem a receita pontual de 2026 (indenizações, restituições e ressarcimentos), que não se repete' : undefined}>{mi(r)}{l.proj?.pontual ? '†' : ''}</span> } },
+    { rotulo: 'PLOA 27', valor: (l: Linha) => <span className="font-semibold">{mi(l.v[4])}</span> },
     { rotulo: 'Dif. R$ mi', secundaria: true, valor: (l: Linha) => { const r = refDe(l); return r === null ? '–' : dMi(l.v[4] - r) } },
     { rotulo: 'Dif. %', valor: (l: Linha) => { const d = difPct(l); return d === null ? '–' : <span className={`font-semibold ${corDif(d)}`}>{fmtPct(d)}</span> } },
   ]
@@ -265,6 +265,8 @@ export function VisaoGeral({ funcoes, contingencia, elementosPloa, rclOficial, f
   const res6 = seis(reservas, 0, 0)
   const antesRes6 = rt6.map((x, j) => x - dcorr6[j] - dcap6[j])
   const ANOS6 = ['2023', '2024', '2025', 'Proj. 26', 'PLOA 27', 'Proj. 27']
+  /* ordem de exibição: a projeção da equipe antes da PLOA, para ler de pronto se a PLOA está acima ou abaixo (os vetores seguem [.., PLOA, Proj. 27]) */
+  const ORDEM6 = [0, 1, 2, 3, 5, 4]
   const pessoal6 = seis(pick(D, 'pessoal'), projD.itens.pessoal.central, projD.itens.pessoal.central * (1 + i27))
   const rgf3q = (ano: number) => rclOficial.rgfPessoal.find((x) => x.ano === ano && x.quad === 3)?.valor ?? NaN
   const rgfUltimo = rclOficial.rgfPessoal[rclOficial.rgfPessoal.length - 1]
@@ -355,8 +357,8 @@ export function VisaoGeral({ funcoes, contingencia, elementosPloa, rclOficial, f
   const legendaGrafico = [
     { cor: COR.empenhado, rotulo: vista === 'despesa' ? 'Executado' : 'Arrecadado' },
     { cor: COR.atualizada, contorno: COR.contornoAtualizada, rotulo: 'Projeção 2026' },
-    { cor: COR.ploa, rotulo: 'PLOA 2027' },
     { cor: COR.referencia, rotulo: 'Projeção 2027 (equipe)' },
+    { cor: COR.ploa, rotulo: 'PLOA 2027' },
   ]
   const notaReferencia = (
     <Nota titulo="Metodologia">
@@ -394,7 +396,7 @@ export function VisaoGeral({ funcoes, contingencia, elementosPloa, rclOficial, f
             }>
             <ColunasAnuais colunas={colunas} descricao={`${tituloGrafico}, em R$ bilhões, ${base === 'real' ? 'a preços de 2027' : 'valores correntes'}: ${colunas.map((c) => `${c.rotulo}${c.sub ? ' ' + c.sub : ''} ${numero(c.v / 1e9, 1)}`).join('; ')}`} />
             <p className={`mt-2 ${NOTA_DISCRETA}`}>
-              R$ bilhões, valores correntes{base === 'real' ? ' (reais de 2027)' : ''}. Linha preta: faixa; traço tracejado: PLOA 2027{vista === 'despesa' ? ' (sem reservas)' : ''}.
+              R$ bilhões, valores correntes{base === 'real' ? ' (reais de 2027)' : ''}. Linha preta: faixa; traço tracejado na barra da PLOA{vista === 'despesa' ? ' (sem reservas)' : ''}: projeção 2027 da equipe, e o percentual é a PLOA sobre a projeção.
             </p>
           </Cartao>
 
@@ -429,21 +431,21 @@ export function VisaoGeral({ funcoes, contingencia, elementosPloa, rclOficial, f
           <Cartao titulo="Resultado orçamentário">
             <TabelaItens altura="livre" itens={linhasResultado} legenda="Resultado orçamentário, em R$ milhões" colunas={[
               { rotulo: 'R$ milhões', valor: celulaLinha },
-              ...ANOS6.map((a, j) => ({ rotulo: a, valor: (l: Linha) => <span className={l.negrito || j === 4 ? 'font-semibold' : ''}>{mi(l.v[j])}</span> })),
+              ...ORDEM6.map((j) => ({ rotulo: ANOS6[j], valor: (l: Linha) => <span className={l.negrito || j === 4 ? 'font-semibold' : ''}>{mi(l.v[j])}</span> })),
             ]} />
             <p className={`mt-2 ${NOTA_DISCRETA}`}>Proj. 26 e Proj. 27: referência da equipe, sem reservas (não são executadas), de modo que o resultado projetado é a receita menos a despesa executada; na PLOA as reservas fecham o resultado em zero.</p>
           </Cartao>
           <Cartao titulo="Da receita total à RCL (LRF, art. 2º, IV)">
             <TabelaItens altura="livre" itens={linhasRcl} legenda="Da receita total à receita corrente líquida, em R$ milhões" colunas={[
               { rotulo: 'R$ milhões', valor: celulaLinha },
-              ...ANOS6.map((a, j) => ({ rotulo: a, valor: (l: Linha) => <span className={l.negrito || j === 4 ? 'font-semibold' : ''}>{mi(l.v[j])}</span> })),
+              ...ORDEM6.map((j) => ({ rotulo: ANOS6[j], valor: (l: Linha) => <span className={l.negrito || j === 4 ? 'font-semibold' : ''}>{mi(l.v[j])}</span> })),
             ]} />
             <p className={`mt-2 ${NOTA_DISCRETA}`}>2023–2025: RCL dos 12 meses até dezembro (RGF/RREO); as deduções previdenciárias vêm por diferença. PLOA 27: Quadro VI da Mensagem nº 189/2026 (R$ {numero(rclOficial.ploa27.rcl / 1e9, 2)} bi); o título do quadro diz 2026, mas os valores são os de 2027. Proj. 26 e Proj. 27: as deduções previdenciárias na proporção média de 2023–25 das receitas correntes ({numero(propPrevid * 100, 1)}%). A RCL é a base dos limites da LRF e da LDO; a receita total é a que a lei orçamentária fixa e iguala à despesa.</p>
           </Cartao>
           <Cartao titulo="Indicadores (% da RCL)">
             <TabelaItens altura="livre" itens={indicadores} legenda="Indicadores, em % da RCL (LRF, art. 2º, IV)" colunas={[
               { rotulo: 'Indicador', valor: (x) => x.rotulo },
-              ...ANOS6.map((a, j) => ({ rotulo: a, valor: (x: (typeof indicadores)[number]) => (Number.isFinite(x.v[j]) ? `${numero(x.v[j], 1)}%` : '–') })),
+              ...ORDEM6.map((j) => ({ rotulo: ANOS6[j], valor: (x: (typeof indicadores)[number]) => (Number.isFinite(x.v[j]) ? `${numero(x.v[j], 1)}%` : '–') })),
             ]} />
             <p className={`mt-2 ${NOTA_DISCRETA}`}>Despesa bruta da PLOA e das projeções sobre a RCL acima. O pessoal líquido do RGF é o do Poder Executivo, com as exclusões da LRF (inativos pagos com recursos vinculados, indenizações e outras), e por isso não é comparável com o pessoal bruto de todos os Poderes; no 2º quadrimestre de 2026 era de {numero(rgfUltimo.valor, 1)}%.</p>
           </Cartao>
@@ -475,8 +477,8 @@ export function VisaoGeral({ funcoes, contingencia, elementosPloa, rclOficial, f
               { rotulo: 'Indicador', valor: (l) => <><span className="font-medium text-ink">{l.rotulo}</span><span className="block text-label font-normal normal-case tracking-normal text-ink-soft">{l.base}</span></> },
               { rotulo: `${lrf3q25.ano} (${lrf3q25.quad}º quad.)`, secundaria: true, valor: (l) => l.v25 },
               { rotulo: `${lrfUlt.ano} (${lrfUlt.quad}º quad.)`, valor: (l) => l.v26 },
-              { rotulo: 'PLOA 27', valor: (l) => <span className="font-semibold">{l.ploa}</span> },
               { rotulo: 'Proj. 27', valor: (l) => l.proj },
+              { rotulo: 'PLOA 27', valor: (l) => <span className="font-semibold">{l.ploa}</span> },
             ]} />
             <p className={`mt-2 ${NOTA_DISCRETA}`}>2025 e 2026: RGF do Poder Executivo (Tesouro Nacional). Projeções (≈): pessoal líquido = pessoal bruto do Executivo (PLOA ou referência) vezes a razão entre o líquido do RGF e o bruto empenhado em 2025 ({numero(razaoLiqBruto * 100, 0)}%), sobre a RCL da PLOA (R$ {numero(rcl6[4] / 1e9, 2)} bi) ou a nossa (R$ {numero(rcl6[5] / 1e9, 2)} bi); dívida consolidada de {lrfUlt.ano} ({lrfUlt.quad}º quadrimestre) mais as operações de crédito e menos a amortização da PLOA 2027 (R$ {numero(dc27 / 1e9, 2)} bi); operações de crédito: captação da PLOA e, na Proj. 27, a de 2026. Não projetamos a dívida líquida nem as garantias, que dependem de caixa e de contratos.</p>
           </Cartao>
@@ -484,8 +486,8 @@ export function VisaoGeral({ funcoes, contingencia, elementosPloa, rclOficial, f
             <TabelaItens altura="livre" compacta itens={linhasCapag} legenda="Capacidade de pagamento (CAPAG), três indicadores e classificação" colunas={[
               { rotulo: 'Indicador', valor: (l) => <><span className="font-medium text-ink">{l.rotulo}</span><span className="block text-label font-normal normal-case tracking-normal text-ink-soft">{l.base}</span></> },
               ...[0, 1, 2].map((j) => ({ rotulo: String(2023 + j), secundaria: j < 2, valor: (l: (typeof linhasCapag)[number]) => l.v[j] })),
-              { rotulo: 'PLOA 27', valor: (l: (typeof linhasCapag)[number]) => <span className="font-semibold">{l.ploa}</span> },
               { rotulo: 'Proj. 27', valor: (l: (typeof linhasCapag)[number]) => l.proj },
+              { rotulo: 'PLOA 27', valor: (l: (typeof linhasCapag)[number]) => <span className="font-semibold">{l.ploa}</span> },
             ]} />
             <p className={`mt-2 ${NOTA_DISCRETA}`}>Edições do Tesouro Nacional; faixas da Portaria Normativa MF nº 1.583/2023. Endividamento: mesma dívida consolidada projetada acima. Poupança corrente: razão entre as despesas correntes e as receitas correntes menos municípios e Fundeb, multiplicada por um fator calibrado nas edições de 2023 a 2025 ({numero(calibraMed, 2)}; erro de até ±{numero(calibraErro, 0)} p.p.), porque o conceito de receitas correntes ajustadas da STN não é reproduzível com os quadros da PLOA. A liquidez depende da posição de caixa e não é projetada; em 2025 estava em {pcN(capagAno(2025)?.liquidez)}, contra o piso de 5% da nota A. Em qualquer das projeções, endividamento e poupança permanecem na faixa da nota A.</p>
           </Cartao>

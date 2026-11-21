@@ -77,7 +77,7 @@ export type ColunaAnual = {
   faixa?: [number, number]
   /** traço de referência (R$) com o seu nome */
   marca?: { v: number; rotulo: string }
-  /** traço de comparação: um valor (R$) marcado sobre a barra, com a diferença da barra para ele (usado para pôr a PLOA sobre a nossa projeção) */
+  /** traço de comparação: um valor (R$) marcado sobre a barra, com o percentual da barra sobre ele (usado para pôr a PLOA sobre a nossa projeção: o percentual diz se a PLOA está acima ou abaixo) */
   compara?: { v: number; rotulo: string }
   /** o que é a barra e como foi calculada, em poucas palavras: aparece ao passar o mouse, tocar ou focar na coluna */
   explicacao?: string
@@ -86,7 +86,7 @@ export type ColunaAnual = {
 /** Colunas por ano, com o valor em bilhões em cima. Faixa, traço de referência e traço de comparação opcionais. */
 export function ColunasAnuais({ colunas, descricao }: { colunas: ColunaAnual[]; descricao: string }) {
   const max = Math.max(...colunas.flatMap((c) => [c.v, c.faixa?.[1] ?? 0, c.marca?.v ?? 0, c.compara?.v ?? 0]))
-  const topo = max * 1.08
+  const topo = max * (colunas.some((c) => c.compara) ? 1.16 : 1.08)
   const h = (x: number) => `${(x / topo) * 100}%`
   const bi = (x: number) => numero(x / 1e9, 1)
   return (
@@ -95,7 +95,7 @@ export function ColunasAnuais({ colunas, descricao }: { colunas: ColunaAnual[]; 
         {colunas.map((c, k) => {
           /* a dica abre alinhada à esquerda nas primeiras colunas, à direita nas últimas e centrada nas do meio, para não sair do cartão */
           const lado = k < colunas.length / 3 ? 'left-0' : k >= (colunas.length * 2) / 3 ? 'right-0' : 'left-1/2 -translate-x-1/2'
-          const dif = c.compara ? (c.compara.v / c.v - 1) * 100 : null
+          const dif = c.compara ? (c.v / c.compara.v - 1) * 100 : null
           const dentro = c.compara ? c.compara.v < c.v : false
           return (
             <div key={c.rotulo + (c.sub ?? '')} className={`group relative flex min-w-0 flex-1 flex-col items-center ${c.explicacao ? 'cursor-help rounded-brand focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-navy' : ''}`}
@@ -114,7 +114,7 @@ export function ColunasAnuais({ colunas, descricao }: { colunas: ColunaAnual[]; 
                     borderRadius: '4px 4px 0 0',
                   }} />
                 </div>
-                <span className="absolute inset-x-0 text-center text-small font-semibold tabular-nums leading-none text-ink" style={{ bottom: `calc(${h(Math.max(c.v, c.faixa?.[1] ?? 0, c.marca?.v ?? 0))} + 0.3rem)` }}>{bi(c.v)}</span>
+                <span className="absolute inset-x-0 text-center text-small font-semibold tabular-nums leading-none text-ink" style={{ bottom: `calc(${h(Math.max(c.v, c.faixa?.[1] ?? 0, c.marca?.v ?? 0, c.compara?.v ?? 0))} + ${c.compara && !dentro ? '1.35rem' : '0.3rem'})` }}>{bi(c.v)}</span>
                 {c.faixa && (
                   <span aria-hidden="true" className="absolute left-1/2 w-0.5 -translate-x-1/2 bg-ink" style={{ bottom: h(c.faixa[0]), height: `calc(${h(c.faixa[1])} - ${h(c.faixa[0])})` }} />
                 )}
