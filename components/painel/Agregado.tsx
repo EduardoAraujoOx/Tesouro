@@ -180,14 +180,14 @@ export function VisaoGeral({ funcoes, contingencia, elementosPloa, rclOficial, f
     ? 'Despesa empenhada no ano, incluídas as intraorçamentárias (Portal de Dados Abertos do ES).'
     : 'Receita total arrecadada no ano, líquida das deduções para municípios e Fundeb (quadro de evolução da receita da PLOA 2027 e Portal de Dados Abertos).'
   const exp26 = desp
-    ? `Fechamento projetado de 2026: despesa acumulada até ${mesDesp} dividida pela fração do ano que a mesma data representou em 2022–2025 (folha, juros e amortização pela liquidação; demais, média de empenhada e liquidada). O traço preto é a faixa pelas frações extremas.`
-    : `Fechamento projetado de 2026: arrecadação acumulada até ${mesRec} dividida pela fração do ano que o mesmo período costuma representar (média de 2022–2025), por linha de receita. O traço preto é a faixa pelas frações extremas.`
+    ? `A despesa de 2026 foi projetada com base no realizado até ${mesDesp} (Portal de Dados Abertos). Os meses restantes seguem o comportamento de anos anteriores (média de 2022–2025), apurado por grupo de despesa.`
+    : `A receita de 2026 foi projetada com base no realizado até ${mesRec} (Portal de Dados Abertos). Os meses restantes seguem o comportamento de anos anteriores (média de 2022–2025), apurado por linha de receita.`
   const expPloa = desp
-    ? 'Despesa fixada na proposta de lei orçamentária (Mensagem nº 189/2026), sem as reservas de RPPS, contingência e Fundo Soberano, que não são executadas. O traço tracejado é a projeção da equipe e o percentual mostra quanto a PLOA está acima ou abaixo dela.'
-    : 'Receita estimada na proposta de lei orçamentária (Mensagem nº 189/2026), líquida das deduções para municípios e Fundeb. O traço tracejado é a projeção da equipe e o percentual mostra quanto a PLOA está acima ou abaixo dela.'
+    ? 'Despesa fixada na proposta de lei orçamentária (Mensagem nº 189/2026), sem as reservas de RPPS, contingência e Fundo Soberano, que não são executadas. O traço tracejado é a projeção da equipe e o percentual, a PLOA sobre ela.'
+    : 'Receita estimada na proposta de lei orçamentária (Mensagem nº 189/2026), líquida das deduções para municípios e Fundeb. O traço tracejado é a projeção da equipe e o percentual, a PLOA sobre ela.'
   const expEquipe = desp
-    ? `Referência independente da PLOA: o fechamento projetado de 2026 corrigido só pelo IPCA (+${numero(i27 * 100, 1)}%), sem crescimento real, e por isso funciona como piso. A faixa vem das frações sazonais extremas de 2026.`
-    : `Referência independente da PLOA: o fechamento projetado de 2026, sem a receita pontual, corrigido por IPCA e PIB real (+${numero(g27 * 100, 1)}%); o petróleo segue o Brent (US$ ${numero(BRENT_CENTRAL, 0)}) e o câmbio (R$ ${numero(CAMBIO_CENTRAL, 2)}) do Focus. A faixa é ± o desvio entre o crescimento dos impostos do ES e o do PIB nominal.`
+    ? `Referência da equipe, independente da PLOA: a despesa projetada de 2026 corrigida só pelo IPCA (+${numero(i27 * 100, 1)}%), sem crescimento real. Funciona como piso.`
+    : `Referência da equipe, independente da PLOA: a receita projetada de 2026, sem a parcela pontual, corrigida por IPCA e PIB real (+${numero(g27 * 100, 1)}%). O petróleo segue o Brent (US$ ${numero(BRENT_CENTRAL, 0)}) e o câmbio (R$ ${numero(CAMBIO_CENTRAL, 2)}) do Focus.`
   const colunasBrutas: ColunaAnual[] = [
     { rotulo: '2023', v: serieTotal[0], tipo: 'real', explicacao: expReal },
     { rotulo: '2024', v: serieTotal[1], tipo: 'real', explicacao: expReal },
