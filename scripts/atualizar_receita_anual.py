@@ -9,7 +9,10 @@ Conferência: os anos 2023 a 2025 são comparados à receita total do quadro "Ev
 (data/ploa2027-macro.json); o script falha se a diferença passar de 1%.
 
 Uso:
-    python3 scripts/atualizar_receita_anual.py [ANO ...]      (padrão: 2019 até o ano anterior)
+    python3 scripts/atualizar_receita_anual.py [ANO ...]      (padrão: 2022 até o ano anterior)
+
+Os arquivos de 2021 e anteriores têm outro leiaute (livro contábil com débito e crédito, sem colunas de arrecadação
+bruta e dedução) e não são lidos por este script.
 """
 import importlib.util
 import json
@@ -43,7 +46,7 @@ def liquida(ano, ids):
 
 
 def main():
-    anos = [int(a) for a in sys.argv[1:]] or list(range(2019, date.today().year))
+    anos = [int(a) for a in sys.argv[1:]] or list(range(2022, date.today().year))
     saida = json.loads(SAIDA.read_text(encoding="utf-8")) if SAIDA.exists() else {"anos": {}}
     ids = ar.recursos()
     macro = json.loads(ar.MACRO.read_text(encoding="utf-8"))

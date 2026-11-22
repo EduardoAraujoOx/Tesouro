@@ -58,7 +58,7 @@ function Tabela({ titulo, rotuloReal, linhas }: { titulo: string; rotuloReal: st
  * anos anteriores vêm da arrecadação do Portal. 2026 é a projeção da equipe. Sem inferência para 2027: só a média, como informação.
  */
 export function OrcadoExecutado({ receita, dados, loa, receitaAnual }: { receita: LinhaMacro[]; dados: DadosReceita; loa: LoaAnual; receitaAnual: ReceitaAnual }) {
-  const { rec, desp, anosMedia, de, ate } = useMemo(() => {
+  const { rec, desp, de, ate } = useMemo(() => {
     const R = Object.fromEntries(receita.map((x) => [x.chave, x.valores])) as Record<string, number[]>
     const it = projecaoItens(dados)
     const proj = projetaDespesa2026()
@@ -89,7 +89,7 @@ export function OrcadoExecutado({ receita, dados, loa, receitaAnual }: { receita
       </div>
       <Nota titulo="Como foi calculado" larga>
         <p>
-          A LOA é a lei orçamentária anual aprovada, antes de qualquer alteração. Receita estimada e despesa fixada coincidem em cada ano, porque a lei é aprovada equilibrada, e a despesa fixada inclui as reservas de RPPS e de contingência. A receita realizada é a arrecadação líquida das deduções (transferências a municípios e Fundeb), com as intraorçamentárias e as operações de crédito, e a despesa é a empenhada no ano. De {de} a {ate}, o orçamento é o mesmo em que o painel mede a PLOA 2027; os valores de 2023 a 2025 são os do quadro Resultado. A linha de 2026 é a projeção da equipe e fica fora das médias. A média é simples, dos percentuais dos {anosMedia.length} anos e, quando há mais de quatro, também dos quatro últimos.
+          A LOA é a lei orçamentária anual aprovada, antes de qualquer alteração. Receita estimada e despesa fixada coincidem em cada ano, porque a lei é aprovada equilibrada, e a despesa fixada inclui as reservas de RPPS e de contingência. A receita realizada é a arrecadação líquida das deduções (transferências a municípios e Fundeb), com as intraorçamentárias e as operações de crédito, e a despesa é a empenhada no ano. De {de} a {ate}, o orçamento é o mesmo em que o painel mede a PLOA 2027; os valores de 2023 a 2025 são os do quadro Resultado. A linha de 2026 é a projeção da equipe e fica fora das médias. A média é simples, dos percentuais de {de} a {ate}.
         </p>
       </Nota>
       <p className={`mt-3 ${NOTA_DISCRETA}`}>Fontes: Portal de Dados Abertos do ES (Despesas: dotação inicial e empenhado; Receitas: arrecadação); PLOA 2027 (Mensagem nº 189/2026, evolução da receita e da despesa).</p>
