@@ -252,9 +252,9 @@ export function VisaoGeral({ vista, elementosPloa, receita, despesa, ipca: ipcaP
         <div className="mt-3 space-y-3">
           <Cartao titulo={tituloGrafico} legenda={<Legenda itens={legendaGrafico} />}
             direita={
-              <div role="group" aria-label="Valores" className="inline-flex overflow-hidden rounded-brand border border-line text-small">
+              <div role="group" aria-label="Valores" className="inline-flex max-w-full flex-wrap rounded-brand border border-line text-small">
                 {([['nominal', 'Nominal'], ['real', 'Real (R$ de 2027)']] as const).map(([k, r]) => (
-                  <button key={k} type="button" aria-pressed={base === k} onClick={() => setBase(k)} className={`px-3 py-1 ${base === k ? 'bg-navy font-semibold text-on-navy' : 'bg-paper text-ink'}`}>{r}</button>
+                  <button key={k} type="button" aria-pressed={base === k} onClick={() => setBase(k)} className={`min-h-8 rounded-brand px-2 py-1 sm:px-3 ${base === k ? 'bg-navy font-semibold text-on-navy' : 'bg-paper text-ink'}`}>{r}</button>
                 ))}
               </div>
             }>
@@ -283,9 +283,9 @@ export function VisaoGeral({ vista, elementosPloa, receita, despesa, ipca: ipcaP
             { cor: COR.ploa, rotulo: 'PLOA 2027' },
           ]} />}
             direita={
-              <div role="group" aria-label="Valores" className="inline-flex overflow-hidden rounded-brand border border-line text-small">
+              <div role="group" aria-label="Valores" className="inline-flex max-w-full flex-wrap rounded-brand border border-line text-small">
                 {([['nominal', 'Nominal'], ['real', 'Real (R$ de 2027)']] as const).map(([k, r]) => (
-                  <button key={k} type="button" aria-pressed={base === k} onClick={() => setBase(k)} className={`px-3 py-1 ${base === k ? 'bg-navy font-semibold text-on-navy' : 'bg-paper text-ink'}`}>{r}</button>
+                  <button key={k} type="button" aria-pressed={base === k} onClick={() => setBase(k)} className={`min-h-8 rounded-brand px-2 py-1 sm:px-3 ${base === k ? 'bg-navy font-semibold text-on-navy' : 'bg-paper text-ink'}`}>{r}</button>
                 ))}
               </div>
             }>

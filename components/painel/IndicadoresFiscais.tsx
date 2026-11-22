@@ -223,7 +223,7 @@ export function IndicadoresCapag(props: Props) {
   return (
     <div className="space-y-3">
       <Cartao titulo={`CAPAG · Nota ${capag.nota} em ${capag.ano}`}
-        legenda={<Legenda itens={[{ cor: 'rgb(var(--paper))', contorno: 'rgb(var(--navy) / 0.7)', rotulo: `Edição ${capag.ano} (ano-base ${capag.ano - 1})` }, { cor: COR.ploa, rotulo: 'Estimativa 2028 com a PLOA' }]} />}>
+        legenda={<Legenda itens={[{ cor: 'rgb(var(--paper))', contorno: 'rgb(var(--navy) / 0.7)', ponto: true, rotulo: `Edição ${capag.ano} (ano-base ${capag.ano - 1})` }, { cor: COR.ploa, ponto: true, rotulo: 'Estimativa 2028 com a PLOA' }]} />}>
         <ul className="divide-y divide-line border-y border-line">
           {inds.map((l) => {
             const nPloa = l.ploa === null ? null : notaDe(l.ploa, l.zonas)
@@ -237,7 +237,7 @@ export function IndicadoresCapag(props: Props) {
                 <div className="relative h-[3.875rem]" role="img" aria-label={`${l.rotulo}: última edição ${pc(l.ultimo)}, nota ${l.nota}${l.ploa === null ? '' : `; estimativa com a PLOA ${pc(l.ploa)}, nota ${nPloa}`}`}>
                   <div className="absolute inset-x-0 top-0 flex h-11 overflow-hidden rounded-sm">
                     {l.zonas.map((z) => (
-                      <span key={z.nota} className="relative flex items-start justify-center text-label font-semibold normal-case tracking-normal text-ink-soft" style={{ width: `${((z.ate - z.de) / total) * 100}%`, background: COR_NOTA[z.nota] }}>{z.nota}</span>
+                      <span key={z.nota} className="relative flex items-start justify-center border-r border-ink-soft/60 text-label font-semibold normal-case tracking-normal text-ink-soft last:border-0" style={{ width: `${((z.ate - z.de) / total) * 100}%`, background: COR_NOTA[z.nota] }}>{z.nota}</span>
                     ))}
                   </div>
                   <div className="absolute inset-x-0 top-11 h-4 text-label normal-case tracking-normal text-ink-soft">

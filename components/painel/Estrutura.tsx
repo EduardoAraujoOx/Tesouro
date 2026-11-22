@@ -1,25 +1,26 @@
 'use client'
 
-import { useState, type ReactNode } from 'react'
+import { useId, useState, type ReactNode } from 'react'
 
 /**
  * Sub-visões: uma pergunta por vez dentro de uma seção longa. Todas ficam montadas; só a escolhida aparece na tela,
  * e no PDF saem todas, cada uma numa página (a exportação precisa levar a seção inteira).
  */
 export function Subvisoes({ itens, rotulo, ativa: ativaExterna, onMudar }: { itens: { id: string; rotulo: string; conteudo: ReactNode }[]; rotulo: string; /** sub-visão escolhida por quem controla o grupo (por exemplo, por um link das conclusões); sem ela, o grupo guarda a própria escolha */ ativa?: string; onMudar?: (id: string) => void }) {
+  const grupo = useId()
   const [propria, setPropria] = useState(itens[0].id)
   const ativa = ativaExterna ?? propria
   const setAtiva = (id: string) => { setPropria(id); onMudar?.(id) }
   return (
-    <div>
-      <div role="group" aria-label={rotulo} className="grid grid-cols-2 gap-1 rounded-xl border border-line bg-paper p-1 text-small sm:inline-flex sm:max-w-full sm:flex-wrap print:hidden">
+    <div className="painel-subvisoes">
+      <div role="group" aria-label={rotulo} className="painel-subabas gap-1 rounded-xl border border-line bg-paper p-1 text-small print:hidden">
         {itens.map((i) => (
-          <button key={i.id} type="button" aria-pressed={ativa === i.id} onClick={() => setAtiva(i.id)}
-            className={`min-h-9 rounded-brand border px-2 py-1.5 leading-tight sm:px-4 ${ativa === i.id ? 'border-navy bg-surface font-semibold text-navy' : 'border-transparent text-ink-soft hover:bg-surface'}`}>{i.rotulo}</button>
+          <button key={i.id} type="button" aria-pressed={ativa === i.id} aria-controls={`${grupo}-${i.id}`} onClick={() => setAtiva(i.id)}
+            className={`min-h-10 rounded-brand border px-1.5 py-1.5 leading-tight sm:px-4 ${ativa === i.id ? 'border-navy bg-surface font-semibold text-navy' : 'border-transparent text-ink-soft hover:bg-surface'}`}>{i.rotulo}</button>
         ))}
       </div>
       {itens.map((i, k) => (
-        <div key={i.id} className={`mt-3 ${ativa === i.id ? '' : 'hidden print:block'} ${k > 0 ? 'print:[break-before:page]' : ''}`}>{i.conteudo}</div>
+        <div key={i.id} id={`${grupo}-${i.id}`} className={`mt-3 ${ativa === i.id ? '' : 'hidden print:block'} ${k > 0 ? 'print:[break-before:page]' : ''}`}>{i.conteudo}</div>
       ))}
     </div>
   )
