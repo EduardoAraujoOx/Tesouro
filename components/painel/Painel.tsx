@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react'
 import { IDENTIDADE } from '@/lib/identidade-painel'
 import { VisaoGeral, type Vista, type IndicadoresFiscais as Fiscais } from './Agregado'
-import { IndicadoresFiscais } from './IndicadoresFiscais'
+import { IndicadoresLrf, IndicadoresCapag } from './IndicadoresFiscais'
 import { NOTA_DISCRETA, Subvisoes } from './Estrutura'
 import { DespesaOrgaos, type OrgaoPloa } from './DespesaOrgaos'
 import { ControlesAcessibilidade } from '@/components/TopBar'
@@ -110,7 +110,8 @@ export function Painel({ macro, receitaMes, elementosPloa, orgaos, fiscais, rclP
         ) : aba === 'resultado' ? (
           <Subvisoes key="resultado" rotulo="Resultado" itens={[
             { id: 'resultado', rotulo: 'Resultado', conteudo: <VisaoGeral vista="resultado" elementosPloa={elementosPloa} receita={macro.receita} despesa={macro.despesa} ipca={macro.ipca} dados={receitaMes} /> },
-            { id: 'indicadores', rotulo: 'Indicadores fiscais', conteudo: <IndicadoresFiscais receita={macro.receita} despesa={macro.despesa} dados={receitaMes} fiscais={fiscais} rclPloa={rclPloa} pessoalExecPloa={pessoalExecPloa} /> },
+            { id: 'lrf', rotulo: 'LRF', conteudo: <IndicadoresLrf receita={macro.receita} despesa={macro.despesa} dados={receitaMes} fiscais={fiscais} rclPloa={rclPloa} pessoalExecPloa={pessoalExecPloa} /> },
+            { id: 'capag', rotulo: 'CAPAG', conteudo: <IndicadoresCapag receita={macro.receita} despesa={macro.despesa} dados={receitaMes} fiscais={fiscais} rclPloa={rclPloa} pessoalExecPloa={pessoalExecPloa} /> },
           ]} />
         ) : (
           <VisaoGeral key={aba} vista={aba} elementosPloa={elementosPloa} receita={macro.receita} despesa={macro.despesa} ipca={macro.ipca} dados={receitaMes} />
