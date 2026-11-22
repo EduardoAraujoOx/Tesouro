@@ -46,7 +46,6 @@ export function Painel({ macro, receitaMes, elementosPloa, orgaos, fiscais, rclP
   const escolheAba = (a: Aba) => { setAba(a); try { window.history.replaceState(null, '', `#${a}`) } catch { /* sem histórico: segue */ } }
   const abaAtual = ABAS.find((a) => a.id === aba)!
   const abertura = aba === 'conclusoes'
-  const TituloTopo = abertura ? 'p' : 'h1'
   const navegar = (destino: Aba, detalhe?: string) => {
     if (detalhe) setSub((x) => ({ ...x, [destino]: detalhe }))
     escolheAba(destino)
@@ -67,13 +66,13 @@ export function Painel({ macro, receitaMes, elementosPloa, orgaos, fiscais, rclP
           <div className="painel-cabecalho bg-navy-deep text-on-navy">
             <div className={`painel-cabecalho-conteudo mx-auto flex max-w-[1600px] flex-wrap items-center justify-between gap-x-6 gap-y-2 px-4 sm:px-6 md:px-8 ${abertura ? 'py-2 md:py-3' : 'py-3 md:py-5'}`}>
               <div className="painel-topo-identidade w-full min-w-0 max-w-[18rem] lg:max-w-[22rem]">
-                <TituloTopo className="text-title font-semibold leading-tight tracking-tight">
+                <h1 className="text-title font-semibold leading-tight tracking-tight">
                   <span className="painel-marca-texto sr-only">{IDENTIDADE.painel}</span>
                   <span className="painel-marca banner-img block aspect-[1000/247] overflow-hidden">
                     <Image src="/img/painel-marca-transparente.png" alt="" width={2172} height={724}
                       sizes="(min-width: 1024px) 390px, 320px" loading="eager" />
                   </span>
-                </TituloTopo>
+                </h1>
                 <p className="painel-marca-texto sr-only text-label tracking-normal">{IDENTIDADE.faixa}</p>
                 <p className="painel-topo-apoio text-label tracking-normal">{IDENTIDADE.apoio}</p>
               </div>
@@ -126,21 +125,21 @@ export function Painel({ macro, receitaMes, elementosPloa, orgaos, fiscais, rclP
         ))}
         <div role="tabpanel" id={`painel-${aba}`} aria-labelledby={`aba-${aba}`} tabIndex={0}>
           {abertura && (
-            <div className="painel-abertura relative isolate overflow-hidden bg-navy-deep text-on-navy print:hidden">
+            <div className="painel-abertura relative isolate hidden overflow-hidden bg-navy-deep text-on-navy print:hidden">
               <div aria-hidden="true" className="painel-abertura-imagem banner-img absolute inset-0 -z-10 lg:left-[36%]">
                 <Image src="/img/hero-vitoria-dia.jpg" alt="" fill sizes="(min-width: 1600px) 980px, (min-width: 1024px) 64vw, 100vw"
                   className="object-cover object-[75%_55%] lg:object-[68%_40%]" />
               </div>
               <div className="painel-abertura-conteudo mx-auto max-w-[1600px] px-4 py-5 sm:px-6 md:px-8 md:py-9">
                 <div className="painel-abertura-texto lg:max-w-[54%]">
-                  <p className="painel-abertura-equipe hidden items-center gap-3 text-label font-semibold uppercase tracking-[0.2em]">{IDENTIDADE.nome}</p>
-                  <h1 className="painel-abertura-titulo text-[1.3125rem] font-semibold leading-tight tracking-tight min-[360px]:text-headline md:text-section lg:text-[2.25rem] xl:text-display">
+                  <p className="painel-abertura-equipe flex items-center gap-3 text-label font-semibold uppercase tracking-[0.2em]">{IDENTIDADE.nome}</p>
+                  <p aria-hidden="true" className="painel-abertura-titulo font-semibold">
                     <span className="painel-abertura-titulo-inicio">{IDENTIDADE.painel.split(' ', 1)[0]}</span>{IDENTIDADE.painel.slice(IDENTIDADE.painel.indexOf(' '))}
-                  </h1>
+                  </p>
                   <p className="painel-abertura-descricao mt-2 max-w-[34rem] text-small md:mt-3 md:text-body">
                     Comparação entre a proposta orçamentária de 2027 e a projeção da equipe de transição para o fechamento de 2026, elaborada com dados públicos do Espírito Santo.
                   </p>
-                  <div className="painel-abertura-acoes mt-7 hidden flex-wrap gap-3 text-small">
+                  <div className="mt-7 flex flex-wrap gap-3 text-small">
                     <button type="button" onClick={explorar} className="inline-flex min-h-12 items-center gap-2 rounded-brand bg-on-navy px-4 font-semibold text-navy-deep hover:underline">
                       Explorar o painel <IconArrow className="h-5 w-5" />
                     </button>

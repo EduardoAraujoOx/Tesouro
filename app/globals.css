@@ -141,33 +141,15 @@ h1, h2, h3 { @apply font-serif font-semibold text-navy; font-optical-sizing: aut
 .painel-topo-apoio { padding-inline-start: 21%; }
 :root[data-contrast='alto'] .painel-marca-texto { @apply not-sr-only; }
 :root[data-contrast='alto'] .painel-topo-apoio { padding-inline-start: 0; }
-.painel .painel-topo h1, .painel .painel-abertura h1 { color: rgb(var(--on-navy)); }
+.painel .painel-topo h1 { color: rgb(var(--on-navy)); }
 .painel .painel-cabecalho :focus-visible, .painel .painel-abertura :focus-visible { outline-color: rgb(var(--on-navy)); }
 :root:not([data-contrast='alto']) :is(.painel-cabecalho, .painel-topo) {
   background-image: linear-gradient(115deg, rgb(var(--navy-deep)), rgb(var(--navy)) 70%, #154578);
-}
-.painel-abertura-imagem::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(105deg, rgb(var(--navy-deep) / .96), rgb(var(--navy-deep) / .83) 56%, rgb(var(--navy-deep) / .65));
-}
-@media (min-width: 1024px) {
-  .painel-abertura-imagem::after {
-    background: linear-gradient(90deg, rgb(var(--navy-deep)), rgb(var(--navy-deep) / .93) 21%, rgb(var(--navy-deep) / .25) 70%, transparent);
-  }
 }
 /* A navegação se ajusta à largura útil em relação ao tamanho do texto. */
 @media screen {
   .painel { container: painel / inline-size; overflow-wrap: anywhere; }
   .painel-topo, .painel-topo-conteudo { display: contents; }
-  .painel-abertura { margin: .75rem 1rem .25rem; border-radius: .75rem; }
-  @media (min-width: 640px) {
-    .painel-abertura { margin-inline: 1.5rem; }
-  }
-  @media (min-width: 768px) {
-    .painel-abertura { margin: 1.25rem 2rem 0; }
-  }
   .painel-abas, .painel-subabas { display: grid; grid-template-columns: minmax(0, 1fr); }
   .painel-navegacao { container: painel-navegacao / inline-size; }
   .painel-subvisoes { container: painel-subvisoes / inline-size; }
@@ -239,10 +221,7 @@ h1, h2, h3 { @apply font-serif font-semibold text-navy; font-optical-sizing: aut
     .painel-topo .painel-abas [aria-selected="true"] { border-bottom-color: rgb(var(--on-navy)); }
     :root:not([data-contrast='alto']) .painel-topo .painel-abas [aria-selected="true"] { border-bottom-color: #39b5e8; }
     .painel .painel-topo .painel-abas :focus-visible { outline-color: rgb(var(--on-navy)); }
-    .painel-abertura {
-      margin: 0;
-      border-radius: 0;
-    }
+    .painel-abertura { display: block; }
     .painel-abertura-conteudo {
       display: flex;
       min-height: 26.75rem;
@@ -250,7 +229,6 @@ h1, h2, h3 { @apply font-serif font-semibold text-navy; font-optical-sizing: aut
       padding: 3rem 2.5rem 3.5rem;
     }
     .painel-abertura-texto { max-width: 56%; }
-    .painel-abertura-equipe, .painel-abertura-acoes { display: flex; }
     .painel-abertura-equipe::before {
       content: "";
       width: 2.25rem;
@@ -278,6 +256,9 @@ h1, h2, h3 { @apply font-serif font-semibold text-navy; font-optical-sizing: aut
       transform: rotate(-14deg);
     }
     .painel-abertura-imagem::after {
+      content: "";
+      position: absolute;
+      inset: 0;
       z-index: 1;
       background: linear-gradient(90deg, rgb(var(--navy-deep)), rgb(var(--navy-deep) / .85) 24%, rgb(var(--navy-deep) / .2) 66%, transparent);
     }
