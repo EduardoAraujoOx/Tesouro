@@ -135,10 +135,21 @@ h1, h2, h3 { @apply font-serif font-semibold text-navy; font-optical-sizing: aut
 .painel-marca {
   background: #f2f6fb url('/img/painel-identidade.jpg') 17.07% 50% / 571.43% 226.62% no-repeat;
 }
-.painel .painel-cabecalho h1 { color: rgb(var(--on-navy)); }
+.painel .painel-cabecalho h1, .painel .painel-abertura h1 { color: rgb(var(--on-navy)); }
 .painel .painel-cabecalho :focus-visible { outline-color: rgb(var(--on-navy)); }
 :root:not([data-contrast='alto']) .painel-cabecalho {
   background-image: linear-gradient(115deg, rgb(var(--navy-deep)), rgb(var(--navy)) 70%, #154578);
+}
+.painel-abertura-imagem::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(105deg, rgb(var(--navy-deep) / .96), rgb(var(--navy-deep) / .83) 56%, rgb(var(--navy-deep) / .65));
+}
+@media (min-width: 1024px) {
+  .painel-abertura-imagem::after {
+    background: linear-gradient(90deg, rgb(var(--navy-deep)), rgb(var(--navy-deep) / .93) 21%, rgb(var(--navy-deep) / .25) 70%, transparent);
+  }
 }
 /* A navegação se ajusta à largura útil em relação ao tamanho do texto. */
 @media screen {

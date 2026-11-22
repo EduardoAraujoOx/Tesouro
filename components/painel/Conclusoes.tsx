@@ -21,8 +21,8 @@ export function Conclusoes({ ajustes, onIr }: { ajustes: AjustesVotacao; onIr: (
   const poderes = milhoes(arredonda50(ajustes.poderes), 0)
   const itens: Item[] = [
     { titulo: 'Base da comparação', paragrafos: [{
-      topico: 'O painel compara a proposta orçamentária de 2027 com a projeção de fechamento de 2026 da equipe de transição.',
-      resto: 'A projeção parte da receita arrecadada e da despesa empenhada até outubro. Para estimar o total do ano, a equipe usa o padrão sazonal observado de 2022 a 2025.',
+      topico: 'A projeção de fechamento de 2026 parte da arrecadação e da despesa empenhada até outubro.',
+      resto: 'A equipe estima o total do ano com base no padrão sazonal observado de 2022 a 2025.',
     }], metodo: 'A proposta foi enviada à Assembleia Legislativa em 30 de setembro de 2026 (Mensagem nº 189/2026). Os valores do Portal de Dados Abertos do Estado foram conferidos com os quadros da Mensagem. A comparação é feita por natureza da receita, por grupo de despesa e, no caso da despesa, também por órgão.' },
     { titulo: 'Orçamento de 2027', destinos: [{ aba: 'resultado', sub: 'resultado', rotulo: 'Resultado' }], paragrafos: [{
       topico: 'A proposta mantém a receita praticamente estável e reduz a despesa executável.',

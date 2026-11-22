@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect, useState } from 'react'
+import Image from 'next/image'
 import { IDENTIDADE } from '@/lib/identidade-painel'
 import { VisaoGeral, type Vista, type IndicadoresFiscais as Fiscais } from './Agregado'
 import { IndicadoresLrf, IndicadoresCapag } from './IndicadoresFiscais'
@@ -43,6 +44,7 @@ export function Painel({ macro, receitaMes, elementosPloa, orgaos, fiscais, rclP
   }, [])
   const escolheAba = (a: Aba) => { setAba(a); try { window.history.replaceState(null, '', `#${a}`) } catch { /* sem histórico: segue */ } }
   const abaAtual = ABAS.find((a) => a.id === aba)!
+  const abertura = aba === 'conclusoes'
   const ir = ({ aba: destino, sub: detalhe }: Destino) => {
     if (detalhe) setSub((x) => ({ ...x, [destino]: detalhe }))
     escolheAba(destino)
@@ -53,21 +55,21 @@ export function Painel({ macro, receitaMes, elementosPloa, orgaos, fiscais, rclP
   return (
     <div className="painel min-h-screen bg-surface print:min-h-0 print:bg-paper">
       <header className="painel-cabecalho bg-navy-deep text-on-navy print:hidden">
-        <div className="mx-auto flex max-w-[1600px] flex-wrap items-center justify-between gap-x-6 gap-y-2 px-4 py-3 sm:px-6 md:px-8 md:py-5">
+        <div className={`mx-auto flex max-w-[1600px] flex-wrap items-center justify-between gap-x-6 gap-y-2 px-4 sm:px-6 md:px-8 ${abertura ? 'py-2 md:py-3' : 'py-3 md:py-5'}`}>
           <div className="flex min-w-0 items-center gap-2.5 sm:gap-3">
-            <span aria-hidden="true" className="painel-marca aspect-[105/139] w-10 shrink-0 rounded-md sm:w-12" />
+            <span aria-hidden="true" className={`painel-marca aspect-[105/139] shrink-0 rounded-md ${abertura ? 'w-8 sm:w-9' : 'w-10 sm:w-12'}`} />
             <div className="min-w-0">
-              <p className="mb-1 text-label tracking-normal text-on-navy/85">{IDENTIDADE.faixa}</p>
-              <h1 className="text-title font-semibold tracking-tight md:text-headline">{IDENTIDADE.painel}</h1>
+              <p className={abertura ? 'text-small font-semibold' : 'mb-1 text-label tracking-normal text-on-navy/85'}>{IDENTIDADE.faixa}</p>
+              {!abertura && <h1 className="text-title font-semibold tracking-tight md:text-headline">{IDENTIDADE.painel}</h1>}
               <p className="mt-1 text-label tracking-normal md:text-small">{IDENTIDADE.apoio}</p>
             </div>
           </div>
           <div className="flex flex-wrap items-center gap-x-2 gap-y-1 sm:gap-x-3">
             <ControlesAcessibilidade compacto className="flex max-w-full flex-wrap" />
-            <button type="button" onClick={() => window.print()} title="Abre a impressão: escolha “Salvar como PDF”"
+            <button type="button" onClick={() => window.print()} title="Exportar esta seção em PDF"
               className="inline-flex min-h-9 items-center gap-1.5 rounded-brand border border-current px-2.5 text-small font-semibold hover:underline">
               <svg aria-hidden="true" viewBox="0 0 20 20" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"><path d="M10 3v9m0 0-3.5-3.5M10 12l3.5-3.5M4 14v2h12v-2" /></svg>
-              PDF<span className="sr-only"> (exportar esta seção)</span>
+              <span className="sr-only">Exportar esta seção em </span>PDF
             </button>
           </div>
         </div>
@@ -114,9 +116,23 @@ export function Painel({ macro, receitaMes, elementosPloa, orgaos, fiscais, rclP
           <div key={id} role="tabpanel" id={`painel-${id}`} aria-labelledby={`aba-${id}`} hidden />
         ))}
         <div role="tabpanel" id={`painel-${aba}`} aria-labelledby={`aba-${aba}`} tabIndex={0}>
-          {aba === 'conclusoes' && <h2 className="mb-3 text-title md:text-section print:hidden">{abaAtual.rotulo}</h2>}
-          {aba === 'conclusoes' ? (
-            <Conclusoes ajustes={ajustes} onIr={ir} />
+          {abertura ? (
+            <>
+              <div className="painel-abertura relative isolate mb-4 overflow-hidden rounded-xl bg-navy-deep px-4 py-5 text-on-navy sm:px-6 md:mb-5 md:px-8 md:py-9 print:hidden">
+                <div aria-hidden="true" className="painel-abertura-imagem banner-img absolute inset-0 -z-10 lg:left-[36%]">
+                  <Image src="/img/hero-vitoria-dia.jpg" alt="" fill sizes="(min-width: 1600px) 980px, (min-width: 1024px) 64vw, 100vw"
+                    className="object-cover object-[75%_55%] lg:object-[68%_40%]" />
+                </div>
+                <div className="lg:max-w-[54%]">
+                  <h1 className="text-[1.3125rem] font-semibold leading-tight tracking-tight min-[360px]:text-headline md:text-section lg:text-[2.25rem] xl:text-display">{IDENTIDADE.painel}</h1>
+                  <p className="mt-2 max-w-[34rem] text-small md:mt-3 md:text-body">
+                    Comparação entre a proposta orçamentária de 2027 e a projeção da equipe de transição para o fechamento de 2026, elaborada com dados públicos do Espírito Santo.
+                  </p>
+                </div>
+              </div>
+              <h2 className="mb-3 text-title md:text-section print:hidden">{abaAtual.rotulo}</h2>
+              <Conclusoes ajustes={ajustes} onIr={ir} />
+            </>
           ) : aba === 'despesa' ? (
             <Subvisoes key="despesa" rotulo="Despesa" ativa={sub.despesa} onMudar={(id) => setSub((x) => ({ ...x, despesa: id }))} itens={[
               { id: 'resumo', rotulo: 'Resumo', conteudo: <>{aviso}<VisaoGeral vista="despesa" elementosPloa={elementosPloa} receita={macro.receita} despesa={macro.despesa} ipca={macro.ipca} dados={receitaMes} /></> },

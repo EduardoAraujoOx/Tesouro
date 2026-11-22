@@ -9,7 +9,7 @@ export const metadata: Metadata = {
 
 const imagens = [
   {
-    uso: 'Imagem principal da página inicial',
+    uso: 'Imagem principal da página inicial e da abertura do painel orçamentário',
     titulo: 'Vista de Vitória com a Terceira Ponte',
     autor: 'Ilustração gerada por inteligência artificial, fornecida pela equipe do projeto',
     licenca: 'Uso autorizado pela equipe do projeto',
