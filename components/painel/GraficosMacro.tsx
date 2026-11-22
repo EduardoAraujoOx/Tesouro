@@ -106,7 +106,7 @@ export function ColunasAnuais({ colunas, descricao, casas = 1 }: { colunas: Colu
                   {c.explicacao}
                 </span>
               )}
-              <div className="relative h-52 w-full">
+              <div className="relative h-52 w-full print:h-20">
                 <div className="absolute inset-x-0 bottom-0 mx-auto w-full max-w-[4.5rem]" style={{ height: h(c.v) }}>
                   <span className="block h-full w-full" style={{
                     background: c.tipo === 'ploa' ? COR.ploa : c.tipo === 'ref' ? COR.referencia : c.tipo === 'real' ? COR.empenhado : COR.atualizada,

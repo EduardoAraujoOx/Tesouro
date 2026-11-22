@@ -100,7 +100,7 @@ export function Painel({ macro, receitaMes, elementosPloa }: { macro: MacroProps
       </div>
 
       <div role="tabpanel" id={`painel-${aba}`} aria-labelledby={`aba-${aba}`} className="mt-3">
-        <VisaoGeral key={aba} vista={aba} elementosPloa={elementosPloa} receita={macro.receita} despesa={macro.despesa} ipca={macro.ipca} fonteIpca={macro.fonteIpca} dados={receitaMes} />
+        <VisaoGeral key={aba} vista={aba} elementosPloa={elementosPloa} receita={macro.receita} despesa={macro.despesa} ipca={macro.ipca} dados={receitaMes} />
       </div>
 
       <p className={`mt-4 ${NOTA_DISCRETA} print:mt-2`}>

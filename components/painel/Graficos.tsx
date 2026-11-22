@@ -91,8 +91,8 @@ export function TabelaDelta<T extends { chave: string }>({ itens, colunas, rotul
         <tbody>
           {itens.map((it) => (
             <tr key={it.chave} className="border-t border-line">
-              <th scope="row" className="sticky left-0 z-[1] min-w-[10rem] max-w-[12rem] whitespace-normal bg-paper px-3 py-1.5 align-middle font-normal shadow-[1px_0_0_rgb(var(--line))] md:max-w-[26rem]">{primeira(it)}</th>
-              {colunas.map((c) => <td key={c.rotulo} className={`whitespace-nowrap px-3 py-1.5 text-right tabular-nums ${c.forte ? 'font-semibold' : ''}`}>{c.valor(it)}</td>)}
+              <th scope="row" className="sticky left-0 z-[1] min-w-[10rem] max-w-[12rem] whitespace-normal bg-paper px-3 py-1.5 print:py-0.5 align-middle font-normal shadow-[1px_0_0_rgb(var(--line))] md:max-w-[26rem]">{primeira(it)}</th>
+              {colunas.map((c) => <td key={c.rotulo} className={`whitespace-nowrap px-3 py-1.5 print:py-0.5 text-right tabular-nums ${c.forte ? 'font-semibold' : ''}`}>{c.valor(it)}</td>)}
             </tr>
           ))}
         </tbody>
@@ -124,8 +124,8 @@ export function TabelaItens<T extends { chave: string }>({ itens, colunas, legen
           {itens.map((it) => (
             <tr key={it.chave} className="border-t border-line">
               {colunas.map((c, j) => j === 0
-                ? <th key={c.rotulo} scope="row" className={`sticky left-0 z-[1] ${larg} whitespace-normal break-words hyphens-auto bg-paper ${px} py-1.5 align-top font-normal shadow-[1px_0_0_rgb(var(--line))] md:max-w-[30rem]`}>{c.valor(it)}</th>
-                : <td key={c.rotulo} className={`whitespace-nowrap ${px} py-1.5 text-right tabular-nums ${c.secundaria ? 'hidden md:table-cell' : ''}`}>{c.valor(it)}</td>)}
+                ? <th key={c.rotulo} scope="row" className={`sticky left-0 z-[1] ${larg} whitespace-normal break-words hyphens-auto bg-paper ${px} py-1.5 print:py-0.5 align-top font-normal shadow-[1px_0_0_rgb(var(--line))] md:max-w-[30rem]`}>{c.valor(it)}</th>
+                : <td key={c.rotulo} className={`whitespace-nowrap ${px} py-1.5 print:py-0.5 text-right tabular-nums ${c.secundaria ? 'hidden md:table-cell' : ''}`}>{c.valor(it)}</td>)}
             </tr>
           ))}
         </tbody>
