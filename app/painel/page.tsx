@@ -1,11 +1,14 @@
 import type { Metadata } from 'next'
 import { Painel } from '@/components/painel/Painel'
 import { IDENTIDADE } from '@/lib/identidade-painel'
-import { ploaPorElemento } from '@/lib/orcamento'
+import { ploaPorElemento, pessoalExecutivoEmpenhado2025, pessoalPloaExecutivo } from '@/lib/orcamento'
 import { despesaMacro, parametros, receitaMacro } from '@/lib/macro'
 import receitaRaw from '@/data/receita.json'
 import ploaRaw from '@/data/ploa2027.json'
 import orgaosRaw from '@/data/ploa2027-orgaos.json'
+import rclRaw from '@/data/ploa2027-rcl.json'
+import indicadoresRaw from '@/data/indicadores.json'
+import type { IndicadoresFiscais } from '@/components/painel/Agregado'
 import type { OrgaoPloa } from '@/components/painel/DespesaOrgaos'
 import type { DadosReceita } from '@/components/painel/projecao'
 
@@ -32,8 +35,14 @@ function orgaosPloa(): OrgaoPloa[] {
   return Object.entries(por).map(([cod, v]) => ({ cod, nome: nomes[cod] ?? `Órgão ${cod}`, ...v }))
 }
 
+/** LRF (RGF do Poder Executivo) e CAPAG, séries do Tesouro Nacional já guardadas em data/indicadores.json. */
+function indicadoresFiscais(): IndicadoresFiscais {
+  const d = indicadoresRaw as unknown as { capag: { serie: IndicadoresFiscais['capag'] }; lrf: { serie: IndicadoresFiscais['lrf'] } }
+  return { capag: d.capag.serie.filter((x) => x.ano >= 2023), lrf: d.lrf.serie.filter((x) => x.ano >= 2025), pessoalExecutivoEmpenhado2025: pessoalExecutivoEmpenhado2025() }
+}
+
 export default function PaginaPainel() {
   return <Painel
     macro={{ receita: receitaMacro, despesa: despesaMacro, ipca: parametros.ipca, pib: parametros.pib_real, fonteIpca: parametros.fonte }}
-    elementosPloa={ploaPorElemento()} orgaos={orgaosPloa()} receitaMes={receitaRaw as unknown as DadosReceita} />
+    elementosPloa={ploaPorElemento()} orgaos={orgaosPloa()} fiscais={indicadoresFiscais()} rclPloa={(rclRaw as unknown as { linhas: Record<string, number> }).linhas.rcl} pessoalExecPloa={pessoalPloaExecutivo()} receitaMes={receitaRaw as unknown as DadosReceita} />
 }

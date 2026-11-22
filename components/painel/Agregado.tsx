@@ -208,22 +208,6 @@ export function VisaoGeral({ vista, elementosPloa, receita, despesa, ipca: ipcaP
   const antesRes6 = rt6.map((x, j) => x - dcorr6[j] - dcap6[j])
   /* operações de crédito: 2023–2025 e PLOA pelo quadro da Mensagem; Proj. 26 pela projeção da receita */
   const cred6 = cinco(pick(R, 'operacoes_credito'), itensProj.cred.central)
-  /* decomposição aproximada, acima da linha: retirando o crédito e a amortização chega-se a um resultado nominal aproximado; somando os juros, a um primário aproximado */
-  const grupoDesp = (chaveD: string, chaveProj: string) => cinco(pick(D, chaveD), projD.itens[chaveProj].central)
-  const amort6 = grupoDesp('amortizacao', 'amort')
-  const juros6 = grupoDesp('juros', 'juros')
-  const invf6 = grupoDesp('inversoes', 'invf')
-  const nominal6 = antesRes6.map((x, j) => x - cred6[j] + amort6[j])
-  const primario6 = nominal6.map((x, j) => x + juros6[j])
-  const linhasPrimario: Linha[] = [
-    { chave: 'antes', rotulo: 'Resultado antes das reservas', nivel: 0, v: antesRes6 },
-    { chave: 'cred', rotulo: '(−) Operações de crédito', nivel: 0, v: cred6.map(neg) },
-    { chave: 'amort', rotulo: '(+) Amortização da dívida', nivel: 0, v: amort6 },
-    { chave: 'nominal', rotulo: '= Resultado nominal aproximado', nivel: 0, negrito: true, v: nominal6 },
-    { chave: 'juros', rotulo: '(+) Juros e encargos da dívida', nivel: 0, v: juros6 },
-    { chave: 'primario', rotulo: '= Resultado primário aproximado', nivel: 0, negrito: true, v: primario6 },
-    { chave: 'invf', rotulo: 'Inversões financeiras (parte é despesa financeira e não foi retirada)', nivel: 1, v: invf6 },
-  ]
   const ANOS5 = ['2023', '2024', '2025', 'Proj. 26', 'PLOA 27']
   const linhasResultado: Linha[] = [
     { chave: 'rc', rotulo: 'Receitas correntes (brutas)', nivel: 0, v: rcBruta },
@@ -317,15 +301,6 @@ export function VisaoGeral({ vista, elementosPloa, receita, despesa, ipca: ipcaP
             ]} />
             <p className={`mt-2 ${NOTA_DISCRETA}`}>
               Resultado do Balanço Orçamentário (receita total menos despesa empenhada); não é resultado primário nem nominal, pois inclui o crédito como receita e a amortização como despesa. As reservas de RPPS e de contingência só existem no orçamento: nos anos executados são zero e, na PLOA, fecham o resultado em zero. 2023–2025: realizado, pelos quadros da Mensagem nº 189/2026. Proj. 26: projeção da equipe, sem reservas e com a receita pontual de 2026. PLOA 27: receita estimada menos despesa fixada.
-            </p>
-          </Cartao>
-          <Cartao titulo="Do resultado aos resultados nominal e primário (aproximados)">
-            <TabelaItens altura="livre" itens={linhasPrimario} legenda="Resultados nominal e primário aproximados, em R$ milhões" colunas={[
-              { rotulo: 'R$ milhões', valor: celulaLinha },
-              ...ANOS5.map((a, j) => ({ rotulo: a, valor: (l: Linha) => <span className={l.negrito || j === 4 ? 'font-semibold' : ''}>{mi(l.v[j])}</span> })),
-            ]} />
-            <p className={`mt-2 ${NOTA_DISCRETA}`}>
-              Cálculo acima da linha, por receitas e despesas do orçamento, e por isso aproximado: o resultado nominal retira do resultado orçamentário as operações de crédito (receita) e soma de volta a amortização da dívida (despesa), e o primário soma ainda os juros e encargos. Os resultados oficiais (RREO e LDO) são apurados abaixo da linha, pela variação da dívida fiscal líquida, e podem diferir. Não foram retiradas as demais receitas financeiras (rendimentos de aplicações, que estão na receita patrimonial, alienação de bens e amortização de empréstimos) nem a parte financeira das inversões financeiras, mostradas na última linha. Proj. 26: juros, amortização e inversões pela projeção da despesa.
             </p>
           </Cartao>
         </div>
