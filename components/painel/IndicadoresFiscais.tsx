@@ -102,7 +102,7 @@ export function IndicadoresLrf(props: Props) {
     <div className="space-y-3">
       <Cartao titulo="LRF: PLOA 2027 e limites legais"
         legenda={<Legenda itens={[{ cor: COR.empenhado, rotulo: 'Último RGF' }, { cor: COR.ploa, rotulo: 'PLOA 2027 (aproximação)' }]} />}>
-        <div className="hidden items-end gap-x-4 pb-1 text-label font-semibold normal-case tracking-normal text-ink-soft md:grid md:grid-cols-[15rem_1fr_12rem]">
+        <div className="painel-lrf-escala painel-lrf-linha hidden items-end gap-x-4 pb-1 text-label font-semibold normal-case tracking-normal text-ink-soft print:grid print:grid-cols-[15rem_1fr_12rem]">
           <span />
           <span className="relative block h-4"><span className="absolute left-0">0</span><span className="absolute right-0">limite (100%)</span></span>
           <span />
@@ -113,7 +113,7 @@ export function IndicadoresLrf(props: Props) {
             const p = l.ploa === null ? null : uso(l.ploa, l.limite)
             const ref = l.ploa ?? l.ultimo
             return (
-              <li key={l.chave} className="grid items-center gap-x-4 gap-y-1 py-2 md:grid-cols-[15rem_1fr_12rem]">
+              <li key={l.chave} className="painel-lrf-linha grid items-center gap-x-4 gap-y-1 py-2 print:grid-cols-[15rem_1fr_12rem]">
                 <div>
                   <span className="block text-small font-medium text-ink">{l.rotulo}</span>
                   <span className="block text-label normal-case tracking-normal text-ink-soft">{l.base}</span>
@@ -229,7 +229,7 @@ export function IndicadoresCapag(props: Props) {
             const nPloa = l.ploa === null ? null : notaDe(l.ploa, l.zonas)
             const total = l.escala[1] - l.escala[0]
             return (
-              <li key={l.chave} className="grid items-center gap-x-4 gap-y-1 py-3 md:grid-cols-[15rem_1fr_13rem]">
+              <li key={l.chave} className="painel-capag-linha grid items-center gap-x-4 gap-y-1 py-3 print:grid-cols-[15rem_1fr_13rem]">
                 <div>
                   <span className="block text-small font-medium text-ink">{l.rotulo}</span>
                   <span className="block text-label normal-case tracking-normal text-ink-soft">{l.formula}</span>
