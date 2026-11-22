@@ -6,8 +6,10 @@ import { useState, type ReactNode } from 'react'
  * Sub-visões: uma pergunta por vez dentro de uma seção longa. Todas ficam montadas; só a escolhida aparece na tela,
  * e no PDF saem todas, cada uma numa página (a exportação precisa levar a seção inteira).
  */
-export function Subvisoes({ itens, rotulo }: { itens: { id: string; rotulo: string; conteudo: ReactNode }[]; rotulo: string }) {
-  const [ativa, setAtiva] = useState(itens[0].id)
+export function Subvisoes({ itens, rotulo, ativa: ativaExterna, onMudar }: { itens: { id: string; rotulo: string; conteudo: ReactNode }[]; rotulo: string; /** sub-visão escolhida por quem controla o grupo (por exemplo, por um link das conclusões); sem ela, o grupo guarda a própria escolha */ ativa?: string; onMudar?: (id: string) => void }) {
+  const [propria, setPropria] = useState(itens[0].id)
+  const ativa = ativaExterna ?? propria
+  const setAtiva = (id: string) => { setPropria(id); onMudar?.(id) }
   return (
     <div>
       <div role="group" aria-label={rotulo} className="inline-flex max-w-full flex-wrap overflow-hidden rounded-brand border border-line text-small print:hidden">

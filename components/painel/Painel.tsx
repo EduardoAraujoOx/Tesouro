@@ -6,6 +6,7 @@ import { VisaoGeral, type Vista, type IndicadoresFiscais as Fiscais } from './Ag
 import { IndicadoresLrf, IndicadoresCapag } from './IndicadoresFiscais'
 import { NOTA_DISCRETA, Subvisoes } from './Estrutura'
 import { AvisoAjustes } from './AvisoAjustes'
+import { Conclusoes, type Destino } from './Conclusoes'
 import type { AjustesVotacao } from '@/lib/ajustes-ploa'
 import { OrcadoExecutado, type LoaAnual, type ReceitaAnual } from './OrcadoExecutado'
 import { DespesaOrgaos, type OrgaoPloa } from './DespesaOrgaos'
@@ -13,8 +14,9 @@ import { ControlesAcessibilidade } from '@/components/TopBar'
 import type { DadosReceita } from './projecao'
 import type { LinhaMacro } from '@/lib/macro'
 
-type Aba = Vista
+type Aba = 'conclusoes' | Vista
 const ABAS: { id: Aba; rotulo: string }[] = [
+  { id: 'conclusoes', rotulo: 'Conclusões' },
   { id: 'receita', rotulo: 'Receita' },
   { id: 'despesa', rotulo: 'Despesa' },
   { id: 'resultado', rotulo: 'Resultado orçamentário' },
@@ -25,12 +27,14 @@ type MacroProps = {
 }
 
 /**
- * Painel em três seções: Receita, Despesa e Resultado orçamentário, cada uma a PLOA 2027 contra a história, o fechamento projetado de 2026 e a nossa
- * projeção de 2027. O restante do material (cenários, detalhamentos, LRF e CAPAG, método) ficou de fora por ora, até se decidir o que acrescentar.
+ * Painel em quatro seções: Conclusões (a abertura, com links para os dados), Receita, Despesa e Resultado orçamentário, cada uma a PLOA 2027 contra a
+ * história e o fechamento projetado de 2026. O restante do material (cenários, detalhamentos, método) ficou de fora por ora, até se decidir o que acrescentar.
  */
 export function Painel({ macro, receitaMes, elementosPloa, orgaos, fiscais, rclPloa, pessoalExecPloa, ajustes, loa, receitaAnual }: { macro: MacroProps; receitaMes: DadosReceita; elementosPloa: Record<string, Record<string, number>>; orgaos: OrgaoPloa[]; fiscais: Fiscais; rclPloa: number; pessoalExecPloa: number; ajustes: AjustesVotacao; loa: LoaAnual; receitaAnual: ReceitaAnual }) {
   const aviso = <AvisoAjustes ajustes={ajustes} />
-  const [aba, setAba] = useState<Aba>('receita')
+  const [aba, setAba] = useState<Aba>('conclusoes')
+  /* sub-visão escolhida em cada grupo, para que os links das conclusões levem direto ao ponto */
+  const [sub, setSub] = useState<Record<string, string>>({ despesa: 'resumo', resultado: 'resultado' })
   const [menuAberto, setMenuAberto] = useState(false)
   useEffect(() => {
     if (!menuAberto) return
@@ -41,11 +45,12 @@ export function Painel({ macro, receitaMes, elementosPloa, orgaos, fiscais, rclP
   useEffect(() => {
     const h = window.location.hash.slice(1)
     /* endereços das versões anteriores: visão geral e demais abas levam à seção mais próxima */
-    const alvo = h === 'despesa' || h === 'fontes' || h === 'atencao' ? 'despesa' : h === 'resultado' ? 'resultado' : 'receita'
+    const alvo: Aba = h === 'despesa' || h === 'fontes' || h === 'atencao' ? 'despesa' : h === 'resultado' ? 'resultado' : h === 'receita' ? 'receita' : 'conclusoes'
     setAba(alvo)
   }, [])
   const escolheAba = (a: Aba) => { setAba(a); try { window.history.replaceState(null, '', `#${a}`) } catch { /* sem histórico: segue */ } }
   const abaAtual = ABAS.find((a) => a.id === aba)!
+  const ir = (d: Destino) => { if (d.sub) setSub((x) => ({ ...x, [d.aba]: d.sub! })); escolheAba(d.aba); window.scrollTo({ top: 0 }) }
 
   return (
     <div className="painel mx-auto max-w-[1600px] px-4 pb-8 sm:px-5 md:px-8">
@@ -106,20 +111,22 @@ export function Painel({ macro, receitaMes, elementosPloa, orgaos, fiscais, rclP
       </div>
 
       <div role="tabpanel" id={`painel-${aba}`} aria-labelledby={`aba-${aba}`} className="mt-3">
-        {aba === 'despesa' ? (
-          <Subvisoes key="despesa" rotulo="Despesa" itens={[
+        {aba === 'conclusoes' ? (
+          <Conclusoes ajustes={ajustes} onIr={ir} />
+        ) : aba === 'despesa' ? (
+          <Subvisoes key="despesa" rotulo="Despesa" ativa={sub.despesa} onMudar={(id) => setSub((x) => ({ ...x, despesa: id }))} itens={[
             { id: 'resumo', rotulo: 'Resumo', conteudo: <>{aviso}<VisaoGeral vista="despesa" elementosPloa={elementosPloa} receita={macro.receita} despesa={macro.despesa} ipca={macro.ipca} dados={receitaMes} /></> },
             { id: 'orgao', rotulo: 'Detalhamento por órgão', conteudo: <>{aviso}<DespesaOrgaos orgaos={orgaos} ipca={macro.ipca} /></> },
           ]} />
         ) : aba === 'resultado' ? (
-          <Subvisoes key="resultado" rotulo="Resultado" itens={[
+          <Subvisoes key="resultado" rotulo="Resultado" ativa={sub.resultado} onMudar={(id) => setSub((x) => ({ ...x, resultado: id }))} itens={[
             { id: 'resultado', rotulo: 'Resultado', conteudo: <>{aviso}<VisaoGeral vista="resultado" elementosPloa={elementosPloa} receita={macro.receita} despesa={macro.despesa} ipca={macro.ipca} dados={receitaMes} /></> },
             { id: 'orcado', rotulo: 'Orçado × executado', conteudo: <OrcadoExecutado receita={macro.receita} dados={receitaMes} loa={loa} receitaAnual={receitaAnual} /> },
             { id: 'lrf', rotulo: 'LRF', conteudo: <>{aviso}<IndicadoresLrf receita={macro.receita} despesa={macro.despesa} dados={receitaMes} fiscais={fiscais} rclPloa={rclPloa} pessoalExecPloa={pessoalExecPloa} /></> },
             { id: 'capag', rotulo: 'CAPAG', conteudo: <>{aviso}<IndicadoresCapag receita={macro.receita} despesa={macro.despesa} dados={receitaMes} fiscais={fiscais} rclPloa={rclPloa} pessoalExecPloa={pessoalExecPloa} /></> },
           ]} />
         ) : (
-          <VisaoGeral key={aba} vista={aba} elementosPloa={elementosPloa} receita={macro.receita} despesa={macro.despesa} ipca={macro.ipca} dados={receitaMes} />
+          <VisaoGeral key={aba} vista={aba as Vista} elementosPloa={elementosPloa} receita={macro.receita} despesa={macro.despesa} ipca={macro.ipca} dados={receitaMes} />
         )}
       </div>
 
