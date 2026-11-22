@@ -46,6 +46,7 @@ export function Painel({ macro, receitaMes, elementosPloa, orgaos, fiscais, rclP
   const escolheAba = (a: Aba) => { setAba(a); try { window.history.replaceState(null, '', `#${a}`) } catch { /* sem histórico: segue */ } }
   const abaAtual = ABAS.find((a) => a.id === aba)!
   const abertura = aba === 'conclusoes'
+  const TituloTopo = abertura ? 'p' : 'h1'
   const navegar = (destino: Aba, detalhe?: string) => {
     if (detalhe) setSub((x) => ({ ...x, [destino]: detalhe }))
     escolheAba(destino)
@@ -65,17 +66,16 @@ export function Painel({ macro, receitaMes, elementosPloa, orgaos, fiscais, rclP
         <div className="painel-topo-conteudo">
           <div className="painel-cabecalho bg-navy-deep text-on-navy">
             <div className={`painel-cabecalho-conteudo mx-auto flex max-w-[1600px] flex-wrap items-center justify-between gap-x-6 gap-y-2 px-4 sm:px-6 md:px-8 ${abertura ? 'py-2 md:py-3' : 'py-3 md:py-5'}`}>
-              <div className="painel-topo-identidade flex min-w-0 items-center gap-2.5 sm:gap-3">
-                <span aria-hidden="true" className={`painel-marca aspect-[105/139] shrink-0 rounded-md ${abertura ? 'w-8 sm:w-9' : 'w-10 sm:w-12'}`} />
-                <div className="min-w-0">
-                  {abertura ? (
-                    <p className="painel-topo-titulo hidden text-title font-semibold tracking-tight">{IDENTIDADE.painel}</p>
-                  ) : (
-                    <h1 className="text-title font-semibold tracking-tight">{IDENTIDADE.painel}</h1>
-                  )}
-                  <p className={abertura ? 'text-small font-semibold' : 'text-label tracking-normal text-on-navy/85'}>{IDENTIDADE.faixa}</p>
-                  <p className="mt-1 text-label tracking-normal">{IDENTIDADE.apoio}</p>
-                </div>
+              <div className="painel-topo-identidade w-full min-w-0 max-w-[18rem] lg:max-w-[22rem]">
+                <TituloTopo className="text-title font-semibold leading-tight tracking-tight">
+                  <span className="painel-marca-texto sr-only">{IDENTIDADE.painel}</span>
+                  <span className="painel-marca banner-img block aspect-[1000/247] overflow-hidden">
+                    <Image src="/img/painel-marca-transparente.png" alt="" width={2172} height={724}
+                      sizes="(min-width: 1024px) 390px, 320px" loading="eager" />
+                  </span>
+                </TituloTopo>
+                <p className="painel-marca-texto sr-only text-label tracking-normal">{IDENTIDADE.faixa}</p>
+                <p className="painel-topo-apoio text-label tracking-normal">{IDENTIDADE.apoio}</p>
               </div>
               <div className="painel-topo-controles flex flex-wrap items-center gap-x-2 gap-y-1 sm:gap-x-3">
                 <ControlesAcessibilidade compacto className="flex max-w-full flex-wrap" />

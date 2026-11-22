@@ -131,10 +131,16 @@ h1, h2, h3 { @apply font-serif font-semibold text-navy; font-optical-sizing: aut
     radial-gradient(farthest-side at 100% 50%, rgb(0 0 0 / 0.16), rgb(0 0 0 / 0)) right center / 10px 100% no-repeat scroll;
   overscroll-behavior-x: contain;
 }
-/* Recorte do símbolo na arte de 1200 × 630, com margem interna. O cabeçalho mantém a identidade em texto. */
-.painel-marca {
-  background: #f2f6fb url('/img/painel-identidade.jpg') 17.07% 50% / 571.43% 226.62% no-repeat;
+/* Enquadra a área útil da marca, preservando o PNG transparente original. */
+.painel-marca img {
+  width: 108.6%;
+  max-width: none;
+  margin-inline-start: -6.25%;
+  margin-top: -6.05%;
 }
+.painel-topo-apoio { padding-inline-start: 21%; }
+:root[data-contrast='alto'] .painel-marca-texto { @apply not-sr-only; }
+:root[data-contrast='alto'] .painel-topo-apoio { padding-inline-start: 0; }
 .painel .painel-topo h1, .painel .painel-abertura h1 { color: rgb(var(--on-navy)); }
 .painel .painel-cabecalho :focus-visible, .painel .painel-abertura :focus-visible { outline-color: rgb(var(--on-navy)); }
 :root:not([data-contrast='alto']) :is(.painel-cabecalho, .painel-topo) {
@@ -208,7 +214,6 @@ h1, h2, h3 { @apply font-serif font-semibold text-navy; font-optical-sizing: aut
     }
     .painel-cabecalho, .painel-cabecalho-conteudo { display: contents; }
     .painel-topo-identidade { grid-area: identidade; }
-    .painel-topo-identidade .painel-topo-titulo { display: block; }
     .painel-topo-controles {
       grid-area: controles;
       border-inline-start: 1px solid rgb(var(--on-navy) / .35);
