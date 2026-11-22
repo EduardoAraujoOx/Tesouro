@@ -12,7 +12,7 @@ type Paragrafo = { topico: string; resto?: string }
 type Item = { n: number; paragrafos: Paragrafo[]; destinos?: Destino[] }
 
 /**
- * Conclusões do painel, que abrem a leitura: seis tópicos, cada um com links para os dados em que se apoia. O texto é redigido (não calculado)
+ * Considerações gerais do painel (aba de abertura; o identificador e o arquivo mantêm o nome antigo, `conclusoes`, para não quebrar endereços já compartilhados): seis tópicos, cada um com links para os dados em que se apoia. O texto é redigido (não calculado)
  * e reflete os dados coletados em 19/11/2026, com arrecadação e despesa empenhada até outubro; deve ser revisto quando os dados forem atualizados.
  * Os valores dos ajustes da votação vêm do cálculo do aviso, arredondados.
  */

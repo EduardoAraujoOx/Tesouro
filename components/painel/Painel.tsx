@@ -16,7 +16,7 @@ import type { LinhaMacro } from '@/lib/macro'
 
 type Aba = 'conclusoes' | Vista
 const ABAS: { id: Aba; rotulo: string }[] = [
-  { id: 'conclusoes', rotulo: 'Conclusões' },
+  { id: 'conclusoes', rotulo: 'Considerações gerais' },
   { id: 'receita', rotulo: 'Receita' },
   { id: 'despesa', rotulo: 'Despesa' },
   { id: 'resultado', rotulo: 'Resultado orçamentário' },
@@ -27,7 +27,7 @@ type MacroProps = {
 }
 
 /**
- * Painel em quatro seções: Conclusões (a abertura, com links para os dados), Receita, Despesa e Resultado orçamentário, cada uma a PLOA 2027 contra a
+ * Painel em quatro seções: Considerações gerais (a abertura, com links para os dados), Receita, Despesa e Resultado orçamentário, cada uma a PLOA 2027 contra a
  * história e o fechamento projetado de 2026. O restante do material (cenários, detalhamentos, método) ficou de fora por ora, até se decidir o que acrescentar.
  */
 export function Painel({ macro, receitaMes, elementosPloa, orgaos, fiscais, rclPloa, pessoalExecPloa, ajustes, loa, receitaAnual }: { macro: MacroProps; receitaMes: DadosReceita; elementosPloa: Record<string, Record<string, number>>; orgaos: OrgaoPloa[]; fiscais: Fiscais; rclPloa: number; pessoalExecPloa: number; ajustes: AjustesVotacao; loa: LoaAnual; receitaAnual: ReceitaAnual }) {
