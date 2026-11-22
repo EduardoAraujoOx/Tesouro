@@ -131,18 +131,23 @@ h1, h2, h3 { @apply font-serif font-semibold text-navy; font-optical-sizing: aut
     radial-gradient(farthest-side at 100% 50%, rgb(0 0 0 / 0.16), rgb(0 0 0 / 0)) right center / 10px 100% no-repeat scroll;
   overscroll-behavior-x: contain;
 }
-/* A navegação se ajusta à largura útil em relação ao tamanho do texto. */
-/* Recorte do símbolo na arte de 1200 × 630. O título e os créditos ficam em texto no cabeçalho. */
-.painel-marca {
-  background: #f2f6fb url('/img/painel-identidade.jpg') 17.17% 49.74% / 571.43% 250% no-repeat;
+/* Enquadra a área útil da marca, preservando o PNG transparente original. */
+.painel-marca img {
+  width: 108.6%;
+  max-width: none;
+  margin-inline-start: -6.25%;
+  margin-top: -6.05%;
 }
-.painel .painel-cabecalho h1 { color: rgb(var(--on-navy)); }
-.painel .painel-cabecalho :focus-visible { outline-color: rgb(var(--on-navy)); }
-:root:not([data-contrast='alto']) .painel-cabecalho {
+:root[data-contrast='alto'] .painel-marca-texto { @apply not-sr-only; }
+.painel .painel-topo h1 { color: rgb(var(--on-navy)); }
+.painel .painel-cabecalho :focus-visible, .painel .painel-abertura :focus-visible { outline-color: rgb(var(--on-navy)); }
+:root:not([data-contrast='alto']) :is(.painel-cabecalho, .painel-topo) {
   background-image: linear-gradient(115deg, rgb(var(--navy-deep)), rgb(var(--navy)) 70%, #154578);
 }
+/* A navegação se ajusta à largura útil em relação ao tamanho do texto. */
 @media screen {
-  .painel { overflow-wrap: anywhere; }
+  .painel { container: painel / inline-size; overflow-wrap: anywhere; }
+  .painel-topo, .painel-topo-conteudo { display: contents; }
   .painel-abas, .painel-subabas { display: grid; grid-template-columns: minmax(0, 1fr); }
   .painel-navegacao { container: painel-navegacao / inline-size; }
   .painel-subvisoes { container: painel-subvisoes / inline-size; }
@@ -161,6 +166,102 @@ h1, h2, h3 { @apply font-serif font-semibold text-navy; font-optical-sizing: aut
   }
   @container painel-subvisoes (min-width: 21.5rem) {
     .painel-subabas { display: inline-flex; flex-wrap: wrap; }
+  }
+  @container painel (min-width: 48rem) {
+    .painel-lrf-escala { display: grid; }
+    .painel-lrf-linha { grid-template-columns: 15rem minmax(0, 1fr) 12rem; }
+    .painel-capag-linha { grid-template-columns: 15rem minmax(0, 1fr) 13rem; }
+  }
+  @container painel (min-width: 68rem) {
+    .painel-topo {
+      display: block;
+      position: sticky;
+      top: 0;
+      z-index: 30;
+      background-color: rgb(var(--navy-deep));
+      color: rgb(var(--on-navy));
+    }
+    .painel-topo-conteudo {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto auto;
+      grid-template-areas: "identidade abas controles";
+      align-items: center;
+      gap: clamp(.75rem, 2vw, 2rem);
+      max-width: 1600px;
+      min-height: 5.25rem;
+      margin-inline: auto;
+      padding: .75rem 2rem;
+    }
+    .painel-cabecalho, .painel-cabecalho-conteudo { display: contents; }
+    .painel-topo-identidade { grid-area: identidade; }
+    .painel-topo-controles {
+      grid-area: controles;
+      border-inline-start: 1px solid rgb(var(--on-navy) / .35);
+      padding-inline-start: .75rem;
+    }
+    .painel-topo .painel-navegacao {
+      grid-area: abas;
+      container-type: normal;
+      position: static;
+      border: 0;
+      background: transparent;
+    }
+    .painel-topo .painel-abas { gap: .25rem; padding: 0; }
+    .painel-abas .painel-aba-curta { display: inline; }
+    .painel-abas .painel-aba-longa { display: none; }
+    .painel-topo .painel-abas [role="tab"] {
+      padding-inline: .75rem;
+      border-color: transparent;
+      background: transparent;
+      color: rgb(var(--on-navy));
+    }
+    .painel-topo .painel-abas [role="tab"]:hover { background: rgb(var(--on-navy) / .1); }
+    .painel-topo .painel-abas [aria-selected="true"] { border-bottom-color: rgb(var(--on-navy)); }
+    :root:not([data-contrast='alto']) .painel-topo .painel-abas [aria-selected="true"] { border-bottom-color: #39b5e8; }
+    .painel .painel-topo .painel-abas :focus-visible { outline-color: rgb(var(--on-navy)); }
+    .painel-abertura { display: block; }
+    .painel-abertura-conteudo {
+      display: flex;
+      min-height: 26.75rem;
+      align-items: center;
+      padding: 3rem 2.5rem 3.5rem;
+    }
+    .painel-abertura-texto { max-width: 56%; }
+    .painel-abertura-equipe::before {
+      content: "";
+      width: 2.25rem;
+      height: 3px;
+      border-radius: 2px;
+      background: currentColor;
+    }
+    :root:not([data-contrast='alto']) .painel-abertura-equipe::before { background: #39b5e8; }
+    .painel-abertura .painel-abertura-titulo {
+      margin-top: 1rem;
+      font-size: clamp(2.5rem, 4.6vw, 4rem);
+      line-height: 1;
+      letter-spacing: -.035em;
+    }
+    .painel-abertura-titulo-inicio { display: block; }
+    .painel-abertura-descricao { margin-top: 1.5rem; font-size: 1.125rem; }
+    .painel-abertura-imagem { left: 32%; }
+    .painel-abertura-imagem::before {
+      content: "";
+      position: absolute;
+      z-index: 1;
+      inset: -13% -31% -70% 7%;
+      border-radius: 50%;
+      border: 1.5rem solid rgb(57 181 232 / .16);
+      transform: rotate(-14deg);
+    }
+    .painel-abertura-imagem::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      z-index: 1;
+      background: linear-gradient(90deg, rgb(var(--navy-deep)), rgb(var(--navy-deep) / .85) 24%, rgb(var(--navy-deep) / .2) 66%, transparent);
+    }
+    .painel-atalhos { display: grid; margin-block: .75rem 2rem; }
+    #consideracoes-gerais { scroll-margin-top: 1rem; }
   }
   @container painel-grafico-anual (max-width: 18rem) {
     .painel-grafico-anual .painel-colunas-anuais { display: none; }
