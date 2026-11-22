@@ -112,7 +112,7 @@ export function Painel({ macro, receitaMes, elementosPloa, orgaos, fiscais, rclP
 
       <div role="tabpanel" id={`painel-${aba}`} aria-labelledby={`aba-${aba}`} className="mt-3">
         {aba === 'conclusoes' ? (
-          <Conclusoes ajustes={ajustes} onIr={ir} />
+          <Conclusoes ajustes={ajustes} onIr={ir} receita={macro.receita} despesa={macro.despesa} dados={receitaMes} fiscais={fiscais} rclPloa={rclPloa} pessoalExecPloa={pessoalExecPloa} />
         ) : aba === 'despesa' ? (
           <Subvisoes key="despesa" rotulo="Despesa" ativa={sub.despesa} onMudar={(id) => setSub((x) => ({ ...x, despesa: id }))} itens={[
             { id: 'resumo', rotulo: 'Resumo', conteudo: <>{aviso}<VisaoGeral vista="despesa" elementosPloa={elementosPloa} receita={macro.receita} despesa={macro.despesa} ipca={macro.ipca} dados={receitaMes} /></> },

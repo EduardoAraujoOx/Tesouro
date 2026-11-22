@@ -8,7 +8,7 @@ import { Nota, NOTA_DISCRETA } from './Estrutura'
 import { projecaoItens, projetaDespesa2026, type DadosReceita } from './projecao'
 import type { IndicadoresFiscais as Fiscais } from './Agregado'
 
-type Props = { receita: LinhaMacro[]; despesa: LinhaMacro[]; dados: DadosReceita; fiscais: Fiscais; rclPloa: number; pessoalExecPloa: number }
+export type PropsFiscais = { receita: LinhaMacro[]; despesa: LinhaMacro[]; dados: DadosReceita; fiscais: Fiscais; rclPloa: number; pessoalExecPloa: number }
 
 const pc = (x: number) => `${numero(x, 1)}%`
 /** a partir de 90% do limite há alerta na LRF */
@@ -21,7 +21,7 @@ const ED_CALIBRACAO = 2026
  * Quadro VI da Mensagem. CAPAG: última edição publicada e estimativa da edição de 2028 (a primeira que usa o exercício de 2027), com a poupança corrente
  * pela média ponderada dos três exercícios (0,5, 0,3 e 0,2) da Portaria Normativa MF nº 1.583/2023.
  */
-function useCalculo({ receita, despesa, dados, fiscais, rclPloa, pessoalExecPloa }: Props) {
+export function useCalculo({ receita, despesa, dados, fiscais, rclPloa, pessoalExecPloa }: PropsFiscais) {
   const R = useMemo(() => Object.fromEntries(receita.map((x) => [x.chave, x.valores])) as Record<string, number[]>, [receita])
   const D = useMemo(() => Object.fromEntries(despesa.map((x) => [x.chave, x.valores])) as Record<string, number[]>, [despesa])
   const itensProj = useMemo(() => projecaoItens(dados), [dados])
@@ -87,7 +87,7 @@ const METODO_LRF: { id: string; nome: string; num: string; den: string; norma: s
 ]
 
 /** Limites da LRF: cada indicador como parcela do limite legal; quanto mais perto de 100%, menor a folga. */
-export function IndicadoresLrf(props: Props) {
+export function IndicadoresLrf(props: PropsFiscais) {
   const { lrf } = useCalculo(props)
   const inds: IndLrf[] = [
     { chave: 'pessoal', rotulo: 'Pessoal líquido do Executivo ÷ RCL', base: 'Limite de 49%; alerta a 44,1% e prudencial a 46,55%', limite: lrf.pessoal.limite, ultimo: lrf.pessoal.ultimo, ultimoRot: 'RGF, 2º quad. 2026', ploa: lrf.pessoal.ploa, prud: lrf.pessoal.prud },
@@ -205,7 +205,7 @@ function TabelaMetodo({ linhas }: { linhas: { id: string; nome: string; num: str
 }
 
 /** CAPAG: onde cada indicador está nas faixas das notas A, B e C, e como as notas parciais compõem a nota final. */
-export function IndicadoresCapag(props: Props) {
+export function IndicadoresCapag(props: PropsFiscais) {
   const { capag } = useCalculo(props)
   const inds: IndCapag[] = [
     { chave: 'endiv', rotulo: 'Endividamento', formula: 'dívida consolidada bruta ÷ RCL', escala: [0, 120], ultimo: capag.endiv.ultimo, nota: capag.endiv.nota, ploa: capag.endiv.ploa,
