@@ -8,7 +8,11 @@ import ploaRaw from '@/data/ploa2027.json'
 import orgaosRaw from '@/data/ploa2027-orgaos.json'
 import rclRaw from '@/data/ploa2027-rcl.json'
 import indicadoresRaw from '@/data/indicadores.json'
+import loaRaw from '@/data/loa-executado.json'
+import receitaAnualRaw from '@/data/receita-anual.json'
+import { ajustesVotacao } from '@/lib/ajustes-ploa'
 import type { IndicadoresFiscais } from '@/components/painel/Agregado'
+import type { LoaAnual, ReceitaAnual } from '@/components/painel/OrcadoExecutado'
 import type { OrgaoPloa } from '@/components/painel/DespesaOrgaos'
 import type { DadosReceita } from '@/components/painel/projecao'
 
@@ -41,8 +45,20 @@ function indicadoresFiscais(): IndicadoresFiscais {
   return { capag: d.capag.serie.filter((x) => x.ano >= 2023), lrf: d.lrf.serie.filter((x) => x.ano >= 2025), pessoalExecutivoEmpenhado2025: pessoalExecutivoEmpenhado2025() }
 }
 
+/** Orçamento inicial (LOA) e despesa empenhada por ano, do consolidado por unidade gestora do Portal. */
+function loaExecutado(): LoaAnual {
+  const d = (loaRaw as unknown as { anos: Record<string, { dotacao_inicial: number; empenhado: number }> }).anos
+  return Object.fromEntries(Object.entries(d).map(([a, v]) => [a, { inicial: v.dotacao_inicial, empenhado: v.empenhado }]))
+}
+
+/** Arrecadação líquida de deduções dos anos que os quadros da PLOA não cobrem (2019 a 2022). */
+function receitaAnual(): ReceitaAnual {
+  const d = (receitaAnualRaw as unknown as { anos: Record<string, { liquida: number }> }).anos
+  return Object.fromEntries(Object.entries(d).map(([a, v]) => [a, v.liquida]))
+}
+
 export default function PaginaPainel() {
   return <Painel
     macro={{ receita: receitaMacro, despesa: despesaMacro, ipca: parametros.ipca, pib: parametros.pib_real, fonteIpca: parametros.fonte }}
-    elementosPloa={ploaPorElemento()} orgaos={orgaosPloa()} fiscais={indicadoresFiscais()} rclPloa={(rclRaw as unknown as { linhas: Record<string, number> }).linhas.rcl} pessoalExecPloa={pessoalPloaExecutivo()} receitaMes={receitaRaw as unknown as DadosReceita} />
+    elementosPloa={ploaPorElemento()} orgaos={orgaosPloa()} fiscais={indicadoresFiscais()} rclPloa={(rclRaw as unknown as { linhas: Record<string, number> }).linhas.rcl} pessoalExecPloa={pessoalPloaExecutivo()} ajustes={ajustesVotacao()} loa={loaExecutado()} receitaAnual={receitaAnual()} receitaMes={receitaRaw as unknown as DadosReceita} />
 }

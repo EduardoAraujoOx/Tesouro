@@ -24,8 +24,8 @@ export type RclOficial = {
 
 /** LRF e CAPAG: séries do Tesouro Nacional (RGF do Executivo, por quadrimestre; CAPAG, uma edição por ano) */
 export type IndicadoresFiscais = {
-  capag: { ano: number; classificacao: string | null; endividamento: number | null; poupanca: number | null; liquidez: number | null }[]
-  lrf: { ano: number; quad: number; pessoal: { valor: number; montante: number }; divida: { valor: number; dc: number; rcl_ajustada: number | null }; garantias: { valor: number }; credito: { valor: number } }[]
+  capag: { ano: number; classificacao: string | null; endividamento: number | null; notaEndividamento: string | null; poupanca: number | null; notaPoupanca: string | null; liquidez: number | null; notaLiquidez: string | null; qualidadeInformacao: string | null }[]
+  lrf: { ano: number; quad: number; pessoal: { valor: number; limite: number; prudencial: number; montante: number }; divida: { valor: number; limite: number; dc: number; rcl_ajustada: number | null }; garantias: { valor: number; limite: number }; credito: { valor: number; limite: number } }[]
   /** pessoal e encargos do Executivo empenhado em 2025 (Portal), bruto */
   pessoalExecutivoEmpenhado2025: number
 }
