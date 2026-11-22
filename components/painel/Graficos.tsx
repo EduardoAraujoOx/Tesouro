@@ -15,12 +15,12 @@ export const COR = {
   baixa: 'rgb(var(--serie2))',
 }
 
-export function Legenda({ itens }: { itens: { cor: string; rotulo: string; contorno?: string }[] }) {
+export function Legenda({ itens }: { itens: { cor: string; rotulo: string; contorno?: string; ponto?: boolean }[] }) {
   return (
     <ul className="flex flex-wrap gap-x-4 gap-y-1 text-small text-ink-soft">
       {itens.map((i) => (
         <li key={i.rotulo} className="inline-flex items-center gap-1.5">
-          <span aria-hidden="true" className="inline-block h-2.5 w-4 rounded-sm" style={{ background: i.cor, outline: i.contorno ? `1px solid ${i.contorno}` : undefined }} />
+          <span aria-hidden="true" className={`inline-block shrink-0 ${i.ponto ? 'h-3 w-3 rounded-full' : 'h-2.5 w-4 rounded-sm'}`} style={{ background: i.cor, outline: i.contorno ? `1px solid ${i.contorno}` : undefined }} />
           {i.rotulo}
         </li>
       ))}
@@ -36,7 +36,7 @@ export function Cartao({ titulo, legenda, grafico, tabela, direita, className = 
     <section aria-label={titulo} data-longa={longa ? '' : undefined} className={`min-w-0 rounded-brand border border-line bg-paper p-3 sm:p-4 md:p-5 print:p-3 ${className}`}>
       <div className="flex flex-wrap items-center justify-between gap-x-4 gap-y-2">
         <h2 className="text-body font-semibold md:text-lead">{titulo}</h2>
-        <div className="flex items-center gap-2 print:hidden">
+        <div className="flex min-w-0 max-w-full flex-wrap items-center gap-2 print:hidden">
           {direita}
           {tabela !== undefined && <div role="group" aria-label={`Forma de ver: ${titulo}`} className="inline-flex overflow-hidden rounded-brand border border-line text-small">
             {([['grafico', 'Gráfico'], ['tabela', 'Tabela']] as const).map(([v, r]) => (
