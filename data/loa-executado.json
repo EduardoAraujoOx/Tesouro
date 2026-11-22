@@ -1,0 +1,62 @@
+{
+ "anos": {
+  "2019": {
+   "dotacao_inicial": 17094551601,
+   "dotacao_atualizada": 18796795483,
+   "empenhado": 16171071512,
+   "liquidado": 15743488663,
+   "pago": 15456689708
+  },
+  "2020": {
+   "dotacao_inicial": 19092352422,
+   "dotacao_atualizada": 21708358546,
+   "empenhado": 17170216402,
+   "liquidado": 16340403874,
+   "pago": 16039337338
+  },
+  "2021": {
+   "dotacao_inicial": 18902292466,
+   "dotacao_atualizada": 23804314457,
+   "empenhado": 18762339558,
+   "liquidado": 17708744426,
+   "pago": 17261549095
+  },
+  "2022": {
+   "dotacao_inicial": 20273774984,
+   "dotacao_atualizada": 26886238062,
+   "empenhado": 22785645318,
+   "liquidado": 21524275579,
+   "pago": 20705148427
+  },
+  "2023": {
+   "dotacao_inicial": 22507308118,
+   "dotacao_atualizada": 28562012590,
+   "empenhado": 25098719259,
+   "liquidado": 23667757284,
+   "pago": 23069389940
+  },
+  "2024": {
+   "dotacao_inicial": 24930292998,
+   "dotacao_atualizada": 31136892478,
+   "empenhado": 28340615872,
+   "liquidado": 26474435631,
+   "pago": 26105913234
+  },
+  "2025": {
+   "dotacao_inicial": 29518094648,
+   "dotacao_atualizada": 35303105831,
+   "empenhado": 31095180621,
+   "liquidado": 29312139511,
+   "pago": 28833104068
+  },
+  "2026": {
+   "dotacao_inicial": 32030806668,
+   "dotacao_atualizada": 36871071910,
+   "empenhado": 31510911118,
+   "liquidado": 26727820458,
+   "pago": 26128905018
+  }
+ },
+ "fonte": "Portal de Dados Abertos do ES, Despesas: OrcamentosExecucoes-AAAA.csv (consolidado por unidade gestora)",
+ "coletado_em": "2026-11-22T12:27:50Z"
+}
