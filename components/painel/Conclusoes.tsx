@@ -11,11 +11,8 @@ export type Destino = { aba: 'receita' | 'despesa' | 'resultado'; sub?: string; 
 type Paragrafo = { topico: string; resto?: string }
 type Item = { n: number; paragrafos: Paragrafo[]; destinos?: Destino[] }
 
-const SINTESE =
-  'A proposta orçamentária para 2027 reproduz, em valores correntes, o fechamento projetado de 2026. O principal risco de receita está no ICMS, e a receita de petróleo parece tratada com cautela. Os limites da LRF não preocupam, mas a poupança corrente é o ponto de atenção da nota da CAPAG.'
-
 /**
- * Conclusões do painel, que abrem a leitura: a síntese e seis tópicos, cada um com links para os dados em que se apoia. O texto é redigido (não calculado)
+ * Conclusões do painel, que abrem a leitura: seis tópicos, cada um com links para os dados em que se apoia. O texto é redigido (não calculado)
  * e reflete os dados coletados em 19/11/2026, com arrecadação e despesa empenhada até outubro; deve ser revisto quando os dados forem atualizados.
  * Os valores dos ajustes da votação vêm do cálculo do aviso, arredondados.
  */
@@ -59,12 +56,7 @@ export function Conclusoes({ ajustes, onIr }: { ajustes: AjustesVotacao; onIr: (
 
   return (
     <div>
-      <section aria-label="Síntese" className="rounded-brand border border-line bg-surface px-4 py-3 print:py-2 md:px-5">
-        <h2 className="text-body font-semibold text-navy">Em síntese</h2>
-        <p className="mt-1 text-body leading-relaxed text-ink print:text-small">{SINTESE}</p>
-      </section>
-
-      <ol className="mt-4 grid gap-x-8 gap-y-5 print:mt-2 print:gap-x-5 print:gap-y-2 md:grid-cols-2 print:grid-cols-3">
+      <ol className="grid gap-x-8 gap-y-5 print:gap-x-5 print:gap-y-2 md:grid-cols-2 print:grid-cols-3">
         {itens.map((it) => (
           <li key={it.n} className="flex gap-3 print:break-inside-avoid">
             <span aria-hidden="true" className="mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-navy text-label font-semibold text-on-navy">{it.n}</span>
