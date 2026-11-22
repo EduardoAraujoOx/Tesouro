@@ -286,6 +286,8 @@ h1, h2, h3 { @apply font-serif font-semibold text-navy; font-optical-sizing: aut
   .painel, .painel * { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
   .painel { max-width: none; padding: 0; }
   .painel .overflow-auto, .painel .overflow-x-auto { overflow: visible !important; max-height: none !important; }
+  .relatorio-capitulo, .relatorio-subsecao + .relatorio-subsecao { break-before: page; }
+  .relatorio-painel .relatorio-capitulo :is(h2, h3) { break-after: avoid; }
   .painel section { break-inside: avoid; margin-bottom: 4mm; box-shadow: none; }
   .painel section[data-longa] { break-inside: auto; }
   .painel [class*="xl:grid-cols-12"] { display: block !important; }

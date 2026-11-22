@@ -69,6 +69,8 @@ npm run dev           # http://localhost:3000
 npm run build && npm start
 ```
 
+O build gera o PDF completo do painel a partir de `/painel/relatorio`, que também pode ser aberta no servidor de desenvolvimento. O gerador usa o Chromium empacotado em Linux. Em outros sistemas, defina `TESOURO_CHROMIUM_PATH` com o caminho para um executável do Chrome ou Chromium.
+
 ## Navegação e página inicial
 
 O menu tem seis itens, cada um para uma pergunta diferente: Início, Indicadores (como está o Estado), Publicações (onde estão os documentos, agrupados por assunto), Serviços e Orientações (o que preciso para trabalhar), O Tesouro (quem somos, Tesouro Cidadão e notícias) e Fale Conosco. A definição está em `lib/links.ts` (`menu`). Os acessos rápidos da página inicial ficam em `acessoRapido`; o destino de Reforma Tributária é provisório (a notícia do ciclo de palestras) até a Subsecretaria definir o conteúdo.

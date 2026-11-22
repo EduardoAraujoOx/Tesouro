@@ -32,6 +32,13 @@ const nextConfig = {
       { key: 'Permissions-Policy', value: 'camera=(), microphone=(), geolocation=(), interest-cohort=()' },
     ]
     return [
+      {
+        source: '/painel/relatorio-orcamentario-2027.pdf',
+        headers: [
+          { key: 'Content-Disposition', value: 'attachment; filename="relatorio-orcamentario-2027.pdf"' },
+          { key: 'X-Robots-Tag', value: 'noindex, nofollow' },
+        ],
+      },
       { source: '/cidadao/em-busca-do-tesouro', headers: [{ key: 'Content-Security-Policy', value: cspLeitor }, ...comuns] },
       { source: '/((?!cidadao/em-busca-do-tesouro$).*)', headers: [{ key: 'Content-Security-Policy', value: csp }, ...comuns] },
     ]

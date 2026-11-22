@@ -177,7 +177,7 @@ export function VisaoGeral({ vista, elementosPloa, receita, despesa, ipca: ipcaP
     if (!filhos) return <span title={c ? `Código ${c}` : undefined} className={`block pl-4 md:pl-5 ${l.negrito ? 'font-semibold' : 'font-medium'}`}>{c && <span className="sr-only">{c} </span>}{l.rotulo}</span>
     return (
       <button type="button" aria-expanded={aberto} onClick={() => alterna(l.chave)} title={c ? `Código ${c}` : undefined} className={`inline-flex items-center gap-1.5 text-left ${l.nivel === 1 ? 'ml-4 text-ink-soft md:ml-5' : 'font-medium text-ink'}`}>
-        <span aria-hidden="true" className="inline-block w-3.5 text-ink-soft">{aberto ? '▾' : '▸'}</span>{l.rotulo}
+        <span aria-hidden="true" className="inline-block w-3.5 text-ink-soft print:hidden">{aberto ? '▾' : '▸'}</span>{l.rotulo}
         <span className="sr-only">{c ? ` (código ${c}); ` : ' '}{aberto ? 'recolher detalhe' : 'mostrar detalhe'}</span>
       </button>
     )
@@ -267,7 +267,7 @@ export function VisaoGeral({ vista, elementosPloa, receita, despesa, ipca: ipcaP
           <Cartao longa titulo={vista === 'receita' ? 'Receita por categoria: PLOA 2027 sobre a projeção de 2026' : 'Despesa por grupo de natureza: PLOA 2027 sobre a projeção de 2026'}>
             <TabelaItens altura="livre" compacta itens={visiveis.map((l) => ({ ...l, chave: l.chave }))} colunas={colunasTabela} legenda={`${vista === 'receita' ? 'Receita por categoria' : 'Despesa por grupo de natureza'}, em R$ milhões`} />
             <p className={`mt-2 ${NOTA_DISCRETA}`}>
-              Proj. 26: fechamento projetado ({vista === 'receita' ? `arrecadação até ${nomeCorte}` : `despesa empenhada até ${nomeCorteDesp}`}, completado pela sazonalidade média de 2022–2025). Var.: PLOA 2027 sobre a Proj. 26, em R$ milhões e em % nominal; Var. real %: descontado o IPCA de 2027.{vista === 'despesa' ? ` Elementos de despesa (clique no grupo): 2025 e Proj. 26 pelo empenhado do Portal, com a Proj. 26 de cada elemento distribuída na proporção do empenhado até ${nomeCorteDesp}; PLOA 2027 pelo detalhamento por elemento da proposta (PL 525/2026).` : ''}{vista === 'receita' ? ` † A Proj. 26 inclui receita pontual (indenizações, restituições e ressarcimentos: R$ ${mi(comProj.find((x) => x.chave === 'demais')?.proj?.pontual ?? 0)} mi até ${nomeCorte}), que não deve se repetir em 2027.` : ''}
+              Proj. 26: fechamento projetado ({vista === 'receita' ? `arrecadação até ${nomeCorte}` : `despesa empenhada até ${nomeCorteDesp}`}, completado pela sazonalidade média de 2022–2025). Var.: PLOA 2027 sobre a Proj. 26, em R$ milhões e em % nominal; Var. real %: descontado o IPCA de 2027.{vista === 'despesa' && <> Elementos de despesa<span className="print:hidden"> (clique no grupo)</span>{`: 2025 e Proj. 26 pelo empenhado do Portal, com a Proj. 26 de cada elemento distribuída na proporção do empenhado até ${nomeCorteDesp}; PLOA 2027 pelo detalhamento por elemento da proposta (PL 525/2026).`}</>}{vista === 'receita' ? ` † A Proj. 26 inclui receita pontual (indenizações, restituições e ressarcimentos: R$ ${mi(comProj.find((x) => x.chave === 'demais')?.proj?.pontual ?? 0)} mi até ${nomeCorte}), que não deve se repetir em 2027.` : ''}
             </p>
             {notaReferencia}
           </Cartao>
