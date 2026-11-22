@@ -8,3 +8,4 @@ out/
 next-env.d.ts
 .DS_Store
 __pycache__/
+/public/painel/relatorio-orcamentario-2027.pdf*

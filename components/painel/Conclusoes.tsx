@@ -17,7 +17,7 @@ type Item = { n: number; trechos: Trecho[]; destinos?: Destino[] }
  * e reflete os dados coletados em 19/11/2026, com arrecadação e despesa empenhada até outubro; deve ser revisto quando os dados forem atualizados.
  * Os valores dos ajustes da votação vêm do cálculo do aviso, arredondados.
  */
-export function Conclusoes({ ajustes, onIr }: { ajustes: AjustesVotacao; onIr: (d: Destino) => void }) {
+export function Conclusoes({ ajustes, onIr }: { ajustes: AjustesVotacao; onIr?: (d: Destino) => void }) {
   const emendas = milhoes(arredonda50(ajustes.emendas), 0)
   const poderes = milhoes(arredonda50(ajustes.poderes), 0)
   const itens: Item[] = [
@@ -70,11 +70,15 @@ export function Conclusoes({ ajustes, onIr }: { ajustes: AjustesVotacao; onIr: (
                 ))}
               </p>
               {it.destinos && (
-                <p className="flex flex-wrap gap-x-4 text-small print:hidden">
-                  {it.destinos.map((d) => (
+                <p className={`flex flex-wrap gap-x-4 text-small ${onIr ? 'print:hidden' : 'print:text-label'}`}>
+                  {it.destinos.map((d) => onIr ? (
                     <button key={d.rotulo} type="button" onClick={() => onIr(d)} className="min-h-10 text-left font-semibold text-navy underline decoration-navy/40 underline-offset-2 hover:decoration-navy">
                       Ver {d.rotulo} →
                     </button>
+                  ) : (
+                    <a key={d.rotulo} href={`#${d.aba}${d.sub ? `-${d.sub}` : ''}`} className="font-semibold text-navy underline underline-offset-2">
+                      Ver {d.rotulo} →
+                    </a>
                   ))}
                 </p>
               )}

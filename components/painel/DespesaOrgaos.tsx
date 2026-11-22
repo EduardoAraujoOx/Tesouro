@@ -67,7 +67,7 @@ export function DespesaOrgaos({ orgaos, ipca: ipcaParams }: { orgaos: OrgaoPloa[
     const aberto = abertos.has(l.chave)
     return (
       <button type="button" aria-expanded={aberto} onClick={() => alterna(l.chave)} className="inline-flex items-center gap-1.5 text-left font-medium text-ink">
-        <span aria-hidden="true" className="inline-block w-3.5 text-ink-soft">{aberto ? '▾' : '▸'}</span>{l.rotulo}
+        <span aria-hidden="true" className="inline-block w-3.5 text-ink-soft print:hidden">{aberto ? '▾' : '▸'}</span>{l.rotulo}
         <span className="sr-only">{aberto ? ' recolher detalhe' : ' mostrar detalhe'}</span>
       </button>
     )
@@ -86,7 +86,7 @@ export function DespesaOrgaos({ orgaos, ipca: ipcaParams }: { orgaos: OrgaoPloa[
           { rotulo: 'Var. real %', secundaria: true, valor: (l: Linha) => { const d = varReal(l); return d === null ? '–' : <span className={corDif(d)}>{fmtPct(d)}</span> } },
         ]} />
         <p className={`mt-2 ${NOTA_DISCRETA}`}>
-          Proj. 26: empenhado até {mesCorte} de cada órgão e grupo de despesa, dividido pela fração do ano que o órgão costuma ter empenhada nessa data (2022–2025), ajustado para somar a projeção do Resumo. Var.: PLOA 2027 sobre a Proj. 26; real: descontado o IPCA de 2027 (+{numero(i27 * 100, 1)}%). Reservas: RPPS, contingência e Fundo Soberano. Clique no órgão para ver os grupos de despesa.
+          Proj. 26: empenhado até {mesCorte} de cada órgão e grupo de despesa, dividido pela fração do ano que o órgão costuma ter empenhada nessa data (2022–2025), ajustado para somar a projeção do Resumo. Var.: PLOA 2027 sobre a Proj. 26; real: descontado o IPCA de 2027 (+{numero(i27 * 100, 1)}%). Reservas: RPPS, contingência e Fundo Soberano.<span className="print:hidden"> Clique no órgão para ver os grupos de despesa.</span>
         </p>
       </Cartao>
       <p className={`mt-3 ${NOTA_DISCRETA}`}>Fontes: PLOA 2027 (Mensagem nº 189/2026, art. 5º); Portal de Dados Abertos do ES; IPCA: Focus (BCB), mediana.</p>

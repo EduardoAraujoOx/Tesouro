@@ -13,3 +13,5 @@ export const IDENTIDADE = {
   painel: 'Painel orçamentário 2027',
   aviso: 'Material de trabalho da equipe de transição, elaborado com dados públicos. Não é divulgação oficial do Governo do Estado.',
 } as const
+
+export const RELATORIO_PDF = '/painel/relatorio-orcamentario-2027.pdf'

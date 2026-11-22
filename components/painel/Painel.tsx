@@ -3,18 +3,17 @@
 import { useEffect, useState } from 'react'
 import Image from 'next/image'
 import { IconArrow, IconBars, IconCoins, IconLayers, IconPie } from '@/components/Icons'
-import { IDENTIDADE } from '@/lib/identidade-painel'
-import { VisaoGeral, type Vista, type IndicadoresFiscais as Fiscais } from './Agregado'
-import { IndicadoresLrf, IndicadoresCapag } from './IndicadoresFiscais'
-import { NOTA_DISCRETA, Subvisoes } from './Estrutura'
-import { AvisoAjustes } from './AvisoAjustes'
+import { IDENTIDADE, RELATORIO_PDF } from '@/lib/identidade-painel'
+import { type Vista } from './Agregado'
+import { NOTA_DISCRETA } from './Estrutura'
 import { Conclusoes, type Destino } from './Conclusoes'
-import type { AjustesVotacao } from '@/lib/ajustes-ploa'
-import { OrcadoExecutado, type LoaAnual, type ReceitaAnual } from './OrcadoExecutado'
-import { DespesaOrgaos, type OrgaoPloa } from './DespesaOrgaos'
+import { SecaoDados } from './SecaoDados'
 import { ControlesAcessibilidade } from '@/components/TopBar'
-import type { DadosReceita } from './projecao'
-import type { LinhaMacro } from '@/lib/macro'
+import type { DadosPainel } from '@/lib/dados-painel'
+
+const downloadPdf = process.env.NODE_ENV !== 'development'
+const relatorioHref = downloadPdf ? RELATORIO_PDF : '/painel/relatorio'
+const rotuloRelatorio = downloadPdf ? 'Baixar relatório completo em PDF' : 'Abrir relatório completo'
 
 type Aba = 'conclusoes' | Vista
 const ABAS = [
@@ -24,16 +23,11 @@ const ABAS = [
   { id: 'resultado', rotulo: 'Resultado orçamentário', curto: 'Resultado', descricao: 'Execução orçamentária, LRF e CAPAG', Icone: IconPie },
 ] as const
 
-type MacroProps = {
-  receita: LinhaMacro[]; despesa: LinhaMacro[]; ipca: Record<string, number>; pib: Record<string, number>; fonteIpca: string
-}
-
 /**
  * Painel em quatro seções: Considerações gerais (a abertura, com links para os dados), Receita, Despesa e Resultado orçamentário, cada uma a PLOA 2027 contra a
  * história e o fechamento projetado de 2026. O restante do material (cenários, detalhamentos, método) ficou de fora por ora, até se decidir o que acrescentar.
  */
-export function Painel({ macro, receitaMes, elementosPloa, orgaos, fiscais, rclPloa, pessoalExecPloa, ajustes, loa, receitaAnual }: { macro: MacroProps; receitaMes: DadosReceita; elementosPloa: Record<string, Record<string, number>>; orgaos: OrgaoPloa[]; fiscais: Fiscais; rclPloa: number; pessoalExecPloa: number; ajustes: AjustesVotacao; loa: LoaAnual; receitaAnual: ReceitaAnual }) {
-  const aviso = <AvisoAjustes ajustes={ajustes} />
+export function Painel(dados: DadosPainel) {
   const [aba, setAba] = useState<Aba>('conclusoes')
   /* sub-visão escolhida em cada grupo, para que os links das conclusões levem direto ao ponto */
   const [sub, setSub] = useState<Record<string, string>>({ despesa: 'resumo', resultado: 'resultado' })
@@ -77,11 +71,11 @@ export function Painel({ macro, receitaMes, elementosPloa, orgaos, fiscais, rclP
               </div>
               <div className="painel-topo-controles flex flex-wrap items-center gap-x-2 gap-y-1 sm:gap-x-3">
                 <ControlesAcessibilidade compacto className="flex max-w-full flex-wrap" />
-                <button type="button" onClick={() => window.print()} title="Exportar esta seção em PDF"
+                <a href={relatorioHref} download={downloadPdf} aria-label={rotuloRelatorio} title={rotuloRelatorio}
                   className="inline-flex min-h-9 items-center gap-1.5 rounded-brand border border-current px-2.5 text-small font-semibold hover:underline">
                   <svg aria-hidden="true" viewBox="0 0 20 20" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"><path d="M10 3v9m0 0-3.5-3.5M10 12l3.5-3.5M4 14v2h12v-2" /></svg>
-                  <span className="sr-only">Exportar esta seção em </span>PDF
-                </button>
+                  {downloadPdf ? 'PDF' : 'Relatório'}
+                </a>
               </div>
             </div>
           </div>
@@ -142,9 +136,9 @@ export function Painel({ macro, receitaMes, elementosPloa, orgaos, fiscais, rclP
                     <button type="button" onClick={explorar} className="inline-flex min-h-12 items-center gap-2 rounded-brand bg-on-navy px-4 font-semibold text-navy-deep hover:underline">
                       Explorar o painel <IconArrow className="h-5 w-5" />
                     </button>
-                    <button type="button" onClick={() => window.print()} className="inline-flex min-h-12 items-center rounded-brand border border-current px-4 font-semibold hover:underline">
-                      Exportar esta seção em PDF
-                    </button>
+                    <a href={relatorioHref} download={downloadPdf} className="inline-flex min-h-12 items-center rounded-brand border border-current px-4 font-semibold hover:underline">
+                      {rotuloRelatorio}
+                    </a>
                   </div>
                 </div>
               </div>
@@ -169,22 +163,10 @@ export function Painel({ macro, receitaMes, elementosPloa, orgaos, fiscais, rclP
                   ))}
                 </nav>
                 <h2 id="consideracoes-gerais" tabIndex={-1} className="mb-3 text-title md:text-section print:hidden">{abaAtual.rotulo}</h2>
-                <Conclusoes ajustes={ajustes} onIr={ir} />
+                <Conclusoes ajustes={dados.ajustes} onIr={ir} />
               </>
-            ) : aba === 'despesa' ? (
-              <Subvisoes key="despesa" rotulo="Despesa" ativa={sub.despesa} onMudar={(id) => setSub((x) => ({ ...x, despesa: id }))} itens={[
-                { id: 'resumo', rotulo: 'Resumo', conteudo: <>{aviso}<VisaoGeral vista="despesa" elementosPloa={elementosPloa} receita={macro.receita} despesa={macro.despesa} ipca={macro.ipca} dados={receitaMes} /></> },
-                { id: 'orgao', rotulo: 'Detalhamento por órgão', conteudo: <>{aviso}<DespesaOrgaos orgaos={orgaos} ipca={macro.ipca} /></> },
-              ]} />
-            ) : aba === 'resultado' ? (
-              <Subvisoes key="resultado" rotulo="Resultado" ativa={sub.resultado} onMudar={(id) => setSub((x) => ({ ...x, resultado: id }))} itens={[
-                { id: 'resultado', rotulo: 'Resultado', conteudo: <>{aviso}<VisaoGeral vista="resultado" elementosPloa={elementosPloa} receita={macro.receita} despesa={macro.despesa} ipca={macro.ipca} dados={receitaMes} /></> },
-                { id: 'orcado', rotulo: 'Orçado × executado', conteudo: <OrcadoExecutado receita={macro.receita} dados={receitaMes} loa={loa} receitaAnual={receitaAnual} /> },
-                { id: 'lrf', rotulo: 'LRF', conteudo: <>{aviso}<IndicadoresLrf receita={macro.receita} despesa={macro.despesa} dados={receitaMes} fiscais={fiscais} rclPloa={rclPloa} pessoalExecPloa={pessoalExecPloa} /></> },
-                { id: 'capag', rotulo: 'CAPAG', conteudo: <>{aviso}<IndicadoresCapag receita={macro.receita} despesa={macro.despesa} dados={receitaMes} fiscais={fiscais} rclPloa={rclPloa} pessoalExecPloa={pessoalExecPloa} /></> },
-              ]} />
             ) : (
-              <VisaoGeral key={aba} vista={aba as Vista} elementosPloa={elementosPloa} receita={macro.receita} despesa={macro.despesa} ipca={macro.ipca} dados={receitaMes} />
+              <SecaoDados key={aba} vista={aba} dados={dados} ativa={sub[aba]} onMudar={(id) => setSub((x) => ({ ...x, [aba]: id }))} />
             )}
           </div>
         </div>
