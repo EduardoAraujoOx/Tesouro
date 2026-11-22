@@ -1,11 +1,11 @@
 {
- "geradoEm": "2026-11-01T09:32:27+00:00",
+ "geradoEm": "2026-11-22T10:40:14+00:00",
  "fontes": {
   "siconfi": "https://apidatalake.tesouro.gov.br/docs/siconfi/",
   "capag": "https://www.tesourotransparente.gov.br/ckan/dataset/capag-estados"
  },
  "capag": {
-  "conjuntoAtualizadoEm": "2026-03-10",
+  "conjuntoAtualizadoEm": "2026-11-18",
   "serie": [
    {
     "ano": 2018,
@@ -92,6 +92,17 @@
     "poupanca": 77.75,
     "notaPoupanca": "A",
     "liquidez": 7.48,
+    "notaLiquidez": "A",
+    "qualidadeInformacao": "A"
+   },
+   {
+    "ano": 2026,
+    "classificacao": "A+",
+    "endividamento": 29.47,
+    "notaEndividamento": "A",
+    "poupanca": 79.47,
+    "notaPoupanca": "A",
+    "liquidez": 7.86,
     "notaLiquidez": "A",
     "qualidadeInformacao": "A"
    }

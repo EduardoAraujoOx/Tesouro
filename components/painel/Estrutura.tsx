@@ -27,14 +27,14 @@ export function Subvisoes({ itens, rotulo }: { itens: { id: string; rotulo: stri
 export const NOTA_DISCRETA = 'text-[0.6875rem] normal-case leading-snug tracking-normal text-ink-soft/75'
 
 /** Texto de apoio recolhido: a tela mostra a frase-resumo, e o método, a fonte e as ressalvas ficam a um toque (e não saem no PDF, que cabe numa página). */
-export function Nota({ children, titulo = 'Metodologia e fontes' }: { children: ReactNode; titulo?: string }) {
+export function Nota({ children, titulo = 'Metodologia e fontes', larga = false }: { children: ReactNode; titulo?: string; /** conteúdo em tabela: ocupa a largura toda */ larga?: boolean }) {
   const [aberta, setAberta] = useState(false)
   return (
     <div className="mt-2">
       <button type="button" aria-expanded={aberta} onClick={() => setAberta((v) => !v)} className="text-label font-medium normal-case tracking-normal text-ink-soft underline underline-offset-4 print:hidden">
         {aberta ? '− ' : '+ '}{titulo}
       </button>
-      <div className={`mt-2 max-w-3xl space-y-2 text-small text-ink-soft ${aberta ? '' : 'hidden'} print:hidden`}>{children}</div>
+      <div className={`mt-2 ${larga ? '' : 'max-w-3xl'} space-y-2 text-small text-ink-soft ${aberta ? '' : 'hidden'} print:hidden`}>{children}</div>
     </div>
   )
 }
