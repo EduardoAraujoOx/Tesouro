@@ -1,6 +1,7 @@
 import rreoRaw from '@/data/rreo.json'
 import ritmoRaw from '@/data/ritmo-receita.json'
 import despesaMensalRaw from '@/data/despesa-mensal.json'
+import despesaOrgaoRaw from '@/data/despesa-mensal-orgao.json'
 import sefazRaw from '@/data/receita-sefaz.json'
 import pibRaw from '@/data/pib-receita.json'
 
@@ -548,6 +549,49 @@ export function razoesFechamento2026(empenhadoPorGnd: Record<string, number>): R
   const p = projetaDespesa2026()
   const out: Record<string, number> = { '9': 0 }
   for (const [chave, g] of Object.entries(GND_DESPESA)) out[g] = empenhadoPorGnd[g] > 0 ? p.itens[chave].central / empenhadoPorGnd[g] : 1
+  return out
+}
+
+/**
+ * Fechamento projetado de 2026 por órgão (código de dois dígitos da unidade orçamentária) e empenhado de 2025. Para cada órgão e grupo de natureza,
+ * o empenhado até o último mês fechado é dividido pela fração do ano que o próprio órgão costuma ter empenhada nessa data (média de 2022 a 2025);
+ * sem histórico próprio (órgão novo ou grupo abaixo de R$ 10 milhões em algum ano), vale a fração do grupo. A projeção de cada grupo é então ajustada
+ * para somar a projeção total da Visão geral, de modo que os órgãos fecham com o total da despesa. Em teste com o fechamento de 2025, esse critério
+ * errou menos que o perfil do grupo aplicado a todos os órgãos (erro médio ponderado de 4,5% contra 7,5%).
+ */
+const orgaoMensal = (despesaOrgaoRaw as unknown as { anos: Record<string, Record<string, number[]>> }).anos
+export function projecaoPorOrgao(): Record<string, { e25: number; p26: number }> {
+  const m = despMensal['2026'].meses_completos
+  const soma = (v: number[], n = 12) => v.slice(0, n).reduce((x, y) => x + y, 0)
+  const media = (v: number[]) => v.reduce((x, y) => x + y, 0) / v.length
+  const gnds = Object.values(GND_DESPESA)
+  const doAno = (ano: number, g: string) => Object.entries(orgaoMensal[String(ano)] ?? {}).filter(([k]) => k.endsWith(`|${g}`))
+  const fracGrupo: Record<string, number> = {}
+  for (const g of gnds) {
+    fracGrupo[g] = media(ANOS_SAZONAL_DESPESA.map((a) => {
+      const cs = doAno(a, g)
+      return cs.reduce((x, [, v]) => x + soma(v, m), 0) / cs.reduce((x, [, v]) => x + soma(v), 0)
+    }))
+  }
+  const bruto: Record<string, number> = {}
+  for (const [k, v] of Object.entries(orgaoMensal['2026'])) {
+    const g = k.split('|')[1]
+    if (!gnds.includes(g)) continue
+    const hist = ANOS_SAZONAL_DESPESA.map((a) => orgaoMensal[String(a)]?.[k])
+    const proprio = hist.every((h) => h && soma(h) >= 10e6)
+    const f = proprio ? Math.min(Math.max(media(hist.map((h) => soma(h!, m) / soma(h!))), 0.4), 1) : fracGrupo[g]
+    bruto[k] = soma(v, m) / f
+  }
+  const itens = projetaDespesa2026().itens
+  const fator: Record<string, number> = {}
+  for (const [chave, g] of Object.entries(GND_DESPESA)) {
+    const total = Object.entries(bruto).filter(([k]) => k.endsWith(`|${g}`)).reduce((x, [, v]) => x + v, 0)
+    fator[g] = total > 0 ? itens[chave].central / total : 1
+  }
+  const out: Record<string, { e25: number; p26: number }> = {}
+  const linha = (o: string) => (out[o] ??= { e25: 0, p26: 0 })
+  for (const [k, v] of Object.entries(bruto)) { const [o, g] = k.split('|'); linha(o).p26 += v * fator[g] }
+  for (const [k, v] of Object.entries(orgaoMensal['2025'] ?? {})) { const [o, g] = k.split('|'); if (gnds.includes(g)) linha(o).e25 += soma(v) }
   return out
 }
 

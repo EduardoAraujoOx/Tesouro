@@ -14,6 +14,9 @@ lançamento, com data, GND e os valores empenhado, liquidado e pago; anulações
 Detalhamento: para o ano corrente e o anterior, o arquivo traz também o empenhado acumulado por elemento de despesa dentro de cada GND
 (`elementos`), com os nomes em `nomes_elemento`. A PLOA 2027 só publica o detalhe por elemento em meio magnético, fora do PDF.
 
+Por órgão: o mesmo arquivo dá o empenhado de cada mês por órgão (código de dois dígitos da unidade orçamentária) e GND, gravado em
+data/despesa-mensal-orgao.json para a projeção de fechamento por órgão, que usa a sazonalidade própria de cada órgão.
+
 Conferência: o total anual por GND de cada ano fechado é comparado ao de data/orcamento.json (que vem de outro arquivo do mesmo conjunto); a
 diferença relativa fica em `conferencia`.
 
@@ -35,6 +38,7 @@ import atualizar_orcamento as orc  # noqa: E402  (reaproveita o acesso ao Portal
 
 RAIZ = Path(__file__).resolve().parent.parent
 SAIDA = RAIZ / "data" / "despesa-mensal.json"
+SAIDA_ORGAO = RAIZ / "data" / "despesa-mensal-orgao.json"
 
 
 def br(s):
@@ -43,10 +47,12 @@ def br(s):
 
 
 def agregar(url):
-    """Lê o CSV em fluxo e devolve {GND: {AAAA-MM-DD: [empenhado, liquidado, pago]}}."""
+    """Lê o CSV em fluxo e devolve {GND: {AAAA-MM-DD: [empenhado, liquidado, pago]}}, o empenhado por elemento, os nomes dos elementos, o número
+    de linhas e o empenhado de cada mês por 'órgão|GND' (lista de 12 valores, janeiro a dezembro)."""
     acc = defaultdict(lambda: defaultdict(lambda: [0.0, 0.0, 0.0]))
     elem = defaultdict(lambda: defaultdict(float))  # (GND, elemento) -> dia -> empenhado
     nomes = {}
+    orgao = defaultdict(lambda: [0.0] * 12)
     linhas = 0
     with orc.abrir(url) as r:
         texto = io.TextIOWrapper(r, encoding="utf-8-sig", newline="")
@@ -61,12 +67,16 @@ def agregar(url):
             a[0] += br(x["ValorEmpenho"])
             a[1] += br(x["ValorLiquidado"])
             a[2] += br(x["ValorPago"])
+            org = (x.get("CodigoOrgao") or "").strip()
+            if org.isdigit() and gnd in "123456" and len(gnd) == 1:
+                orgao[f"{org}|{gnd}"][int(dia[5:7]) - 1] += br(x["ValorEmpenho"])
             el = (x.get("CodigoElementoDespesa") or "").strip()
             if el:
                 elem[(gnd, el)][dia] += br(x["ValorEmpenho"])
                 nomes.setdefault(el, (x.get("ElementoDespesa") or "").strip())
     diario = {g: {d: [round(v) for v in vs] for d, vs in sorted(dias.items()) if any(round(v) for v in vs)} for g, dias in acc.items()}
-    return diario, {k: {d: round(v) for d, v in dias.items() if round(v)} for k, dias in elem.items()}, nomes, linhas
+    por_orgao = {k: [round(v) for v in meses] for k, meses in sorted(orgao.items()) if any(round(v) for v in meses)}
+    return diario, {k: {d: round(v) for d, v in dias.items() if round(v)} for k, dias in elem.items()}, nomes, linhas, por_orgao
 
 
 def compactar_elementos(elem, completos):
@@ -100,13 +110,16 @@ def main():
     saida.setdefault("anos", {})
     base = json.loads((RAIZ / "data" / "orcamento.json").read_text(encoding="utf-8"))
     saida["conferencia"] = saida.get("conferencia", {})
+    saida_orgao = json.loads(SAIDA_ORGAO.read_text(encoding="utf-8")) if SAIDA_ORGAO.exists() else {"anos": {}}
+    saida_orgao.setdefault("anos", {})
     for ano in anos:
         nome = f"Despesas-{ano}.csv"
         if nome not in ids:
             print(f"{nome}: não encontrado, ignorado", file=sys.stderr)
             continue
         t0 = time.time()
-        dados, elem, nomes_el, n = agregar(orc.url_recurso(ids[nome], nome))
+        dados, elem, nomes_el, n, por_orgao = agregar(orc.url_recurso(ids[nome], nome))
+        saida_orgao["anos"][str(ano)] = por_orgao
         saida["anos"][str(ano)] = compactar(dados)
         if ano >= hoje.year - 1:
             saida["anos"][str(ano)]["elementos"] = compactar_elementos(elem, saida["anos"][str(ano)]["meses_completos"])
@@ -127,6 +140,10 @@ def main():
     saida["coletado_em"] = datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
     SAIDA.write_text(json.dumps(saida, ensure_ascii=False, separators=(",", ":")), encoding="utf-8")
     print(f"{SAIDA.relative_to(RAIZ)}: {SAIDA.stat().st_size / 1e3:.0f} kB", file=sys.stderr)
+    saida_orgao["fonte"] = "Portal de Dados Abertos do ES, Despesas-AAAA.csv: despesa empenhada por órgão (código de 2 dígitos da unidade orçamentária) e GND, em reais, em cada mês do ano (índice 0 = janeiro)"
+    saida_orgao["coletado_em"] = saida["coletado_em"]
+    SAIDA_ORGAO.write_text(json.dumps(saida_orgao, ensure_ascii=False, separators=(",", ":")), encoding="utf-8")
+    print(f"{SAIDA_ORGAO.relative_to(RAIZ)}: {SAIDA_ORGAO.stat().st_size / 1e3:.0f} kB", file=sys.stderr)
 
 
 if __name__ == "__main__":

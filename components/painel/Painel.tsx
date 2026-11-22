@@ -3,7 +3,8 @@
 import { useEffect, useState } from 'react'
 import { IDENTIDADE } from '@/lib/identidade-painel'
 import { VisaoGeral, type Vista } from './Agregado'
-import { NOTA_DISCRETA } from './Estrutura'
+import { NOTA_DISCRETA, Subvisoes } from './Estrutura'
+import { DespesaOrgaos, type OrgaoPloa } from './DespesaOrgaos'
 import { ControlesAcessibilidade } from '@/components/TopBar'
 import type { DadosReceita } from './projecao'
 import type { LinhaMacro } from '@/lib/macro'
@@ -23,7 +24,7 @@ type MacroProps = {
  * Painel em três seções: Receita, Despesa e Resultado orçamentário, cada uma a PLOA 2027 contra a história, o fechamento projetado de 2026 e a nossa
  * projeção de 2027. O restante do material (cenários, detalhamentos, LRF e CAPAG, método) ficou de fora por ora, até se decidir o que acrescentar.
  */
-export function Painel({ macro, receitaMes, elementosPloa }: { macro: MacroProps; receitaMes: DadosReceita; elementosPloa: Record<string, Record<string, number>> }) {
+export function Painel({ macro, receitaMes, elementosPloa, orgaos }: { macro: MacroProps; receitaMes: DadosReceita; elementosPloa: Record<string, Record<string, number>>; orgaos: OrgaoPloa[] }) {
   const [aba, setAba] = useState<Aba>('receita')
   const [menuAberto, setMenuAberto] = useState(false)
   useEffect(() => {
@@ -100,7 +101,14 @@ export function Painel({ macro, receitaMes, elementosPloa }: { macro: MacroProps
       </div>
 
       <div role="tabpanel" id={`painel-${aba}`} aria-labelledby={`aba-${aba}`} className="mt-3">
-        <VisaoGeral key={aba} vista={aba} elementosPloa={elementosPloa} receita={macro.receita} despesa={macro.despesa} ipca={macro.ipca} dados={receitaMes} />
+        {aba === 'despesa' ? (
+          <Subvisoes rotulo="Despesa" itens={[
+            { id: 'resumo', rotulo: 'Resumo', conteudo: <VisaoGeral vista="despesa" elementosPloa={elementosPloa} receita={macro.receita} despesa={macro.despesa} ipca={macro.ipca} dados={receitaMes} /> },
+            { id: 'orgao', rotulo: 'Detalhamento por órgão', conteudo: <DespesaOrgaos orgaos={orgaos} ipca={macro.ipca} /> },
+          ]} />
+        ) : (
+          <VisaoGeral key={aba} vista={aba} elementosPloa={elementosPloa} receita={macro.receita} despesa={macro.despesa} ipca={macro.ipca} dados={receitaMes} />
+        )}
       </div>
 
       <p className={`mt-4 ${NOTA_DISCRETA} print:mt-2`}>
