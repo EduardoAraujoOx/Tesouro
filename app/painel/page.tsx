@@ -20,12 +20,13 @@ export const metadata: Metadata = {
 function orgaosPloa(): OrgaoPloa[] {
   const b = ploaRaw as unknown as { colunas: string[]; linhas: (string | number)[][] }
   const ic = Object.fromEntries(b.colunas.map((c, i) => [c, i]))
-  const por: Record<string, { exec: number; reserva: number }> = {}
+  const por: Record<string, { exec: number; reserva: number; porGnd: Record<string, number> }> = {}
   for (const r of b.linhas) {
     const cod = String(r[ic.uo]).padStart(5, '0').slice(0, 2)
-    const o = (por[cod] ??= { exec: 0, reserva: 0 })
-    if (String(r[ic.gnd]) === '9') o.reserva += Number(r[ic.valor])
-    else o.exec += Number(r[ic.valor])
+    const o = (por[cod] ??= { exec: 0, reserva: 0, porGnd: {} })
+    const g = String(r[ic.gnd])
+    if (g === '9') o.reserva += Number(r[ic.valor])
+    else { o.exec += Number(r[ic.valor]); o.porGnd[g] = (o.porGnd[g] ?? 0) + Number(r[ic.valor]) }
   }
   const nomes = Object.fromEntries((orgaosRaw as unknown as { poderes: { orgaos: { cod: string; nome: string }[] }[] }).poderes.flatMap((p) => p.orgaos).map((o) => [o.cod, o.nome]))
   return Object.entries(por).map(([cod, v]) => ({ cod, nome: nomes[cod] ?? `Órgão ${cod}`, ...v }))
