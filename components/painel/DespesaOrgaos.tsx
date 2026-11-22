@@ -5,13 +5,14 @@ import { milhoes, numero } from '@/lib/formato'
 import { Cartao, TabelaItens } from './Graficos'
 import { NOTA_DISCRETA } from './Estrutura'
 import { fmtPct } from './GraficosMacro'
-import { ipcaAnual, projecaoPorOrgao } from './projecao'
+import { ipcaAnual, projecaoPorOrgao, projetaDespesa2026 } from './projecao'
 
 /** Órgão da PLOA 2027 (código de dois dígitos da unidade orçamentária): despesa executável (GND 1 a 6) e reservas, em reais */
 export type OrgaoPloa = { cod: string; nome: string; exec: number; reserva: number }
 
 type Linha = { chave: string; rotulo: string; v25: number | null; p26: number | null; ploa: number; negrito?: boolean }
 
+const MESES = ['janeiro', 'fevereiro', 'março', 'abril', 'maio', 'junho', 'julho', 'agosto', 'setembro', 'outubro', 'novembro', 'dezembro']
 const mi = (x: number) => milhoes(x === 0 ? 0 : x, 0)
 const sinal = (x: number) => (x > 0 ? '+' : x < 0 ? '−' : '')
 const dMi = (x: number) => (Math.abs(x) < 0.5e6 ? '0' : `${sinal(x)}${milhoes(Math.abs(x), 0)}`)
@@ -28,6 +29,8 @@ const curto = (n: string) => n.replace(/^Secretaria (?:de Estado|Estadual) (?:da
 export function DespesaOrgaos({ orgaos, ipca: ipcaParams }: { orgaos: OrgaoPloa[]; ipca: Record<string, number> }) {
   const i27 = useMemo(() => ipcaAnual(Object.fromEntries(Object.entries(ipcaParams).map(([a, v]) => [a, v])))[2027], [ipcaParams])
   const proj = useMemo(() => projecaoPorOrgao(), [])
+  /* mesmo corte da projeção: último mês fechado do coletor */
+  const mesCorte = useMemo(() => MESES[projetaDespesa2026().mesCorte - 1], [])
   const linhas = useMemo(() => {
     const norm = (c: string) => String(Number(c))
     const porCod = new Map(orgaos.map((o) => [norm(o.cod), o]))
@@ -62,7 +65,7 @@ export function DespesaOrgaos({ orgaos, ipca: ipcaParams }: { orgaos: OrgaoPloa[
           { rotulo: 'Var. real %', secundaria: true, valor: (l: Linha) => { const d = varReal(l); return d === null ? '–' : <span className={corDif(d)}>{fmtPct(d)}</span> } },
         ]} />
         <p className={`mt-2 ${NOTA_DISCRETA}`}>
-          Proj. 26: empenhado até outubro de cada órgão e grupo de despesa, dividido pela fração do ano que o órgão costuma ter empenhada nessa data (2022–2025), ajustado para somar a projeção do Resumo. Var.: PLOA 2027 sobre a Proj. 26; real: descontado o IPCA de 2027 (+{numero(i27 * 100, 1)}%). Reservas: RPPS, contingência e Fundo Soberano.
+          Proj. 26: empenhado até {mesCorte} de cada órgão e grupo de despesa, dividido pela fração do ano que o órgão costuma ter empenhada nessa data (2022–2025), ajustado para somar a projeção do Resumo. Var.: PLOA 2027 sobre a Proj. 26; real: descontado o IPCA de 2027 (+{numero(i27 * 100, 1)}%). Reservas: RPPS, contingência e Fundo Soberano.
         </p>
       </Cartao>
       <p className={`mt-3 ${NOTA_DISCRETA}`}>Fontes: PLOA 2027 (Mensagem nº 189/2026, art. 5º); Portal de Dados Abertos do ES; IPCA: Focus (BCB), mediana.</p>
