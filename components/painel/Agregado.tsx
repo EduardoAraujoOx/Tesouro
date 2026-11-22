@@ -38,7 +38,7 @@ const COL = [0, 1, 2, 4, 5]
 const sinal = (x: number) => (x > 0 ? '+' : x < 0 ? '−' : '')
 const mi = (x: number) => milhoes(x === 0 ? 0 : x, 0)
 const neg = (x: number) => (x === 0 ? 0 : -x)
-const dMi = (x: number) => `${sinal(x)}${milhoes(Math.abs(x), 0)}`
+const dMi = (x: number) => (Math.abs(x) < 0.5e6 ? '0' : `${sinal(x)}${milhoes(Math.abs(x), 0)}`)
 
 type Linha = { chave: string; rotulo: string; nivel: number; negrito?: boolean; v: number[]; proj?: ItemProjetado; pai?: string }
 /** variação (em %) a partir da qual a PLOA é dita acima ou abaixo da projeção de 2026 */

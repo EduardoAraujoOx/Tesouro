@@ -4,7 +4,7 @@ import { useState, type ReactNode } from 'react'
 
 /**
  * Sub-visões: uma pergunta por vez dentro de uma seção longa. Todas ficam montadas; só a escolhida aparece na tela,
- * e no PDF saem todas (a exportação precisa levar a seção inteira).
+ * e no PDF saem todas, cada uma numa página (a exportação precisa levar a seção inteira).
  */
 export function Subvisoes({ itens, rotulo }: { itens: { id: string; rotulo: string; conteudo: ReactNode }[]; rotulo: string }) {
   const [ativa, setAtiva] = useState(itens[0].id)
@@ -16,8 +16,8 @@ export function Subvisoes({ itens, rotulo }: { itens: { id: string; rotulo: stri
             className={`px-3 py-1.5 sm:px-4 ${ativa === i.id ? 'bg-navy font-semibold text-on-navy' : 'bg-paper text-ink hover:bg-surface'}`}>{i.rotulo}</button>
         ))}
       </div>
-      {itens.map((i) => (
-        <div key={i.id} className={`mt-3 ${ativa === i.id ? '' : 'hidden print:mt-6 print:block'}`}>{i.conteudo}</div>
+      {itens.map((i, k) => (
+        <div key={i.id} className={`mt-3 ${ativa === i.id ? '' : 'hidden print:block'} ${k > 0 ? 'print:[break-before:page]' : ''}`}>{i.conteudo}</div>
       ))}
     </div>
   )

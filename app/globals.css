@@ -156,6 +156,8 @@ html:has(.painel) { scroll-padding-top: 3.75rem; }
   .painel tr, .painel li { break-inside: avoid; }
   .painel th, .painel td { position: static !important; box-shadow: none !important; }
   .painel .rola { background: none; }
+  /* tabelas longas numa página só (por exemplo, 30 órgãos): linhas mais justas */
+  .painel .print-compacto th, .painel .print-compacto td { padding-top: 0.5px !important; padding-bottom: 0.5px !important; font-size: 10.5px; line-height: 1.2; }
   .painel .sticky { position: static !important; }
   .painel table { min-width: 0 !important; width: 100%; }
   .painel th[scope="row"] { max-width: none !important; }
