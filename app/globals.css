@@ -152,6 +152,27 @@ h1, h2, h3 { @apply font-serif font-semibold text-navy; font-optical-sizing: aut
   .painel-navegacao { container: painel-navegacao / inline-size; }
   .painel-subvisoes { container: painel-subvisoes / inline-size; }
   .painel-grafico-anual { container: painel-grafico-anual / inline-size; }
+  .painel-orcado { container: painel-orcado / inline-size; }
+  .painel-metodo { container: painel-metodo / inline-size; }
+  .painel-tabela-itens { container: painel-tabela-itens / inline-size; }
+  @container painel-orcado (min-width: 20rem) {
+    .painel-orcado-colunas { display: block; }
+    .painel-orcado-linhas { display: none; }
+  }
+  @container painel-orcado (max-width: 26rem) {
+    .painel-orcado-diferenca { display: none; }
+  }
+  @container painel-metodo (min-width: 46rem) {
+    .painel-metodo-colunas { display: block; }
+    .painel-metodo-linhas { display: none; }
+  }
+  @container painel-tabela-itens (max-width: 15rem) {
+    .painel-coluna-fixa { left: auto; }
+  }
+  @container painel (max-width: 12.5rem) {
+    .painel-capag-grafico { height: 5rem; }
+    .painel-capag-limites > :nth-child(2) { top: 1.125rem; }
+  }
   @container painel-navegacao (min-width: 12rem) {
     .painel-abas { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   }

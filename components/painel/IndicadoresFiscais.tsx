@@ -174,32 +174,54 @@ const METODO_CAPAG: { id: string; nome: string; num: string; den: string; norma:
 
 const COR_NOTA: Record<string, string> = { A: 'rgb(var(--serie3) / 0.16)', B: 'rgb(var(--navy) / 0.07)', C: 'rgb(var(--serie2) / 0.16)' }
 
+const CAMPOS_METODO = [
+  { chave: 'num', rotulo: 'Numerador' },
+  { chave: 'den', rotulo: 'Denominador' },
+  { chave: 'norma', rotulo: 'Norma, fonte e nota' },
+  { chave: 'ploa', rotulo: 'Estimativa para a PLOA 2027' },
+] as const
+
 function TabelaMetodo({ linhas }: { linhas: { id: string; nome: string; num: string; den: string; norma: string; ploa: string }[] }) {
+  const legenda = 'Numerador, denominador, base legal e estimativa de cada indicador'
+
   return (
-    <div className="rola overflow-auto rounded-brand border border-line">
-      <table className="w-full min-w-[46rem] text-left text-small">
-        <caption className="sr-only">Numerador, denominador, base legal e estimativa de cada indicador</caption>
-        <thead>
-          <tr className="bg-surface text-ink">
-            <th scope="col" className="px-3 py-2 font-semibold">Indicador</th>
-            <th scope="col" className="px-3 py-2 font-semibold">Numerador</th>
-            <th scope="col" className="px-3 py-2 font-semibold">Denominador</th>
-            <th scope="col" className="px-3 py-2 font-semibold">Norma, fonte e nota</th>
-            <th scope="col" className="px-3 py-2 font-semibold">Estimativa para a PLOA 2027</th>
-          </tr>
-        </thead>
-        <tbody className="align-top">
-          {linhas.map((m) => (
-            <tr key={m.id} className="border-t border-line">
-              <th scope="row" className="px-3 py-2 font-medium text-ink">{m.nome}</th>
-              <td className="px-3 py-2">{m.num}</td>
-              <td className="px-3 py-2">{m.den}</td>
-              <td className="px-3 py-2">{m.norma}</td>
-              <td className="px-3 py-2">{m.ploa}</td>
+    <div className="painel-metodo">
+      <div className="painel-metodo-colunas rola hidden overflow-auto rounded-brand border border-line">
+        <table className="w-full min-w-[46rem] break-normal text-left text-small">
+          <caption className="sr-only">{legenda}</caption>
+          <thead>
+            <tr className="bg-surface text-ink">
+              <th scope="col" className="px-3 py-2 font-semibold">Indicador</th>
+              {CAMPOS_METODO.map(({ chave, rotulo }) => (
+                <th key={chave} scope="col" className="px-3 py-2 font-semibold">{rotulo}</th>
+              ))}
             </tr>
-          ))}
-        </tbody>
-      </table>
+          </thead>
+          <tbody className="align-top">
+            {linhas.map((m) => (
+              <tr key={m.id} className="border-t border-line">
+                <th scope="row" className="px-3 py-2 font-medium text-ink">{m.nome}</th>
+                {CAMPOS_METODO.map(({ chave }) => <td key={chave} className="px-3 py-2">{m[chave]}</td>)}
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+      <ul role="list" aria-label={legenda} className="painel-metodo-linhas divide-y divide-line rounded-brand border border-line">
+        {linhas.map((m) => (
+          <li key={m.id} className="p-3">
+            <p className="font-semibold text-ink">{m.nome}</p>
+            <dl className="mt-2 space-y-2">
+              {CAMPOS_METODO.map(({ chave, rotulo }) => (
+                <div key={chave}>
+                  <dt className="text-label font-semibold tracking-normal text-ink">{rotulo}</dt>
+                  <dd>{m[chave]}</dd>
+                </div>
+              ))}
+            </dl>
+          </li>
+        ))}
+      </ul>
     </div>
   )
 }
@@ -234,15 +256,15 @@ export function IndicadoresCapag(props: Props) {
                   <span className="block text-small font-medium text-ink">{l.rotulo}</span>
                   <span className="block text-label normal-case tracking-normal text-ink-soft">{l.formula}</span>
                 </div>
-                <div className="relative h-[3.875rem]" role="img" aria-label={`${l.rotulo}: última edição ${pc(l.ultimo)}, nota ${l.nota}${l.ploa === null ? '' : `; estimativa com a PLOA ${pc(l.ploa)}, nota ${nPloa}`}`}>
+                <div className="painel-capag-grafico relative h-[3.875rem]" role="img" aria-label={`${l.rotulo}: última edição ${pc(l.ultimo)}, nota ${l.nota}${l.ploa === null ? '' : `; estimativa com a PLOA ${pc(l.ploa)}, nota ${nPloa}`}`}>
                   <div className="absolute inset-x-0 top-0 flex h-11 overflow-hidden rounded-sm">
                     {l.zonas.map((z) => (
                       <span key={z.nota} className="relative flex items-start justify-center border-r border-ink-soft/60 text-label font-semibold normal-case tracking-normal text-ink-soft last:border-0" style={{ width: `${((z.ate - z.de) / total) * 100}%`, background: COR_NOTA[z.nota] }}>{z.nota}</span>
                     ))}
                   </div>
-                  <div className="absolute inset-x-0 top-11 h-4 text-label normal-case tracking-normal text-ink-soft">
+                  <div className="painel-capag-limites absolute inset-x-0 top-11 h-4 text-label normal-case tracking-normal text-ink-soft">
                     {l.zonas.slice(1).map((z) => (
-                      <span key={z.de} className="absolute -translate-x-1/2" style={{ left: `${pos(z.de, l.escala)}%` }}>{z.de}%</span>
+                      <span key={z.de} className="absolute -translate-x-1/2 whitespace-nowrap" style={{ left: `${pos(z.de, l.escala)}%` }}>{z.de}%</span>
                     ))}
                   </div>
                   <span aria-hidden="true" className="absolute h-3.5 w-3.5 -translate-x-1/2 rounded-full" style={ponto(pos(l.ultimo, l.escala), '1rem', false)} />

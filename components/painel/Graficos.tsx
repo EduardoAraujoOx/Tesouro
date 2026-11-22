@@ -112,19 +112,19 @@ export function TabelaItens<T extends { chave: string }>({ itens, colunas, legen
   const larg = compacta ? 'min-w-[6.5rem] max-w-[8rem] md:min-w-[8.5rem] md:max-w-[11rem]' : 'min-w-[8.5rem] max-w-[11rem]'
   const largTh = compacta ? 'min-w-[6.5rem] md:min-w-[8.5rem]' : 'min-w-[8.5rem]'
   return (
-    <div tabIndex={0} role="region" aria-label={legenda} className={`rola overflow-auto rounded-brand border border-line ${altura === 'livre' ? '' : 'max-h-[32rem]'}`}>
+    <div tabIndex={0} role="region" aria-label={legenda} className={`painel-tabela-itens rola overflow-auto rounded-brand border border-line ${altura === 'livre' ? '' : 'max-h-[32rem]'}`}>
       <table className="w-full min-w-max text-left text-small">
         <caption className="sr-only">{legenda}</caption>
         <thead>
           <tr>{colunas.map((c, j) => (
-            <th key={c.rotulo} scope="col" className={`sticky top-0 bg-surface ${px} py-2 font-semibold ${j === 0 ? `left-0 z-20 ${largTh}` : 'z-10 whitespace-nowrap text-right'} ${c.secundaria ? 'hidden md:table-cell' : ''}`}>{c.rotulo}</th>
+            <th key={c.rotulo} scope="col" className={`sticky top-0 bg-surface ${px} py-2 font-semibold ${j === 0 ? `painel-coluna-fixa left-0 z-20 ${largTh}` : 'z-10 whitespace-nowrap text-right'} ${c.secundaria ? 'hidden md:table-cell' : ''}`}>{c.rotulo}</th>
           ))}</tr>
         </thead>
         <tbody>
           {itens.map((it) => (
             <tr key={it.chave} className="border-t border-line">
               {colunas.map((c, j) => j === 0
-                ? <th key={c.rotulo} scope="row" className={`sticky left-0 z-[1] ${larg} whitespace-normal break-words hyphens-auto bg-paper ${px} py-1.5 print:py-0.5 align-top font-normal shadow-[1px_0_0_rgb(var(--line))] md:max-w-[30rem]`}>{c.valor(it)}</th>
+                ? <th key={c.rotulo} scope="row" className={`painel-coluna-fixa sticky left-0 z-[1] ${larg} whitespace-normal break-words hyphens-auto bg-paper ${px} py-1.5 print:py-0.5 align-top font-normal shadow-[1px_0_0_rgb(var(--line))] md:max-w-[30rem]`}>{c.valor(it)}</th>
                 : <td key={c.rotulo} className={`whitespace-nowrap ${px} py-1.5 print:py-0.5 text-right tabular-nums ${c.secundaria ? 'hidden md:table-cell' : ''}`}>{c.valor(it)}</td>)}
             </tr>
           ))}

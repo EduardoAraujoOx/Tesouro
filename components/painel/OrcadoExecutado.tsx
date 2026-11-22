@@ -19,34 +19,64 @@ const dif = (x: number) => (Math.abs(x) < 0.5e6 ? '0' : `${x > 0 ? '+' : '−'}$
 type Linha = { chave: string; rotulo: string; loa?: number; real?: number; pct: number; projecao?: boolean; media?: boolean }
 
 function Tabela({ titulo, rotuloReal, linhas }: { titulo: string; rotuloReal: string; linhas: Linha[] }) {
-  const th = 'px-2 py-2 text-right font-semibold md:px-3'
-  const td = 'px-2 py-1.5 text-right tabular-nums print:py-0.5 md:px-3'
+  const espaco = 'px-1.5 sm:px-2 md:px-3'
+  const th = `${espaco} whitespace-nowrap py-2 text-right font-semibold`
+  const td = `${espaco} whitespace-nowrap py-1.5 text-right tabular-nums print:py-0.5`
+  const legenda = `${titulo}: LOA e ${rotuloReal.toLowerCase()} por ano, em R$ milhões`
   return (
     <Cartao titulo={titulo}>
-      <div className="overflow-hidden rounded-brand border border-line">
-        <table className="w-full text-left text-small">
-          <caption className="sr-only">{titulo}: LOA e {rotuloReal.toLowerCase()} por ano, em R$ milhões</caption>
-          <thead>
-            <tr className="bg-surface">
-              <th scope="col" className="px-2 py-2 font-semibold md:px-3">R$ milhões</th>
-              <th scope="col" className={th}>LOA</th>
-              <th scope="col" className={th}>{rotuloReal}</th>
-              <th scope="col" className={`${th} hidden md:table-cell`}>Diferença</th>
-              <th scope="col" className={th}>% da LOA</th>
-            </tr>
-          </thead>
-          <tbody>
-            {linhas.map((l) => (
-              <tr key={l.chave} className={`border-t border-line ${l.media ? 'bg-surface/60' : ''}`}>
-                <th scope="row" className={`px-2 py-1.5 font-normal print:py-0.5 md:px-3 ${l.media ? 'font-semibold' : l.projecao ? 'text-ink-soft' : ''}`}>{l.rotulo}</th>
-                <td className={td}>{l.loa === undefined ? '' : mi(l.loa)}</td>
-                <td className={`${td} ${l.projecao ? 'text-ink-soft' : ''}`}>{l.real === undefined ? '' : mi(l.real)}</td>
-                <td className={`${td} hidden md:table-cell`}>{l.loa === undefined || l.real === undefined ? '' : dif(l.real - l.loa)}</td>
-                <td className={`${td} ${l.media || !l.projecao ? 'font-semibold' : 'text-ink-soft'}`}>{pc(l.pct)}</td>
+      <div className="painel-orcado">
+        <div className="painel-orcado-colunas hidden overflow-hidden break-normal rounded-brand border border-line print:block">
+          <table className="w-full text-left text-small">
+            <caption className="sr-only">{legenda}</caption>
+            <thead>
+              <tr className="bg-surface">
+                <th scope="col" className={`${espaco} whitespace-nowrap py-2 font-semibold`}>R$ milhões</th>
+                <th scope="col" className={th}>LOA</th>
+                <th scope="col" className={th}>{rotuloReal}</th>
+                <th scope="col" className={`${th} painel-orcado-diferenca hidden md:table-cell`}>Diferença</th>
+                <th scope="col" className={th}>% da LOA</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              {linhas.map((l) => (
+                <tr key={l.chave} className={`border-t border-line ${l.media ? 'bg-surface/60' : ''}`}>
+                  <th scope="row" className={`${espaco} py-1.5 print:py-0.5 ${l.media ? 'font-semibold' : l.projecao ? 'font-normal text-ink-soft' : 'font-normal'}`}>{l.rotulo}</th>
+                  <td className={td}>{l.loa === undefined ? '' : mi(l.loa)}</td>
+                  <td className={`${td} ${l.projecao ? 'text-ink-soft' : ''}`}>{l.real === undefined ? '' : mi(l.real)}</td>
+                  <td className={`${td} painel-orcado-diferenca hidden md:table-cell`}>{l.loa === undefined || l.real === undefined ? '' : dif(l.real - l.loa)}</td>
+                  <td className={`${td} ${l.media || !l.projecao ? 'font-semibold' : 'text-ink-soft'}`}>{pc(l.pct)}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+        <p className="painel-orcado-linhas mb-1 text-small text-ink-soft print:hidden">Valores em R$ milhões</p>
+        <ul role="list" aria-label={legenda} className="painel-orcado-linhas divide-y divide-line rounded-brand border border-line text-small print:hidden">
+          {linhas.map((l) => (
+            <li key={l.chave} className={`px-2.5 py-2 ${l.media ? 'bg-surface/60' : ''}`}>
+              <p className={`font-semibold ${l.projecao ? 'text-ink-soft' : ''}`}>{l.rotulo}</p>
+              <dl className="mt-1 flex flex-wrap gap-x-3 gap-y-1 tabular-nums">
+                {l.loa !== undefined && (
+                  <div className="min-w-max flex-1">
+                    <dt className="text-label tracking-normal text-ink-soft">LOA</dt>
+                    <dd className="whitespace-nowrap">{mi(l.loa)}</dd>
+                  </div>
+                )}
+                {l.real !== undefined && (
+                  <div className="min-w-max flex-1">
+                    <dt className="text-label tracking-normal text-ink-soft">{rotuloReal}</dt>
+                    <dd className="whitespace-nowrap">{mi(l.real)}</dd>
+                  </div>
+                )}
+                <div className="min-w-max flex-1">
+                  <dt className="text-label tracking-normal text-ink-soft">% da LOA</dt>
+                  <dd className="whitespace-nowrap font-semibold">{pc(l.pct)}</dd>
+                </div>
+              </dl>
+            </li>
+          ))}
+        </ul>
       </div>
     </Cartao>
   )
