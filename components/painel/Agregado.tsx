@@ -46,8 +46,8 @@ const DIF_MIN = 3
 const MESES_NOME = ['janeiro', 'fevereiro', 'março', 'abril', 'maio', 'junho', 'julho', 'agosto', 'setembro', 'outubro', 'novembro', 'dezembro']
 const corDif = (d: number) => (Math.abs(d) < DIF_MIN ? '' : d > 0 ? 'text-serie3' : 'text-serie2')
 
-export function VisaoGeral({ vista, elementosPloa, receita, despesa, ipca: ipcaParams, fonteIpca, dados }: {
-  vista: Vista; elementosPloa: Record<string, Record<string, number>>; receita: LinhaMacro[]; despesa: LinhaMacro[]; ipca: Record<string, number>; fonteIpca: string; dados: DadosReceita
+export function VisaoGeral({ vista, elementosPloa, receita, despesa, ipca: ipcaParams, dados }: {
+  vista: Vista; elementosPloa: Record<string, Record<string, number>>; receita: LinhaMacro[]; despesa: LinhaMacro[]; ipca: Record<string, number>; dados: DadosReceita
 }) {
   const [abertos, setAbertos] = useState<Set<string>>(new Set(['corr', 'capd']))
   const [base, setBase] = useState<'nominal' | 'real'>('nominal')
@@ -257,7 +257,7 @@ export function VisaoGeral({ vista, elementosPloa, receita, despesa, ipca: ipcaP
   const notaReferencia = (
     <Nota titulo="Metodologia">
       <p>
-        Proj. 26: acumulado até {nomeCorte} (receita) ou {nomeCorteDesp} (despesa) dividido pela fração média do ano já realizada na mesma data em 2022–2025; faixa pelas frações extremas (traço preto no gráfico). Var.: PLOA 2027 sobre a Proj. 26; a variação real desconta o IPCA de 2027 (+{numero(i27 * 100, 1)}%, {fonteIpca}); azul acima, rosa abaixo (≥ {DIF_MIN}%). A PLOA é orçamento inicial e a Proj. 26, execução provável: por construção o orçamento inicial fica abaixo do executado, que os créditos adicionais completam ao longo do ano.
+        Proj. 26: acumulado até {nomeCorte} (receita) ou {nomeCorteDesp} (despesa) dividido pela fração média do ano já realizada na mesma data em 2022–2025; faixa pelas frações extremas (traço preto no gráfico). Var.: PLOA 2027 sobre a Proj. 26; a variação real desconta o IPCA de 2027 (+{numero(i27 * 100, 1)}%, Focus/BCB); azul acima, rosa abaixo (≥ {DIF_MIN}%). A PLOA é orçamento inicial e a Proj. 26, execução provável: por construção o orçamento inicial fica abaixo do executado, que os créditos adicionais completam ao longo do ano.
       </p>
     </Nota>
   )
@@ -283,7 +283,7 @@ export function VisaoGeral({ vista, elementosPloa, receita, despesa, ipca: ipcaP
           <Cartao longa titulo={vista === 'receita' ? 'Receita por categoria: PLOA 2027 sobre a projeção de 2026' : 'Despesa por grupo de natureza: PLOA 2027 sobre a projeção de 2026'}>
             <TabelaItens altura="livre" compacta itens={visiveis.map((l) => ({ ...l, chave: l.chave }))} colunas={colunasTabela} legenda={`${vista === 'receita' ? 'Receita por categoria' : 'Despesa por grupo de natureza'}, em R$ milhões`} />
             <p className={`mt-2 ${NOTA_DISCRETA}`}>
-              Proj. 26: fechamento projetado ({vista === 'receita' ? `arrecadação até ${nomeCorte}` : `despesa empenhada até ${nomeCorteDesp}`}). Var.: PLOA 2027 sobre a Proj. 26, em R$ milhões e em % nominal; Var. real %: descontado o IPCA de 2027.{vista === 'despesa' ? ` Elementos de despesa (clique no grupo): 2025 e Proj. 26 pelo empenhado do Portal, com a Proj. 26 de cada elemento distribuída na proporção do empenhado até ${nomeCorteDesp}; PLOA 2027 pelo detalhamento por elemento da proposta (PL 525/2026).` : ''}{vista === 'receita' ? ` † A Proj. 26 inclui receita pontual (indenizações, restituições e ressarcimentos: R$ ${mi(comProj.find((x) => x.chave === 'demais')?.proj?.pontual ?? 0)} mi até ${nomeCorte}), que não deve se repetir em 2027.` : ''}
+              Proj. 26: fechamento projetado ({vista === 'receita' ? `arrecadação até ${nomeCorte}` : `despesa empenhada até ${nomeCorteDesp}`}, completado pela sazonalidade média de 2022–2025). Var.: PLOA 2027 sobre a Proj. 26, em R$ milhões e em % nominal; Var. real %: descontado o IPCA de 2027.{vista === 'despesa' ? ` Elementos de despesa (clique no grupo): 2025 e Proj. 26 pelo empenhado do Portal, com a Proj. 26 de cada elemento distribuída na proporção do empenhado até ${nomeCorteDesp}; PLOA 2027 pelo detalhamento por elemento da proposta (PL 525/2026).` : ''}{vista === 'receita' ? ` † A Proj. 26 inclui receita pontual (indenizações, restituições e ressarcimentos: R$ ${mi(comProj.find((x) => x.chave === 'demais')?.proj?.pontual ?? 0)} mi até ${nomeCorte}), que não deve se repetir em 2027.` : ''}
             </p>
             {notaReferencia}
           </Cartao>
@@ -316,7 +316,7 @@ export function VisaoGeral({ vista, elementosPloa, receita, despesa, ipca: ipcaP
               ...ANOS5.map((a, j) => ({ rotulo: a, valor: (l: Linha) => <span className={l.negrito || j === 4 ? 'font-semibold' : ''}>{mi(l.v[j])}</span> })),
             ]} />
             <p className={`mt-2 ${NOTA_DISCRETA}`}>
-              Resultado do Balanço Orçamentário: receita total, líquida de deduções, menos a despesa empenhada. Não é resultado primário nem nominal: inclui como receita as operações de crédito e como despesa a amortização da dívida, e por isso as duas últimas linhas mostram o resultado sem o crédito. As reservas de RPPS e de contingência só existem no orçamento (nos anos executados são zero), de modo que a comparação entre os anos é feita antes delas e, na PLOA, elas fecham o resultado em zero. 2023–2025: realizado, pelos quadros da Mensagem nº 189/2026. Proj. 26: projeção da equipe, sem reservas, que inclui a receita pontual de 2026. PLOA 27: receita estimada menos despesa fixada.
+              Resultado do Balanço Orçamentário (receita total menos despesa empenhada); não é resultado primário nem nominal, pois inclui o crédito como receita e a amortização como despesa. As reservas de RPPS e de contingência só existem no orçamento: nos anos executados são zero e, na PLOA, fecham o resultado em zero. 2023–2025: realizado, pelos quadros da Mensagem nº 189/2026. Proj. 26: projeção da equipe, sem reservas e com a receita pontual de 2026. PLOA 27: receita estimada menos despesa fixada.
             </p>
           </Cartao>
           <Cartao titulo="Do resultado aos resultados nominal e primário (aproximados)">
@@ -330,7 +330,9 @@ export function VisaoGeral({ vista, elementosPloa, receita, despesa, ipca: ipcaP
           </Cartao>
         </div>
       )}
-      <p className={`mt-3 ${NOTA_DISCRETA}`}>Fonte: PLOA 2027, Mensagem nº 189/2026, quadros Evolução da Receita (p. 97) e Evolução da Despesa (p. 130); arrecadação mensal do Portal de Dados Abertos do ES; despesa empenhada: Siconfi, RREO; IPCA: {fonteIpca}</p>
+      <p className={`mt-3 ${NOTA_DISCRETA}`}>
+        Fontes: PLOA 2027 (Mensagem nº 189/2026{vista === 'receita' ? ', evolução da receita' : vista === 'despesa' ? ', evolução da despesa' : ', evolução da receita e da despesa'}); Portal de Dados Abertos do ES{vista === 'resultado' ? '' : '; IPCA: Focus (BCB), mediana'}.
+      </p>
     </div>
   )
 }
