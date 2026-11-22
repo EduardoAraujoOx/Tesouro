@@ -560,7 +560,8 @@ export function razoesFechamento2026(empenhadoPorGnd: Record<string, number>): R
  * errou menos que o perfil do grupo aplicado a todos os órgãos (erro médio ponderado de 4,5% contra 7,5%).
  */
 const orgaoMensal = (despesaOrgaoRaw as unknown as { anos: Record<string, Record<string, number[]>> }).anos
-export function projecaoPorOrgao(): Record<string, { e25: number; p26: number }> {
+export type ProjecaoOrgao = { e25: number; p26: number; porGnd: Record<string, { e25: number; p26: number }> }
+export function projecaoPorOrgao(): Record<string, ProjecaoOrgao> {
   const m = despMensal['2026'].meses_completos
   const soma = (v: number[], n = 12) => v.slice(0, n).reduce((x, y) => x + y, 0)
   const media = (v: number[]) => v.reduce((x, y) => x + y, 0) / v.length
@@ -588,10 +589,13 @@ export function projecaoPorOrgao(): Record<string, { e25: number; p26: number }>
     const total = Object.entries(bruto).filter(([k]) => k.endsWith(`|${g}`)).reduce((x, [, v]) => x + v, 0)
     fator[g] = total > 0 ? itens[chave].central / total : 1
   }
-  const out: Record<string, { e25: number; p26: number }> = {}
-  const linha = (o: string) => (out[o] ??= { e25: 0, p26: 0 })
-  for (const [k, v] of Object.entries(bruto)) { const [o, g] = k.split('|'); linha(o).p26 += v * fator[g] }
-  for (const [k, v] of Object.entries(orgaoMensal['2025'] ?? {})) { const [o, g] = k.split('|'); if (gnds.includes(g)) linha(o).e25 += soma(v) }
+  const out: Record<string, ProjecaoOrgao> = {}
+  const linha = (o: string, g: string) => {
+    const l = (out[o] ??= { e25: 0, p26: 0, porGnd: {} })
+    return { l, c: (l.porGnd[g] ??= { e25: 0, p26: 0 }) }
+  }
+  for (const [k, v] of Object.entries(bruto)) { const [o, g] = k.split('|'); const { l, c } = linha(o, g); const p = v * fator[g]; l.p26 += p; c.p26 += p }
+  for (const [k, v] of Object.entries(orgaoMensal['2025'] ?? {})) { const [o, g] = k.split('|'); if (gnds.includes(g)) { const { l, c } = linha(o, g); const e = soma(v); l.e25 += e; c.e25 += e } }
   return out
 }
 
