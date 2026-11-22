@@ -12,10 +12,10 @@ export function Subvisoes({ itens, rotulo, ativa: ativaExterna, onMudar }: { ite
   const setAtiva = (id: string) => { setPropria(id); onMudar?.(id) }
   return (
     <div>
-      <div role="group" aria-label={rotulo} className="inline-flex max-w-full flex-wrap overflow-hidden rounded-brand border border-line text-small print:hidden">
+      <div role="group" aria-label={rotulo} className="inline-flex max-w-full flex-wrap gap-1 rounded-xl border border-line bg-paper p-1 text-small print:hidden">
         {itens.map((i) => (
           <button key={i.id} type="button" aria-pressed={ativa === i.id} onClick={() => setAtiva(i.id)}
-            className={`px-3 py-1.5 sm:px-4 ${ativa === i.id ? 'bg-navy font-semibold text-on-navy' : 'bg-paper text-ink hover:bg-surface'}`}>{i.rotulo}</button>
+            className={`min-h-10 rounded-brand px-3 py-1.5 sm:px-4 ${ativa === i.id ? 'bg-navy font-semibold text-on-navy' : 'bg-paper text-ink hover:bg-surface'}`}>{i.rotulo}</button>
         ))}
       </div>
       {itens.map((i, k) => (
