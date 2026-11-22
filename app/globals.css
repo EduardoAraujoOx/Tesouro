@@ -132,6 +132,10 @@ h1, h2, h3 { @apply font-serif font-semibold text-navy; font-optical-sizing: aut
   overscroll-behavior-x: contain;
 }
 /* A navegação se ajusta à largura útil em relação ao tamanho do texto. */
+/* Recorte do símbolo na arte de 1200 × 630. O título e os créditos ficam em texto no cabeçalho. */
+.painel-marca {
+  background: #f2f6fb url('/img/painel-identidade.jpg') 17.17% 49.74% / 571.43% 250% no-repeat;
+}
 .painel .painel-cabecalho h1 { color: rgb(var(--on-navy)); }
 .painel .painel-cabecalho :focus-visible { outline-color: rgb(var(--on-navy)); }
 :root:not([data-contrast='alto']) .painel-cabecalho {
