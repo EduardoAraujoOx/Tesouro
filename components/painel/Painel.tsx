@@ -48,13 +48,13 @@ export function Painel({ macro, receitaMes, elementosPloa, orgaos, fiscais, rclP
   return (
     <div className="painel min-h-screen bg-surface print:min-h-0 print:bg-paper">
       <header className="painel-cabecalho bg-navy-deep text-on-navy print:hidden">
-        <div className="mx-auto flex max-w-[1600px] flex-wrap items-center justify-between gap-x-6 gap-y-4 px-4 py-5 sm:px-6 md:px-8 md:py-8">
+        <div className="mx-auto flex max-w-[1600px] flex-wrap items-center justify-between gap-x-6 gap-y-2 px-4 py-3 sm:px-6 md:px-8 md:py-5">
           <div>
-            <p className="mb-2 text-small font-semibold">{IDENTIDADE.faixa}</p>
-            <h1 className="text-display font-semibold tracking-tight">{IDENTIDADE.painel}</h1>
-            <p className="mt-2 text-small">{IDENTIDADE.apoio}</p>
+            <p className="mb-1 text-label font-medium tracking-normal">{IDENTIDADE.faixa}</p>
+            <h1 className="text-[1.375rem] font-semibold leading-tight tracking-tight md:text-headline">{IDENTIDADE.painel}</h1>
+            <p className="mt-1 text-label tracking-normal md:text-small">{IDENTIDADE.apoio}</p>
           </div>
-          <div className="flex flex-wrap items-center gap-2 sm:gap-3">
+          <div className="flex flex-wrap items-center gap-x-2 gap-y-1 sm:gap-x-3">
             <ControlesAcessibilidade compacto className="flex" />
             <button type="button" onClick={() => window.print()} title="Abre a impressão: escolha “Salvar como PDF”"
               className="inline-flex min-h-9 items-center gap-1.5 rounded-brand border border-current px-2.5 text-small font-semibold hover:underline">
@@ -66,7 +66,7 @@ export function Painel({ macro, receitaMes, elementosPloa, orgaos, fiscais, rclP
       </header>
 
       <div className="z-30 border-b border-line bg-paper md:sticky md:top-0 print:hidden">
-        <div role="tablist" aria-label="Seções do painel" className="mx-auto grid max-w-[1600px] grid-cols-2 gap-1 px-4 py-2 sm:px-6 md:flex md:gap-2 md:px-8">
+        <div role="tablist" aria-label="Seções do painel" className="mx-auto grid max-w-[1600px] grid-cols-2 gap-1 px-4 py-1.5 sm:px-6 md:flex md:gap-2 md:px-8">
           {ABAS.map((a) => (
             <button key={a.id} type="button" role="tab" id={`aba-${a.id}`} aria-selected={aba === a.id} aria-controls={aba === a.id ? `painel-${a.id}` : undefined} tabIndex={aba === a.id ? 0 : -1}
               onClick={() => { escolheAba(a.id); window.scrollTo({ top: 0 }) }}
@@ -84,21 +84,21 @@ export function Painel({ macro, receitaMes, elementosPloa, orgaos, fiscais, rclP
                 escolheAba(destino)
                 document.getElementById(`aba-${destino}`)?.focus()
               }}
-              className={`min-h-11 rounded-brand px-2 py-2 text-small font-semibold md:px-4 ${aba === a.id ? 'bg-navy text-on-navy' : 'text-ink-soft hover:bg-surface hover:text-navy'}`}>
+              className={`min-h-10 rounded-brand px-2 py-1.5 text-small font-semibold leading-tight md:min-h-11 md:px-4 ${aba === a.id ? 'bg-navy text-on-navy' : 'text-ink-soft hover:bg-surface hover:text-navy'}`}>
               {a.rotulo}
             </button>
           ))}
         </div>
       </div>
 
-      <div className="mx-auto max-w-[1600px] px-4 pb-8 pt-5 sm:px-6 md:px-8 md:pt-7 print:max-w-none print:p-0">
+      <div className="mx-auto max-w-[1600px] px-4 pb-8 pt-3 sm:px-6 md:px-8 md:pt-5 print:max-w-none print:p-0">
         <div className="hidden print:block">
           <p className={NOTA_DISCRETA}>{IDENTIDADE.nome} · {IDENTIDADE.apoio}</p>
           <h1 className="text-title font-semibold">{IDENTIDADE.painel} · {abaAtual.rotulo}</h1>
         </div>
 
         <div role="tabpanel" id={`painel-${aba}`} aria-labelledby={`aba-${aba}`} tabIndex={0}>
-          <h2 className="mb-4 text-section print:hidden">{abaAtual.rotulo}</h2>
+          {aba === 'conclusoes' && <h2 className="mb-3 text-title md:text-section print:hidden">{abaAtual.rotulo}</h2>}
           {aba === 'conclusoes' ? (
             <Conclusoes ajustes={ajustes} onIr={ir} />
           ) : aba === 'despesa' ? (
