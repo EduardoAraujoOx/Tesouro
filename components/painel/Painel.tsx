@@ -55,9 +55,9 @@ export function Painel({ macro, receitaMes, elementosPloa, orgaos, fiscais, rclP
       <header className="painel-cabecalho bg-navy-deep text-on-navy print:hidden">
         <div className="mx-auto flex max-w-[1600px] flex-wrap items-center justify-between gap-x-6 gap-y-2 px-4 py-3 sm:px-6 md:px-8 md:py-5">
           <div className="flex min-w-0 items-center gap-2.5 sm:gap-3">
-            <span aria-hidden="true" className="painel-marca aspect-[5/6] w-10 shrink-0 rounded-md sm:w-12" />
+            <span aria-hidden="true" className="painel-marca aspect-[105/139] w-10 shrink-0 rounded-md sm:w-12" />
             <div className="min-w-0">
-              <p className="mb-1 text-label font-medium tracking-normal">{IDENTIDADE.faixa}</p>
+              <p className="mb-1 text-label tracking-normal text-on-navy/85">{IDENTIDADE.faixa}</p>
               <h1 className="text-title font-semibold tracking-tight md:text-headline">{IDENTIDADE.painel}</h1>
               <p className="mt-1 text-label tracking-normal md:text-small">{IDENTIDADE.apoio}</p>
             </div>
