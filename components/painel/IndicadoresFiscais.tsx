@@ -216,7 +216,8 @@ export function IndicadoresCapag(props: Props) {
       zonas: [{ de: -5, ate: 0, nota: 'C' }, { de: 0, ate: 5, nota: 'B' }, { de: 5, ate: 12, nota: 'A' }] },
   ]
   const pos = (v: number, [min, max]: [number, number]) => Math.min(Math.max(((v - min) / (max - min)) * 100, 0), 100)
-  const notaDe = (v: number, zonas: Zona[]) => zonas.find((z) => v >= z.de && v < z.ate)?.nota ?? zonas[zonas.length - 1].nota
+  /* a escala desenhada tem limites só de exibição: abaixo da primeira faixa vale a nota dela (A em endividamento e poupança, C em liquidez), e acima da última, a da última */
+  const notaDe = (v: number, zonas: Zona[]) => (v < zonas[0].de ? zonas[0].nota : (zonas.find((z) => v >= z.de && v < z.ate)?.nota ?? zonas[zonas.length - 1].nota))
   const ponto = (left: number, top: string, cheio: boolean): CSSProperties => ({ left: `${left}%`, top, background: cheio ? COR.ploa : 'rgb(var(--paper))', border: `2px solid ${cheio ? COR.ploa : 'rgb(var(--navy) / 0.7)'}` })
 
   return (
