@@ -1,15 +1,16 @@
 'use client'
 
+import { Fragment } from 'react'
 import { milhoes } from '@/lib/formato'
 import type { AjustesVotacao } from '@/lib/ajustes-ploa'
 import { arredonda50 } from './AvisoAjustes'
-import { Nota, NOTA_DISCRETA } from './Estrutura'
+import { NOTA_DISCRETA } from './Estrutura'
 
 export type Destino = { aba: 'receita' | 'despesa' | 'resultado'; sub?: string; rotulo: string }
 
-/** Parágrafo com a ideia central na primeira frase (em destaque), para a leitura rápida, e o desenvolvimento em seguida. */
-type Paragrafo = { topico: string; resto?: string }
-type Item = { titulo: string; paragrafos: Paragrafo[]; metodo?: string; destinos?: Destino[] }
+/** Cada tópico reúne seus destaques e a fundamentação em um único parágrafo. */
+type Trecho = { topico: string; resto: string }
+type Item = { n: number; trechos: Trecho[]; destinos?: Destino[] }
 
 /**
  * Considerações gerais do painel (aba de abertura; o identificador e o arquivo mantêm o nome antigo, `conclusoes`, para não quebrar endereços já compartilhados): seis tópicos, cada um com links para os dados em que se apoia. O texto é redigido (não calculado)
@@ -20,37 +21,35 @@ export function Conclusoes({ ajustes, onIr }: { ajustes: AjustesVotacao; onIr: (
   const emendas = milhoes(arredonda50(ajustes.emendas), 0)
   const poderes = milhoes(arredonda50(ajustes.poderes), 0)
   const itens: Item[] = [
-    { titulo: 'Base da comparação', paragrafos: [{
-      topico: 'A projeção de fechamento de 2026 parte da arrecadação e da despesa empenhada até outubro.',
-      resto: 'A equipe estima o total do ano com base no padrão sazonal observado de 2022 a 2025.',
-    }], metodo: 'A proposta foi enviada à Assembleia Legislativa em 30 de setembro de 2026 (Mensagem nº 189/2026). Os valores do Portal de Dados Abertos do Estado foram conferidos com os quadros da Mensagem. A comparação é feita por natureza da receita, por grupo de despesa e, no caso da despesa, também por órgão.' },
-    { titulo: 'Orçamento de 2027', destinos: [{ aba: 'resultado', sub: 'resultado', rotulo: 'Resultado' }], paragrafos: [{
-      topico: 'A proposta mantém a receita praticamente estável e reduz a despesa executável.',
-      resto: 'A receita prevista é de R$ 35,4 bilhões. A despesa executável, excluídas as reservas de RPPS e de contingência, é de R$ 34,0 bilhões, cerca de 2% abaixo da projeção de fechamento de 2026. Em termos reais, ambos os valores recuam. A estimativa de 2026 publicada na Mensagem é inferior à da equipe e foi elaborada com menos meses de execução conhecidos.',
+    { n: 1, trechos: [{
+      topico: 'Este painel reúne a proposta de lei orçamentária para 2027, enviada à Assembleia Legislativa em 30 de setembro de 2026 (Mensagem nº 189/2026), e a compara com uma projeção própria da execução de 2026.',
+      resto: 'A projeção parte da arrecadação e da despesa empenhada acumuladas até outubro, extraídas do Portal de Dados Abertos do Estado, e as leva ao fechamento do ano pela participação que esse período teve no total de 2022 a 2025. Os valores do Portal foram conferidos com os quadros da própria Mensagem, o que assegura a comparabilidade. A comparação é feita por natureza da receita e por grupo de despesa e, na despesa, também por órgão.',
     }] },
-    { titulo: 'Receita', destinos: [{ aba: 'receita', rotulo: 'Receita' }], paragrafos: [
-      { topico: 'O ICMS responde por mais da metade da receita.',
-        resto: 'Somado ao Fundo de Participação dos Estados e à receita do petróleo, responde por cerca de dois terços.' },
-      { topico: 'A arrecadação do ICMS perdeu ritmo em 2026.',
-        resto: 'O crescimento foi de 10,6% no primeiro semestre e de 8,4% de julho a outubro, com queda de 2,7% em outubro. A proposta prevê R$ 26,6 bilhões em 2027, 7,8% acima da projeção para 2026. Cada ponto percentual a menos de crescimento equivale a cerca de R$ 250 milhões de receita.' },
-      { topico: 'A proposta estima uma receita menor com o petróleo.',
-        resto: 'A previsão para 2027 é de cerca de R$ 1 bilhão, ante mais de R$ 3 bilhões projetados para 2026. O preço do petróleo e o câmbio estão entre os fatores que explicam a volatilidade dessa receita.' },
-    ] },
-    { titulo: 'Despesa', destinos: [{ aba: 'despesa', sub: 'resumo', rotulo: 'Despesa' }, { aba: 'despesa', sub: 'orgao', rotulo: 'Por órgão' }], paragrafos: [
-      { topico: 'A redução da despesa se concentra em custeio e investimento.',
-        resto: 'Em relação à projeção de 2026, as outras despesas correntes caem cerca de 9% e os investimentos, 7%. O gasto com pessoal cresce abaixo da inflação, e os juros da dívida sobem de forma expressiva.' },
-      { topico: 'A comparação considera a proposta enviada à Assembleia, antes dos ajustes da votação.',
-        resto: `As emendas impositivas somam cerca de R$ ${emendas} milhões além da reserva prevista. O financiamento exige a anulação de outras dotações (LDO, art. 23, I), e a execução obrigatória reduz a margem para remanejamento. A recomposição das dotações dos Poderes até os limites da LDO, de cerca de R$ ${poderes} milhões, exige anulação de despesas ou reestimativa da receita.` },
-    ] },
-    { titulo: 'Histórico de execução', destinos: [{ aba: 'resultado', sub: 'orcado', rotulo: 'Orçado × executado' }], paragrafos: [{
-      topico: 'Receita e despesa superaram o orçamento inicial de 2022 a 2025.',
-      resto: 'No período, a receita realizada ficou em média 15% acima do previsto e a despesa empenhada, 11% acima. De 2019 a 2021, a despesa ficou próxima ou abaixo da dotação inicial. A projeção para 2026 indica nova execução acima do orçamento nas duas contas.',
+    { n: 2, destinos: [{ aba: 'resultado', sub: 'resultado', rotulo: 'Resultado' }], trechos: [{
+      topico: 'A proposta para 2027 mantém a receita praticamente estável e reduz a despesa executável.',
+      resto: 'A receita prevista é de R$ 35,4 bilhões. A despesa executável, excluídas as reservas de RPPS e de contingência, soma R$ 34,0 bilhões, cerca de 2% abaixo da projeção para 2026. Em termos reais, o orçamento é menor. A estimativa do Governo para 2026, que consta da Mensagem, é inferior à nossa, mas foi elaborada antes, com menos meses de execução conhecidos.',
     }] },
-    { titulo: 'Indicadores fiscais', destinos: [{ aba: 'resultado', sub: 'lrf', rotulo: 'LRF' }, { aba: 'resultado', sub: 'capag', rotulo: 'CAPAG' }], paragrafos: [
-      { topico: 'A despesa com pessoal do Executivo fica abaixo do limite da LRF na proposta.',
-        resto: 'A estimativa é de cerca de 37% da receita corrente líquida, para um limite de 49%. As operações de crédito previstas e a dívida apurada também ficam abaixo dos respectivos limites.' },
-      { topico: 'A edição de 2026 da CAPAG atribuiu nota A+ ao Estado.',
-        resto: 'Para a edição de 2028, a poupança corrente é estimada em cerca de 80%. É o indicador estimado mais próximo da faixa B, que começa em 85%. A liquidez depende dos dados de caixa.' },
+    { n: 3, destinos: [{ aba: 'receita', rotulo: 'Receita' }], trechos: [
+      { topico: 'A receita depende de poucas fontes, e é nelas que se concentram os riscos da projeção.',
+        resto: 'ICMS, Fundo de Participação dos Estados e petróleo respondem por cerca de dois terços da receita, e o ICMS sozinho, por mais da metade.' },
+      { topico: 'O ICMS é o principal risco de frustração.',
+        resto: 'A proposta prevê R$ 26,6 bilhões, 7,8% acima da projeção para 2026, em um momento em que a arrecadação perdeu ritmo: cresceu 10,6% no primeiro semestre, 8,4% de julho a outubro e caiu 2,7% em outubro. Cada ponto percentual de crescimento a menos equivale a cerca de R$ 250 milhões.' },
+      { topico: 'O petróleo, ao contrário, parece tratado com cautela.',
+        resto: 'A proposta embute receita de cerca de R$ 1 bilhão em 2027, contra mais de R$ 3 bilhões projetados para 2026. Como depende do preço do petróleo e do câmbio, essa receita é volátil e foge ao controle do Estado.' },
+    ] },
+    { n: 4, destinos: [{ aba: 'despesa', sub: 'resumo', rotulo: 'Despesa' }, { aba: 'despesa', sub: 'orgao', rotulo: 'Por órgão' }], trechos: [
+      { topico: 'A despesa da proposta é menor que a projetada para 2026 e concentra o ajuste em custeio e investimento.',
+        resto: 'As outras despesas correntes caem cerca de 9% e os investimentos, 7%, enquanto o pessoal cresce abaixo da inflação e os juros da dívida sobem de forma expressiva.' },
+      { topico: 'A proposta não contempla duas pressões da votação.',
+        resto: `As emendas impositivas, cerca de R$ ${emendas} milhões além da reserva já prevista, só podem ser financiadas por anulação de outras dotações (LDO, art. 23, I) e aumentam a rigidez do orçamento, porque sua execução é obrigatória. A recomposição das dotações dos Poderes até os limites da LDO, cerca de R$ ${poderes} milhões, também exige anulações ou reestimativa da receita. Esses ajustes ainda não estão neste trabalho.` },
+    ] },
+    { n: 5, destinos: [{ aba: 'resultado', sub: 'orcado', rotulo: 'Orçado × executado' }], trechos: [{
+      topico: 'Receita e despesa costumam ser orçadas abaixo do que se realiza, e a nossa projeção indica que 2026 repetirá o padrão.',
+      resto: 'De 2022 a 2025, a receita realizada superou o orçamento inicial em média em 15% e a despesa empenhada, em 11%. Antes disso, a despesa ficou próxima ou abaixo do orçado. O histórico não permite estimar a execução de 2027, mas é informação relevante para quem avalia a proposta.',
+    }] },
+    { n: 6, destinos: [{ aba: 'resultado', sub: 'lrf', rotulo: 'LRF' }, { aba: 'resultado', sub: 'capag', rotulo: 'CAPAG' }], trechos: [
+      { topico: 'Os indicadores da LRF apontam tranquilidade para 2027, e a atenção na CAPAG recai sobre a poupança corrente.',
+        resto: 'O gasto com pessoal deve ficar em cerca de 37% da receita corrente líquida, para um limite de 49%, e as operações de crédito e a dívida estão bem abaixo dos seus limites. A CAPAG de 2026 atribuiu nota A+ ao Estado. A estimativa para a poupança corrente na edição de 2028 é de cerca de 80%. É o indicador estimado mais próximo da faixa B, que começa em 85%.' },
       { topico: 'A transição tributária pode reduzir a arrecadação de ICMS até 2033.',
         resto: 'Se a receita corrente ajustada diminuir e a despesa corrente se mantiver, a relação entre as duas sobe, reduzindo a margem da poupança corrente para a faixa A.' },
     ] },
@@ -58,27 +57,28 @@ export function Conclusoes({ ajustes, onIr }: { ajustes: AjustesVotacao; onIr: (
 
   return (
     <div>
-      <ol role="list" className="grid gap-3 md:grid-cols-2 md:gap-4 print:grid-cols-3 print:gap-x-5 print:gap-y-2">
+      <ol role="list" className="grid gap-x-8 gap-y-5 md:grid-cols-2 print:grid-cols-3 print:gap-x-5 print:gap-y-2">
         {itens.map((it) => (
-          <li key={it.titulo} className="flex min-w-0 flex-col rounded-xl border border-line bg-paper p-4 sm:p-5 print:break-inside-avoid print:rounded-none print:border-0 print:p-0">
-            <h3 className="mb-2 text-title print:mb-1 print:text-small">{it.titulo}</h3>
-            <div className="space-y-2 print:space-y-1">
-              {it.paragrafos.map((p) => (
-                <p key={p.topico} className="text-small leading-relaxed text-ink print:text-[0.75rem] print:leading-snug">
-                  <span className="font-semibold">{p.topico}</span>{p.resto ? ` ${p.resto}` : ''}
-                </p>
-              ))}
-            </div>
-            {it.metodo && <Nota titulo="Metodologia e fontes">{it.metodo}</Nota>}
-            {it.destinos && (
-              <p className="mt-auto flex flex-wrap gap-2 pt-4 text-small print:hidden">
-                {it.destinos.map((d) => (
-                  <button key={d.rotulo} type="button" onClick={() => onIr(d)} className="min-h-10 rounded-brand bg-surface px-3 py-1.5 text-left font-semibold text-navy hover:underline">
-                    Ver {d.rotulo} →
-                  </button>
+          <li key={it.n} className="flex gap-3 print:break-inside-avoid">
+            <span aria-hidden="true" className="mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-navy text-label font-semibold text-on-navy">{it.n}</span>
+            <div className="min-w-0 space-y-2 print:space-y-1">
+              <p className="text-small leading-relaxed text-ink print:text-[0.75rem] print:leading-snug">
+                {it.trechos.map(({ topico, resto }, i) => (
+                  <Fragment key={topico}>
+                    {i > 0 && ' '}<strong className="font-semibold">{topico}</strong> {resto}
+                  </Fragment>
                 ))}
               </p>
-            )}
+              {it.destinos && (
+                <p className="flex flex-wrap gap-x-4 text-small print:hidden">
+                  {it.destinos.map((d) => (
+                    <button key={d.rotulo} type="button" onClick={() => onIr(d)} className="min-h-10 text-left font-semibold text-navy underline decoration-navy/40 underline-offset-2 hover:decoration-navy">
+                      Ver {d.rotulo} →
+                    </button>
+                  ))}
+                </p>
+              )}
+            </div>
           </li>
         ))}
       </ol>

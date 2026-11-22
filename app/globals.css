@@ -138,9 +138,7 @@ h1, h2, h3 { @apply font-serif font-semibold text-navy; font-optical-sizing: aut
   margin-inline-start: -6.25%;
   margin-top: -6.05%;
 }
-.painel-topo-apoio { padding-inline-start: 21%; }
 :root[data-contrast='alto'] .painel-marca-texto { @apply not-sr-only; }
-:root[data-contrast='alto'] .painel-topo-apoio { padding-inline-start: 0; }
 .painel .painel-topo h1 { color: rgb(var(--on-navy)); }
 .painel .painel-cabecalho :focus-visible, .painel .painel-abertura :focus-visible { outline-color: rgb(var(--on-navy)); }
 :root:not([data-contrast='alto']) :is(.painel-cabecalho, .painel-topo) {

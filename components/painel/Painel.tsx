@@ -74,7 +74,6 @@ export function Painel({ macro, receitaMes, elementosPloa, orgaos, fiscais, rclP
                   </span>
                 </h1>
                 <p className="painel-marca-texto sr-only text-label tracking-normal">{IDENTIDADE.faixa}</p>
-                <p className="painel-topo-apoio text-label tracking-normal">{IDENTIDADE.apoio}</p>
               </div>
               <div className="painel-topo-controles flex flex-wrap items-center gap-x-2 gap-y-1 sm:gap-x-3">
                 <ControlesAcessibilidade compacto className="flex max-w-full flex-wrap" />
