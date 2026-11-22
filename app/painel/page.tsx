@@ -8,6 +8,7 @@ import ploaRaw from '@/data/ploa2027.json'
 import orgaosRaw from '@/data/ploa2027-orgaos.json'
 import rclRaw from '@/data/ploa2027-rcl.json'
 import indicadoresRaw from '@/data/indicadores.json'
+import { ajustesVotacao } from '@/lib/ajustes-ploa'
 import type { IndicadoresFiscais } from '@/components/painel/Agregado'
 import type { OrgaoPloa } from '@/components/painel/DespesaOrgaos'
 import type { DadosReceita } from '@/components/painel/projecao'
@@ -44,5 +45,5 @@ function indicadoresFiscais(): IndicadoresFiscais {
 export default function PaginaPainel() {
   return <Painel
     macro={{ receita: receitaMacro, despesa: despesaMacro, ipca: parametros.ipca, pib: parametros.pib_real, fonteIpca: parametros.fonte }}
-    elementosPloa={ploaPorElemento()} orgaos={orgaosPloa()} fiscais={indicadoresFiscais()} rclPloa={(rclRaw as unknown as { linhas: Record<string, number> }).linhas.rcl} pessoalExecPloa={pessoalPloaExecutivo()} receitaMes={receitaRaw as unknown as DadosReceita} />
+    elementosPloa={ploaPorElemento()} orgaos={orgaosPloa()} fiscais={indicadoresFiscais()} rclPloa={(rclRaw as unknown as { linhas: Record<string, number> }).linhas.rcl} pessoalExecPloa={pessoalPloaExecutivo()} ajustes={ajustesVotacao()} receitaMes={receitaRaw as unknown as DadosReceita} />
 }

@@ -5,6 +5,8 @@ import { IDENTIDADE } from '@/lib/identidade-painel'
 import { VisaoGeral, type Vista, type IndicadoresFiscais as Fiscais } from './Agregado'
 import { IndicadoresLrf, IndicadoresCapag } from './IndicadoresFiscais'
 import { NOTA_DISCRETA, Subvisoes } from './Estrutura'
+import { AvisoAjustes } from './AvisoAjustes'
+import type { AjustesVotacao } from '@/lib/ajustes-ploa'
 import { DespesaOrgaos, type OrgaoPloa } from './DespesaOrgaos'
 import { ControlesAcessibilidade } from '@/components/TopBar'
 import type { DadosReceita } from './projecao'
@@ -25,7 +27,8 @@ type MacroProps = {
  * Painel em três seções: Receita, Despesa e Resultado orçamentário, cada uma a PLOA 2027 contra a história, o fechamento projetado de 2026 e a nossa
  * projeção de 2027. O restante do material (cenários, detalhamentos, LRF e CAPAG, método) ficou de fora por ora, até se decidir o que acrescentar.
  */
-export function Painel({ macro, receitaMes, elementosPloa, orgaos, fiscais, rclPloa, pessoalExecPloa }: { macro: MacroProps; receitaMes: DadosReceita; elementosPloa: Record<string, Record<string, number>>; orgaos: OrgaoPloa[]; fiscais: Fiscais; rclPloa: number; pessoalExecPloa: number }) {
+export function Painel({ macro, receitaMes, elementosPloa, orgaos, fiscais, rclPloa, pessoalExecPloa, ajustes }: { macro: MacroProps; receitaMes: DadosReceita; elementosPloa: Record<string, Record<string, number>>; orgaos: OrgaoPloa[]; fiscais: Fiscais; rclPloa: number; pessoalExecPloa: number; ajustes: AjustesVotacao }) {
+  const aviso = <AvisoAjustes ajustes={ajustes} />
   const [aba, setAba] = useState<Aba>('receita')
   const [menuAberto, setMenuAberto] = useState(false)
   useEffect(() => {
@@ -104,14 +107,14 @@ export function Painel({ macro, receitaMes, elementosPloa, orgaos, fiscais, rclP
       <div role="tabpanel" id={`painel-${aba}`} aria-labelledby={`aba-${aba}`} className="mt-3">
         {aba === 'despesa' ? (
           <Subvisoes key="despesa" rotulo="Despesa" itens={[
-            { id: 'resumo', rotulo: 'Resumo', conteudo: <VisaoGeral vista="despesa" elementosPloa={elementosPloa} receita={macro.receita} despesa={macro.despesa} ipca={macro.ipca} dados={receitaMes} /> },
-            { id: 'orgao', rotulo: 'Detalhamento por órgão', conteudo: <DespesaOrgaos orgaos={orgaos} ipca={macro.ipca} /> },
+            { id: 'resumo', rotulo: 'Resumo', conteudo: <>{aviso}<VisaoGeral vista="despesa" elementosPloa={elementosPloa} receita={macro.receita} despesa={macro.despesa} ipca={macro.ipca} dados={receitaMes} /></> },
+            { id: 'orgao', rotulo: 'Detalhamento por órgão', conteudo: <>{aviso}<DespesaOrgaos orgaos={orgaos} ipca={macro.ipca} /></> },
           ]} />
         ) : aba === 'resultado' ? (
           <Subvisoes key="resultado" rotulo="Resultado" itens={[
-            { id: 'resultado', rotulo: 'Resultado', conteudo: <VisaoGeral vista="resultado" elementosPloa={elementosPloa} receita={macro.receita} despesa={macro.despesa} ipca={macro.ipca} dados={receitaMes} /> },
-            { id: 'lrf', rotulo: 'LRF', conteudo: <IndicadoresLrf receita={macro.receita} despesa={macro.despesa} dados={receitaMes} fiscais={fiscais} rclPloa={rclPloa} pessoalExecPloa={pessoalExecPloa} /> },
-            { id: 'capag', rotulo: 'CAPAG', conteudo: <IndicadoresCapag receita={macro.receita} despesa={macro.despesa} dados={receitaMes} fiscais={fiscais} rclPloa={rclPloa} pessoalExecPloa={pessoalExecPloa} /> },
+            { id: 'resultado', rotulo: 'Resultado', conteudo: <>{aviso}<VisaoGeral vista="resultado" elementosPloa={elementosPloa} receita={macro.receita} despesa={macro.despesa} ipca={macro.ipca} dados={receitaMes} /></> },
+            { id: 'lrf', rotulo: 'LRF', conteudo: <>{aviso}<IndicadoresLrf receita={macro.receita} despesa={macro.despesa} dados={receitaMes} fiscais={fiscais} rclPloa={rclPloa} pessoalExecPloa={pessoalExecPloa} /></> },
+            { id: 'capag', rotulo: 'CAPAG', conteudo: <>{aviso}<IndicadoresCapag receita={macro.receita} despesa={macro.despesa} dados={receitaMes} fiscais={fiscais} rclPloa={rclPloa} pessoalExecPloa={pessoalExecPloa} /></> },
           ]} />
         ) : (
           <VisaoGeral key={aba} vista={aba} elementosPloa={elementosPloa} receita={macro.receita} despesa={macro.despesa} ipca={macro.ipca} dados={receitaMes} />
