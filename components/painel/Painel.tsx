@@ -7,7 +7,7 @@ import { IndicadoresLrf, IndicadoresCapag } from './IndicadoresFiscais'
 import { NOTA_DISCRETA, Subvisoes } from './Estrutura'
 import { AvisoAjustes } from './AvisoAjustes'
 import type { AjustesVotacao } from '@/lib/ajustes-ploa'
-import { OrcadoExecutado, type LoaAnual } from './OrcadoExecutado'
+import { OrcadoExecutado, type LoaAnual, type ReceitaAnual } from './OrcadoExecutado'
 import { DespesaOrgaos, type OrgaoPloa } from './DespesaOrgaos'
 import { ControlesAcessibilidade } from '@/components/TopBar'
 import type { DadosReceita } from './projecao'
@@ -28,7 +28,7 @@ type MacroProps = {
  * Painel em três seções: Receita, Despesa e Resultado orçamentário, cada uma a PLOA 2027 contra a história, o fechamento projetado de 2026 e a nossa
  * projeção de 2027. O restante do material (cenários, detalhamentos, LRF e CAPAG, método) ficou de fora por ora, até se decidir o que acrescentar.
  */
-export function Painel({ macro, receitaMes, elementosPloa, orgaos, fiscais, rclPloa, pessoalExecPloa, ajustes, loa }: { macro: MacroProps; receitaMes: DadosReceita; elementosPloa: Record<string, Record<string, number>>; orgaos: OrgaoPloa[]; fiscais: Fiscais; rclPloa: number; pessoalExecPloa: number; ajustes: AjustesVotacao; loa: LoaAnual }) {
+export function Painel({ macro, receitaMes, elementosPloa, orgaos, fiscais, rclPloa, pessoalExecPloa, ajustes, loa, receitaAnual }: { macro: MacroProps; receitaMes: DadosReceita; elementosPloa: Record<string, Record<string, number>>; orgaos: OrgaoPloa[]; fiscais: Fiscais; rclPloa: number; pessoalExecPloa: number; ajustes: AjustesVotacao; loa: LoaAnual; receitaAnual: ReceitaAnual }) {
   const aviso = <AvisoAjustes ajustes={ajustes} />
   const [aba, setAba] = useState<Aba>('receita')
   const [menuAberto, setMenuAberto] = useState(false)
@@ -114,7 +114,7 @@ export function Painel({ macro, receitaMes, elementosPloa, orgaos, fiscais, rclP
         ) : aba === 'resultado' ? (
           <Subvisoes key="resultado" rotulo="Resultado" itens={[
             { id: 'resultado', rotulo: 'Resultado', conteudo: <>{aviso}<VisaoGeral vista="resultado" elementosPloa={elementosPloa} receita={macro.receita} despesa={macro.despesa} ipca={macro.ipca} dados={receitaMes} /></> },
-            { id: 'orcado', rotulo: 'Orçado × executado', conteudo: <>{aviso}<OrcadoExecutado receita={macro.receita} despesa={macro.despesa} dados={receitaMes} loa={loa} /></> },
+            { id: 'orcado', rotulo: 'Orçado × executado', conteudo: <OrcadoExecutado receita={macro.receita} dados={receitaMes} loa={loa} receitaAnual={receitaAnual} /> },
             { id: 'lrf', rotulo: 'LRF', conteudo: <>{aviso}<IndicadoresLrf receita={macro.receita} despesa={macro.despesa} dados={receitaMes} fiscais={fiscais} rclPloa={rclPloa} pessoalExecPloa={pessoalExecPloa} /></> },
             { id: 'capag', rotulo: 'CAPAG', conteudo: <>{aviso}<IndicadoresCapag receita={macro.receita} despesa={macro.despesa} dados={receitaMes} fiscais={fiscais} rclPloa={rclPloa} pessoalExecPloa={pessoalExecPloa} /></> },
           ]} />

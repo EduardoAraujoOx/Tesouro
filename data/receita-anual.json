@@ -1,0 +1,16 @@
+{
+ "anos": {
+  "2023": {
+   "bruta": 34681808404,
+   "deducao": -8785467185,
+   "liquida": 25896341219
+  },
+  "2022": {
+   "bruta": 31992142105,
+   "deducao": -7970277507,
+   "liquida": 24021864598
+  }
+ },
+ "fonte": "Portal de Dados Abertos do ES, Receitas (ARRECADADA-BRUTA e ARRECADADA-DEDUCAO)",
+ "coletado_em": "2026-11-22T12:50:56Z"
+}
