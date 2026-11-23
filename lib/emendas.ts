@@ -8,7 +8,9 @@ import obrigRaw from '@/data/ploa2027-obrigatorias.json'
  *
  * Emendas individuais: PEC 04/2026 (Assembleia Legislativa, 13/10/2026) e LDO 2027, art. 24: 1,55% da RCL do exercício de 2025, divididas entre os 30 deputados.
  * Em 2026 o teto foi de R$ 3 milhões por deputado (ES Hoje, 13/10/2026), sem obrigatoriedade de execução. O valor de 2025 não foi localizado em fonte pública.
- * Despesa primária discricionária: demonstrativo da Mensagem nº 189/2026 (autorizado em 25/09/2026 e PLOA 2027), em data/ploa2027-obrigatorias.json.
+ * Despesa primária discricionária: demonstrativo da Mensagem nº 189/2026 (autorizado em 25/09/2026 e PLOA 2027), em data/ploa2027-obrigatorias.json. O demonstrativo é
+ * consolidado (soma ao total da PLOA menos a reserva do RPPS) e, portanto, inclui os demais Poderes; a série só do Executivo não foi localizada. Como sensibilidade,
+ * `discSemPoderes` retira o custeio e o investimento (GND 3, 4 e 5) dos Poderes, o limite superior do que nesses órgãos seria discricionário.
  */
 export const PCT_EMENDAS = 0.0155
 const DEPUTADOS = 30
@@ -30,6 +32,8 @@ export type DadosEmendas = {
   rcl: { a2025: number; a2026: number; a2027: number }
   /** despesa primária discricionária do Executivo, em R$: autorizado de 2026 e PLOA 2027 */
   disc: { a2026: number; a2027: number }
+  /** a mesma série sem o custeio e o investimento dos Poderes (limite inferior para o Executivo), em R$ */
+  discSemPoderes: { a2026: number; a2027: number }
   /** recursos não vinculados de impostos (fonte 500) dos Poderes: LOA 2025 e 2026 (dotação inicial) e PLOA 2027 */
   poderes: PoderEmenda[]
   /** IPCA de julho a junho que antecede cada exercício (2026 e 2027), em % */
@@ -56,11 +60,18 @@ export function dadosEmendas(): DadosEmendas {
     }
     return (f - 1) * 100
   }
+  const ptab = ploaRaw as unknown as Tabela
+  const custeio = (t: Tabela, valor: string) => {
+    const ic = Object.fromEntries(t.colunas.map((c, i) => [c, i]))
+    const uos = PODERES.flatMap((q) => q.uos)
+    return t.linhas.filter((l) => uos.includes(String(l[ic.uo]).padStart(5, '0')) && ['3', '4', '5'].includes(String(l[ic.gnd]))).reduce((x, l) => x + Number(l[ic[valor]]), 0)
+  }
   const obrig = (obrigRaw as unknown as { linhas: Record<string, number[]> }).linhas.primarias_discricionarias
   return {
     emendas: { a2025: null, a2026: DEPUTADOS * POR_DEPUTADO_2026, a2027: PCT_EMENDAS * rcl(2025) },
     rcl: { a2025: rcl(2023), a2026: rcl(2024), a2027: rcl(2025) },
     disc: { a2026: obrig[0], a2027: obrig[1] },
+    discSemPoderes: { a2026: obrig[0] - custeio(orc['2026'], 'dotacao_atualizada'), a2027: obrig[1] - custeio(ptab, 'valor') },
     poderes: PODERES.map((p) => ({
       rotulo: p.rotulo,
       v25: soma(orc['2025'], p.uos, 'dotacao_inicial'),

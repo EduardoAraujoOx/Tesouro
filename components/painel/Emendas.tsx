@@ -51,7 +51,8 @@ function Lista({ itens, legenda }: { itens: ItemLista[]; legenda: string }) {
  * permitiria, e a despesa dos Poderes ao longo da LOA 2025, da LOA 2026 e da PLOA 2027. O critério é tratado como parâmetro de referência.
  */
 export function Emendas({ dados }: { dados: DadosEmendas }) {
-  const { emendas: E, rcl, disc, poderes, ipca } = dados
+  const { emendas: E, rcl, disc, discSemPoderes: sem, poderes, ipca } = dados
+  const vSem = (sem.a2027 / sem.a2026 - 1) * 100
   const vRcl26 = (rcl.a2026 / rcl.a2025 - 1) * 100
   const vRcl27 = (rcl.a2027 / rcl.a2026 - 1) * 100
   const vDisc27 = (disc.a2027 / disc.a2026 - 1) * 100
@@ -65,12 +66,12 @@ export function Emendas({ dados }: { dados: DadosEmendas }) {
     { chave: '2025', rotulo: '2025', emendas: E.a2025 === null ? nd : <Celula v={mi(E.a2025)} />, rcl: <Celula v={bi(rcl.a2025)} nota="(2023)" />, disc: nd },
     { chave: '2026', rotulo: '2026', emendas: <Celula v={mi(E.a2026)} d={vE26} nota="(teto)" />, rcl: <Celula v={bi(rcl.a2026)} d={vRcl26} nota="(2024)" />, disc: <Celula v={bi(disc.a2026)} nota="(autorizado)" /> },
     { chave: '2027', rotulo: '2027 (PEC)', emendas: <Celula v={<span className="font-semibold">{mi(E.a2027)}</span>} d={vE27} />, rcl: <Celula v={bi(rcl.a2027)} d={vRcl27} nota="(2025)" />, disc: <Celula v={bi(disc.a2027)} d={vDisc27} nota="(PLOA)" /> },
-    { chave: 'max', rotulo: <span className="text-ink-soft">2027, máximo</span>, emendas: <Celula v={mi(maximo)} d={teto} /> },
+    { chave: 'max', rotulo: <span className="text-ink-soft">2027, máximo (aprox.)</span>, emendas: <Celula v={mi(maximo)} d={teto} /> },
   ]
 
   const barras = [
     { rotulo: '2026 (teto)', v: E.a2026, cor: COR.empenhado },
-    { rotulo: '2027, máximo pelo critério', v: maximo, cor: COR.atualizada, tracejado: true },
+    { rotulo: '2027, máximo pelo critério (aprox.)', v: maximo, cor: COR.atualizada, tracejado: true },
     { rotulo: '2027, PEC 04/2026', v: E.a2027, cor: COR.ploa },
   ]
   const topo = Math.max(...barras.map((b) => b.v))
@@ -108,18 +109,18 @@ export function Emendas({ dados }: { dados: DadosEmendas }) {
               { rotulo: 'Ano', valor: (l: Linha) => l.rotulo },
               { rotulo: 'Emendas (mi)', valor: (l: Linha) => l.emendas ?? '' },
               { rotulo: 'RCL (bi)', valor: (l: Linha) => l.rcl ?? '' },
-              { rotulo: 'Discricionária (bi)', valor: (l: Linha) => l.disc ?? '' },
+              { rotulo: 'Discricionária, Estado (bi)', valor: (l: Linha) => l.disc ?? '' },
             ]} />
           </div>
-          <Lista legenda="Emendas individuais, RCL e despesa primária discricionária do Executivo, por ano" itens={linhas.map((l) => ({ chave: l.chave, rotulo: l.rotulo, campos: [{ r: 'Emendas (R$ mi)', v: l.emendas ?? '' }, { r: 'RCL (R$ bi)', v: l.rcl ?? '' }, { r: 'Discricionária (R$ bi)', v: l.disc ?? '' }] }))} />
+          <Lista legenda="Emendas individuais, RCL e despesa primária discricionária do Executivo, por ano" itens={linhas.map((l) => ({ chave: l.chave, rotulo: l.rotulo, campos: [{ r: 'Emendas (R$ mi)', v: l.emendas ?? '' }, { r: 'RCL (R$ bi)', v: l.rcl ?? '' }, { r: 'Discricionária, Estado (R$ bi)', v: l.disc ?? '' }] }))} />
         </div>
         <Nota titulo="Critério, decisões e fontes" larga>
           <div className="space-y-2">
             <p>
-              A PEC 04/2026 (Assembleia Legislativa, 13/10/2026) e o art. 24 da LDO 2027 fixam as emendas individuais em 1,55% da RCL do exercício anterior (R$ 14,5 milhões por deputado), com metade em saúde e execução obrigatória. Em 2026 o teto foi de R$ 3 milhões por deputado. O critério de crescimento é o das decisões do STF sobre emendas impositivas: de um ano para o outro, as emendas não podem crescer mais que a despesa discricionária do Poder Executivo ou que a RCL, o que for menor (ADI 7697, ministro Dino, em dezembro de 2024, para a União; aplicado à Paraíba na ADI 7867, ministro Fachin, em cautelar, com teto de R$ 182,3 milhões para 2026, contra R$ 283,9 milhões pela regra de 1,5% da RCL). O limite de 1,55% da RCL coincide com o fixado pelo ministro Moraes para a Paraíba na ADI 7869.
+              A PEC 04/2026 (Assembleia Legislativa, 13/10/2026) e o art. 24 da LDO 2027 fixam as emendas individuais em 1,55% da RCL de 2025 (R$ 14,5 milhões por deputado), com metade em saúde e execução obrigatória. Em 2026 o teto foi de R$ 3 milhões por deputado. O critério de crescimento é o das decisões do STF sobre emendas impositivas: de um ano para o outro, as emendas não podem crescer mais que a despesa discricionária do Poder Executivo ou que a RCL, o que for menor (ADI 7697, ministro Dino, em dezembro de 2024, para a União; aplicado à Paraíba na ADI 7867, ministro Fachin, em cautelar, com teto de R$ 182,3 milhões para 2026, contra R$ 283,9 milhões pela regra de 1,5% da RCL). O limite de 1,55% da RCL coincide com o fixado pelo ministro Moraes para a Paraíba na ADI 7869.
             </p>
             <p>
-              São decisões cautelares e de outros entes, tomadas antes do julgamento de mérito; o painel as usa como parâmetro de referência, sem concluir sobre sua incidência no Espírito Santo. A RCL de cada linha é a do ano-base (2023 para 2025, 2024 para 2026 e 2025 para 2027). A despesa discricionária é a do demonstrativo da Mensagem nº 189/2026: autorizado de 2026 em 25/09/2026 e PLOA 2027; o demonstrativo de 2025 não foi localizado, e o valor das emendas de 2025 também não. O máximo pelo critério é o valor de 2026 corrigido pelo menor crescimento.
+              São decisões cautelares e de outros entes, tomadas antes do julgamento de mérito; o painel as usa como parâmetro de referência, sem concluir sobre sua incidência no Espírito Santo. A RCL de cada linha é a do ano-base (2023 para 2025, 2024 para 2026 e 2025 para 2027). A despesa discricionária é a do demonstrativo da Mensagem nº 189/2026 (autorizado de 2026 em 25/09/2026 e PLOA 2027), que é consolidado e inclui os demais Poderes; a série só do Executivo não foi localizada. Mesmo supondo que todo o custeio e o investimento dos Poderes fosse discricionário, a variação do Executivo seria de {fmtPct(vSem)}, de modo que o valor consolidado é o mais conservador. O demonstrativo de 2025 não foi localizado, e o valor das emendas de 2025 também não. O máximo é o valor de 2026 corrigido pelo menor crescimento e, por isso, aproximado.
             </p>
           </div>
         </Nota>
