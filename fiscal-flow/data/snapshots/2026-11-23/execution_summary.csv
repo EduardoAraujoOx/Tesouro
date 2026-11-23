@@ -1,0 +1,3 @@
+escopo,n_ugs,liquidado,pago,gap_liquidado_pago,gap_pct_liquidado,observacao
+todos_os_poderes,123,27016444976.51,26332029018.87,684415957.64,0.02533331,Soma de todas as UGs do recurso público.
+poder_executivo_aproximado,114,24445418954.37,23849972360.64,595446593.73,0.02435821,Heurística: UGs com código >= 100000. Não substitui classificação oficial por Poder.
