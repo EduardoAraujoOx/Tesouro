@@ -1,5 +1,5 @@
 {
- "coletado_em": "2026-11-20T16:50:42Z",
+ "coletado_em": "2026-11-23T21:49:19Z",
  "metodo": "Estimado sobre a história mensal; ver scripts/analisar_petroleo.py",
  "royalties": {
   "defasagem_meses": 2,
@@ -148,7 +148,7 @@
  },
  "base_2026": {
   "brent": 96.30490909090909,
-  "cambio": 5.188909090909092,
+  "cambio": 5.191181818181819,
   "producao": 253.7111111111111,
   "ate_preco": "2026-11",
   "ate_producao": "2026-09"

@@ -1,5 +1,5 @@
 {
- "coletado_em": "2026-11-20T16:47:12Z",
+ "coletado_em": "2026-11-23T21:47:34Z",
  "fontes": {
   "brent": "Ipeadata (EIA366_PBRENT366, origem U.S. EIA): média mensal do preço diário FOB, US$/barril",
   "cambio": "Banco Central do Brasil, SGS 1: média mensal da PTAX de venda, R$/US$",
@@ -197,7 +197,7 @@
   "2026-08": 5.153,
   "2026-09": 5.145,
   "2026-10": 5.129,
-  "2026-11": 5.621
+  "2026-11": 5.646
  },
  "producao": {
   "2019-01": 326.4,

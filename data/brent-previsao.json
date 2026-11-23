@@ -1,5 +1,5 @@
 {
- "coletado_em": "2026-11-20T16:59:11Z",
+ "coletado_em": "2026-11-23T21:47:34Z",
  "tecnica": "Valor central do Brent de 2027 = média de 2027 da previsão mais recente da EIA (STEO); câmbio de 2027 = mediana do Focus",
  "eia": {
   "edicao": "November 2026",
@@ -35,8 +35,8 @@
   "url": "https://www.eia.gov/outlooks/steo/"
  },
  "cambio_focus_2027": {
-  "mediana": 5.45,
-  "data": "2026-11-13",
+  "mediana": 5.5,
+  "data": "2026-11-19",
   "respondentes": 120
  },
  "outras_previsoes_2027": [
