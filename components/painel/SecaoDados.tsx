@@ -8,6 +8,7 @@ import { Emendas } from './Emendas'
 import { Subvisoes } from './Estrutura'
 import { IndicadoresCapag, IndicadoresLrf } from './IndicadoresFiscais'
 import { OrcadoExecutado } from './OrcadoExecutado'
+import { ProjecaoReceitas } from './ProjecaoReceitas'
 
 export function SecaoDados({ vista, dados, ativa, onMudar, relatorio = false }: {
   vista: Vista
@@ -16,13 +17,16 @@ export function SecaoDados({ vista, dados, ativa, onMudar, relatorio = false }: 
   onMudar?: (id: string) => void
   relatorio?: boolean
 }) {
-  const { macro, elementosPloa, receitaMes, ajustes, orgaos, fiscais, rclPloa, pessoalExecPloa, loa, receitaAnual, emendas } = dados
+  const { macro, elementosPloa, receitaMes, ajustes, orgaos, fiscais, rclPloa, pessoalExecPloa, loa, receitaAnual, emendas, projecaoReceitas } = dados
   const geral = <VisaoGeral vista={vista} elementosPloa={elementosPloa} receita={macro.receita} despesa={macro.despesa} ipca={macro.ipca} dados={receitaMes} />
-  if (vista === 'receita') return geral
-
   const aviso = <AvisoAjustes ajustes={ajustes} />
   const indicadores = { receita: macro.receita, despesa: macro.despesa, dados: receitaMes, fiscais, rclPloa, pessoalExecPloa }
-  const itens = vista === 'despesa'
+  const itens = vista === 'receita'
+    ? [
+        { id: 'resumo', rotulo: 'Resumo', conteudo: geral },
+        { id: 'projecao', rotulo: 'Projeção das maiores fontes', conteudo: <ProjecaoReceitas dados={projecaoReceitas} /> },
+      ]
+    : vista === 'despesa'
     ? [
         { id: 'resumo', rotulo: 'Resumo', conteudo: <>{aviso}{geral}</> },
         { id: 'orgao', rotulo: 'Detalhamento por órgão', conteudo: <>{aviso}<DespesaOrgaos orgaos={orgaos} ipca={macro.ipca} /></> },
@@ -38,9 +42,9 @@ export function SecaoDados({ vista, dados, ativa, onMudar, relatorio = false }: 
   return relatorio
     ? itens.map(({ id, rotulo, conteudo }) => (
         <div key={id} id={`${vista}-${id}`} className="relatorio-subsecao mt-3">
-          {id !== 'resultado' && <h3 className="mb-1.5 text-body">{rotulo}</h3>}
+          {id !== itens[0].id && <h3 className="mb-1.5 text-body">{rotulo}</h3>}
           {conteudo}
         </div>
       ))
-    : <Subvisoes rotulo={vista === 'despesa' ? 'Despesa' : 'Resultado'} itens={itens} ativa={ativa} onMudar={onMudar} />
+    : <Subvisoes rotulo={vista === 'receita' ? 'Receita' : vista === 'despesa' ? 'Despesa' : 'Resultado'} itens={itens} ativa={ativa} onMudar={onMudar} />
 }

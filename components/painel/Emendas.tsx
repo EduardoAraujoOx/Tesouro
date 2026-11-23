@@ -23,9 +23,9 @@ function Celula({ v, d, nota }: { v: ReactNode; d?: number | null; nota?: string
 
 type Linha = { chave: string; rotulo: ReactNode; emendas?: ReactNode; rcl?: ReactNode; disc?: ReactNode }
 
-type ItemLista = { chave: string; rotulo: ReactNode; campos: { r: string; v: ReactNode }[] }
+export type ItemLista = { chave: string; rotulo: ReactNode; campos: { r: string; v: ReactNode }[] }
 /** Visão das tabelas em tela estreita: cada linha vira um bloco com os campos nomeados, sem rolagem lateral. */
-function Lista({ itens, legenda }: { itens: ItemLista[]; legenda: string }) {
+export function Lista({ itens, legenda }: { itens: ItemLista[]; legenda: string }) {
   return (
     <ul role="list" aria-label={legenda} className="divide-y divide-line rounded-brand border border-line text-small md:hidden print:hidden">
       {itens.map((i) => (
