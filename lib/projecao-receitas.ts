@@ -36,7 +36,8 @@ export function projecaoReceitas(dados: DadosReceita, receita: LinhaMacro[], fpe
   const icms26 = projecaoItens(dados).icms.central
   const fpe26 = analise.find((a) => a.id === 'fpe')!.central
   const pet = receitaPetroleo(BRENT_CENTRAL, CAMBIO_CENTRAL, PRODUCAO_CENTRAL)
-  const petPloa = implicitoPetroleo(dados, analise, R.transf_corr_uniao[5], g27).implicito
+  /* resíduo das transferências da União na PLOA: desconta o FPE que a própria PLOA informa e as demais transferências crescendo como a atividade */
+  const petPloa = R.transf_corr_uniao[5] - fpePloa - implicitoPetroleo(dados, analise, R.transf_corr_uniao[5], g27).outras27
   const icms = icms26 * (1 + g27)
   const fpe = fpe26 * (1 + g27)
   const petEst = pet.transferencias
