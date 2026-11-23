@@ -18,7 +18,7 @@ const rotuloRelatorio = downloadPdf ? 'Baixar relatório completo em PDF' : 'Abr
 type Aba = 'conclusoes' | Vista
 const ABAS = [
   { id: 'conclusoes', rotulo: 'Considerações gerais', curto: 'Geral', descricao: 'Base da comparação e leitura dos dados', Icone: IconBars },
-  { id: 'receita', rotulo: 'Receita', curto: 'Receita', descricao: 'Estimativas e comparações', Icone: IconCoins },
+  { id: 'receita', rotulo: 'Receita', curto: 'Receita', descricao: 'Estimativas e maiores fontes', Icone: IconCoins },
   { id: 'despesa', rotulo: 'Despesa', curto: 'Despesa', descricao: 'Por grupo, por órgão e emendas', Icone: IconLayers },
   { id: 'resultado', rotulo: 'Resultado orçamentário', curto: 'Resultado', descricao: 'Execução orçamentária, LRF e CAPAG', Icone: IconPie },
 ] as const
@@ -30,7 +30,7 @@ const ABAS = [
 export function Painel(dados: DadosPainel) {
   const [aba, setAba] = useState<Aba>('conclusoes')
   /* sub-visão escolhida em cada grupo, para que os links das conclusões levem direto ao ponto */
-  const [sub, setSub] = useState<Record<string, string>>({ despesa: 'resumo', resultado: 'resultado' })
+  const [sub, setSub] = useState<Record<string, string>>({ receita: 'resumo', despesa: 'resumo', resultado: 'resultado' })
   useEffect(() => {
     const h = window.location.hash.slice(1)
     /* endereços das versões anteriores: visão geral e demais abas levam à seção mais próxima */
