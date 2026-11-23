@@ -4,6 +4,7 @@ import type { DadosPainel } from '@/lib/dados-painel'
 import { VisaoGeral, type Vista } from './Agregado'
 import { AvisoAjustes } from './AvisoAjustes'
 import { DespesaOrgaos } from './DespesaOrgaos'
+import { Emendas } from './Emendas'
 import { Subvisoes } from './Estrutura'
 import { IndicadoresCapag, IndicadoresLrf } from './IndicadoresFiscais'
 import { OrcadoExecutado } from './OrcadoExecutado'
@@ -15,7 +16,7 @@ export function SecaoDados({ vista, dados, ativa, onMudar, relatorio = false }: 
   onMudar?: (id: string) => void
   relatorio?: boolean
 }) {
-  const { macro, elementosPloa, receitaMes, ajustes, orgaos, fiscais, rclPloa, pessoalExecPloa, loa, receitaAnual } = dados
+  const { macro, elementosPloa, receitaMes, ajustes, orgaos, fiscais, rclPloa, pessoalExecPloa, loa, receitaAnual, emendas } = dados
   const geral = <VisaoGeral vista={vista} elementosPloa={elementosPloa} receita={macro.receita} despesa={macro.despesa} ipca={macro.ipca} dados={receitaMes} />
   if (vista === 'receita') return geral
 
@@ -25,6 +26,7 @@ export function SecaoDados({ vista, dados, ativa, onMudar, relatorio = false }: 
     ? [
         { id: 'resumo', rotulo: 'Resumo', conteudo: <>{aviso}{geral}</> },
         { id: 'orgao', rotulo: 'Detalhamento por órgão', conteudo: <>{aviso}<DespesaOrgaos orgaos={orgaos} ipca={macro.ipca} /></> },
+        { id: 'emendas', rotulo: 'Emendas', conteudo: <Emendas dados={emendas} /> },
       ]
     : [
         { id: 'resultado', rotulo: 'Resultado', conteudo: <>{aviso}{geral}</> },
