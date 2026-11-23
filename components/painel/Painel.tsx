@@ -19,7 +19,7 @@ type Aba = 'conclusoes' | Vista
 const ABAS = [
   { id: 'conclusoes', rotulo: 'Considerações gerais', curto: 'Geral', descricao: 'Base da comparação e leitura dos dados', Icone: IconBars },
   { id: 'receita', rotulo: 'Receita', curto: 'Receita', descricao: 'Estimativas e comparações', Icone: IconCoins },
-  { id: 'despesa', rotulo: 'Despesa', curto: 'Despesa', descricao: 'Por grupo e por órgão', Icone: IconLayers },
+  { id: 'despesa', rotulo: 'Despesa', curto: 'Despesa', descricao: 'Por grupo, por órgão e emendas', Icone: IconLayers },
   { id: 'resultado', rotulo: 'Resultado orçamentário', curto: 'Resultado', descricao: 'Execução orçamentária, LRF e CAPAG', Icone: IconPie },
 ] as const
 

@@ -8,6 +8,7 @@ import indicadoresRaw from '@/data/indicadores.json'
 import loaRaw from '@/data/loa-executado.json'
 import receitaAnualRaw from '@/data/receita-anual.json'
 import { ajustesVotacao } from '@/lib/ajustes-ploa'
+import { dadosEmendas } from '@/lib/emendas'
 import type { IndicadoresFiscais } from '@/components/painel/Agregado'
 import type { LoaAnual, ReceitaAnual } from '@/components/painel/OrcadoExecutado'
 import type { OrgaoPloa } from '@/components/painel/DespesaOrgaos'
@@ -56,6 +57,7 @@ export function dadosPainel() {
     rclPloa: (rclRaw as unknown as { linhas: Record<string, number> }).linhas.rcl,
     pessoalExecPloa: pessoalPloaExecutivo(),
     ajustes: ajustesVotacao(),
+    emendas: dadosEmendas(),
     loa: loaExecutado(),
     receitaAnual: receitaAnual(),
     receitaMes: receitaRaw as unknown as DadosReceita,
