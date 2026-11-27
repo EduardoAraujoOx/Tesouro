@@ -47,7 +47,10 @@ export function Relatorio({ dados }: { dados: DadosPainel }) {
         </header>
         <h2 className="mt-6 text-section">Resumo executivo</h2>
         <p className="mt-2 max-w-4xl text-body">
-          A proposta orçamentária de 2027 é comparada à projeção da equipe de transição para o fechamento de 2026. Os valores da proposta estão em termos nominais. A receita é líquida de deduções e a despesa executável exclui as reservas de RPPS e de contingência.
+          Este relatório analisa a proposta de lei orçamentária para 2027 do Estado do Espírito Santo. O Executivo estadual encaminhou o projeto à Assembleia Legislativa em 30 de setembro de 2026 (Mensagem nº 189/2026). A análise subsidia a elaboração do decreto de início de exercício de 2027.
+        </p>
+        <p className="mt-2 max-w-4xl text-body">
+          A equipe de transição compara a proposta com sua projeção para o fechamento de 2026. A projeção parte dos dados de arrecadação e de despesa empenhada até outubro de 2026, extraídos do Portal de Dados Abertos do Estado, e considera o ritmo de execução observado de 2022 a 2025.
         </p>
         <dl className="mt-4 grid grid-cols-2 gap-3 md:grid-cols-4 print:grid-cols-4">
           {numeros.map(({ rotulo, valor, referencia }) => (

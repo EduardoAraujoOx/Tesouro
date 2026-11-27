@@ -22,36 +22,36 @@ export function Conclusoes({ ajustes, onIr }: { ajustes: AjustesVotacao; onIr?: 
   const poderes = milhoes(arredonda50(ajustes.poderes), 0)
   const itens: Item[] = [
     { n: 1, trechos: [{
-      topico: 'Este painel reúne a proposta de lei orçamentária para 2027, enviada à Assembleia Legislativa em 30 de setembro de 2026 (Mensagem nº 189/2026), e a compara com uma projeção própria da execução de 2026.',
-      resto: 'A projeção parte da arrecadação e da despesa empenhada acumuladas até outubro, extraídas do Portal de Dados Abertos do Estado, e as leva ao fechamento do ano pela participação que esse período teve no total de 2022 a 2025. Os valores do Portal foram conferidos com os quadros da própria Mensagem, o que assegura a comparabilidade. A comparação é feita por natureza da receita e por grupo de despesa e, na despesa, também por órgão.',
+      topico: 'O painel compara a proposta de lei orçamentária de 2027 com a projeção de fechamento de 2026.',
+      resto: 'A projeção da equipe de transição parte da arrecadação e da despesa empenhada de janeiro a outubro de 2026, registradas no Portal de Dados Abertos do Estado. A participação desses meses nos totais anuais de 2022 a 2025 orienta a estimativa. Os valores de receita de 2025 foram conferidos com os quadros da Mensagem nº 189/2026. O painel detalha a receita por natureza e a despesa por grupo e por órgão.',
     }] },
     { n: 2, destinos: [{ aba: 'resultado', sub: 'resultado', rotulo: 'Resultado' }], trechos: [{
-      topico: 'A proposta para 2027 mantém a receita praticamente estável e reduz a despesa executável.',
-      resto: 'A receita prevista é de R$ 35,4 bilhões. A despesa executável, excluídas as reservas de RPPS e de contingência, soma R$ 34,0 bilhões, cerca de 2% abaixo da projeção para 2026. Em termos reais, o orçamento é menor. A estimativa do Governo para 2026, que consta da Mensagem, é inferior à nossa, mas foi elaborada antes, com menos meses de execução conhecidos.',
+      topico: 'Em valores correntes, a proposta para 2027 mantém a receita praticamente estável e reduz a despesa executável.',
+      resto: 'A receita líquida de deduções é de R$ 35,4 bilhões, 0,4% abaixo da projeção de 2026. A despesa executável, que exclui as reservas de RPPS e de contingência, soma R$ 34,0 bilhões, com redução de 2,1%. Tanto a receita quanto a despesa executável diminuem em termos reais. A estimativa oficial para 2026, apresentada na Mensagem, é inferior à da equipe de transição e foi elaborada com menos meses de execução disponíveis.',
     }] },
     { n: 3, destinos: [{ aba: 'receita', rotulo: 'Receita' }], trechos: [
-      { topico: 'A receita depende de poucas fontes, e é nelas que se concentram os riscos da projeção.',
-        resto: 'ICMS, Fundo de Participação dos Estados e petróleo respondem por cerca de dois terços da receita, e o ICMS sozinho, por mais da metade.' },
+      { topico: 'Cerca de dois terços da receita bruta vêm do ICMS, do Fundo de Participação dos Estados e do petróleo.',
+        resto: 'O ICMS responde por mais da metade da receita bruta.' },
       { topico: 'O ICMS é o principal risco de frustração.',
-        resto: 'A proposta prevê R$ 26,6 bilhões, 7,8% acima da projeção para 2026, em um momento em que a arrecadação perdeu ritmo: cresceu 10,6% no primeiro semestre, 8,4% de julho a outubro e caiu 2,7% em outubro. Cada ponto percentual de crescimento a menos equivale a cerca de R$ 250 milhões.' },
-      { topico: 'O petróleo, ao contrário, parece tratado com cautela.',
-        resto: 'A proposta embute receita de cerca de R$ 1 bilhão em 2027, contra mais de R$ 3 bilhões projetados para 2026. Como depende do preço do petróleo e do câmbio, essa receita é volátil e foge ao controle do Estado.' },
+        resto: 'A proposta prevê R$ 26,6 bilhões, 7,8% acima da projeção de 2026. Na comparação com os mesmos períodos de 2025, a arrecadação cresceu 10,6% no primeiro semestre e 8,4% de julho a outubro. Em outubro, caiu 2,7%. Cada ponto percentual a menos no crescimento do ICMS equivale a cerca de R$ 250 milhões.' },
+      { topico: 'A previsão de receita do petróleo para 2027 é de cerca de R$ 1 bilhão.',
+        resto: 'A projeção para 2026 supera R$ 3 bilhões. A receita do petróleo varia com o preço internacional e o câmbio.' },
     ] },
     { n: 4, destinos: [{ aba: 'despesa', sub: 'resumo', rotulo: 'Despesa' }, { aba: 'despesa', sub: 'orgao', rotulo: 'Por órgão' }], trechos: [
-      { topico: 'A despesa da proposta é menor que a projetada para 2026 e concentra o ajuste em custeio e investimento.',
-        resto: 'As outras despesas correntes caem cerca de 9% e os investimentos, 7%, enquanto o pessoal cresce abaixo da inflação e os juros da dívida sobem de forma expressiva.' },
-      { topico: 'A proposta não contempla duas pressões da votação.',
-        resto: `As emendas impositivas, cerca de R$ ${emendas} milhões além da reserva já prevista, só podem ser financiadas por anulação de outras dotações (LDO, art. 23, I) e aumentam a rigidez do orçamento, porque sua execução é obrigatória. A recomposição das dotações dos Poderes até os limites da LDO, cerca de R$ ${poderes} milhões, também exige anulações ou reestimativa da receita. Esses ajustes ainda não estão neste trabalho.` },
+      { topico: 'A redução da despesa se concentra no custeio e no investimento.',
+        resto: 'Em relação à projeção de 2026, as outras despesas correntes caem cerca de 9% e os investimentos, 7%. A despesa com pessoal cresce abaixo da inflação, e a despesa com juros aumenta 37%.' },
+      { topico: 'Dois ajustes ainda dependem da votação do orçamento.',
+        resto: `As emendas impositivas exigem anulação de cerca de R$ ${emendas} milhões em outras dotações, além da reserva já prevista (LDO, art. 23, I). Por serem de execução obrigatória, aumentam a rigidez do orçamento. A recomposição das dotações dos Poderes até os limites da LDO, de cerca de R$ ${poderes} milhões, exige anulação de dotações ou reestimativa da receita.` },
     ] },
     { n: 5, destinos: [{ aba: 'resultado', sub: 'orcado', rotulo: 'Orçado × executado' }], trechos: [{
-      topico: 'Receita e despesa costumam ser orçadas abaixo do que se realiza, e a nossa projeção indica que 2026 repetirá o padrão.',
-      resto: 'De 2022 a 2025, a receita realizada superou o orçamento inicial em média em 15% e a despesa empenhada, em 11%. Antes disso, a despesa ficou próxima ou abaixo do orçado. O histórico não permite estimar a execução de 2027, mas é informação relevante para quem avalia a proposta.',
+      topico: 'De 2022 a 2025, a receita realizada e a despesa empenhada superaram os valores da LOA.',
+      resto: 'A arrecadação ficou, em média, 15% acima da previsão inicial, e a despesa empenhada, 11% acima da dotação inicial. A projeção de 2026 aponta o mesmo comportamento. Entre 2019 e 2021, o valor empenhado ficou próximo ou abaixo da dotação inicial.',
     }] },
     { n: 6, destinos: [{ aba: 'resultado', sub: 'lrf', rotulo: 'LRF' }, { aba: 'resultado', sub: 'capag', rotulo: 'CAPAG' }], trechos: [
-      { topico: 'Os indicadores da LRF apontam tranquilidade para 2027, e a atenção na CAPAG recai sobre a poupança corrente.',
-        resto: 'O gasto com pessoal deve ficar em cerca de 37% da receita corrente líquida, para um limite de 49%, e as operações de crédito e a dívida estão bem abaixo dos seus limites. A CAPAG de 2026 atribuiu nota A+ ao Estado. A estimativa para a poupança corrente na edição de 2028 é de cerca de 80%. É o indicador estimado mais próximo da faixa B, que começa em 85%.' },
-      { topico: 'A transição tributária pode reduzir a arrecadação de ICMS até 2033.',
-        resto: 'Se a receita corrente ajustada diminuir e a despesa corrente se mantiver, a relação entre as duas sobe, reduzindo a margem da poupança corrente para a faixa A.' },
+      { topico: 'Os indicadores estimados com a PLOA ficam abaixo dos limites da LRF.',
+        resto: 'A despesa com pessoal do Executivo equivale a cerca de 37% da receita corrente líquida, ante o limite de 49%. As operações de crédito e a dívida consolidada líquida também ficam abaixo dos respectivos limites.' },
+      { topico: 'Na CAPAG, a poupança corrente é o indicador estimado mais próximo da faixa B.',
+        resto: 'O Estado recebeu nota A+ na edição de 2026. Para a edição de 2028, a poupança corrente é estimada em cerca de 80%, e a faixa B começa em 85%. A transição tributária pode reduzir a arrecadação de ICMS até 2033. Se a receita corrente ajustada cair e a despesa corrente se mantiver, o indicador sobe, aproximando-se da faixa B.' },
     ] },
   ]
 
